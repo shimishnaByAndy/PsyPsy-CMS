@@ -19,9 +19,11 @@ import PropTypes from "prop-types";
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import Icon from "@mui/material/Icon";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
+import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 React example components
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
@@ -41,18 +43,27 @@ function BasicLayout({ image, children }) {
         width="100%"
         minHeight="100vh"
         sx={{
+          position: "relative",
           backgroundImage: ({ functions: { rgba } }) =>
             image && `url(${image})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)", // Dark overlay
+            zIndex: 1
+          }
         }}
       >
-        {/* Language Switcher positioned at the top right */}
-        <MDBox position="absolute" top={16} right={16} zIndex={2}>
-          <LanguageSwitcher iconColor="white" />
-        </MDBox>
         <MDBox 
+          position="relative"
+          zIndex={2}
           display="flex" 
           justifyContent="center" 
           alignItems="center" 
@@ -71,8 +82,54 @@ function BasicLayout({ image, children }) {
             {children}
           </Box>
         </MDBox>
+        
+        {/* Language switcher and Made with heart at the absolute bottom */}
+        <MDBox 
+          position="absolute"
+          bottom={24}
+          left={0}
+          right={0}
+          zIndex={2}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+        >
+          {/* Language switcher */}
+          <MDBox
+            mb={2}
+            width="100%"
+            maxWidth="280px"
+            display="flex"
+            justifyContent="center"
+          >
+            <LanguageSwitcher iconColor="white" horizontalLayout />
+          </MDBox>
+          
+          {/* Made with love in Montreal */}
+          <MDBox
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <MDTypography
+              variant="caption"
+              color="white"
+              fontWeight="light"
+              textAlign="center"
+              sx={{ 
+                fontSize: "0.7rem",
+                opacity: 0.75,
+                letterSpacing: "0.02rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "4px"
+              }}
+            >
+              Made with <Icon sx={{ fontSize: "0.8rem", color: "white" }}>favorite</Icon> in Montreal
+            </MDTypography>
+          </MDBox>
+        </MDBox>
       </MDBox>
-      <Footer light />
     </PageLayout>
   );
 }

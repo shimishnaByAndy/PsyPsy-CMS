@@ -1,0 +1,281 @@
+---
+description: Guidelines for committing and pushing code to Bitbucket following project standards and avoiding common issues
+globs: **/*.js, **/*.xml, **/*.tss
+alwaysApply: false
+---
+
+# Git Push Guidelines
+
+## Context
+- When committing and pushing code to Bitbucket
+- When using SourceTree as git client or terminal commands
+- For Titanium Alloy project management
+- For maintaining clear commit history
+- When pushing changes to remote repository
+- When handling multiple commits
+- When resolving push conflicts
+- When verifying pushed changes
+
+## Critical Rules
+
+1. ALWAYS push all changed files, NEVER individual files
+
+2. Branch Management:
+   - Only create/switch branches when explicitly requested
+   - Branch naming format when requested:
+     ```
+     feature/name  # For new features
+     bugfix/name   # For bug fixes
+     ```
+
+3. Check All Changes:
+   ```bash
+   git status  # Verify all changed files
+   git diff --name-status | cat  # List all modified files
+   ```
+
+4. Check Unpushed Changes:
+   ```bash
+   git log origin/master..HEAD | cat  # Use | cat to prevent less pager
+   ```
+
+5. Stage and Commit All:
+   ```bash
+   git add .  # Stage ALL changes
+   git commit -m "type: description"  # Commit with proper format
+   ```
+
+6. Push All:
+   ```bash
+   git push  # Push ALL changes to remote
+   ```
+
+## Common Issues
+
+If push fails:
+```bash
+git pull --rebase  # Update and rebase (only if collaborating or if push is rejected)
+git push  # Try again
+```
+
+If conflicts:
+```bash
+# Resolve conflicts in files
+git add .  # Stage ALL resolved files
+git rebase --continue
+git push
+```
+
+Note: 
+- Always append `| cat` to git commands that might trigger the less pager
+- Never use `git add <specific-file>` or push individual files
+- Wait for explicit instructions before creating or merging branches
+
+## Examples
+
+<example>
+// Good Commits (SourceTree)
+feat: add login screen
+- Implement biometric auth
+- Add error handling
+
+fix: keyboard overlap
+- Remove duplicate toolbar code
+- Fix iOS specific issues
+
+// Good Commits (Terminal)
+git commit -m "feat: add login screen" -m "- Implement biometric auth" -m "- Add error handling"
+git commit -m "fix: keyboard overlap" -m "- Remove duplicate toolbar code" -m "- Fix iOS specific issues"
+
+// Good Branch Names
+feature/user-authentication
+bugfix/keyboard-issue
+</example>
+
+<example type="invalid">
+// Bad Commits (Any Method)
+updated code
+fixed bug
+WIP
+quick fix
+
+// Bad Terminal Commits (Wrong Format)
+git commit -m "feat: add login screen
+- Implement biometric auth"  # Don't use newlines in -m
+git commit -m "updated stuff"  # No type prefix
+git commit -m "feat: changes"  # No ticket number
+
+// Bad Branch Names
+andrei-fix
+test
+temp
+</example>
+
+## Common Issues & Solutions
+
+1. Files Not Committing:
+   - Check .gitignore
+   - Verify file is staged
+   - Look for parent directory ignores
+
+2. Push Rejected:
+   - Fetch first
+   - Resolve any conflicts
+   - Try again
+
+3. Wrong Files Committed:
+   - Reset last commit if not pushed
+   - Create new commit to fix if pushed
+   - Update .gitignore if needed
+
+See `docs/git-workflow-examples.md` for detailed examples and scenarios.
+
+## 📝 Search Tags
+#commit #push #branch #bugfix #feature #sourcetree #bitbucket #merge #conflict #ignore #titanium #alloy
+
+## Recent Examples Archive
+[Keep last 5 significant pushes here for reference]
+
+### 2024-02-XX: TextField Widget Update
+
+## Common Issues and Solutions
+
+1. **Desktop App Not Showing Push**
+   - Issue: Desktop GUI might not immediately reflect pushed changes
+   - Solution: 
+     - Verify push on web interface
+     - Use `git status` in terminal
+     - Refresh/restart desktop app if needed
+
+2. **Partial Pushes**
+   - Issue: Some commits not pushed
+   - Solution:
+     - Use `git log origin/branch..HEAD` to see unpushed commits
+     - Check for pending commits with `git status`
+     - Push explicitly with branch name
+
+3. **Push Conflicts**
+   - Issue: Remote has changes you don't have
+   - Solution:
+     - Pull first: `git pull origin branch_name`
+     - Resolve any conflicts
+     - Then push: `git push origin branch_name`
+
+4. **Large File Issues**
+   - Issue: Push fails due to large files
+   - Solution:
+     - Check `.gitignore` for proper exclusions
+     - Use Git LFS for large files
+     - Break down commits if needed
+
+## Best Practices
+
+1. **Before Push**
+   - Review changes with `git status`
+   - Check commit messages
+   - Verify branch name
+   - Run tests if applicable
+
+2. **During Push**
+   - Use explicit push commands
+   - Watch for error messages
+   - Be ready to handle conflicts
+   - Don't interrupt push operation
+
+3. **After Push**
+   - Verify changes on remote
+   - Check CI/CD pipeline
+   - Update relevant tickets/issues
+   - Notify team if needed
+
+## Verification Steps
+
+1. Command Line Verification:
+   ```bash
+   git status              # Should show "Your branch is up to date"
+   git log origin/master   # Should show your commits
+   ```
+
+2. Web Interface:
+   - Check repository on web
+   - Verify commit history
+   - Check file changes
+   - Review CI/CD status
+
+3. Local Cleanup:
+   ```bash
+   git remote prune origin  # Clean up remote tracking
+   git fetch --all         # Update remote info
+   ```
+
+## Emergency Procedures
+
+1. **Incorrect Push**
+   ```bash
+   git reset --hard HEAD~1  # Reset last commit
+   git push --force-with-lease  # Force push (use carefully)
+   ```
+
+2. **Push Timeout**
+   ```bash
+   git config http.postBuffer 524288000  # Increase buffer
+   git push --verbose  # Push with detailed output
+   ```
+
+3. **Authentication Issues**
+   ```bash
+   git config --global credential.helper cache  # Cache credentials
+   git push  # Try push again
+   ```
+
+## Critical Steps
+
+1. Check Status:
+   ```bash
+   git status  # Verify changes and branch
+   ```
+
+2. Check Unpushed Changes:
+   ```bash
+   git log origin/master..HEAD | cat  # Use | cat to prevent less pager
+   ```
+
+3. Stage and Commit:
+   ```bash
+   git add .  # Stage all changes
+   git commit -m "type: description"  # Commit with proper format
+   ```
+
+4. Push:
+   ```bash
+   git push  # Push to remote
+   ```
+
+## Common Issues
+
+If push fails:
+```bash
+git pull --rebase  # Update and rebase
+git push  # Try again
+```
+
+If conflicts:
+```bash
+# Resolve conflicts in files
+git add .
+git rebase --continue
+git push
+```
+
+Note: Always append `| cat` to git commands that might trigger the less pager (like `git log`, `git diff`, etc.)
+
+## Notes
+- You do NOT need to run 'git pull' after every commit if you are the only one working on this computer and branch.
+- Always push all changed files, never just individual files.
+- Use the commit message format: `type: description` (e.g., `feat: ...`, `fix: ...`).
+- Wait for explicit instructions before creating or merging branches.
+
+git push
+```
+
+Note: Always append `| cat` to git commands that might trigger the less pager (like `git log`, `git diff`, etc.)

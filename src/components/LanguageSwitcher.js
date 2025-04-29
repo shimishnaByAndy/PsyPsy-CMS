@@ -43,7 +43,7 @@ const LanguageSwitcher = ({ iconColor, horizontalLayout = false }) => {
           width: '80%',
           height: '40px',
           borderRadius: '30px',
-          backgroundColor: 'rgba(255, 255, 255, 0.15)',
+          backgroundColor: 'rgba(255, 255, 255, 0.08)',
           mx: 'auto',
           position: 'relative',
           mb: 2,
@@ -58,11 +58,11 @@ const LanguageSwitcher = ({ iconColor, horizontalLayout = false }) => {
         <Box
           sx={{
             position: 'absolute',
-            left: currentLanguage === 'en' ? '0%' : '50%',
-            width: '50%',
+            left: currentLanguage === 'en' ? '4px' : 'calc(50% + 4px)',
+            width: 'calc(50% - 8px)',
             height: '32px',
-            borderRadius: '30px',
-            backgroundColor: 'rgba(255, 255, 255, 0.25)',
+            borderRadius: '24px',
+            backgroundColor: 'rgba(255, 255, 255, 0.15)',
             transition: 'left 0.3s ease',
             zIndex: 1
           }}
@@ -92,14 +92,18 @@ const LanguageSwitcher = ({ iconColor, horizontalLayout = false }) => {
               width: '16px', 
               height: '16px', 
               mr: 0.5,
-              filter: 'brightness(0) invert(1)' // Always white
+              filter: 'brightness(0) invert(1)',
+              opacity: currentLanguage === 'en' ? 1 : 0.8
             }} 
           />
           <MDTypography
             variant="button"
             color="white"
             fontWeight={currentLanguage === 'en' ? 'medium' : 'regular'}
-            sx={{ fontSize: '0.75rem' }}
+            sx={{ 
+              fontSize: '0.85rem',
+              letterSpacing: '0.02em'
+            }}
           >
             EN
           </MDTypography>
@@ -126,8 +130,8 @@ const LanguageSwitcher = ({ iconColor, horizontalLayout = false }) => {
             src={fleurDeLisIcon} 
             alt="Quebec Flag" 
             sx={{ 
-              width: '16px', 
-              height: '16px', 
+              width: '18px', 
+              height: '18px', 
               mr: 0.5,
               filter: 'brightness(0) invert(1)' // Always white
             }} 
@@ -136,7 +140,10 @@ const LanguageSwitcher = ({ iconColor, horizontalLayout = false }) => {
             variant="button"
             color="white"
             fontWeight={currentLanguage === 'fr' ? 'medium' : 'regular'}
-            sx={{ fontSize: '0.75rem' }}
+            sx={{ 
+              fontSize: '0.85rem',
+              letterSpacing: '0.02em'
+            }}
           >
             FR
           </MDTypography>
@@ -159,6 +166,8 @@ const LanguageSwitcher = ({ iconColor, horizontalLayout = false }) => {
             color: currentLanguage === 'en' ? '#FFFFFF' : '#000000',
             bgcolor: currentLanguage === 'en' ? '#5d1c33' : '#FFFFFF',
             borderColor: currentLanguage === 'en' ? '#5d1c33' : '#FFFFFF',
+            fontSize: '0.85rem',
+            letterSpacing: '0.02em',
             '&:hover': {
               bgcolor: currentLanguage === 'en' ? '#6d2c43' : 'rgba(255, 255, 255, 0.8)',
               borderColor: currentLanguage === 'en' ? '#6d2c43' : '#FFFFFF',
@@ -188,6 +197,8 @@ const LanguageSwitcher = ({ iconColor, horizontalLayout = false }) => {
             color: currentLanguage === 'fr' ? '#FFFFFF' : '#000000',
             bgcolor: currentLanguage === 'fr' ? '#5d1c33' : '#FFFFFF',
             borderColor: currentLanguage === 'fr' ? '#5d1c33' : '#FFFFFF',
+            fontSize: '0.85rem',
+            letterSpacing: '0.02em',
             '&:hover': {
               bgcolor: currentLanguage === 'fr' ? '#6d2c43' : 'rgba(255, 255, 255, 0.8)',
               borderColor: currentLanguage === 'fr' ? '#6d2c43' : '#FFFFFF',
@@ -199,8 +210,8 @@ const LanguageSwitcher = ({ iconColor, horizontalLayout = false }) => {
             src={fleurDeLisIcon} 
             alt="Quebec Flag" 
             sx={{ 
-              width: '16px', 
-              height: '16px', 
+              width: '18px', 
+              height: '18px', 
               mr: 0.5,
               filter: currentLanguage === 'fr' ? 'brightness(0) invert(1)' : 'none'
             }} 

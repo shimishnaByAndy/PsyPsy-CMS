@@ -34,6 +34,7 @@ import Box from "@mui/material/Box";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import LanguageSwitcher from "components/LanguageSwitcher";
+import ThemeToggle from "components/ThemeToggle";
 
 // Material Dashboard 2 React example components
 import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
@@ -43,7 +44,7 @@ import SidenavRoot from "examples/Sidenav/SidenavRoot";
 import sidenavLogoLabel from "examples/Sidenav/styles/sidenav";
 
 // Montreal cityline SVG
-import montrealCityline from "assets/images/branding/mtlLines_w.png";
+import montrealCityline from "assets/images/branding/mtlLines_w2.png";
 
 // Material Dashboard 2 React context
 import {
@@ -202,7 +203,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       icon: "logout",
       onClick: handleLogout,
       iconColor: "white",
-    },
+    }
   ];
 
   // Setting the routes based on menu type
@@ -340,17 +341,20 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         position="relative"
         mb={0}
       >
+        {/* Theme toggles and language switcher side by side */}
         <MDBox
-          p={2}
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            mb: 1
-          }}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexDirection="column"
+          mb={1}
+          mt={3}
         >
+          <ThemeToggle />
           <LanguageSwitcher iconColor="white" horizontalLayout />
         </MDBox>
+        
+        {/* Montreal cityline image right above the footer */}
         <MDBox 
           component="img" 
           src={montrealCityline} 
@@ -358,14 +362,47 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           width="100%" 
           sx={{ 
             height: "auto",
-            objectFit: "contain",
-            maxWidth: "100%",
+            objectFit: "cover",
+            width: "calc(100% + 6px)",  // Extend beyond the sidebar padding
+            maxWidth: "none",            // Remove maxWidth constraint
             display: "block",
-            marginLeft: "auto",
-            marginRight: "auto",
-            mt: "auto"
+            marginLeft: "-8px",          // Negative margin to offset sidebar padding
+            marginRight: "-8px",         // Negative margin to offset sidebar padding
+            mb: 1,
+            mt: 0,
+            opacity: 0.15,
+            //border: "1px dashed rgba(255, 255, 255, 0.5)",
+            boxSizing: "border-box",
+            padding: 0                   // Remove padding
           }}
         />
+        
+        {/* Made with love in Montreal - immediately after image */}
+        <MDBox
+          px={2}
+          pb={2}
+          pt={0.5}  // Small padding top to create minimal space from image
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <MDTypography
+            variant="caption"
+            color="white"
+            fontWeight="light"
+            textAlign="center"
+            sx={{ 
+              fontSize: "0.7rem",
+              opacity: 0.75,
+              letterSpacing: "0.02rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px"
+            }}
+          >
+            Made with <Icon sx={{ fontSize: "0.8rem", color: "white" }}>favorite</Icon> in Montreal
+          </MDTypography>
+        </MDBox>
       </MDBox>
     </SidenavRoot>
   );
