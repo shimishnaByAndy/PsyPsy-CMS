@@ -11,6 +11,10 @@ const DEFAULT_SERVER_URL = 'https://your-parse-server.com/parse';
 const DEFAULT_JAVASCRIPT_KEY = 'your_javascript_key';
 const DEFAULT_MASTER_KEY = 'your_master_key'; // Only use in secure environments
 
+// Keys for localStorage
+const REMEMBER_ME_KEY = 'psypsy_remember_me';
+const SESSION_TOKEN_KEY = 'Parse/sessionToken';
+
 /**
  * Initializes Parse with the given parameters
  * @param {Object} options - Parse initialization options
@@ -44,8 +48,28 @@ export const initializeParse = (options = {}) => {
     Parse.liveQueryServerURL = serverURL.replace(/^https?:\/\//, 'wss://');
   }
 
+  // Check if we need to restore a session
+  checkRememberMeState();
+
   console.log('Parse initialized with appId:', appId);
   return Parse;
+};
+
+/**
+ * Checks if the user should be remembered and handles session state accordingly
+ */
+const checkRememberMeState = () => {
+  const rememberMe = localStorage.getItem(REMEMBER_ME_KEY) === 'true';
+  
+  // If remember me is not set, clear any existing session
+  if (!rememberMe) {
+    const sessionToken = localStorage.getItem(SESSION_TOKEN_KEY);
+    if (sessionToken) {
+      console.log('Remember me not set, clearing session');
+      localStorage.removeItem(SESSION_TOKEN_KEY);
+      // Parse's internal state will be updated on next initialization
+    }
+  }
 };
 
 /**
@@ -93,11 +117,41 @@ export const ParseAuth = {
   },
 
   /**
+   * Logs in a user with remember me option
+   * @param {string} username - Username 
+   * @param {string} password - Password
+   * @param {boolean} rememberMe - Whether to remember the user's session
+   * @returns {Promise<Parse.User>} Parse User object
+   */
+  loginWithRememberMe: async (username, password, rememberMe = false) => {
+    try {
+      const user = await Parse.User.logIn(username, password);
+      
+      // Store the remember me preference in localStorage
+      localStorage.setItem(REMEMBER_ME_KEY, rememberMe.toString());
+      
+      // If remember me is false, add event listener to clear session on window close
+      if (!rememberMe) {
+        window.addEventListener('beforeunload', () => {
+          localStorage.removeItem(SESSION_TOKEN_KEY);
+        });
+      }
+      
+      console.log(`User logged in successfully with remember me: ${rememberMe}`);
+      return user;
+    } catch (error) {
+      console.error('Error logging in:', error);
+      throw error;
+    }
+  },
+
+  /**
    * Logs out the current user
    * @returns {Promise<void>}
    */
   logout: async () => {
     try {
+      localStorage.removeItem(REMEMBER_ME_KEY);
       await Parse.User.logOut();
       console.log('User logged out successfully');
     } catch (error) {
@@ -119,7 +173,12 @@ export const ParseAuth = {
    * @returns {boolean} True if a user is logged in
    */
   isLoggedIn: () => {
-    return !!Parse.User.current();
+    try {
+      return !!Parse.User.current();
+    } catch (error) {
+      console.error('Error checking login status:', error);
+      return false;
+    }
   },
 
   /**

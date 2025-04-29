@@ -48,7 +48,7 @@ import createCache from "@emotion/cache";
 import routes from "./routes";
 
 // Material Dashboard 2 React contexts
-import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "./context";
+import { useMaterialUIController, setMiniSidenav, setOpenConfigurator, setSidenavColor } from "./context";
 
 // Images
 import brandWhite from "./assets/images/logo-ct.png";
@@ -65,6 +65,9 @@ import ParseInitializer from "./components/ParseInitializer";
 
 // i18n (internationalization) setup
 import "./localization/i18n";
+
+// Custom PsyPsy color
+const PSYPSY_COLOR = "#5d1c33";
 
 // Loading component for suspense fallback
 const LoadingFallback = () => (
@@ -96,6 +99,11 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
+
+  // Set the custom color for the sidenav when the component mounts
+  useEffect(() => {
+    setSidenavColor(dispatch, "secondary");
+  }, [dispatch]);
 
   // Initialize development tools if in development mode
   useEffect(() => {
@@ -188,7 +196,7 @@ export default function App() {
         {layout === "dashboard" && (
           <>
             <Sidenav
-              color={sidenavColor}
+              color="dark"
               brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
               brandName="PsyPsy CMS"
               routes={routes}
@@ -212,7 +220,7 @@ export default function App() {
       {layout === "dashboard" && (
         <>
           <Sidenav
-            color={sidenavColor}
+            color="dark"
             brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
             brandName="PsyPsy CMS"
             routes={routes}

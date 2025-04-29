@@ -21,10 +21,19 @@ function collapseItem(theme, ownerState) {
   const { borderRadius } = borders;
   const { pxToRem, rgba, linearGradient } = functions;
 
+  // Use standard colors for the background or a custom hex color
+  let backgroundValue = active ? "#5d1c33" : transparent.main;
+  
+  // For standard theme colors, use the gradient
+  if (active && gradients[sidenavColor] && gradients[sidenavColor].main) {
+    backgroundValue = linearGradient(
+      gradients[sidenavColor].main,
+      gradients[sidenavColor].state
+    );
+  }
+
   return {
-    background: active
-      ? linearGradient(gradients[sidenavColor].main, gradients[sidenavColor].state)
-      : transparent.main,
+    background: backgroundValue,
     color:
       (transparentSidenav && !darkMode && !active) || (whiteSidenav && !active)
         ? dark.main

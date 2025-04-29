@@ -66,6 +66,13 @@ function Basic() {
     if (i18n.language !== defaultLanguage) {
       i18n.changeLanguage(defaultLanguage);
     }
+    
+    // Check if there's a remembered username and pre-fill it
+    const rememberedUsername = localStorage.getItem('lastLoginUsername');
+    if (rememberedUsername) {
+      setUsername(rememberedUsername);
+      setRememberMe(true);
+    }
   }, [i18n]);
 
   const handleRememberMeChange = (checked) => {
@@ -87,7 +94,16 @@ function Basic() {
     }
     
     try {
-      await ParseAuth.login(username, password);
+      // Use the new loginWithRememberMe function and pass the rememberMe state
+      await ParseAuth.loginWithRememberMe(username, password, rememberMe);
+      
+      // Store the username in localStorage if rememberMe is true
+      if (rememberMe) {
+        localStorage.setItem('lastLoginUsername', username);
+      } else {
+        localStorage.removeItem('lastLoginUsername');
+      }
+      
       const from = location.state?.from?.pathname || "/dashboard";
       navigate(from, { replace: true });
     } catch (error) {

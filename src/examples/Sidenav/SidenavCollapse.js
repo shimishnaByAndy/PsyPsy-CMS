@@ -36,9 +36,12 @@ import {
 // Material Dashboard 2 React context
 import { useMaterialUIController } from "context";
 
-function SidenavCollapse({ icon, name, active, ...rest }) {
+function SidenavCollapse({ icon, name, active, color, ...rest }) {
   const [controller] = useMaterialUIController();
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
+
+  // Use custom color if provided, otherwise fall back to the controller's sidenavColor
+  const activeColor = color || sidenavColor;
 
   return (
     <ListItem component="li">
@@ -50,7 +53,7 @@ function SidenavCollapse({ icon, name, active, ...rest }) {
             transparentSidenav,
             whiteSidenav,
             darkMode,
-            sidenavColor,
+            sidenavColor: activeColor,
           })
         }
       >
@@ -85,6 +88,7 @@ function SidenavCollapse({ icon, name, active, ...rest }) {
 // Setting default values for the props of SidenavCollapse
 SidenavCollapse.defaultProps = {
   active: false,
+  color: null,
 };
 
 // Typechecking props for the SidenavCollapse
@@ -92,6 +96,7 @@ SidenavCollapse.propTypes = {
   icon: PropTypes.node.isRequired,
   name: PropTypes.string.isRequired,
   active: PropTypes.bool,
+  color: PropTypes.string,
 };
 
 export default SidenavCollapse;

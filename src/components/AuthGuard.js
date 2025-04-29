@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 // Parse authentication service
-import { ParseAuth } from '../services/parseService';
+import { ParseAuth, Parse } from '../services/parseService';
+import { useParseInitialization } from './ParseInitializer';
 
 /**
  * Guard component that prevents unauthorized users from accessing protected routes
@@ -12,21 +13,35 @@ const AuthGuard = ({ children }) => {
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { isInitialized } = useParseInitialization();
 
   useEffect(() => {
+    // Only check auth status when Parse is initialized
+    if (!isInitialized) {
+      return;
+    }
+
     // Check authentication status
     const checkAuth = async () => {
       setIsLoading(true);
-      const isLoggedIn = ParseAuth.isLoggedIn();
-      setIsAuthenticated(isLoggedIn);
-      setIsLoading(false);
+      
+      try {
+        // Use the safer isLoggedIn method from ParseAuth
+        const isLoggedIn = ParseAuth.isLoggedIn();
+        setIsAuthenticated(isLoggedIn);
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     checkAuth();
-  }, []);
+  }, [isInitialized]);
 
-  // Show nothing while checking authentication
-  if (isLoading) {
+  // Show nothing while checking authentication or waiting for Parse to initialize
+  if (isLoading || !isInitialized) {
     return null;
   }
 

@@ -107,6 +107,11 @@ const colors = {
       state: "#3D314A", // accent1
     },
 
+    psypsy: {
+      main: "#5d1c33", // PsyPsy custom color
+      state: "#732141", // Lighter shade for state
+    },
+
     info: {
       main: "#899581", // mainColor
       state: "#A9AC99", // prevMainColor

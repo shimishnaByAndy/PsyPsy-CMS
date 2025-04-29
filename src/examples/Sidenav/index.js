@@ -30,7 +30,7 @@ import Icon from "@mui/material/Icon";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
+import LanguageSwitcher from "components/LanguageSwitcher";
 
 // Material Dashboard 2 React example components
 import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
@@ -49,9 +49,12 @@ import {
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
-  const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
+  const { miniSidenav, transparentSidenav, whiteSidenav, darkMode } = controller;
   const location = useLocation();
   const collapseName = location.pathname.replace("/", "");
+  
+  // Custom color for our app
+  const customColor = "#5d1c33";
 
   let textColor = "white";
 
@@ -145,6 +148,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       {...rest}
       variant="permanent"
       ownerState={{ transparentSidenav, whiteSidenav, miniSidenav, darkMode }}
+      sx={{ backgroundColor: customColor }}
     >
       <MDBox pt={3} pb={1} px={4} textAlign="center">
         <MDBox
@@ -166,8 +170,18 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             width={!brandName && "100%"}
             sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
           >
-            <MDTypography component="h6" variant="button" fontWeight="medium" color={textColor}>
-              {brandName}
+            <MDTypography 
+              component="h6" 
+              variant="button" 
+              fontWeight="medium" 
+              color={textColor}
+              sx={{
+                fontFamily: "'Romantically', 'Playfair Display', serif",
+                fontSize: "1.75rem",
+                letterSpacing: "0.5px"
+              }}
+            >
+              PsyPsy
             </MDTypography>
           </MDBox>
         </MDBox>
@@ -179,18 +193,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         }
       />
       <List>{renderRoutes}</List>
-      <MDBox p={2} mt="auto">
-        <MDButton
-          component="a"
-          href="https://www.creative-tim.com/product/material-dashboard-pro-react"
-          target="_blank"
-          rel="noreferrer"
-          variant="gradient"
-          color={sidenavColor}
-          fullWidth
-        >
-          upgrade to pro
-        </MDButton>
+      <MDBox p={2} mt="auto" textAlign="center">
+        <LanguageSwitcher iconColor="white" />
       </MDBox>
     </SidenavRoot>
   );
