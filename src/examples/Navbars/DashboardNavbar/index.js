@@ -44,6 +44,7 @@ import NotificationItem from "examples/Items/NotificationItem";
 
 // Language Switcher component
 import LanguageSwitcher from "components/LanguageSwitcher";
+import UserTypeSelector from "components/UserTypeSelector";
 
 // Custom styles for DashboardNavbar
 import {
@@ -65,7 +66,7 @@ import {
 // Parse authentication service
 import { ParseAuth } from "services/parseService";
 
-function DashboardNavbar({ absolute, light, isMini }) {
+function DashboardNavbar({ absolute, light, isMini, onUserTypeChange }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [navbarType, setNavbarType] = useState();
@@ -73,7 +74,11 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const [userMenu, setUserMenu] = useState(null);
-  const route = useLocation().pathname.split("/").slice(1);
+  const location = useLocation();
+  const route = location.pathname.split("/").slice(1);
+  
+  // Check if we're on the tables/users page
+  const isUsersPage = location.pathname === "/tables";
 
   useEffect(() => {
     // Setting the navbar type
@@ -185,37 +190,76 @@ function DashboardNavbar({ absolute, light, isMini }) {
     <AppBar
       position={absolute ? "absolute" : navbarType}
       color="inherit"
-      sx={(theme) => navbar(theme, { transparentNavbar, absolute, light, darkMode })}
+      sx={(theme) => ({
+        ...navbar(theme, { transparentNavbar, absolute, light, darkMode }),
+        ...(isUsersPage && {
+          p: 0,
+          minHeight: 'auto',
+          borderRadius: 0
+        })
+      })}
     >
-      <Toolbar sx={(theme) => navbarContainer(theme)}>
-        <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
-          <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
-        </MDBox>
-        {isMini ? null : (
-          <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <MDBox color={light ? "white" : "inherit"}>
-              <IconButton
-                size="small"
-                disableRipple
-                color="inherit"
-                sx={navbarMobileMenu}
-                onClick={handleMiniSidenav}
-              >
-                <Icon sx={iconsStyle} fontSize="medium">
-                  {miniSidenav ? "menu_open" : "menu"}
-                </Icon>
-              </IconButton>
-              <IconButton
-                size="small"
-                disableRipple
-                color="inherit"
-                sx={navbarIconButton}
-                onClick={handleConfiguratorOpen}
-              >
-                <Icon sx={iconsStyle}>settings</Icon>
-              </IconButton>
-            </MDBox>
+      <Toolbar 
+        sx={(theme) => ({
+          ...navbarContainer(theme),
+          ...(isUsersPage && {
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+            maxWidth: '100%',
+            minHeight: '75px',
+            padding: '0 !important',
+            margin: 0
+          })
+        })}
+      >
+        {isUsersPage ? (
+          <MDBox 
+            width="100%" 
+            height="100%"
+            display="flex" 
+            justifyContent="center" 
+            alignItems="center"
+            sx={{ 
+              maxWidth: '100%',
+              padding: 0,
+              margin: 0
+            }}
+          >
+            <UserTypeSelector onChange={onUserTypeChange} />
           </MDBox>
+        ) : (
+          <>
+            <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
+              <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
+            </MDBox>
+            {isMini ? null : (
+              <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
+                <MDBox color={light ? "white" : "inherit"}>
+                  <IconButton
+                    size="small"
+                    disableRipple
+                    color="inherit"
+                    sx={navbarMobileMenu}
+                    onClick={handleMiniSidenav}
+                  >
+                    <Icon sx={iconsStyle} fontSize="medium">
+                      {miniSidenav ? "menu_open" : "menu"}
+                    </Icon>
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    disableRipple
+                    color="inherit"
+                    sx={navbarIconButton}
+                    onClick={handleConfiguratorOpen}
+                  >
+                    <Icon sx={iconsStyle}>settings</Icon>
+                  </IconButton>
+                </MDBox>
+              </MDBox>
+            )}
+          </>
         )}
       </Toolbar>
     </AppBar>
@@ -227,6 +271,7 @@ DashboardNavbar.defaultProps = {
   absolute: false,
   light: false,
   isMini: false,
+  onUserTypeChange: null,
 };
 
 // Typechecking props for the DashboardNavbar
@@ -234,6 +279,7 @@ DashboardNavbar.propTypes = {
   absolute: PropTypes.bool,
   light: PropTypes.bool,
   isMini: PropTypes.bool,
+  onUserTypeChange: PropTypes.func,
 };
 
 export default DashboardNavbar;

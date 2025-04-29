@@ -13,6 +13,8 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
+import { useState, useEffect } from "react";
+
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
@@ -32,12 +34,62 @@ import authorsTableData from "layouts/tables/data/authorsTableData";
 import projectsTableData from "layouts/tables/data/projectsTableData";
 
 function Tables() {
-  const { columns, rows } = authorsTableData();
+  // Get table data
+  const { columns, rows: allRows } = authorsTableData();
   const { columns: pColumns, rows: pRows } = projectsTableData();
+  
+  // State for filtered rows
+  const [filteredRows, setFilteredRows] = useState(allRows);
+  const [userType, setUserType] = useState(localStorage.getItem('userTypeFilter') || 'all');
+  
+  // Handle user type change
+  const handleUserTypeChange = (type) => {
+    setUserType(type);
+    filterRows(type);
+  };
+  
+  // Filter rows based on user type
+  const filterRows = (type) => {
+    if (!allRows || !allRows.length) {
+      setFilteredRows([]);
+      return;
+    }
+
+    switch(type) {
+      case 'professionals':
+        setFilteredRows(allRows.filter(row => 
+          row.function && 
+          row.function.props && 
+          row.function.props.title === 'Programator'
+        ));
+        break;
+      case 'clients':
+        setFilteredRows(allRows.filter(row => 
+          row.function && 
+          row.function.props && 
+          row.function.props.title === 'Executive'
+        ));
+        break;
+      case 'admins':
+        setFilteredRows(allRows.filter(row => 
+          row.function && 
+          row.function.props && 
+          row.function.props.title === 'Manager'
+        ));
+        break;
+      default:
+        setFilteredRows(allRows);
+    }
+  };
+  
+  // Apply filtering when component mounts
+  useEffect(() => {
+    filterRows(userType);
+  }, []);
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      <DashboardNavbar onUserTypeChange={handleUserTypeChange} />
       <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
@@ -53,15 +105,15 @@ function Tables() {
                 coloredShadow="info"
               >
                 <MDTypography variant="h6" color="white">
-                  Authors Table
+                  Users
                 </MDTypography>
               </MDBox>
               <MDBox pt={3}>
                 <DataTable
-                  table={{ columns, rows }}
+                  table={{ columns, rows: filteredRows }}
                   isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
+                  entriesPerPage={true}
+                  showTotalEntries={true}
                   noEndBorder
                 />
               </MDBox>

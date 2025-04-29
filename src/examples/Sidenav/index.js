@@ -78,7 +78,9 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       try {
         const currentUser = ParseAuth.getCurrentUser();
         if (currentUser) {
-          setUsername(currentUser.get("username"));
+          // Get first name if available, otherwise fall back to username
+          const firstName = currentUser.get("firstName") || currentUser.get("first_name") || currentUser.get("username").split(" ")[0];
+          setUsername(firstName);
         }
       } catch (error) {
         console.error("Error getting current user:", error);
@@ -169,51 +171,42 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   );
 
   // Create additional menu items for lock and logout
-  const additionalMenuItems = [
-    {
-      type: "divider",
-      key: "account-divider",
-    },
-    {
-      type: "title",
-      title: "Account",
-      key: "account-title",
-    },
-    {
-      type: "collapse",
-      name: `${username}`,
-      key: "profile",
-      icon: "person",
-      route: "/profile",
-      iconColor: "white",
-    },
-    {
-      type: "collapse",
-      name: "Lock",
-      key: "lock",
-      icon: "lock",
-      route: "/authentication/lock",
-      onClick: handleLockApp,
-      iconColor: "white",
-    },
-    {
-      type: "collapse",
-      name: "Logout",
-      key: "logout",
-      icon: "logout",
-      onClick: handleLogout,
-      iconColor: "white",
-    }
-  ];
+  const additionalMenuItems = []; // We'll handle these separately in the footer
 
   // Setting the routes based on menu type
   const menu = routes.find((route) => route.menu)?.subRoutes || routes;
   
-  // Combine standard routes with our additional account menu items
-  const allRoutes = [...menu, ...additionalMenuItems];
+  // Add the settings option after Parse Data
+  const modifiedMenu = [...menu];
+  
+  // Find where to add the Settings option (after Parse Data)
+  const parseDataIndex = modifiedMenu.findIndex(item => item.key === "parse-data");
+  if (parseDataIndex !== -1) {
+    const settingsOption = {
+      type: "collapse",
+      name: `${username}`,
+      key: "profile",
+      icon: "settings",
+      route: "/profile",
+      iconColor: "white",
+    };
+    
+    // Insert the settings option right after Parse Data
+    modifiedMenu.splice(parseDataIndex + 1, 0, settingsOption);
+  }
+  
+  // Ensure all icons are white
+  modifiedMenu.forEach(item => {
+    if (item.type === "collapse") {
+      item.iconColor = "white";
+    }
+  });
+  
+  // Use only the modified menu routes
+  const allRoutes = [...modifiedMenu];
 
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
-  const renderRoutes = allRoutes.map(({ type, name, icon, title, route, href, key, onClick, iconColor }) => {
+  const renderRoutes = allRoutes.map(({ type, name, icon, title, route, href, key, onClick, iconColor, actions }) => {
     let returnValue;
 
     if (type === "collapse") {
@@ -276,6 +269,50 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             borderColor: 'rgba(255,255,255,0.2)'
           }}
         />
+      );
+    } else if (type === "actions-row") {
+      // Render multiple actions in a row
+      returnValue = (
+        <MDBox
+          key={key}
+          display="flex"
+          justifyContent="space-around"
+          px={2}
+          mt={1}
+          mb={1}
+        >
+          {actions.map((action) => (
+            <MDBox 
+              key={action.key}
+              onClick={action.onClick}
+              sx={{
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                width: '50%'
+              }}
+            >
+              <Icon
+                sx={{
+                  color: action.iconColor || 'white',
+                  fontSize: '1.3rem',
+                  mb: 0.5
+                }}
+              >
+                {action.icon}
+              </Icon>
+              <MDTypography
+                variant="button"
+                color="white"
+                fontWeight="regular"
+                sx={{ fontSize: '0.75rem' }}
+              >
+                {action.name}
+              </MDTypography>
+            </MDBox>
+          ))}
+        </MDBox>
       );
     }
 
@@ -341,6 +378,16 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         position="relative"
         mb={0}
       >
+        {/* Divider before pickers */}
+        <Divider
+          light={true}
+          sx={{
+            opacity: 0.3,
+            borderColor: 'rgba(255,255,255,0.2)',
+            mt: 2
+          }}
+        />
+        
         {/* Theme toggles and language switcher side by side */}
         <MDBox
           display="flex"
@@ -348,10 +395,90 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           alignItems="center"
           flexDirection="column"
           mb={1}
-          mt={3}
+          mt={1}
         >
           <ThemeToggle />
           <LanguageSwitcher iconColor="white" horizontalLayout />
+        </MDBox>
+        
+        {/* Lock and Logout buttons */}
+        <MDBox
+          display="flex"
+          justifyContent="space-around"
+          px={2}
+          mt={0}
+          mb={1}
+        >
+          <MDBox 
+            onClick={handleLogout}
+            sx={{
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              width: '50%',
+              padding: '8px 0',
+              borderRadius: '4px',
+              transition: 'background-color 0.3s ease',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.1)'
+              }
+            }}
+          >
+            <Icon
+              sx={{
+                color: 'white',
+                fontSize: '1.3rem',
+                mb: 0.5,
+                filter: 'brightness(0) invert(1)' // Force white color
+              }}
+            >
+              logout
+            </Icon>
+            <MDTypography
+              variant="button"
+              color="white"
+              fontWeight="regular"
+              sx={{ fontSize: '0.75rem' }}
+            >
+              Logout
+            </MDTypography>
+          </MDBox>
+          <MDBox 
+            onClick={handleLockApp}
+            sx={{
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              width: '50%',
+              padding: '8px 0',
+              borderRadius: '4px',
+              transition: 'background-color 0.3s ease',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.1)'
+              }
+            }}
+          >
+            <Icon
+              sx={{
+                color: 'white',
+                fontSize: '1.3rem',
+                mb: 0.5,
+                filter: 'brightness(0) invert(1)' // Force white color
+              }}
+            >
+              lock
+            </Icon>
+            <MDTypography
+              variant="button"
+              color="white"
+              fontWeight="regular"
+              sx={{ fontSize: '0.75rem' }}
+            >
+              Lock
+            </MDTypography>
+          </MDBox>
         </MDBox>
         
         {/* Montreal cityline image right above the footer */}

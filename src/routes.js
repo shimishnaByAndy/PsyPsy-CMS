@@ -67,43 +67,19 @@ const protectedRoutes = [
   },
   {
     type: "collapse",
-    name: "Tables",
+    name: "Users",
     key: "tables",
-    icon: <Icon fontSize="small">table_view</Icon>,
+    icon: <Icon fontSize="small">people</Icon>,
     route: "/tables",
     component: <ProtectedRoute component={<Tables />} />,
   },
   {
     type: "collapse",
-    name: "Billing",
+    name: "Appointments",
     key: "billing",
-    icon: <Icon fontSize="small">receipt_long</Icon>,
+    icon: <Icon fontSize="small">calendar_today</Icon>,
     route: "/billing",
     component: <ProtectedRoute component={<Billing />} />,
-  },
-  {
-    type: "collapse",
-    name: "RTL",
-    key: "rtl",
-    icon: <Icon fontSize="small">format_textdirection_r_to_l</Icon>,
-    route: "/rtl",
-    component: <ProtectedRoute component={<RTL />} />,
-  },
-  {
-    type: "collapse",
-    name: "Notifications",
-    key: "notifications",
-    icon: <Icon fontSize="small">notifications</Icon>,
-    route: "/notifications",
-    component: <ProtectedRoute component={<Notifications />} />,
-  },
-  {
-    type: "collapse",
-    name: "Profile",
-    key: "profile",
-    icon: <Icon fontSize="small">person</Icon>,
-    route: "/profile",
-    component: <ProtectedRoute component={<Profile />} />,
   },
   {
     type: "collapse",
@@ -113,26 +89,10 @@ const protectedRoutes = [
     route: "/parse-data",
     component: <ProtectedRoute component={<ParseDataExample />} />,
   },
-  {
-    type: "collapse",
-    name: "Darkone UI",
-    key: "darkone-ui",
-    icon: <Icon fontSize="small">dashboard_customize</Icon>,
-    route: "/darkone-ui",
-    component: <ProtectedRoute component={<DarkoneExample />} />,
-  },
 ];
 
 // Public routes - accessible without authentication
 const publicRoutes = [
-  {
-    type: "collapse",
-    name: "Login",
-    key: "login",
-    icon: <Icon fontSize="small">login</Icon>,
-    route: "/authentication/login",
-    component: <Login />,
-  },
   {
     name: "Lock",
     key: "lock",
