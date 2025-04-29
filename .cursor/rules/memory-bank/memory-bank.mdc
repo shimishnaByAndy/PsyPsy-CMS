@@ -1,0 +1,950 @@
+---
+description: Enhanced Memory Bank system with tiered memory management, context-aware chunking, and conflict resolution
+globs:
+alwaysApply: false
+---
+
+# Memory Bank
+
+## Context
+
+- When managing agent memory across different persistence levels
+- When storing and retrieving information during sequential processes
+- When prioritizing information based on relevance and recency
+- When implementing context-aware memory strategies
+- When handling memory conflicts and updates
+
+## Critical Rules
+
+1. **Memory Tiering Structure**
+   - All memory operations MUST implement a three-tier structure:
+   ```json
+   {
+     "memoryTiers": {
+       "shortTerm": {
+         "retention": "current session only",
+         "priority": "high",
+         "accessSpeed": "immediate",
+         "storage": "in-context"
+       },
+       "mediumTerm": {
+         "retention": "across related sessions",
+         "priority": "medium",
+         "accessSpeed": "fast",
+         "storage": "memory files"
+       },
+       "longTerm": {
+         "retention": "persistent",
+         "priority": "low",
+         "accessSpeed": "slower",
+         "storage": "external files"
+       }
+     }
+   }
+   ```
+
+2. **Memory File Structure**
+   - Memory files MUST follow this hierarchical structure:
+   ```json
+   {
+     "memoryFiles": {
+       "projectBrief": {
+         "path": ".memory-bank/projectbrief.md",
+         "tier": "longTerm",
+         "updateFrequency": "rare",
+         "dependencies": []
+       },
+       "productContext": {
+         "path": ".memory-bank/productContext.md",
+         "tier": "longTerm",
+         "updateFrequency": "rare",
+         "dependencies": ["projectBrief"]
+       },
+       "systemPatterns": {
+         "path": ".memory-bank/systemPatterns.md",
+         "tier": "longTerm",
+         "updateFrequency": "occasional",
+         "dependencies": ["projectBrief", "productContext"]
+       },
+       "techContext": {
+         "path": ".memory-bank/techContext.md",
+         "tier": "longTerm",
+         "updateFrequency": "occasional",
+         "dependencies": ["systemPatterns"]
+       },
+       "activeContext": {
+         "path": ".memory-bank/activeContext.md",
+         "tier": "mediumTerm",
+         "updateFrequency": "frequent",
+         "dependencies": ["techContext"]
+       },
+       "progress": {
+         "path": ".memory-bank/progress.md",
+         "tier": "mediumTerm",
+         "updateFrequency": "frequent",
+         "dependencies": ["activeContext"]
+       },
+       "workingMemory": {
+         "path": ".memory-bank/working/",
+         "tier": "shortTerm",
+         "updateFrequency": "constant",
+         "dependencies": ["activeContext", "progress"]
+       }
+     }
+   }
+   ```
+
+3. **Memory Operations**
+   - All memory operations MUST implement these standard functions:
+   ```json
+   {
+     "memoryOperations": {
+       "store": {
+         "parameters": {
+           "content": "data to store",
+           "tier": "shortTerm|mediumTerm|longTerm",
+           "category": "category identifier",
+           "tags": ["relevant", "tags"],
+           "priority": "critical|high|medium|low"
+         },
+         "returns": {
+           "memoryId": "unique identifier",
+           "storagePath": "where stored",
+           "accessMethod": "how to retrieve"
+         }
+       },
+       "retrieve": {
+         "parameters": {
+           "memoryId": "specific memory id",
+           "category": "category to search",
+           "tags": ["relevant", "tags"],
+           "maxResults": "number of results",
+           "priorityThreshold": "minimum priority"
+         },
+         "returns": {
+           "memories": ["matching memories"],
+           "relevanceScores": ["scores per memory"],
+           "completeness": "full|partial|summary"
+         }
+       },
+       "update": {
+         "parameters": {
+           "memoryId": "memory to update",
+           "content": "new or modified content",
+           "updateType": "append|replace|merge",
+           "updateReason": "reason for update"
+         },
+         "returns": {
+           "success": "boolean",
+           "previousVersion": "previous content",
+           "changeLog": "what changed"
+         }
+       },
+       "forget": {
+         "parameters": {
+           "memoryId": "memory to forget",
+           "forgetType": "archive|delete",
+           "forgetReason": "reason for forgetting"
+         },
+         "returns": {
+           "success": "boolean",
+           "archivePath": "if archived"
+         }
+       }
+     }
+   }
+   ```
+
+4. **Memory Modes**
+   - All memory systems MUST support these operational modes:
+   ```json
+   {
+     "memoryModes": {
+       "plan": {
+         "description": "Planning mode without making changes",
+         "permissions": {
+           "read": "all tiers",
+           "write": "shortTerm only",
+           "update": "none",
+           "delete": "none"
+         }
+       },
+       "act": {
+         "description": "Implementation mode with full permissions",
+         "permissions": {
+           "read": "all tiers",
+           "write": "all tiers",
+           "update": "all tiers",
+           "delete": "shortTerm, mediumTerm"
+         }
+       },
+       "reflect": {
+         "description": "Analysis mode for learning",
+         "permissions": {
+           "read": "all tiers",
+           "write": "mediumTerm, longTerm",
+           "update": "mediumTerm, longTerm",
+           "delete": "none"
+         }
+       }
+     }
+   }
+   ```
+
+5. **Context-Aware Chunking Integration**
+   - Memory operations MUST implement context-aware chunking:
+   ```json
+   {
+     "contextManagement": {
+       "chunkingStrategy": {
+         "type": "incremental|hierarchical|semantic|temporal",
+         "chunkSize": 1024,
+         "overlap": 128,
+         "priorityContent": ["critical information types"],
+         "externalReferences": [
+           {
+             "id": "reference-id",
+             "type": "reference type",
+             "location": "storage path",
+             "summary": "brief description"
+           }
+         ]
+       },
+       "restorationMethod": "summary|key-points|full-context",
+       "compressionStrategy": "none|summary|key-points"
+     }
+   }
+   ```
+
+6. **Memory Conflict Resolution**
+   - All memory conflicts MUST be resolved using this protocol:
+   ```json
+   {
+     "conflictResolution": {
+       "detectionCriteria": {
+         "contentOverlap": "percentage threshold",
+         "contradictoryStatements": "logical contradiction",
+         "timestampDiscrepancy": "multiple updates"
+       },
+       "resolutionStrategies": {
+         "recencyPriority": "prefer most recent",
+         "sourcePriority": "prefer more authoritative source",
+         "mergingStrategy": "combine non-contradictory elements",
+         "humanResolution": "flag for human decision"
+       },
+       "documentationRequirements": {
+         "conflictNature": "what conflicted",
+         "resolutionMethod": "how resolved",
+         "justification": "why this resolution"
+       }
+     }
+   }
+   ```
+
+## Memory Bank Operations
+
+### 1. Memory Initialization
+
+```javascript
+function initializeMemoryBank() {
+  // Check if memory bank already exists
+  if (memoryBankExists()) {
+    return loadExistingMemoryBank();
+  }
+  
+  // Create memory directory structure
+  createMemoryDirectories();
+  
+  // Initialize memory files
+  initializeMemoryFiles();
+  
+  // Set default memory mode
+  setMemoryMode('plan');
+  
+  // Create memory index
+  createMemoryIndex();
+  
+  return {
+    status: 'initialized',
+    memoryMode: 'plan',
+    memoryTiers: {
+      shortTerm: { status: 'ready', capacity: calculateShortTermCapacity() },
+      mediumTerm: { status: 'ready', files: listMediumTermFiles() },
+      longTerm: { status: 'ready', files: listLongTermFiles() }
+    }
+  };
+}
+```
+
+### 2. Memory Storage
+
+```javascript
+function storeInMemoryBank(content, options = {}) {
+  // Set defaults
+  const tier = options.tier || determineAppropriateMemoryTier(content);
+  const category = options.category || categorizeContent(content);
+  const tags = options.tags || extractRelevantTags(content);
+  const priority = options.priority || calculatePriority(content, tier);
+  
+  // Check current memory mode permissions
+  const currentMode = getCurrentMemoryMode();
+  if (!canWriteInMode(currentMode, tier)) {
+    throw new Error(`Cannot write to ${tier} memory in ${currentMode} mode`);
+  }
+  
+  // Apply context-aware chunking if needed
+  let processedContent = content;
+  if (needsChunking(content, tier)) {
+    const chunkingStrategy = determineChunkingStrategy(content, tier);
+    processedContent = applyChunking(content, chunkingStrategy);
+  }
+  
+  // Generate memory ID
+  const memoryId = generateUniqueMemoryId(tier, category);
+  
+  // Determine storage location
+  const storagePath = determineStoragePath(tier, category, memoryId);
+  
+  // Format memory with metadata
+  const memoryObject = {
+    id: memoryId,
+    content: processedContent,
+    metadata: {
+      tier: tier,
+      category: category,
+      tags: tags,
+      priority: priority,
+      created: new Date().toISOString(),
+      lastAccessed: new Date().toISOString(),
+      accessCount: 0,
+      version: 1,
+      chunkingApplied: needsChunking(content, tier)
+    }
+  };
+  
+  // Store based on tier
+  switch (tier) {
+    case 'shortTerm':
+      storeShortTermMemory(memoryObject);
+      break;
+    case 'mediumTerm':
+      storeMediumTermMemory(memoryObject, storagePath);
+      break;
+    case 'longTerm':
+      storeLongTermMemory(memoryObject, storagePath);
+      break;
+  }
+  
+  // Update memory index
+  updateMemoryIndex(memoryObject, storagePath);
+  
+  // Return storage information
+  return {
+    memoryId: memoryId,
+    storagePath: storagePath,
+    accessMethod: determineAccessMethod(tier, storagePath)
+  };
+}
+```
+
+### 3. Memory Retrieval
+
+```javascript
+function retrieveFromMemoryBank(options = {}) {
+  // Initialize results
+  const results = [];
+  const relevanceScores = [];
+  let completeness = 'full';
+  
+  // If specific memory ID is provided
+  if (options.memoryId) {
+    const memory = fetchMemoryById(options.memoryId);
+    if (memory) {
+      updateAccessMetadata(memory);
+      
+      // Handle chunked content if needed
+      if (memory.metadata.chunkingApplied) {
+        const restoredMemory = restoreChunkedMemory(memory);
+        results.push(restoredMemory);
+      } else {
+        results.push(memory);
+      }
+      
+      relevanceScores.push(1.0); // Direct fetch has perfect relevance
+    }
+    return { memories: results, relevanceScores, completeness };
+  }
+  
+  // Search by category and tags
+  let candidates = [];
+  
+  // Determine which tiers to search
+  const tiersToSearch = options.tier ? [options.tier] : ['shortTerm', 'mediumTerm', 'longTerm'];
+  
+  // Search each tier
+  for (const tier of tiersToSearch) {
+    let tierCandidates = [];
+    
+    if (options.category) {
+      tierCandidates = fetchMemoriesByCategory(tier, options.category);
+    } else {
+      tierCandidates = fetchMemoriesFromTier(tier);
+    }
+    
+    candidates = candidates.concat(tierCandidates);
+  }
+  
+  // Filter by tags if provided
+  if (options.tags && options.tags.length > 0) {
+    candidates = filterMemoriesByTags(candidates, options.tags);
+  }
+  
+  // Calculate relevance scores
+  candidates.forEach(memory => {
+    const score = calculateRelevanceScore(memory, options);
+    if (options.priorityThreshold && 
+        getPriorityValue(memory.metadata.priority) < getPriorityValue(options.priorityThreshold)) {
+      return; // Skip if below priority threshold
+    }
+    
+    // Handle chunked content if needed
+    if (memory.metadata.chunkingApplied) {
+      const restoredMemory = restoreChunkedMemory(memory);
+      results.push(restoredMemory);
+    } else {
+      results.push(memory);
+    }
+    
+    relevanceScores.push(score);
+  });
+  
+  // Sort by relevance
+  const sortedResults = sortByRelevance(results, relevanceScores);
+  
+  // Limit results if specified
+  if (options.maxResults && sortedResults.memories.length > options.maxResults) {
+    sortedResults.memories = sortedResults.memories.slice(0, options.maxResults);
+    sortedResults.relevanceScores = sortedResults.relevanceScores.slice(0, options.maxResults);
+    completeness = 'partial';
+  }
+  
+  // Update access metadata for retrieved memories
+  sortedResults.memories.forEach(memory => updateAccessMetadata(memory));
+  
+  return {
+    memories: sortedResults.memories,
+    relevanceScores: sortedResults.relevanceScores,
+    completeness
+  };
+}
+```
+
+### 4. Memory Update
+
+```javascript
+function updateMemoryBankItem(memoryId, content, options = {}) {
+  // Set defaults
+  const updateType = options.updateType || 'merge';
+  const updateReason = options.updateReason || 'manual update';
+  
+  // Fetch current memory
+  const memory = fetchMemoryById(memoryId);
+  if (!memory) {
+    throw new Error(`Memory with ID ${memoryId} not found`);
+  }
+  
+  // Store previous version
+  const previousVersion = deepCopy(memory);
+  
+  // Check current mode permissions
+  const currentMode = getCurrentMemoryMode();
+  if (!canUpdateInMode(currentMode, memory.metadata.tier)) {
+    throw new Error(`Cannot update ${memory.metadata.tier} memory in ${currentMode} mode`);
+  }
+  
+  // Apply context-aware chunking if needed
+  let processedContent = content;
+  if (needsChunking(content, memory.metadata.tier)) {
+    const chunkingStrategy = determineChunkingStrategy(content, memory.metadata.tier);
+    processedContent = applyChunking(content, chunkingStrategy);
+  }
+  
+  // Perform update based on type
+  let updatedContent;
+  switch (updateType) {
+    case 'append':
+      updatedContent = memory.content + processedContent;
+      break;
+    case 'replace':
+      updatedContent = processedContent;
+      break;
+    case 'merge':
+      updatedContent = mergeContent(memory.content, processedContent);
+      break;
+    default:
+      throw new Error(`Unknown update type: ${updateType}`);
+  }
+  
+  // Check for conflicts
+  const hasConflict = detectConflict(memory.content, updatedContent);
+  if (hasConflict) {
+    const resolution = resolveMemoryConflict(
+      memory,
+      {
+        id: generateTempId(),
+        content: updatedContent,
+        metadata: {
+          ...memory.metadata,
+          lastModified: new Date().toISOString()
+        }
+      }
+    );
+    
+    // If requires human intervention
+    if (resolution.requiresHumanIntervention) {
+      return {
+        success: false,
+        message: 'Update requires conflict resolution',
+        conflictId: resolution.conflictId
+      };
+    }
+    
+    // Use resolved content
+    updatedContent = resolution.resolvedContent;
+  }
+  
+  // Update memory object
+  memory.content = updatedContent;
+  memory.metadata.lastModified = new Date().toISOString();
+  memory.metadata.version += 1;
+  memory.metadata.updateHistory = memory.metadata.updateHistory || [];
+  memory.metadata.updateHistory.push({
+    timestamp: new Date().toISOString(),
+    updateType: updateType,
+    updateReason: updateReason,
+    conflictResolved: hasConflict
+  });
+  memory.metadata.chunkingApplied = needsChunking(content, memory.metadata.tier);
+  
+  // Store updated memory
+  storeMemoryById(memoryId, memory);
+  
+  // Generate changelog
+  const changeLog = generateChangeLog(previousVersion.content, updatedContent);
+  
+  return {
+    success: true,
+    previousVersion: previousVersion.content,
+    changeLog: changeLog
+  };
+}
+```
+
+### 5. Memory Deletion
+
+```javascript
+function removeFromMemoryBank(memoryId, options = {}) {
+  // Set defaults
+  const forgetType = options.forgetType || 'archive';
+  const forgetReason = options.forgetReason || 'manual forget';
+  
+  // Fetch memory
+  const memory = fetchMemoryById(memoryId);
+  if (!memory) {
+    throw new Error(`Memory with ID ${memoryId} not found`);
+  }
+  
+  // Check current mode permissions
+  const currentMode = getCurrentMemoryMode();
+  if (!canDeleteInMode(currentMode, memory.metadata.tier)) {
+    throw new Error(`Cannot forget ${memory.metadata.tier} memory in ${currentMode} mode`);
+  }
+  
+  let archivePath = null;
+  
+  // Process based on forget type
+  if (forgetType === 'archive') {
+    // Create archive copy
+    archivePath = createArchivePath(memory);
+    
+    // Add archive metadata
+    memory.metadata.archived = true;
+    memory.metadata.archiveDate = new Date().toISOString();
+    memory.metadata.archiveReason = forgetReason;
+    
+    // Store in archive
+    storeMemoryInArchive(memory, archivePath);
+  }
+  
+  // Remove from active memory
+  removeMemoryById(memoryId);
+  
+  // Update memory index
+  updateMemoryIndex();
+  
+  return {
+    success: true,
+    archivePath: archivePath
+  };
+}
+```
+
+## Memory Update Triggers
+
+1. **Explicit Triggers**
+   - User command: "update memory bank"
+   - Completion of major implementation phase
+   - Significant change in project requirements
+   - New technical discovery
+
+2. **Implicit Triggers**
+   - Pattern recognition in implementation
+   - Repeated reference to undocumented concept
+   - Conflict detection between memory items
+   - Context switching between major sections
+
+3. **Scheduled Triggers**
+   - End of implementation session
+   - Beginning of new implementation day
+   - Weekly project review
+   - Milestone completion
+
+## Memory Bank Integration with Sequential Thinking
+
+```javascript
+function integrateWithSequentialThinking(thought) {
+  // Determine relevant memory categories based on thought
+  const relevantCategories = determineRelevantCategories(thought);
+  
+  // Retrieve relevant memories
+  const relevantMemories = retrieveFromMemoryBank({
+    categories: relevantCategories,
+    tags: extractRelevantTags(thought.content),
+    maxResults: 5,
+    priorityThreshold: 'medium'
+  });
+  
+  // Create context for thought
+  const thoughtContext = {
+    thought: thought,
+    relevantMemories: relevantMemories.memories,
+    contextManagement: {
+      strategy: determineChunkingStrategy(thought.content, 'shortTerm'),
+      currentChunk: thought.number,
+      totalChunks: thought.totalExpected,
+      priorityContent: determinePriorityContent(thought, relevantMemories),
+      externalReferences: createExternalReferences(relevantMemories)
+    }
+  };
+  
+  // Store thought in short-term memory
+  storeInMemoryBank(thought, {
+    tier: 'shortTerm',
+    category: 'sequentialThought',
+    tags: ['thought', `thought-${thought.number}`, thought.type],
+    priority: 'high'
+  });
+  
+  // If thought is complete or milestone, consider storing in medium-term
+  if (thought.status === 'complete' || isThoughtMilestone(thought)) {
+    storeInMemoryBank(thought, {
+      tier: 'mediumTerm',
+      category: 'completedThought',
+      tags: ['thought', `thought-${thought.number}`, thought.type, 'milestone'],
+      priority: 'medium'
+    });
+  }
+  
+  return thoughtContext;
+}
+```
+
+## Memory Bank Integration with Context-Aware Chunking
+
+```javascript
+function integrateWithContextAwareChunking(content, operation) {
+  // Determine appropriate chunking strategy
+  const contentComplexity = assessContentComplexity(content);
+  const contentType = determineContentType(content);
+  
+  let chunkingStrategy;
+  
+  // Select strategy based on content type
+  switch (contentType) {
+    case 'figmaDesign':
+      chunkingStrategy = {
+        type: 'hierarchical',
+        maxDepth: 3,
+        priorityElements: ['interactive', 'text', 'layout']
+      };
+      break;
+    case 'sequentialProcess':
+      chunkingStrategy = {
+        type: 'temporal',
+        checkpointInterval: 3
+      };
+      break;
+    case 'documentation':
+      chunkingStrategy = {
+        type: 'semantic',
+        boundaries: ['##', '###', '---']
+      };
+      break;
+    default:
+      chunkingStrategy = {
+        type: 'incremental',
+        chunkSize: 1024,
+        overlap: 128
+      };
+  }
+  
+  // Apply chunking if content exceeds threshold
+  if (contentComplexity > getComplexityThreshold(contentType)) {
+    const chunks = applyChunking(content, chunkingStrategy);
+    
+    // Store chunks with appropriate metadata
+    const chunkIds = [];
+    for (let i = 0; i < chunks.length; i++) {
+      const chunkId = storeInMemoryBank(chunks[i].content, {
+        tier: 'shortTerm',
+        category: `${contentType}Chunk`,
+        tags: ['chunk', `${contentType}`, `chunk-${i}`],
+        priority: i === 0 ? 'high' : 'medium'
+      }).memoryId;
+      
+      chunkIds.push(chunkId);
+    }
+    
+    // Create chunk index
+    const chunkIndex = {
+      originalContent: summarizeContent(content),
+      chunkingStrategy: chunkingStrategy,
+      chunks: chunkIds,
+      metadata: {
+        contentType: contentType,
+        complexity: contentComplexity,
+        timestamp: new Date().toISOString()
+      }
+    };
+    
+    // Store chunk index
+    const chunkIndexId = storeInMemoryBank(chunkIndex, {
+      tier: 'mediumTerm',
+      category: 'chunkIndex',
+      tags: ['chunkIndex', contentType],
+      priority: 'high'
+    }).memoryId;
+    
+    return {
+      chunked: true,
+      chunkIndexId: chunkIndexId,
+      chunkCount: chunks.length,
+      chunkingStrategy: chunkingStrategy
+    };
+  }
+  
+  // If no chunking needed, return original content
+  return {
+    chunked: false,
+    content: content
+  };
+}
+```
+
+## Examples
+
+<example>
+// Good: Complete memory bank usage with tiering and context-aware chunking
+
+// 1. Initialize memory bank
+initializeMemoryBank();
+
+// 2. Set appropriate memory mode
+setMemoryMode('act');
+
+// 3. Store project information in long-term memory
+storeInMemoryBank(`
+# Project Brief
+
+## Overview
+Mobile app for healthcare providers to track patient appointments and medical records.
+
+## Key Requirements
+- Secure authentication
+- Patient record management
+- Appointment scheduling
+- Medication tracking
+- Lab result viewing
+`, {
+  tier: 'longTerm',
+  category: 'projectBrief',
+  tags: ['project', 'requirements', 'overview'],
+  priority: 'high'
+});
+
+// 4. Store technical context in long-term memory
+storeInMemoryBank(`
+# Technical Context
+
+## Technology Stack
+- Titanium Alloy for cross-platform mobile development
+- RESTful API integration with backend services
+- Local SQLite database for offline capability
+- OAuth2 authentication
+
+## Architecture
+- MVC pattern with Alloy
+- Service layer for API communication
+- Repository pattern for data access
+- Observer pattern for UI updates
+`, {
+  tier: 'longTerm',
+  category: 'techContext',
+  tags: ['technical', 'architecture', 'stack'],
+  priority: 'high'
+});
+
+// 5. Store current work context in medium-term memory
+storeInMemoryBank(`
+# Active Context
+
+## Current Focus
+Implementing the patient appointment scheduling screen.
+
+## Components Needed
+- Calendar view
+- Time slot selection
+- Provider selection
+- Appointment type selection
+- Confirmation dialog
+
+## API Endpoints
+- GET /providers
+- GET /available-slots
+- POST /appointments
+`, {
+  tier: 'mediumTerm',
+  category: 'activeContext',
+  tags: ['current', 'focus', 'appointments'],
+  priority: 'high'
+});
+
+// 6. Retrieve relevant information for current task
+const appointmentInfo = retrieveFromMemoryBank({
+  tags: ['appointments', 'scheduling'],
+  maxResults: 3,
+  priorityThreshold: 'medium'
+});
+
+// 7. Update progress as work is completed
+updateMemoryBankItem('active-context-12345', `
+# Active Context
+
+## Current Focus
+Implementing the patient appointment scheduling screen.
+
+## Components Needed
+- Calendar view ✅
+- Time slot selection ✅
+- Provider selection
+- Appointment type selection
+- Confirmation dialog
+
+## API Endpoints
+- GET /providers ✅
+- GET /available-slots ✅
+- POST /appointments
+`, {
+  updateType: 'replace',
+  updateReason: 'progress update'
+});
+
+// 8. Store complex Figma design with context-aware chunking
+const figmaDesign = loadFigmaDesign('appointment-screen');
+const chunkedResult = integrateWithContextAwareChunking(figmaDesign, 'store');
+
+// 9. Retrieve and restore chunked content when needed
+if (chunkedResult.chunked) {
+  const chunkIndex = retrieveFromMemoryBank({
+    memoryId: chunkedResult.chunkIndexId
+  }).memories[0];
+  
+  const restoredDesign = restoreChunkedContent(chunkIndex);
+  console.log(`Restored design with ${restoredDesign.components.length} components`);
+}
+</example>
+
+<example type="invalid">
+// Bad: No tiering or context management
+
+// Storing everything in global variables
+const projectInfo = "Healthcare app for tracking appointments";
+const techStack = "Titanium Alloy, REST API";
+const currentTask = "Building appointment screen";
+
+// No structure or organization
+function saveMemory(key, value) {
+  localStorage.setItem(key, value);
+}
+
+// No retrieval strategy
+function getMemory(key) {
+  return localStorage.getItem(key);
+}
+
+// No update tracking
+function updateTask(task) {
+  currentTask = task;
+}
+
+// No handling for complex content
+const figmaDesign = loadFigmaDesign('appointment-screen');
+saveMemory('design', JSON.stringify(figmaDesign));
+</example>
+
+## Rule Dependencies
+
+This rule depends on:
+- `sequential-thinking-standard.mdc` for thought structure integration
+- `context-aware-chunking-standard.mdc` for context management strategies
+- `memory-operations-standard.mdc` for memory operation standards
+
+This rule is referenced by:
+- `agent-workflow-agent.mdc`
+- `figma-to-titanium-plan-agent.mdc`
+- All rules that require memory persistence
+
+## Best Practices
+
+1. **Tiering Strategy**
+   - Use short-term for immediate task context
+   - Use medium-term for session-persistent information
+   - Use long-term for project-wide knowledge
+   - Implement automatic promotion/demotion between tiers
+
+2. **Conflict Management**
+   - Detect conflicts early
+   - Use clear resolution strategies
+   - Document resolution decisions
+   - Maintain version history
+
+3. **Context Awareness**
+   - Prioritize relevant information
+   - Implement efficient retrieval strategies
+   - Use tags and categories consistently
+   - Consider recency and frequency of access
+
+4. **Memory Optimization**
+   - Compress low-priority information
+   - Summarize where appropriate
+   - Externalize reference information
+   - Implement garbage collection for obsolete memories
+
+5. **Integration**
+   - Integrate with sequential thinking
+   - Coordinate with agent workflow
+   - Maintain consistent memory access patterns
+   - Document memory dependencies
+
+## Search Tags
+#memory-bank #tiering #persistence #conflict-resolution #context-awareness

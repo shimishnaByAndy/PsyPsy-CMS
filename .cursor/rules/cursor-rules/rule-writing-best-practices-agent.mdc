@@ -1,0 +1,105 @@
+---
+description: Best practices for writing clear, precise, and effective content within Cursor rule files to ensure accurate agent interpretation and application, maximizing code accuracy.
+globs: 
+alwaysApply: false
+---
+# Rule Writing Best Practices (Node.js Parse Server)
+
+## Context
+
+- When creating or editing Cursor rules for Node.js Parse Server projects.
+- When defining rules for Parse Cloud Functions, triggers, or queries.
+- To ensure rules are clear, actionable, and tailored to the Parse Server/Node.js environment.
+- To maximize code reliability, maintainability, and reduce runtime errors in Parse Server code.
+
+## Critical Rules
+
+- **Specificity & Precision:**
+  - Be hyper-specific. Instead of "Filter objects," specify "Exclude appointments where the professional's ID is in the `appliedProfIds` array using `query.notContainedIn`."
+  - Define exact Parse classes, field names, and query methods (e.g., `Parse.Query`, `equalTo`, `notContainedIn`).
+- **Parse API Adherence:**
+  - **Reference Parse Server Docs:** MUST include a reference to the relevant Parse Server documentation (e.g., https://docs.parseplatform.org/parse-server/guide/).
+  - **Mandate API Validation:** Add a rule like: "NEVER use any Parse Query method or field not documented in the official Parse Server docs."
+- **Async/Await & Error Handling:**
+  - ALWAYS use `async/await` for asynchronous Parse operations (e.g., `query.find`, `object.save`).
+  - MUST propagate errors using `throw new Parse.Error(...)` with appropriate error codes.
+  - ALWAYS log errors with context using `console.error` or a project-specific logger.
+- **Descriptions (Agent Rules):**
+  - Be highly specific about the rule's purpose and trigger conditions (e.g., "when filtering appointments in cloud functions").
+  - Include Parse-specific keywords (e.g., "cloud function", "Parse.Query", "pointer").
+- **Globs (Auto Rules):**
+  - Use exact file paths and patterns for Node.js/Parse Server code (e.g., `cloud/functions/*.js`).
+  - Avoid overly broad globs that could match non-Parse code.
+- **Titles:**
+  - Ensure the title clearly reflects the rule's function in the Parse Server context.
+- **Context Section:**
+  - State explicit trigger scenarios (e.g., "when defining a beforeSave trigger").
+  - Mention necessary prerequisites (e.g., "user must be authenticated").
+  - Briefly explain the "why" – the Parse Server-specific problem solved.
+- **Critical Rules Section:**
+  - Start bullets with actionable verbs (MUST, NEVER, ALWAYS, PREFER, AVOID).
+  - Use unambiguous language; avoid subjective terms.
+  - Make each bullet a single, distinct instruction.
+  - Reference specific Parse Server functions, error codes, or concepts where applicable.
+  - **Cover Key Areas:** Include guidance on error handling, pointer dereferencing, and query optimization for Parse Server.
+  - **Cross-Reference:** Mention related rules textually where dependencies exist (e.g., "See `parse-error-handling-agent.mdc` for error propagation details.").
+- **Examples Section:**
+  - **Mandatory Examples:** MUST include both valid (`<example>`) and invalid (`<example type="invalid">`) examples demonstrating correct/incorrect application of the critical rules in Node.js/Parse Server code.
+  - **Illustrate Rules Directly:** Each example should clearly demonstrate one or more Critical Rules, especially Parse Query usage and error handling.
+  - **Realistic Code:** Use code snippets that resemble actual Parse Server cloud functions or triggers.
+  - **Explain Invalidity:** Add comments within or after `<example type="invalid">` explaining _why_ it's incorrect according to the rule or Parse Server docs.
+- **Anti-Patterns Section (Recommended):**
+  - Consider adding a `## Common Anti-Patterns` section.
+  - List common mistakes, deprecated approaches, or inefficient patterns in Parse Server (e.g., using callbacks instead of async/await, not handling errors).
+  - Explicitly state "AVOID these patterns:".
+
+## Examples
+
+<example>
+// Good: Exclude appointments where the professional has already applied
+function applyCommonConstraints(query, constraints) {
+    if (constraints.professionalId) {
+        query.notContainedIn("appliedProfIds", [constraints.professionalId]);
+        console.log(`Constraint: Excluding appointments where professional ${constraints.professionalId} has already applied`);
+    }
+    // ... other constraints ...
+    return query;
+}
+
+// Good: Async cloud function with error propagation
+Parse.Cloud.define("fetchAppointments", async (request) => {
+    try {
+        const query = new Parse.Query("Appointment");
+        // ... constraints ...
+        const results = await query.find({ useMasterKey: true });
+        return results;
+    } catch (error) {
+        console.error("Error fetching appointments:", error);
+        throw new Parse.Error(Parse.Error.INTERNAL_SERVER_ERROR, error.message);
+    }
+});
+</example>
+
+<example type="invalid">
+// Bad: Using callback style instead of async/await
+query.find(function(results, error) {
+    if (error) {
+        // No error propagation
+        return;
+    }
+    // ...
+}); // Not recommended in Node.js Parse Server
+
+// Bad: Not handling errors
+Parse.Cloud.define("fetchAppointments", async (request) => {
+    const query = new Parse.Query("Appointment");
+    const results = await query.find(); // No try/catch, errors will crash the function
+    return results;
+});
+</example>
+
+## Common Anti-Patterns
+- AVOID using callback style for Parse queries in Node.js; ALWAYS use async/await.
+- AVOID silent error handling; ALWAYS propagate errors with `throw new Parse.Error(...)`.
+- AVOID using undefined or misspelled field names in queries; ALWAYS validate against Parse Server docs and your data model.
+- AVOID broad queries without constraints; ALWAYS apply necessary filters for performance and security.

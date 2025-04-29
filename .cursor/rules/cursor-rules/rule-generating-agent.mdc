@@ -1,0 +1,162 @@
+---
+description: Always follow this when the user requests that a rule be added or modified, or asks you to remember to always do something in the future
+globs: 
+alwaysApply: false
+---
+# Rule Generation Guidelines (Node.js Parse Server)
+
+## Context
+- When creating new rule files for Node.js Parse Server projects
+- When modifying existing rules for Parse Cloud Functions, triggers, or queries
+- When implementing user requests for new conventions in Parse Server
+- When ensuring consistent rule documentation for Node.js/Parse Server code
+
+## Critical Rules
+
+1. **Required Front Matter Structure**
+   - MUST start EVERY rule file with front matter enclosed in triple dashes (`---`)
+   - Front matter MUST contain these fields based on rule type:
+     ```yaml
+     ---
+     description: [Required for Agent/Auto rules] Brief description of when to use this rule (e.g., "Guidelines for filtering appointments in Parse Cloud Functions")
+     globs: [Required for Auto rules] File patterns that trigger this rule (e.g., ["cloud/functions/*.js"])
+     alwaysApply: [Required] true for Always rules, false for others
+     ---
+     ```
+   - Rule types and their front matter requirements:
+     | Rule Type | Description | Front Matter Fields |
+     |-----------|-------------|-------------------|
+     | Always | Always included in context | description (optional), alwaysApply: true |
+     | Auto Attached | Included for matching files | description, globs (required), alwaysApply: false |
+     | Agent Requested | AI decides when to include | description (required), alwaysApply: false |
+     | Manual | Only included when @mentioned | description (optional), alwaysApply: false |
+
+2. **Rule Type Naming**
+   - MUST use correct file suffix based on type:
+     - `-always.mdc`: Always included rules
+     - `-auto.mdc`: Auto-attached rules
+     - `-agent.mdc`: Agent-requested rules
+     - `-manual.mdc`: Manually included rules
+
+3. **Rule Structure Requirements**
+   - MUST include all sections in order:
+     ```markdown
+     # Title (matches rule name)
+     ## Context (when to use, e.g., "when defining a Parse Cloud Function")
+     ## Critical Rules (core requirements, e.g., "MUST use async/await for Parse queries")
+     ## Implementation Steps (if needed, e.g., "How to apply constraints to a Parse.Query")
+     ## Examples (good and bad, using realistic Parse Server code)
+     ## Best Practices (Parse Server/Node.js specific)
+     ## Search Tags
+     ```
+   - Keep rules focused and concise (under 500 lines)
+   - Split large concepts into multiple rules
+   - Include concrete examples using Parse Server/Node.js code
+   - Use clear, actionable language
+
+4. **Content Quality Requirements**
+   - Context section MUST clearly state:
+     - When to apply the rule (e.g., "when filtering appointments in cloud functions")
+     - Prerequisites or dependencies (e.g., "user must be authenticated")
+     - Problem being solved (e.g., "avoid returning appointments already applied to")
+   - Critical Rules MUST:
+     - Start with action verbs (MUST, NEVER, ALWAYS)
+     - Be unambiguous and specific
+     - Reference exact Parse Server functions/variables (e.g., `Parse.Query`, `notContainedIn`)
+   - Examples MUST:
+     - Demonstrate Critical Rules directly
+     - Include both valid and invalid cases
+     - Use realistic Node.js/Parse Server project code
+     - Explain why invalid examples are wrong (e.g., "does not propagate errors with Parse.Error")
+
+5. **Organization Requirements**
+   - Place rules in correct organizational folder:
+     - `core-rules/`: Fundamental architecture rules
+     - `cursor-rules/`: Cursor agent behavior rules
+     - `documentation/`: Documentation standards
+     - `js-rules/`: JavaScript patterns
+     - `mcp/`: Sequential thinking patterns
+     - `memory-bank/`: Project memory system
+     - `titanium-rules/`: SDK guidelines
+     - `tool-rules/`: CLI and automation
+     - `tss-rules/`: Styling guidelines
+     - `ui-components/`: Component implementations
+     - `xml-rules/`: XML structure standards
+
+## Examples
+
+<example>
+// Good: Complete Rule Structure for Parse Server
+---
+description: Guidelines for filtering out appointments already applied to in Parse Cloud Functions
+globs: ["cloud/functions/*.js"]
+alwaysApply: false
+---
+
+# Exclude Already Applied Appointments
+
+## Context
+- When filtering appointments in a Parse Cloud Function
+- When ensuring professionals do not see appointments they already applied to
+
+## Critical Rules
+- MUST use `query.notContainedIn("appliedProfIds", [professionalId])` to exclude already applied appointments
+- MUST use async/await for all Parse queries
+- MUST propagate errors using `throw new Parse.Error(...)`
+
+## Examples
+// Good:
+function applyCommonConstraints(query, constraints) {
+    if (constraints.professionalId) {
+        query.notContainedIn("appliedProfIds", [constraints.professionalId]);
+    }
+    return query;
+}
+
+// Bad:
+function applyCommonConstraints(query, constraints) {
+    // Does not exclude already applied appointments
+    return query;
+}
+
+## Best Practices
+- ALWAYS log constraints applied for debugging
+- ALWAYS validate field names against your Parse data model
+- NEVER use callback style for Parse queries in Node.js
+
+## Search Tags
+#parse-server #cloud-functions #query-constraints #nodejs
+</example>
+
+<example type="invalid">
+// Bad: Missing Required Elements
+---
+description: Some API rules
+---
+# API Rules
+// Missing required sections
+// No file path comment
+// Incomplete front matter
+</example>
+
+## Best Practices
+
+1. **Front Matter**
+   - Keep descriptions concise but informative, and relevant to Parse Server context
+   - Use specific glob patterns for auto rules (e.g., `cloud/functions/*.js`)
+   - Set alwaysApply appropriately for rule type
+
+2. **Content Structure**
+   - Follow section order consistently
+   - Use clear headings and formatting
+   - Include practical Parse Server examples
+   - Document edge cases (e.g., what if professionalId is undefined?)
+
+3. **Maintenance**
+   - Review and update rules regularly
+   - Remove obsolete rules
+   - Keep examples current and relevant to Parse Server
+   - Validate against Parse Server documentation
+
+## Search Tags
+#rules #documentation #standards #best-practices #cursor #front-matter #mdc #parse-server #nodejs
