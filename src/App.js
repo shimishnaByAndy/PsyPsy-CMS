@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 
 // react-router components
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
@@ -22,6 +22,7 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Icon from "@mui/material/Icon";
+import CircularProgress from "@mui/material/CircularProgress";
 
 // Material Dashboard 2 React components
 import MDBox from "./components/MDBox";
@@ -58,6 +59,24 @@ import { initDevTools } from "./utils/devTools";
 
 // Parse initialization
 import ParseInitializer from "./components/ParseInitializer";
+
+// i18n (internationalization) setup
+import "./localization/i18n";
+
+// Loading component for suspense fallback
+const LoadingFallback = () => (
+  <MDBox
+    sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+      width: '100vw',
+    }}
+  >
+    <CircularProgress color="info" />
+  </MDBox>
+);
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -210,8 +229,10 @@ export default function App() {
   );
 
   return (
-    <ParseInitializer>
-      {content}
-    </ParseInitializer>
+    <Suspense fallback={<LoadingFallback />}>
+      <ParseInitializer>
+        {content}
+      </ParseInitializer>
+    </Suspense>
   );
 }

@@ -26,20 +26,15 @@ import MDBox from "components/MDBox";
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import PageLayout from "examples/LayoutContainers/PageLayout";
 
+// Import the LanguageSwitcher
+import LanguageSwitcher from "components/LanguageSwitcher";
+
 // Authentication pages components
 import Footer from "layouts/authentication/components/Footer";
 
 function BasicLayout({ image, children }) {
   return (
     <PageLayout>
-      <DefaultNavbar
-        action={{
-          type: "external",
-          route: "https://creative-tim.com/product/material-dashboard-react",
-          label: "free download",
-          color: "dark",
-        }}
-      />
       <MDBox
         position="absolute"
         width="100%"
@@ -55,13 +50,18 @@ function BasicLayout({ image, children }) {
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}
-      />
-      <MDBox px={1} width="100%" height="100vh" mx="auto">
-        <Grid container spacing={1} justifyContent="center" alignItems="center" height="100%">
-          <Grid item xs={11} sm={9} md={5} lg={4} xl={3}>
-            {children}
+      >
+        {/* Language Switcher positioned at the top right */}
+        <MDBox position="absolute" top={16} right={16} zIndex={2}>
+          <LanguageSwitcher iconColor="white" />
+        </MDBox>
+        <MDBox px={1} width="100%" height="100vh" mx="auto">
+          <Grid container spacing={1} justifyContent="center" alignItems="center" height="100%">
+            <Grid item xs={11} sm={9} md={5} lg={4} xl={3}>
+              {children}
+            </Grid>
           </Grid>
-        </Grid>
+        </MDBox>
       </MDBox>
       <Footer light />
     </PageLayout>

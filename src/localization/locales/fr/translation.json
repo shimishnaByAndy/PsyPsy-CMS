@@ -1,0 +1,80 @@
+{
+  "common": {
+    "search": "Rechercher ici",
+    "logout": "Déconnexion",
+    "profile": "Profil",
+    "signIn": "Connexion",
+    "signUp": "S'inscrire",
+    "dashboard": "Tableau de bord",
+    "tables": "Tables",
+    "billing": "Facturation",
+    "notifications": "Notifications",
+    "language": "Langue",
+    "english": "Anglais",
+    "french": "Français",
+    "settings": "Paramètres",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié ?"
+  },
+  "footer": {
+    "madeWith": "Fait avec",
+    "in": "à Montréal"
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "error": "Échec de la connexion. Veuillez vérifier vos identifiants et réessayer."
+    },
+    "register": {
+      "title": "S'inscrire",
+      "username": "Nom d'utilisateur",
+      "email": "Email",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "submit": "S'inscrire",
+      "error": "Échec de l'inscription. Veuillez réessayer."
+    }
+  },
+  "parseData": {
+    "title": "Exemple de données du serveur Parse",
+    "subtitle": "Connectez-vous et interagissez avec votre base de données Parse Server",
+    "form": {
+      "title": "Créer un nouvel élément",
+      "itemTitle": "Titre",
+      "description": "Description",
+      "create": "Créer",
+      "titleRequired": "Le titre est requis"
+    },
+    "table": {
+      "title": "Éléments du serveur Parse",
+      "noItems": "Aucun élément trouvé. Créez votre premier élément ci-dessus.",
+      "columns": {
+        "title": "Titre",
+        "description": "Description",
+        "createdAt": "Date de création",
+        "actions": "Actions"
+      },
+      "delete": "Supprimer"
+    },
+    "errors": {
+      "fetchFailed": "Échec de la récupération des données du serveur",
+      "createFailed": "Échec de la création du nouvel élément",
+      "deleteFailed": "Échec de la suppression de l'élément"
+    }
+  },
+  "navbar": {
+    "searchHere": "Rechercher ici",
+    "newMessages": "Vérifier les nouveaux messages",
+    "podcastSessions": "Gérer les sessions de podcast",
+    "paymentCompleted": "Paiement effectué avec succès"
+  },
+  "errors": {
+    "general": "Une erreur est survenue",
+    "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
+    "requiredField": "Ce champ est obligatoire"
+  }
+} 

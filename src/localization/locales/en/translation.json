@@ -1,0 +1,80 @@
+{
+  "common": {
+    "search": "Search here",
+    "logout": "Logout",
+    "profile": "Profile",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "dashboard": "Dashboard",
+    "tables": "Tables",
+    "billing": "Billing",
+    "notifications": "Notifications",
+    "language": "Language",
+    "english": "English",
+    "french": "French",
+    "settings": "Settings",
+    "noAccount": "Don't have an account?",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?"
+  },
+  "footer": {
+    "madeWith": "Made with",
+    "in": "in Montréal"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "username": "Username",
+      "password": "Password",
+      "submit": "Sign in",
+      "error": "Login failed. Please check your credentials and try again."
+    },
+    "register": {
+      "title": "Sign up",
+      "username": "Username",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Sign up",
+      "error": "Registration failed. Please try again."
+    }
+  },
+  "parseData": {
+    "title": "Parse Server Data Example",
+    "subtitle": "Connect and interact with your Parse Server database",
+    "form": {
+      "title": "Create New Item",
+      "itemTitle": "Title",
+      "description": "Description",
+      "create": "Create",
+      "titleRequired": "Title is required"
+    },
+    "table": {
+      "title": "Items from Parse Server",
+      "noItems": "No items found. Create your first item above.",
+      "columns": {
+        "title": "Title",
+        "description": "Description",
+        "createdAt": "Created At",
+        "actions": "Actions"
+      },
+      "delete": "Delete"
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch data from the server",
+      "createFailed": "Failed to create new item",
+      "deleteFailed": "Failed to delete item"
+    }
+  },
+  "navbar": {
+    "searchHere": "Search here",
+    "newMessages": "Check new messages",
+    "podcastSessions": "Manage Podcast sessions",
+    "paymentCompleted": "Payment successfully completed"
+  },
+  "errors": {
+    "general": "An error occurred",
+    "networkError": "Network error. Please check your connection and try again.",
+    "requiredField": "This field is required"
+  }
+} 

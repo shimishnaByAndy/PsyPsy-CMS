@@ -14,14 +14,19 @@ Coded by www.creative-tim.com
 */
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // @mui material components
 import Card from "@mui/material/Card";
+import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
 import MuiLink from "@mui/material/Link";
-import Checkbox from "@mui/material/Checkbox";
-import CircularProgress from "@mui/material/CircularProgress";
+
+// @mui icons
+import FacebookIcon from "@mui/icons-material/Facebook";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import LanguageIcon from "@mui/icons-material/Language";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -29,6 +34,7 @@ import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 import MDAlert from "components/MDAlert";
+import LanguageSwitcher from "components/LanguageSwitcher";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
@@ -36,35 +42,29 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
-// Parse authentication service
-import { ParseAuth } from "services/parseService";
+// Parse
+import Parse from "parse/dist/parse.min.js";
 
-function Login() {
-  const navigate = useNavigate();
+function Basic() {
+  const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    
-    if (!username || !password) {
-      setError("Please enter both username and password");
-      return;
-    }
-    
-    setLoading(true);
-    setError("");
-    
+  const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+  const login = async () => {
+    setError(null);
     try {
-      await ParseAuth.login(username, password);
-      navigate("/dashboard");
-    } catch (err) {
-      setError(err.message || "Login failed. Please check your credentials and try again.");
-    } finally {
-      setLoading(false);
+      await Parse.User.logIn(username, password);
+      const from = location.state?.from?.pathname || "/dashboard";
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error("Error while logging in user", error);
+      setError(t("auth.login.error"));
     }
   };
 
@@ -83,94 +83,67 @@ function Login() {
           textAlign="center"
         >
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-            Sign in
+            {t("auth.login.title")}
           </MDTypography>
           <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
             <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                <i className="fab fa-facebook-f" />
+              <MDTypography component={MuiLink} href="https://facebook.com" target="_blank" variant="body1" color="white">
+                <FacebookIcon color="inherit" />
               </MDTypography>
             </Grid>
             <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                <i className="fab fa-github" />
+              <MDTypography component={MuiLink} href="https://instagram.com" target="_blank" variant="body1" color="white">
+                <InstagramIcon color="inherit" />
               </MDTypography>
             </Grid>
             <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                <i className="fab fa-google" />
+              <MDTypography component={MuiLink} href="https://psypsy.ca" target="_blank" variant="body1" color="white">
+                <LanguageIcon color="inherit" />
               </MDTypography>
             </Grid>
           </Grid>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form" onSubmit={handleLogin}>
-            {error && (
-              <MDBox mb={2}>
-                <MDAlert color="error" dismissible>
-                  {error}
-                </MDAlert>
-              </MDBox>
-            )}
+          {error && (
+            <MDBox mb={2}>
+              <MDAlert color="error">{error}</MDAlert>
+            </MDBox>
+          )}
+          <MDBox component="form" role="form">
             <MDBox mb={2}>
               <MDInput
                 type="text"
-                label="Username"
+                label={t("auth.login.username")}
+                fullWidth
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                fullWidth
               />
             </MDBox>
             <MDBox mb={2}>
               <MDInput
                 type="password"
-                label="Password"
+                label={t("auth.login.password")}
+                fullWidth
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                fullWidth
               />
             </MDBox>
-            <MDBox display="flex" alignItems="center" ml={-1}>
-              <Checkbox
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              />
+            <MDBox mt={4} mb={1}>
+              <MDButton variant="gradient" color="info" fullWidth onClick={login}>
+                {t("auth.login.submit")}
+              </MDButton>
+            </MDBox>
+            <MDBox display="flex" justifyContent="center" alignItems="center" mt={2}>
               <MDTypography
                 variant="button"
                 fontWeight="regular"
                 color="text"
-                sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
-                onClick={() => setRememberMe(!rememberMe)}
+                onClick={handleSetRememberMe}
+                sx={{ cursor: "pointer", userSelect: "none", mr: 1 }}
               >
-                &nbsp;&nbsp;Remember me
+                {t("common.rememberMe")}
               </MDTypography>
-            </MDBox>
-            <MDBox mt={4} mb={1}>
-              <MDButton
-                variant="gradient"
-                color="info"
-                type="submit"
-                fullWidth
-                disabled={loading}
-              >
-                {loading ? <CircularProgress size={24} color="inherit" /> : "sign in"}
-              </MDButton>
-            </MDBox>
-            <MDBox mt={3} mb={1} textAlign="center">
-              <MDTypography variant="button" color="text">
-                Don&apos;t have an account?{" "}
-                <MDTypography
-                  component={MuiLink}
-                  href="#"
-                  variant="button"
-                  color="info"
-                  fontWeight="medium"
-                  textGradient
-                  onClick={() => navigate("/authentication/sign-up")}
-                >
-                  Sign up
-                </MDTypography>
-              </MDTypography>
+              <Switch checked={rememberMe} onChange={handleSetRememberMe} />
             </MDBox>
           </MDBox>
         </MDBox>
@@ -179,4 +152,4 @@ function Login() {
   );
 }
 
-export default Login; 
+export default Basic; 

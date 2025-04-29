@@ -47,19 +47,23 @@ import SignUp from "./layouts/authentication/sign-up";
 import Login from "./layouts/authentication/login";  // New login page with Parse integration
 import ParseDataExample from "./layouts/parse-data";  // Parse data management example
 
+// Protected route wrapper
+import ProtectedRoute from "./routes/ProtectedRoute";
+
 // @mui icons
 import Icon from "@mui/material/Icon";
 
 // PsyPsy CMS additional routes can be added here
 
-const routes = [
+// Define which routes should be protected and which should be public
+const protectedRoutes = [
   {
     type: "collapse",
     name: "Dashboard",
     key: "dashboard",
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
-    component: <Dashboard />,
+    component: <ProtectedRoute component={<Dashboard />} />,
   },
   {
     type: "collapse",
@@ -67,7 +71,7 @@ const routes = [
     key: "tables",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/tables",
-    component: <Tables />,
+    component: <ProtectedRoute component={<Tables />} />,
   },
   {
     type: "collapse",
@@ -75,7 +79,7 @@ const routes = [
     key: "billing",
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/billing",
-    component: <Billing />,
+    component: <ProtectedRoute component={<Billing />} />,
   },
   {
     type: "collapse",
@@ -83,7 +87,7 @@ const routes = [
     key: "rtl",
     icon: <Icon fontSize="small">format_textdirection_r_to_l</Icon>,
     route: "/rtl",
-    component: <RTL />,
+    component: <ProtectedRoute component={<RTL />} />,
   },
   {
     type: "collapse",
@@ -91,7 +95,7 @@ const routes = [
     key: "notifications",
     icon: <Icon fontSize="small">notifications</Icon>,
     route: "/notifications",
-    component: <Notifications />,
+    component: <ProtectedRoute component={<Notifications />} />,
   },
   {
     type: "collapse",
@@ -99,8 +103,20 @@ const routes = [
     key: "profile",
     icon: <Icon fontSize="small">person</Icon>,
     route: "/profile",
-    component: <Profile />,
+    component: <ProtectedRoute component={<Profile />} />,
   },
+  {
+    type: "collapse",
+    name: "Parse Data",
+    key: "parse-data",
+    icon: <Icon fontSize="small">storage</Icon>,
+    route: "/parse-data",
+    component: <ProtectedRoute component={<ParseDataExample />} />,
+  },
+];
+
+// Public routes - accessible without authentication
+const publicRoutes = [
   {
     type: "collapse",
     name: "Sign In",
@@ -125,14 +141,9 @@ const routes = [
     route: "/authentication/login",
     component: <Login />,
   },
-  {
-    type: "collapse",
-    name: "Parse Data",
-    key: "parse-data",
-    icon: <Icon fontSize="small">storage</Icon>,
-    route: "/parse-data",
-    component: <ParseDataExample />,
-  },
 ];
+
+// Combine all routes
+const routes = [...protectedRoutes, ...publicRoutes];
 
 export default routes;
