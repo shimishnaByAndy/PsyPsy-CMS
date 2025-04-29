@@ -53,6 +53,9 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "./
 import brandWhite from "./assets/images/logo-ct.png";
 import brandDark from "./assets/images/logo-ct-dark.png";
 
+// Development utilities
+import { initDevTools } from "./utils/devTools";
+
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
   const {
@@ -68,6 +71,13 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
+
+  // Initialize development tools if in development mode
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      initDevTools();
+    }
+  }, []);
 
   // Cache for the rtl
   useMemo(() => {

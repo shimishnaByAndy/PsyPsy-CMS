@@ -5,6 +5,19 @@ const isDev = process.env.NODE_ENV !== 'production';
 // Keep a global reference of the window object to prevent garbage collection
 let mainWindow;
 
+// Setup live reload for development
+if (isDev) {
+  try {
+    require('electron-reloader')(module, {
+      debug: true,
+      watchRenderer: true
+    });
+    console.log('Electron reloader initialized');
+  } catch (err) {
+    console.error('Error setting up electron-reloader:', err);
+  }
+}
+
 function createWindow() {
   // Create the browser window
   mainWindow = new BrowserWindow({
@@ -12,7 +25,7 @@ function createWindow() {
     height: 800,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     }
   });
@@ -50,6 +63,19 @@ app.on('activate', () => {
   // On macOS, re-create a window when the dock icon is clicked and no windows are open
   if (mainWindow === null) {
     createWindow();
+  }
+});
+
+// Listen for preload loaded notification
+ipcMain.on('preload-loaded', () => {
+  console.log('Preload script loaded');
+});
+
+// Listen for reload requests from renderer
+ipcMain.on('app-reload', () => {
+  if (mainWindow) {
+    console.log('Reloading app...');
+    mainWindow.reload();
   }
 });
 

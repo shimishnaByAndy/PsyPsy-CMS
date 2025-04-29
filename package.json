@@ -8,7 +8,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron:dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron:dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && cross-env ELECTRON_DISABLE_SECURITY_WARNINGS=true NODE_ENV=development electron .\"",
     "electron:build": "npm run build && electron-builder",
     "package": "electron-builder build --mac --win --linux -c.extraMetadata.main=electron/main.js --publish never"
   },
@@ -70,5 +70,8 @@
     "stylis-plugin-rtl": "^2.1.1",
     "wait-on": "^8.0.3",
     "yup": "^1.1.1"
+  },
+  "devDependencies": {
+    "electron-reloader": "^1.5.0"
   }
 }
