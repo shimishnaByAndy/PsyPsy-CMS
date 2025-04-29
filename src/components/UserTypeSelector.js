@@ -50,15 +50,15 @@ const UserTypeSelector = ({ onChange }) => {
   const getIndicatorPosition = () => {
     switch (currentType) {
       case USER_TYPES.ALL:
-        return '4px';
+        return '0px';
       case USER_TYPES.PROFESSIONALS:
-        return 'calc(25% + 4px)';
+        return '25%';
       case USER_TYPES.CLIENTS:
-        return 'calc(50% + 4px)';
+        return '50%';
       case USER_TYPES.ADMINS:
-        return 'calc(75% + 4px)';
+        return '75%';
       default:
-        return '4px';
+        return '0px';
     }
   };
 
@@ -67,12 +67,12 @@ const UserTypeSelector = ({ onChange }) => {
       sx={{ 
         width: '100%',
         height: '100%',
-        borderRadius: '0',
-        backgroundColor: 'transparent',
+        borderRadius: 'inherit',
+        backgroundColor: darkMode ? '#1a2035' : 'rgba(255, 255, 255, 0.8)',
         mx: 'auto',
         my: 0,
         position: 'relative',
-        p: 0.75,
+        p: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -85,12 +85,14 @@ const UserTypeSelector = ({ onChange }) => {
         sx={{
           position: 'absolute',
           left: getIndicatorPosition(),
-          width: 'calc(25% - 12px)',
-          height: '52px',
-          borderRadius: '6px',
-          backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.08)',
-          transition: 'left 0.3s ease',
-          zIndex: 1
+          width: 'calc(25% - 8px)',
+          height: '96%',
+          borderRadius: '12px',
+          backgroundColor: '#5D1C33',
+          transition: 'left 0.3s ease, width 0.3s ease',
+          zIndex: 1,
+          opacity: 1,
+          boxShadow: '0 4px 12px rgba(93, 28, 51, 0.3)'
         }}
       />
       
@@ -107,10 +109,12 @@ const UserTypeSelector = ({ onChange }) => {
           zIndex: 2,
           position: 'relative',
           fontWeight: currentType === USER_TYPES.ALL ? 'bold' : 'normal',
-          color: labelColor,
+          color: currentType === USER_TYPES.ALL ? '#ffffff' : (darkMode ? '#ffffff' : '#4B5563'),
           transition: 'all 0.2s ease',
           '&:hover': {
-            transform: currentType !== USER_TYPES.ALL ? 'translateY(-2px)' : 'none'
+            color: '#ffffff',
+            backgroundColor: currentType !== USER_TYPES.ALL ? 'rgba(93, 28, 51, 0.3)' : 'transparent',
+            borderRadius: '10px'
           }
         }}
       >
@@ -118,19 +122,19 @@ const UserTypeSelector = ({ onChange }) => {
           sx={{ 
             fontSize: "1.25rem",
             mr: 1,
-            color: labelColor,
-            opacity: currentType === USER_TYPES.ALL ? 1 : 0.8
+            color: 'inherit',
+            opacity: currentType === USER_TYPES.ALL ? 1 : 0.7
           }}
         >
           group
         </Icon>
         <MDTypography
           variant="button"
-          color={labelColor}
+          color="inherit"
           fontWeight={currentType === USER_TYPES.ALL ? 'bold' : 'regular'}
           sx={{ 
-            fontSize: '1rem',
-            letterSpacing: '0.03em',
+            fontSize: '0.9rem',
+            letterSpacing: '0.02em',
             display: { xs: 'block', sm: 'block' }
           }}
         >
@@ -151,10 +155,12 @@ const UserTypeSelector = ({ onChange }) => {
           zIndex: 2,
           position: 'relative',
           fontWeight: currentType === USER_TYPES.PROFESSIONALS ? 'bold' : 'normal',
-          color: labelColor,
+          color: currentType === USER_TYPES.PROFESSIONALS ? '#ffffff' : (darkMode ? '#ffffff' : '#4B5563'),
           transition: 'all 0.2s ease',
           '&:hover': {
-            transform: currentType !== USER_TYPES.PROFESSIONALS ? 'translateY(-2px)' : 'none'
+            color: '#ffffff',
+            backgroundColor: currentType !== USER_TYPES.PROFESSIONALS ? 'rgba(93, 28, 51, 0.3)' : 'transparent',
+            borderRadius: '10px'
           }
         }}
       >
@@ -162,19 +168,19 @@ const UserTypeSelector = ({ onChange }) => {
           sx={{ 
             fontSize: "1.25rem",
             mr: 1,
-            color: labelColor,
-            opacity: currentType === USER_TYPES.PROFESSIONALS ? 1 : 0.8
+            color: 'inherit',
+            opacity: currentType === USER_TYPES.PROFESSIONALS ? 1 : 0.7
           }}
         >
           psychology
         </Icon>
         <MDTypography
           variant="button"
-          color={labelColor}
+          color="inherit"
           fontWeight={currentType === USER_TYPES.PROFESSIONALS ? 'bold' : 'regular'}
           sx={{ 
-            fontSize: '1rem',
-            letterSpacing: '0.03em',
+            fontSize: '0.9rem',
+            letterSpacing: '0.02em',
             display: { xs: 'block', sm: 'block' }
           }}
         >
@@ -195,10 +201,12 @@ const UserTypeSelector = ({ onChange }) => {
           zIndex: 2,
           position: 'relative',
           fontWeight: currentType === USER_TYPES.CLIENTS ? 'bold' : 'normal',
-          color: labelColor,
+          color: currentType === USER_TYPES.CLIENTS ? '#ffffff' : (darkMode ? '#ffffff' : '#4B5563'),
           transition: 'all 0.2s ease',
           '&:hover': {
-            transform: currentType !== USER_TYPES.CLIENTS ? 'translateY(-2px)' : 'none'
+            color: '#ffffff',
+            backgroundColor: currentType !== USER_TYPES.CLIENTS ? 'rgba(93, 28, 51, 0.3)' : 'transparent',
+            borderRadius: '10px'
           }
         }}
       >
@@ -206,19 +214,19 @@ const UserTypeSelector = ({ onChange }) => {
           sx={{ 
             fontSize: "1.25rem",
             mr: 1,
-            color: labelColor,
-            opacity: currentType === USER_TYPES.CLIENTS ? 1 : 0.8
+            color: 'inherit',
+            opacity: currentType === USER_TYPES.CLIENTS ? 1 : 0.7
           }}
         >
           person
         </Icon>
         <MDTypography
           variant="button"
-          color={labelColor}
+          color="inherit"
           fontWeight={currentType === USER_TYPES.CLIENTS ? 'bold' : 'regular'}
           sx={{ 
-            fontSize: '1rem',
-            letterSpacing: '0.03em',
+            fontSize: '0.9rem',
+            letterSpacing: '0.02em',
             display: { xs: 'block', sm: 'block' }
           }}
         >
@@ -239,10 +247,12 @@ const UserTypeSelector = ({ onChange }) => {
           zIndex: 2,
           position: 'relative',
           fontWeight: currentType === USER_TYPES.ADMINS ? 'bold' : 'normal',
-          color: labelColor,
+          color: currentType === USER_TYPES.ADMINS ? '#ffffff' : (darkMode ? '#ffffff' : '#4B5563'),
           transition: 'all 0.2s ease',
           '&:hover': {
-            transform: currentType !== USER_TYPES.ADMINS ? 'translateY(-2px)' : 'none'
+            color: '#ffffff',
+            backgroundColor: currentType !== USER_TYPES.ADMINS ? 'rgba(93, 28, 51, 0.3)' : 'transparent',
+            borderRadius: '10px'
           }
         }}
       >
@@ -250,19 +260,19 @@ const UserTypeSelector = ({ onChange }) => {
           sx={{ 
             fontSize: "1.25rem",
             mr: 1,
-            color: labelColor,
-            opacity: currentType === USER_TYPES.ADMINS ? 1 : 0.8
+            color: 'inherit',
+            opacity: currentType === USER_TYPES.ADMINS ? 1 : 0.7
           }}
         >
           admin_panel_settings
         </Icon>
         <MDTypography
           variant="button"
-          color={labelColor}
+          color="inherit"
           fontWeight={currentType === USER_TYPES.ADMINS ? 'bold' : 'regular'}
           sx={{ 
-            fontSize: '1rem',
-            letterSpacing: '0.03em',
+            fontSize: '0.9rem',
+            letterSpacing: '0.02em',
             display: { xs: 'block', sm: 'block' }
           }}
         >

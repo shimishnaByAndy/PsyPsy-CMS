@@ -25,6 +25,18 @@ The project is currently in **Phase 1: Core Administration**. This phase focuses
 - Created cursor rule to ensure Darkone is used only as a reference
 - Fixed build errors related to direct imports from Darkone
 
+### Navigation Components
+- Refined DashboardNavbar implementation
+- Maintained minimal UI approach with essential navigation controls
+- Ensured proper functionality of sidenav toggles and configuration access
+- Kept UserTypeSelector component for the tables/users page
+
+### Build Configuration
+- Identified proper build scripts in package.json
+- Confirmed React application runs with `npm start`
+- Confirmed Electron desktop version runs with `npm run electron:dev`
+- No "dev" script defined in package.json (use "start" instead)
+
 ## Current Focus
 - Completing the user management interface
 - Building the dashboard with initial metrics
@@ -36,6 +48,7 @@ The project is currently in **Phase 1: Core Administration**. This phase focuses
 - Theme persistence issues on some page refreshes
 - Authentication token expiration handling needs improvement
 - Mobile responsiveness requires attention in some dashboard views
+- Need to use correct npm scripts (`npm start` instead of `npm run dev`)
 
 ## Next Steps
 1. Complete dashboard with core metrics

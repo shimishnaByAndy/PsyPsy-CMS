@@ -32,6 +32,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Icon from "@mui/material/Icon";
 import Tooltip from "@mui/material/Tooltip";
+import Avatar from "@mui/material/Avatar";
+import Divider from "@mui/material/Divider";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -194,8 +196,11 @@ function DashboardNavbar({ absolute, light, isMini, onUserTypeChange }) {
         ...navbar(theme, { transparentNavbar, absolute, light, darkMode }),
         ...(isUsersPage && {
           p: 0,
-          minHeight: 'auto',
-          borderRadius: 0
+          minHeight: '64px',
+          borderRadius: '15px',
+          backgroundColor: darkMode ? '#1a2035' : 'rgba(255, 255, 255, 0.8)',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+          overflow: 'hidden'
         })
       })}
     >
@@ -207,7 +212,7 @@ function DashboardNavbar({ absolute, light, isMini, onUserTypeChange }) {
             alignItems: 'center',
             width: '100%',
             maxWidth: '100%',
-            minHeight: '75px',
+            minHeight: '64px',
             padding: '0 !important',
             margin: 0
           })
