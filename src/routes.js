@@ -43,6 +43,7 @@ import RTL from "./layouts/rtl";
 import Notifications from "./layouts/notifications";
 import Profile from "./layouts/profile";
 import Login from "./layouts/authentication/login";  // Login page with Parse integration
+import Lock from "./layouts/authentication/lock";    // Lock screen
 import ParseDataExample from "./layouts/parse-data";  // Parse data management example
 import DarkoneExample from "./darkone/DarkoneExample"; // Darkone components example
 
@@ -131,6 +132,13 @@ const publicRoutes = [
     icon: <Icon fontSize="small">login</Icon>,
     route: "/authentication/login",
     component: <Login />,
+  },
+  {
+    name: "Lock",
+    key: "lock",
+    icon: <Icon fontSize="small">lock</Icon>,
+    route: "/authentication/lock",
+    component: <Lock />,
   },
 ];
 

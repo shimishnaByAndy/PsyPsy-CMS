@@ -39,7 +39,8 @@ function createWindow() {
 
   // Open DevTools in development mode
   if (isDev) {
-    mainWindow.webContents.openDevTools();
+    // Comment out the line below to prevent auto-opening DevTools
+    // mainWindow.webContents.openDevTools();
   }
 
   // Handle window being closed

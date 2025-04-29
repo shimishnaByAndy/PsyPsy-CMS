@@ -33,16 +33,9 @@ import Configurator from "./examples/Configurator";
 
 // Material Dashboard 2 React themes
 import theme from "./assets/theme";
-import themeRTL from "./assets/theme/theme-rtl";
 
 // Material Dashboard 2 React Dark Mode themes
 import themeDark from "./assets/theme-dark";
-import themeDarkRTL from "./assets/theme-dark/theme-rtl";
-
-// RTL plugins
-import rtlPlugin from "stylis-plugin-rtl";
-import { CacheProvider } from "@emotion/react";
-import createCache from "@emotion/cache";
 
 // Material Dashboard 2 React routes
 import routes from "./routes";
@@ -67,7 +60,7 @@ import ParseInitializer from "./components/ParseInitializer";
 import "./localization/i18n";
 
 // Custom PsyPsy color
-const PSYPSY_COLOR = "#5d1c33";
+const PSYPSY_COLOR = "#899581";
 
 // Loading component for suspense fallback
 const LoadingFallback = () => (
@@ -88,7 +81,6 @@ export default function App() {
   const [controller, dispatch] = useMaterialUIController();
   const {
     miniSidenav,
-    direction,
     layout,
     openConfigurator,
     sidenavColor,
@@ -97,29 +89,19 @@ export default function App() {
     darkMode,
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
-  const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
 
   // Set the custom color for the sidenav when the component mounts
   useEffect(() => {
-    setSidenavColor(dispatch, "secondary");
+    setSidenavColor(dispatch, "success");
   }, [dispatch]);
 
   // Initialize development tools if in development mode
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      initDevTools();
+      // Comment out initDevTools() to prevent auto-opening developer tools
+      // initDevTools();
     }
-  }, []);
-
-  // Cache for the rtl
-  useMemo(() => {
-    const cacheRtl = createCache({
-      key: "rtl",
-      stylisPlugins: [rtlPlugin],
-    });
-
-    setRtlCache(cacheRtl);
   }, []);
 
   // Open sidenav when mouse enter on mini sidenav
@@ -140,11 +122,6 @@ export default function App() {
 
   // Change the openConfigurator state
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
-
-  // Setting the dir attribute for the body element
-  useEffect(() => {
-    document.body.setAttribute("dir", direction);
-  }, [direction]);
 
   // Setting page scroll to 0 when changing the route
   useEffect(() => {
@@ -189,60 +166,31 @@ export default function App() {
     </MDBox>
   );
 
-  const content = direction === "rtl" ? (
-    <CacheProvider value={rtlCache}>
-      <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
-        <CssBaseline />
-        {layout === "dashboard" && (
-          <>
-            <Sidenav
-              color="dark"
-              brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-              brandName="PsyPsy CMS"
-              routes={routes}
-              onMouseEnter={handleOnMouseEnter}
-              onMouseLeave={handleOnMouseLeave}
-            />
-            <Configurator />
-            {configsButton}
-          </>
-        )}
-        {layout === "vr" && <Configurator />}
-        <Routes>
-          {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/dashboard" />} />
-        </Routes>
-      </ThemeProvider>
-    </CacheProvider>
-  ) : (
-    <ThemeProvider theme={darkMode ? themeDark : theme}>
-      <CssBaseline />
-      {layout === "dashboard" && (
-        <>
-          <Sidenav
-            color="dark"
-            brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-            brandName="PsyPsy CMS"
-            routes={routes}
-            onMouseEnter={handleOnMouseEnter}
-            onMouseLeave={handleOnMouseLeave}
-          />
-          <Configurator />
-          {configsButton}
-        </>
-      )}
-      {layout === "vr" && <Configurator />}
-      <Routes>
-        {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/dashboard" />} />
-      </Routes>
-    </ThemeProvider>
-  );
-
   return (
     <Suspense fallback={<LoadingFallback />}>
       <ParseInitializer>
-        {content}
+        <ThemeProvider theme={darkMode ? themeDark : theme}>
+          <CssBaseline />
+          {layout === "dashboard" && (
+            <>
+              <Sidenav
+                color="success"
+                brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
+                brandName="PsyPsy CMS"
+                routes={routes}
+                onMouseEnter={handleOnMouseEnter}
+                onMouseLeave={handleOnMouseLeave}
+              />
+              <Configurator />
+              {configsButton}
+            </>
+          )}
+          {layout === "vr" && <Configurator />}
+          <Routes>
+            {getRoutes(routes)}
+            <Route path="*" element={<Navigate to="/dashboard" />} />
+          </Routes>
+        </ThemeProvider>
       </ParseInitializer>
     </Suspense>
   );

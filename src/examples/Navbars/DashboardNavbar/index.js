@@ -193,34 +193,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
         </MDBox>
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <MDBox pr={1}>
-              <MDInput label={t('navbar.searchHere')} />
-            </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
-              {/* Language Switcher */}
-              <LanguageSwitcher iconColor={iconsStyle().color()} />
-
-              <Tooltip title={t('common.profile')}>
-                <IconButton 
-                  sx={navbarIconButton}
-                  size="small" 
-                  disableRipple
-                  onClick={handleUserMenuOpen}
-                  aria-controls="user-menu"
-                  aria-haspopup="true"
-                >
-                  <Icon sx={iconsStyle}>account_circle</Icon>
-                  <MDTypography
-                    variant="button"
-                    fontWeight="medium"
-                    color={light ? "white" : "dark"}
-                    sx={{ ml: 0.5, display: { xs: 'none', sm: 'inline-block' } }}
-                  >
-                    {username}
-                  </MDTypography>
-                </IconButton>
-              </Tooltip>
-              {renderUserMenu()}
               <IconButton
                 size="small"
                 disableRipple
@@ -239,21 +212,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 sx={navbarIconButton}
                 onClick={handleConfiguratorOpen}
               >
-                <Icon sx={iconsStyle}>{t('common.settings')}</Icon>
+                <Icon sx={iconsStyle}>settings</Icon>
               </IconButton>
-              <IconButton
-                size="small"
-                disableRipple
-                color="inherit"
-                sx={navbarIconButton}
-                aria-controls="notification-menu"
-                aria-haspopup="true"
-                variant="contained"
-                onClick={handleOpenMenu}
-              >
-                <Icon sx={iconsStyle}>notifications</Icon>
-              </IconButton>
-              {renderMenu()}
             </MDBox>
           </MDBox>
         )}

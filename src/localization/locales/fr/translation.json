@@ -35,6 +35,12 @@
       "missingCredentials": "Le nom d'utilisateur/email est requis.",
       "missingPassword": "Le mot de passe est requis."
     },
+    "lock": {
+      "locked": "Écran Verrouillé",
+      "enterPassword": "Entrez votre mot de passe pour déverrouiller",
+      "unlock": "Déverrouiller",
+      "signInDifferent": "Se connecter avec un autre utilisateur"
+    },
     "register": {
       "title": "S'inscrire",
       "username": "Nom d'utilisateur",

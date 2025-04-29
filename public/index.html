@@ -78,6 +78,20 @@ Coded by www.creative-tim.com
     <script>
       // Handle Electron-specific functionality
       window.electronAPI = window.electron || {};
+      
+      // Set window size on startup
+      if (window.electron && window.electron.setWindowSize) {
+        window.electron.setWindowSize(1440, 900);
+      } else {
+        // For browser-based app, can use window.resizeTo
+        window.addEventListener('DOMContentLoaded', () => {
+          try {
+            window.resizeTo(1440, 900);
+          } catch(e) {
+            console.log('Unable to resize window in this environment');
+          }
+        });
+      }
     </script>
     <script
       defer

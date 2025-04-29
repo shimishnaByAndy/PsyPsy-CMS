@@ -21,7 +21,6 @@ import { useTranslation } from "react-i18next";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import MuiLink from "@mui/material/Link";
-import Box from "@mui/material/Box";
 
 // @mui icons
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -34,7 +33,6 @@ import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 import SimpleErrorMessage from "components/SimpleErrorMessage";
-import LanguageSwitcher from "components/LanguageSwitcher";
 import SimpleSwitch from "components/SimpleSwitch";
 
 // Authentication layout components
@@ -42,6 +40,7 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 
 // Images
 import bgImage from "assets/images/montreal_green.png";
+//import bgImage from "assets/images/montreal_night.png";
 //import bgImage from "assets/images/montreal_blue.png";
 //import bgImage from "assets/images/montrel_purple.png";
 
@@ -130,7 +129,7 @@ function Basic() {
 
   return (
     <BasicLayout image={bgImage}>
-      <Card>
+      <Card sx={{ width: '350px', maxWidth: '350px', minWidth: '300px' }}>
         <MDBox
           variant="gradient"
           bgColor="info"
@@ -147,13 +146,15 @@ function Basic() {
             color="white" 
             mt={1}
             sx={{ 
-              fontSize: "1.875rem",
-              letterSpacing: "1px" 
+              fontFamily: "'Romantically', serif",
+              fontSize: "2.2rem",
+              lineHeight: 1.2,
+              letterSpacing: "1px"
             }}
           >
             PsyPsy
           </MDTypography>
-          <Grid container spacing={3} justifyContent="center" sx={{ mt: 2, mb: 0.5 }}>
+          <Grid container spacing={3} justifyContent="center" sx={{ mt: 3, mb: 0.5 }}>
             <Grid item xs={2}>
               <MDTypography component={MuiLink} href="https://www.facebook.com/profile.php?id=61558742723032" target="_blank" variant="body1" color="white">
                 <FacebookIcon color="inherit" />

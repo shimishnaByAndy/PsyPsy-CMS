@@ -34,6 +34,7 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 // Dashboard components
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import MonthlyStats from "layouts/dashboard/components/MonthlyStats";
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
@@ -153,6 +154,10 @@ function Dashboard() {
               <OrdersOverview />
             </Grid>
           </Grid>
+        </MDBox>
+        
+        <MDBox mt={3}>
+          <MonthlyStats />
         </MDBox>
       </MDBox>
       <Footer />

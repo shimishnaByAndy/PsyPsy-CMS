@@ -35,6 +35,12 @@
       "missingCredentials": "Username/email is required.",
       "missingPassword": "Password is required."
     },
+    "lock": {
+      "locked": "Screen Locked",
+      "enterPassword": "Enter your password to unlock",
+      "unlock": "Unlock",
+      "signInDifferent": "Sign in as different user"
+    },
     "register": {
       "title": "Sign up",
       "username": "Username",

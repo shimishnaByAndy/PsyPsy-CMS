@@ -19,16 +19,21 @@ import { styled } from "@mui/material/styles";
 
 export default styled(Drawer)(({ theme, ownerState }) => {
   const { palette, boxShadows, transitions, breakpoints, functions } = theme;
-  const { transparentSidenav, whiteSidenav, miniSidenav, darkMode } = ownerState;
+  const { sidenavColor, transparentSidenav, whiteSidenav, miniSidenav, darkMode } = ownerState;
 
   const sidebarWidth = 250;
   const { transparent, gradients, white, background } = palette;
   const { xxl } = boxShadows;
   const { pxToRem, linearGradient } = functions;
 
+  // Enhanced gradient with stronger contrast and darker top area
   let backgroundValue = darkMode
     ? background.sidenav
-    : linearGradient(gradients.dark.main, gradients.dark.state);
+    : `linear-gradient(to bottom, 
+        rgba(51, 15, 28, 1) 0%, 
+        rgba(78, 23, 43, 0.95) 15%, 
+        rgba(93, 28, 51, 0.9) 30%, 
+        rgba(93, 28, 51, 1) 100%)`;
 
   if (transparentSidenav) {
     backgroundValue = transparent.main;
