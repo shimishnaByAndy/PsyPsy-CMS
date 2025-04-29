@@ -13,22 +13,22 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-// Material Dashboard 2 React Base Styles
+// Material Dashboard 2 React base styles
 import colors from "assets/theme/base/colors";
 import typography from "assets/theme/base/typography";
 
-const { text, info } = colors;
+const { dark } = colors;
 const { size } = typography;
 
 const inputLabel = {
   styleOverrides: {
     root: {
       fontSize: size.sm,
-      color: text.main,
+      color: "#AD9E93", // hintTxt color from mobile app
       lineHeight: 0.9,
 
       "&.Mui-focused": {
-        color: info.main,
+        color: "#AD9E93", // hintTxt color from mobile app
       },
 
       "&.MuiInputLabel-shrink": {

@@ -28,11 +28,12 @@ import pxToRem from "assets/theme/functions/pxToRem";
 const { dark } = colors;
 
 const baseProperties = {
-  fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+  fontFamily: '"Josefin Sans", "Quicksand", sans-serif',
   fontWeightLighter: 100,
   fontWeightLight: 300,
   fontWeightRegular: 400,
-  fontWeightMedium: 600,
+  fontWeightMedium: 500,
+  fontWeightSemiBold: 600,
   fontWeightBold: 700,
   fontSizeXXS: pxToRem(10.4),
   fontSizeXS: pxToRem(12),
@@ -44,14 +45,26 @@ const baseProperties = {
   fontSize3XL: pxToRem(30),
 };
 
+const josefinSans = {
+  fontFamily: '"Josefin Sans", sans-serif',
+};
+
+const quicksand = {
+  fontFamily: '"Quicksand", sans-serif',
+};
+
+const romantically = {
+  fontFamily: '"Romantically", cursive',
+};
+
 const baseHeadingProperties = {
-  fontFamily: baseProperties.fontFamily,
+  ...josefinSans,
   color: dark.main,
   fontWeight: baseProperties.fontWeightBold,
 };
 
 const baseDisplayProperties = {
-  fontFamily: baseProperties.fontFamily,
+  ...quicksand,
   color: dark.main,
   fontWeight: baseProperties.fontWeightLight,
   lineHeight: 1.2,
@@ -63,6 +76,7 @@ const typography = {
   fontWeightLight: baseProperties.fontWeightLight,
   fontWeightRegular: baseProperties.fontWeightRegular,
   fontWeightMedium: baseProperties.fontWeightMedium,
+  fontWeightSemiBold: baseProperties.fontWeightSemiBold,
   fontWeightBold: baseProperties.fontWeightBold,
 
   h1: {
@@ -102,50 +116,51 @@ const typography = {
   },
 
   subtitle1: {
-    fontFamily: baseProperties.fontFamily,
+    ...quicksand,
     fontSize: baseProperties.fontSizeXL,
-    fontWeight: baseProperties.fontWeightLight,
+    fontWeight: baseProperties.fontWeightMedium,
     lineHeight: 1.625,
   },
 
   subtitle2: {
-    fontFamily: baseProperties.fontFamily,
+    ...quicksand,
     fontSize: baseProperties.fontSizeMD,
-    fontWeight: baseProperties.fontWeightLight,
+    fontWeight: baseProperties.fontWeightMedium,
     lineHeight: 1.6,
   },
 
   body1: {
-    fontFamily: baseProperties.fontFamily,
+    ...josefinSans,
     fontSize: baseProperties.fontSizeXL,
     fontWeight: baseProperties.fontWeightRegular,
     lineHeight: 1.625,
   },
 
   body2: {
-    fontFamily: baseProperties.fontFamily,
+    ...josefinSans,
     fontSize: baseProperties.fontSizeMD,
     fontWeight: baseProperties.fontWeightLight,
     lineHeight: 1.6,
   },
 
   button: {
-    fontFamily: baseProperties.fontFamily,
+    ...quicksand,
     fontSize: baseProperties.fontSizeSM,
-    fontWeight: baseProperties.fontWeightLight,
+    fontWeight: baseProperties.fontWeightSemiBold,
     lineHeight: 1.5,
-    textTransform: "uppercase",
+    textTransform: "none",
   },
 
   caption: {
-    fontFamily: baseProperties.fontFamily,
+    ...quicksand,
     fontSize: baseProperties.fontSizeXS,
     fontWeight: baseProperties.fontWeightLight,
     lineHeight: 1.25,
   },
 
   overline: {
-    fontFamily: baseProperties.fontFamily,
+    ...quicksand,
+    fontWeight: baseProperties.fontWeightSemiBold,
   },
 
   d1: {
@@ -176,6 +191,12 @@ const typography = {
   d6: {
     fontSize: pxToRem(40),
     ...baseDisplayProperties,
+  },
+
+  logo: {
+    ...romantically,
+    fontSize: pxToRem(32),
+    fontWeight: baseProperties.fontWeightRegular,
   },
 
   size: {

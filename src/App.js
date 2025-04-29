@@ -54,6 +54,9 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "./
 import brandWhite from "./assets/images/logo-ct.png";
 import brandDark from "./assets/images/logo-ct-dark.png";
 
+// Bootstrap CSS for Darkone
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 // Development utilities
 import { initDevTools } from "./utils/devTools";
 

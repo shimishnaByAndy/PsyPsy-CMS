@@ -19,41 +19,43 @@ import borders from "assets/theme/base/borders";
 import boxShadows from "assets/theme/base/boxShadows";
 
 // Material Dashboard 2 React helper functions
-// import rgba from "assets/theme/functions/rgba";
 import pxToRem from "assets/theme/functions/pxToRem";
-import linearGradient from "assets/theme/functions/linearGradient";
+import rgba from "assets/theme/functions/rgba";
 
-const { white, gradients, grey, transparent } = colors;
-const { borderWidth } = borders;
+const { white, grey, black, primary } = colors;
+const { borderWidth, borderRadius } = borders;
 const { md } = boxShadows;
 
 const switchButton = {
   defaultProps: {
-    disableRipple: false,
+    disableRipple: true,
   },
 
   styleOverrides: {
     switchBase: {
-      color: gradients.dark.main,
-
+      color: grey[300],
+      padding: 0,
+      
       "&:hover": {
-        backgroundColor: transparent.main,
+        backgroundColor: rgba(grey[300], 0.15),
       },
 
       "&.Mui-checked": {
-        color: gradients.dark.main,
+        color: primary.main,
+        padding: 0,
+        transform: `translateX(${pxToRem(16)})`,
 
         "&:hover": {
-          backgroundColor: transparent.main,
+          backgroundColor: rgba(primary.main, 0.15),
         },
 
         "& .MuiSwitch-thumb": {
-          borderColor: `${gradients.dark.main} !important`,
+          borderColor: `${primary.main} !important`,
         },
 
         "& + .MuiSwitch-track": {
-          backgroundColor: `${gradients.dark.main} !important`,
-          borderColor: `${gradients.dark.main} !important`,
+          backgroundColor: `${primary.main} !important`,
+          borderColor: `${primary.main} !important`,
           opacity: 1,
         },
       },
@@ -63,22 +65,31 @@ const switchButton = {
       },
 
       "&.Mui-focusVisible .MuiSwitch-thumb": {
-        backgroundImage: linearGradient(gradients.info.main, gradients.info.state),
+        boxShadow: md,
       },
     },
 
     thumb: {
+      width: pxToRem(18),
+      height: pxToRem(18),
       backgroundColor: white.main,
       boxShadow: md,
       border: `${borderWidth[1]} solid ${grey[400]}`,
+      position: 'relative',
+      top: '-1px',
+
+      "&:hover": {
+        boxShadow: "none",
+      },
     },
 
     track: {
-      width: pxToRem(32),
-      height: pxToRem(15),
+      width: pxToRem(36),
+      height: pxToRem(16),
       backgroundColor: grey[400],
       border: `${borderWidth[1]} solid ${grey[400]}`,
       opacity: 1,
+      borderRadius: borderRadius.xl,
     },
 
     checked: {},

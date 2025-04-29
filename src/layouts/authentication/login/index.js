@@ -19,9 +19,9 @@ import { useTranslation } from "react-i18next";
 
 // @mui material components
 import Card from "@mui/material/Card";
-import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
 import MuiLink from "@mui/material/Link";
+import Box from "@mui/material/Box";
 
 // @mui icons
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -35,6 +35,7 @@ import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 import MDAlert from "components/MDAlert";
 import LanguageSwitcher from "components/LanguageSwitcher";
+import CustomSwitch from "components/CustomSwitch";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
@@ -82,22 +83,30 @@ function Basic() {
           mb={1}
           textAlign="center"
         >
-          <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-            {t("auth.login.title")}
+          <MDTypography 
+            variant="logo" 
+            color="white" 
+            mt={1}
+            sx={{ 
+              fontSize: "1.875rem",
+              letterSpacing: "1px" 
+            }}
+          >
+            PsyPsy
           </MDTypography>
-          <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
+          <Grid container spacing={3} justifyContent="center" sx={{ mt: 2, mb: 0.5 }}>
             <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="https://facebook.com" target="_blank" variant="body1" color="white">
+              <MDTypography component={MuiLink} href="https://www.facebook.com/profile.php?id=61558742723032" target="_blank" variant="body1" color="white">
                 <FacebookIcon color="inherit" />
               </MDTypography>
             </Grid>
             <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="https://instagram.com" target="_blank" variant="body1" color="white">
+              <MDTypography component={MuiLink} href="https://www.instagram.com/psypsy_sante/" target="_blank" variant="body1" color="white">
                 <InstagramIcon color="inherit" />
               </MDTypography>
             </Grid>
             <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="https://psypsy.ca" target="_blank" variant="body1" color="white">
+              <MDTypography component={MuiLink} href="http://www.psypsy.ca" target="_blank" variant="body1" color="white">
                 <LanguageIcon color="inherit" />
               </MDTypography>
             </Grid>
@@ -133,18 +142,33 @@ function Basic() {
                 {t("auth.login.submit")}
               </MDButton>
             </MDBox>
-            <MDBox display="flex" justifyContent="center" alignItems="center" mt={2}>
-              <MDTypography
-                variant="button"
-                fontWeight="regular"
-                color="text"
+            
+            {/* Remember me with custom switch */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: 2,
+                height: 40
+              }}
+            >
+              <Box 
+                component="span" 
+                sx={{ 
+                  color: '#999999',
+                  fontFamily: '"Quicksand", sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 400,
+                  marginRight: 1,
+                  cursor: 'pointer'
+                }}
                 onClick={handleSetRememberMe}
-                sx={{ cursor: "pointer", userSelect: "none", mr: 1 }}
               >
                 {t("common.rememberMe")}
-              </MDTypography>
-              <Switch checked={rememberMe} onChange={handleSetRememberMe} />
-            </MDBox>
+              </Box>
+              <CustomSwitch checked={rememberMe} onChange={handleSetRememberMe} />
+            </Box>
           </MDBox>
         </MDBox>
       </Card>

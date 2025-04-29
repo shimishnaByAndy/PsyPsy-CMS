@@ -37,12 +37,12 @@ const LanguageSwitcher = ({ iconColor }) => {
             display: 'flex',
             alignItems: 'center',
             padding: '4px 8px',
-            color: currentLanguage === 'en' ? '#fff' : '#000',
-            bgcolor: currentLanguage === 'en' ? 'info.main' : '#fff',
-            borderColor: currentLanguage === 'en' ? 'info.main' : '#fff',
+            color: currentLanguage === 'en' ? '#FFFFFF' : '#000000',
+            bgcolor: currentLanguage === 'en' ? '#899581' : '#FFFFFF',
+            borderColor: currentLanguage === 'en' ? '#899581' : '#FFFFFF',
             '&:hover': {
-              bgcolor: currentLanguage === 'en' ? 'info.dark' : 'rgba(255, 255, 255, 0.8)',
-              borderColor: currentLanguage === 'en' ? 'info.dark' : '#fff',
+              bgcolor: currentLanguage === 'en' ? '#A9AC99' : 'rgba(255, 255, 255, 0.8)',
+              borderColor: currentLanguage === 'en' ? '#A9AC99' : '#FFFFFF',
             }
           }}
         >
@@ -66,12 +66,12 @@ const LanguageSwitcher = ({ iconColor }) => {
             display: 'flex',
             alignItems: 'center',
             padding: '4px 8px',
-            color: currentLanguage === 'fr' ? '#fff' : '#000',
-            bgcolor: currentLanguage === 'fr' ? 'info.main' : '#fff',
-            borderColor: currentLanguage === 'fr' ? 'info.main' : '#fff',
+            color: currentLanguage === 'fr' ? '#FFFFFF' : '#000000',
+            bgcolor: currentLanguage === 'fr' ? '#899581' : '#FFFFFF',
+            borderColor: currentLanguage === 'fr' ? '#899581' : '#FFFFFF',
             '&:hover': {
-              bgcolor: currentLanguage === 'fr' ? 'info.dark' : 'rgba(255, 255, 255, 0.8)',
-              borderColor: currentLanguage === 'fr' ? 'info.dark' : '#fff',
+              bgcolor: currentLanguage === 'fr' ? '#A9AC99' : 'rgba(255, 255, 255, 0.8)',
+              borderColor: currentLanguage === 'fr' ? '#A9AC99' : '#FFFFFF',
             }
           }}
         >

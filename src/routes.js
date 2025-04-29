@@ -46,6 +46,7 @@ import SignIn from "./layouts/authentication/sign-in";
 import SignUp from "./layouts/authentication/sign-up";
 import Login from "./layouts/authentication/login";  // New login page with Parse integration
 import ParseDataExample from "./layouts/parse-data";  // Parse data management example
+import DarkoneExample from "./darkone/DarkoneExample"; // Darkone components example
 
 // Protected route wrapper
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -109,9 +110,17 @@ const protectedRoutes = [
     type: "collapse",
     name: "Parse Data",
     key: "parse-data",
-    icon: <Icon fontSize="small">storage</Icon>,
+    icon: <Icon fontSize="small">cloud</Icon>,
     route: "/parse-data",
     component: <ProtectedRoute component={<ParseDataExample />} />,
+  },
+  {
+    type: "collapse",
+    name: "Darkone UI",
+    key: "darkone-ui",
+    icon: <Icon fontSize="small">dashboard_customize</Icon>,
+    route: "/darkone-ui",
+    component: <ProtectedRoute component={<DarkoneExample />} />,
   },
 ];
 
@@ -135,9 +144,9 @@ const publicRoutes = [
   },
   {
     type: "collapse",
-    name: "Parse Login",
-    key: "parse-login",
-    icon: <Icon fontSize="small">key</Icon>,
+    name: "Login",
+    key: "login",
+    icon: <Icon fontSize="small">login</Icon>,
     route: "/authentication/login",
     component: <Login />,
   },

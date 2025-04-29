@@ -48,7 +48,7 @@ const MDButton = forwardRef(
 MDButton.defaultProps = {
   size: "medium",
   variant: "contained",
-  color: "white",
+  color: "primary",
   circular: false,
   iconOnly: false,
 };
@@ -58,7 +58,6 @@ MDButton.propTypes = {
   size: PropTypes.oneOf(["small", "medium", "large"]),
   variant: PropTypes.oneOf(["text", "contained", "outlined", "gradient"]),
   color: PropTypes.oneOf([
-    "white",
     "primary",
     "secondary",
     "info",
@@ -67,6 +66,7 @@ MDButton.propTypes = {
     "error",
     "light",
     "dark",
+    "white",
   ]),
   circular: PropTypes.bool,
   iconOnly: PropTypes.bool,

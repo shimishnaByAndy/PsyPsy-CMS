@@ -21,12 +21,12 @@ Coded by www.creative-tim.com
 
 const colors = {
   background: {
-    default: "#f0f2f5",
+    default: "#F2F0ED", // bgLight
   },
 
   text: {
-    main: "#7b809a",
-    focus: "#7b809a",
+    main: "#899581", // mainColorTxt
+    focus: "#899581", // mainColorTxt
   },
 
   transparent: {
@@ -34,107 +34,107 @@ const colors = {
   },
 
   white: {
-    main: "#ffffff",
-    focus: "#ffffff",
+    main: "#FFFFFF", // txt
+    focus: "#FFFFFF", // txt
   },
 
   black: {
-    light: "#000000",
-    main: "#000000",
-    focus: "#000000",
+    light: "#000000", // mainDark
+    main: "#000000", // mainDark
+    focus: "#000000", // mainDark
   },
 
   primary: {
-    main: "#e91e63",
-    focus: "#e91e63",
+    main: "#899581", // mainColor
+    focus: "#A9AC99", // prevMainColor
   },
 
   secondary: {
-    main: "#7b809a",
-    focus: "#8f93a9",
+    main: "#5d1c33", // mainMedium
+    focus: "#3D314A", // accent1
   },
 
   info: {
-    main: "#1A73E8",
-    focus: "#1662C4",
+    main: "#899581", // mainColor (replacing the blue with mainColor)
+    focus: "#A9AC99", // prevMainColor
   },
 
   success: {
-    main: "#4CAF50",
-    focus: "#67bb6a",
+    main: "#1F650E", // filledGreen
+    focus: "#11BA73", // confirmGreen
   },
 
   warning: {
-    main: "#fb8c00",
-    focus: "#fc9d26",
+    main: "#AD9E93", // hintTxt
+    focus: "#A7A7A7", // mTyStatus
   },
 
   error: {
-    main: "#F44335",
-    focus: "#f65f53",
+    main: "#D00000", // errorRed
+    focus: "#FFCBCB", // cancelBg
   },
 
   light: {
-    main: "#f0f2f5",
-    focus: "#f0f2f5",
+    main: "#F8F8EE", // mainLight
+    focus: "#F2F0ED", // bgLight
   },
 
   dark: {
-    main: "#344767",
-    focus: "#2c3c58",
+    main: "#000000", // mainDark
+    focus: "#3D314A", // accent1
   },
 
   grey: {
-    100: "#f8f9fa",
-    200: "#f0f2f5",
-    300: "#dee2e6",
-    400: "#ced4da",
-    500: "#adb5bd",
-    600: "#6c757d",
-    700: "#495057",
-    800: "#343a40",
-    900: "#212529",
+    100: "#F8F8EE", // mainLight
+    200: "#F2F0ED", // bgLight
+    300: "#fbf4f7", // bgLight2
+    400: "#F6F7F5", // btnNotSel
+    500: "#FAFAFA", // tableBgLight
+    600: "#F9F9F9", // tableBgSuperLight
+    700: "#B3B8A2", // accent2
+    800: "#A7A7A7", // mTyStatus
+    900: "#A8A8A8", // noAnsYet/apptOffer
   },
 
   gradients: {
     primary: {
-      main: "#EC407A",
-      state: "#D81B60",
+      main: "#899581", // mainColor
+      state: "#A9AC99", // prevMainColor
     },
 
     secondary: {
-      main: "#747b8a",
-      state: "#495361",
+      main: "#5d1c33", // mainMedium
+      state: "#3D314A", // accent1
     },
 
     info: {
-      main: "#49a3f1",
-      state: "#1A73E8",
+      main: "#899581", // mainColor
+      state: "#A9AC99", // prevMainColor
     },
 
     success: {
-      main: "#66BB6A",
-      state: "#43A047",
+      main: "#1F650E", // filledGreen
+      state: "#11BA73", // confirmGreen
     },
 
     warning: {
-      main: "#FFA726",
-      state: "#FB8C00",
+      main: "#AD9E93", // hintTxt
+      state: "#A7A7A7", // mTyStatus
     },
 
     error: {
-      main: "#EF5350",
-      state: "#E53935",
+      main: "#D00000", // errorRed
+      state: "#FFCBCB", // cancelBg
     },
 
     light: {
-      main: "#EBEFF4",
-      state: "#CED4DA",
+      main: "#F8F8EE", // mainLight
+      state: "#F2F0ED", // bgLight
     },
 
     dark: {
-      main: "#42424a",
-      state: "#191919",
+      main: "#000000", // mainDark
+      state: "#3D314A", // accent1
     },
   },
 
@@ -202,61 +202,61 @@ const colors = {
 
   badgeColors: {
     primary: {
-      background: "#f8b3ca",
-      text: "#cc084b",
+      background: "#B3B8A2", // accent2
+      text: "#899581", // mainColor
     },
 
     secondary: {
-      background: "#d7d9e1",
-      text: "#6c757d",
+      background: "#F2F0ED", // bgLight
+      text: "#5d1c33", // mainMedium
     },
 
     info: {
-      background: "#aecef7",
-      text: "#095bc6",
+      background: "#F8F8EE", // mainLight
+      text: "#899581", // mainColor
     },
 
     success: {
-      background: "#bce2be",
-      text: "#339537",
+      background: "#F8F8EE", // mainLight
+      text: "#1F650E", // filledGreen
     },
 
     warning: {
-      background: "#ffd59f",
-      text: "#c87000",
+      background: "#F8F8EE", // mainLight
+      text: "#AD9E93", // hintTxt
     },
 
     error: {
-      background: "#fcd3d0",
-      text: "#f61200",
+      background: "#FFCBCB", // cancelBg
+      text: "#D00000", // errorRed
     },
 
     light: {
-      background: "#ffffff",
-      text: "#c7d3de",
+      background: "#F2F0ED", // bgLight
+      text: "#899581", // mainColorTxt
     },
 
     dark: {
-      background: "#8097bf",
-      text: "#1e2e4a",
+      background: "#3D314A", // accent1
+      text: "#FFFFFF", // txt
     },
   },
 
   coloredShadows: {
-    primary: "#e91e62",
-    secondary: "#110e0e",
-    info: "#00bbd4",
-    success: "#4caf4f",
-    warning: "#ff9900",
-    error: "#f44336",
-    light: "#adb5bd",
-    dark: "#404040",
+    primary: "#899581", // mainColor
+    secondary: "#5d1c33", // mainMedium
+    info: "#899581", // mainColor
+    success: "#1F650E", // filledGreen
+    warning: "#AD9E93", // hintTxt
+    error: "#D00000", // errorRed
+    light: "#F2F0ED", // bgLight
+    dark: "#000000", // mainDark
   },
 
-  inputBorderColor: "#d2d6da",
+  inputBorderColor: "#B3B8A2", // accent2
 
   tabs: {
-    indicator: { boxShadow: "#ddd" },
+    indicator: { boxShadow: "#B3B8A2" }, // accent2
   },
 };
 
