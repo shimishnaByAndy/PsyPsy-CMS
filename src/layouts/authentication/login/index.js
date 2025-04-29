@@ -35,7 +35,7 @@ import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 import MDAlert from "components/MDAlert";
 import LanguageSwitcher from "components/LanguageSwitcher";
-import CustomSwitch from "components/CustomSwitch";
+import SimpleSwitch from "components/SimpleSwitch";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
@@ -55,7 +55,9 @@ function Basic() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleSetRememberMe = () => setRememberMe(!rememberMe);
+  const handleRememberMeChange = (checked) => {
+    setRememberMe(checked);
+  };
 
   const login = async () => {
     setError(null);
@@ -65,7 +67,19 @@ function Basic() {
       navigate(from, { replace: true });
     } catch (error) {
       console.error("Error while logging in user", error);
-      setError(t("auth.login.error"));
+      
+      // Handle specific error types
+      if (error.code === Parse.Error.CONNECTION_FAILED) {
+        setError("Could not connect to the server. Please check your internet connection.");
+      } else if (error.code === Parse.Error.OBJECT_NOT_FOUND) {
+        setError("Invalid username or password.");
+      } else if (error.code === Parse.Error.INVALID_SESSION_TOKEN) {
+        setError("Your session has expired. Please login again.");
+      } else if (error.message && error.message.includes("unauthorized")) {
+        setError("Incorrect username or password. Please try again.");
+      } else {
+        setError(error.message || t("auth.login.error"));
+      }
     }
   };
 
@@ -137,38 +151,21 @@ function Basic() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </MDBox>
-            <MDBox mt={4} mb={1}>
+            
+            <MDBox mt={2} mb={1}>
               <MDButton variant="gradient" color="info" fullWidth onClick={login}>
                 {t("auth.login.submit")}
               </MDButton>
             </MDBox>
             
-            {/* Remember me with custom switch */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginTop: 2,
-                height: 40
-              }}
-            >
-              <Box 
-                component="span" 
-                sx={{ 
-                  color: '#999999',
-                  fontFamily: '"Quicksand", sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 400,
-                  marginRight: 1,
-                  cursor: 'pointer'
-                }}
-                onClick={handleSetRememberMe}
-              >
-                {t("common.rememberMe")}
-              </Box>
-              <CustomSwitch checked={rememberMe} onChange={handleSetRememberMe} />
-            </Box>
+            {/* Remember me with simple switch */}
+            <MDBox mt={2} display="flex" justifyContent="center">
+              <SimpleSwitch
+                checked={rememberMe}
+                onChange={handleRememberMeChange}
+                label={t("common.rememberMe")}
+              />
+            </MDBox>
           </MDBox>
         </MDBox>
       </Card>
