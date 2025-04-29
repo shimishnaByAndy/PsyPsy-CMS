@@ -44,6 +44,8 @@ import Notifications from "./layouts/notifications";
 import Profile from "./layouts/profile";
 import SignIn from "./layouts/authentication/sign-in";
 import SignUp from "./layouts/authentication/sign-up";
+import Login from "./layouts/authentication/login";  // New login page with Parse integration
+import ParseDataExample from "./layouts/parse-data";  // Parse data management example
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -114,6 +116,22 @@ const routes = [
     icon: <Icon fontSize="small">assignment</Icon>,
     route: "/authentication/sign-up",
     component: <SignUp />,
+  },
+  {
+    type: "collapse",
+    name: "Parse Login",
+    key: "parse-login",
+    icon: <Icon fontSize="small">key</Icon>,
+    route: "/authentication/login",
+    component: <Login />,
+  },
+  {
+    type: "collapse",
+    name: "Parse Data",
+    key: "parse-data",
+    icon: <Icon fontSize="small">storage</Icon>,
+    route: "/parse-data",
+    component: <ParseDataExample />,
   },
 ];
 

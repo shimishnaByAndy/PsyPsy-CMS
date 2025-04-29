@@ -56,6 +56,9 @@ import brandDark from "./assets/images/logo-ct-dark.png";
 // Development utilities
 import { initDevTools } from "./utils/devTools";
 
+// Parse initialization
+import ParseInitializer from "./components/ParseInitializer";
+
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
   const {
@@ -156,7 +159,7 @@ export default function App() {
     </MDBox>
   );
 
-  return direction === "rtl" ? (
+  const content = direction === "rtl" ? (
     <CacheProvider value={rtlCache}>
       <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
         <CssBaseline />
@@ -204,5 +207,11 @@ export default function App() {
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
     </ThemeProvider>
+  );
+
+  return (
+    <ParseInitializer>
+      {content}
+    </ParseInitializer>
   );
 }

@@ -58,6 +58,7 @@
     "cross-env": "^7.0.3",
     "electron": "^36.0.0",
     "electron-builder": "^26.0.12",
+    "parse": "^6.1.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
@@ -72,6 +73,6 @@
     "yup": "^1.1.1"
   },
   "devDependencies": {
-    "electron-reloader": "^1.5.0"
+    "electron-reloader": "^1.2.3"
   }
 }
