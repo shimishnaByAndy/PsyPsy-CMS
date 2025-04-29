@@ -41,7 +41,9 @@ import SimpleSwitch from "components/SimpleSwitch";
 import BasicLayout from "layouts/authentication/components/BasicLayout";
 
 // Images
-import bgImage from "assets/images/bg-sign-in-basic.jpeg";
+import bgImage from "assets/images/montreal_green.png";
+//import bgImage from "assets/images/montreal_blue.png";
+//import bgImage from "assets/images/montrel_purple.png";
 
 // Parse
 import { ParseAuth } from "services/parseService";

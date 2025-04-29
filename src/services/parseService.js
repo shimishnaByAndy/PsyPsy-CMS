@@ -39,6 +39,9 @@ export const initializeParse = (options = {}) => {
     Parse.enableLocalDatastore();
   }
 
+  // Before initialize Parse, check if session should be cleared
+  checkRememberMeState();
+
   // Initialize Parse
   Parse.initialize(appId, javascriptKey);
   Parse.serverURL = serverURL;
@@ -47,9 +50,6 @@ export const initializeParse = (options = {}) => {
   if (liveQuery) {
     Parse.liveQueryServerURL = serverURL.replace(/^https?:\/\//, 'wss://');
   }
-
-  // Check if we need to restore a session
-  checkRememberMeState();
 
   console.log('Parse initialized with appId:', appId);
   return Parse;
@@ -61,15 +61,24 @@ export const initializeParse = (options = {}) => {
 const checkRememberMeState = () => {
   const rememberMe = localStorage.getItem(REMEMBER_ME_KEY) === 'true';
   
-  // If remember me is not set, clear any existing session
+  // If remember me is not checked, clear the session immediately on app load
   if (!rememberMe) {
-    const sessionToken = localStorage.getItem(SESSION_TOKEN_KEY);
-    if (sessionToken) {
-      console.log('Remember me not set, clearing session');
-      localStorage.removeItem(SESSION_TOKEN_KEY);
-      // Parse's internal state will be updated on next initialization
-    }
+    clearUserSession();
+    console.log('Remember me not enabled, cleared previous session');
+  } else {
+    console.log('Remember me is enabled, keeping session');
   }
+};
+
+/**
+ * Clears the user session completely
+ */
+const clearUserSession = () => {
+  // Remove session token from localStorage
+  localStorage.removeItem(SESSION_TOKEN_KEY);
+  
+  // No need to call Parse.User.logOut() here because Parse hasn't been initialized yet
+  // The session will be effectively cleared when Parse reads from localStorage
 };
 
 /**
@@ -129,14 +138,6 @@ export const ParseAuth = {
       
       // Store the remember me preference in localStorage
       localStorage.setItem(REMEMBER_ME_KEY, rememberMe.toString());
-      
-      // If remember me is false, add event listener to clear session on window close
-      if (!rememberMe) {
-        window.addEventListener('beforeunload', () => {
-          localStorage.removeItem(SESSION_TOKEN_KEY);
-        });
-      }
-      
       console.log(`User logged in successfully with remember me: ${rememberMe}`);
       return user;
     } catch (error) {
