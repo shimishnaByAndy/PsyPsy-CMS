@@ -27,7 +27,13 @@
       "username": "Username",
       "password": "Password",
       "submit": "Sign in",
-      "error": "Login failed. Please check your credentials and try again."
+      "error": "Login failed. Please check your credentials and try again.",
+      "invalidCredentials": "Invalid username or password.",
+      "sessionExpired": "Your session has expired. Please login again.",
+      "connectionFailed": "Could not connect to the server. Please check your internet connection.",
+      "unauthorized": "Incorrect username or password. Please try again.",
+      "missingCredentials": "Username/email is required.",
+      "missingPassword": "Password is required."
     },
     "register": {
       "title": "Sign up",

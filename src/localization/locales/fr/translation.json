@@ -27,7 +27,13 @@
       "username": "Nom d'utilisateur",
       "password": "Mot de passe",
       "submit": "Se connecter",
-      "error": "Échec de la connexion. Veuillez vérifier vos identifiants et réessayer."
+      "error": "Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.",
+      "invalidCredentials": "Nom d'utilisateur ou mot de passe invalide.",
+      "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+      "connectionFailed": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion internet.",
+      "unauthorized": "Nom d'utilisateur ou mot de passe incorrect. Veuillez réessayer.",
+      "missingCredentials": "Le nom d'utilisateur/email est requis.",
+      "missingPassword": "Le mot de passe est requis."
     },
     "register": {
       "title": "S'inscrire",

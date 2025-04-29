@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -33,7 +33,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
-import MDAlert from "components/MDAlert";
+import SimpleErrorMessage from "components/SimpleErrorMessage";
 import LanguageSwitcher from "components/LanguageSwitcher";
 import SimpleSwitch from "components/SimpleSwitch";
 
@@ -44,10 +44,10 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
 // Parse
-import Parse from "parse/dist/parse.min.js";
+import { ParseAuth } from "services/parseService";
 
 function Basic() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -55,28 +55,55 @@ function Basic() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Check for saved language preference or use browser language
+  useEffect(() => {
+    // Get stored language or browser language with French fallback
+    const storedLanguage = localStorage.getItem('language');
+    const userLanguage = navigator.language.split('-')[0]; // Gets 'fr' from 'fr-CA'
+    const defaultLanguage = storedLanguage || userLanguage || 'fr';
+    
+    // If current language is different from the desired language, change it
+    if (i18n.language !== defaultLanguage) {
+      i18n.changeLanguage(defaultLanguage);
+    }
+  }, [i18n]);
+
   const handleRememberMeChange = (checked) => {
     setRememberMe(checked);
   };
 
   const login = async () => {
     setError(null);
+    
+    // Basic validation before attempting to log in
+    if (!username.trim()) {
+      setError(t("auth.login.missingCredentials"));
+      return;
+    }
+    
+    if (!password.trim()) {
+      setError(t("auth.login.missingPassword"));
+      return;
+    }
+    
     try {
-      await Parse.User.logIn(username, password);
+      await ParseAuth.login(username, password);
       const from = location.state?.from?.pathname || "/dashboard";
       navigate(from, { replace: true });
     } catch (error) {
       console.error("Error while logging in user", error);
       
       // Handle specific error types
-      if (error.code === Parse.Error.CONNECTION_FAILED) {
-        setError("Could not connect to the server. Please check your internet connection.");
-      } else if (error.code === Parse.Error.OBJECT_NOT_FOUND) {
-        setError("Invalid username or password.");
-      } else if (error.code === Parse.Error.INVALID_SESSION_TOKEN) {
-        setError("Your session has expired. Please login again.");
+      if (error.code === 101) {
+        setError(t("auth.login.invalidCredentials"));
+      } else if (error.code === 209) {
+        setError(t("auth.login.sessionExpired"));
       } else if (error.message && error.message.includes("unauthorized")) {
-        setError("Incorrect username or password. Please try again.");
+        setError(t("auth.login.unauthorized"));
+      } else if (error.code === 100) {
+        setError(t("auth.login.connectionFailed"));
+      } else if (error.message && error.message.includes("username/email is required")) {
+        setError(t("auth.login.missingCredentials"));
       } else {
         setError(error.message || t("auth.login.error"));
       }
@@ -127,11 +154,7 @@ function Basic() {
           </Grid>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          {error && (
-            <MDBox mb={2}>
-              <MDAlert color="error">{error}</MDAlert>
-            </MDBox>
-          )}
+          {error && <SimpleErrorMessage message={error} />}
           <MDBox component="form" role="form">
             <MDBox mb={2}>
               <MDInput
