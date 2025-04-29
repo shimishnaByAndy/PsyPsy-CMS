@@ -1,0 +1,74 @@
+{
+  "name": "psypsy-cms",
+  "version": "1.0.0",
+  "main": "electron/main.js",
+  "homepage": "./",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron:dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron:build": "npm run build && electron-builder",
+    "package": "electron-builder build --mac --win --linux -c.extraMetadata.main=electron/main.js --publish never"
+  },
+  "build": {
+    "appId": "com.psypsy.cms",
+    "productName": "PsyPsy CMS",
+    "files": [
+      "build/**/*",
+      "electron/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "PsyPsy CMS based on Material Dashboard React",
+  "dependencies": {
+    "@emotion/cache": "^11.10.8",
+    "@emotion/react": "^11.10.8",
+    "@emotion/styled": "^11.10.8",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.12.3",
+    "chart.js": "^4.3.0",
+    "chroma-js": "^2.4.2",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^36.0.0",
+    "electron-builder": "^26.0.12",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0",
+    "react-github-btn": "^1.4.0",
+    "react-router-dom": "^6.11.0",
+    "react-scripts": "^5.0.1",
+    "react-table": "^7.8.0",
+    "stylis": "^4.1.4",
+    "stylis-plugin-rtl": "^2.1.1",
+    "wait-on": "^8.0.3",
+    "yup": "^1.1.1"
+  }
+}
