@@ -196,7 +196,9 @@ function DashboardNavbar({ absolute, light, isMini, onUserTypeChange }) {
         ...navbar(theme, { transparentNavbar, absolute, light, darkMode }),
         ...(isUsersPage && {
           p: 0,
+          height: '64px',
           minHeight: '64px',
+          maxHeight: '64px',
           borderRadius: '15px',
           backgroundColor: darkMode ? '#1a2035' : 'rgba(255, 255, 255, 0.8)',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
@@ -212,7 +214,9 @@ function DashboardNavbar({ absolute, light, isMini, onUserTypeChange }) {
             alignItems: 'center',
             width: '100%',
             maxWidth: '100%',
+            height: '64px',
             minHeight: '64px',
+            maxHeight: '64px',
             padding: '0 !important',
             margin: 0
           })
@@ -221,14 +225,16 @@ function DashboardNavbar({ absolute, light, isMini, onUserTypeChange }) {
         {isUsersPage ? (
           <MDBox 
             width="100%" 
-            height="100%"
+            height="64px"
             display="flex" 
             justifyContent="center" 
             alignItems="center"
             sx={{ 
               maxWidth: '100%',
               padding: 0,
-              margin: 0
+              margin: 0,
+              height: '64px',
+              minHeight: '64px'
             }}
           >
             <UserTypeSelector onChange={onUserTypeChange} />

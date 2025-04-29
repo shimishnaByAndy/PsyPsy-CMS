@@ -50,7 +50,7 @@ const UserTypeSelector = ({ onChange }) => {
   const getIndicatorPosition = () => {
     switch (currentType) {
       case USER_TYPES.ALL:
-        return '0px';
+        return '0%';
       case USER_TYPES.PROFESSIONALS:
         return '25%';
       case USER_TYPES.CLIENTS:
@@ -58,7 +58,7 @@ const UserTypeSelector = ({ onChange }) => {
       case USER_TYPES.ADMINS:
         return '75%';
       default:
-        return '0px';
+        return '0%';
     }
   };
 
@@ -66,7 +66,7 @@ const UserTypeSelector = ({ onChange }) => {
     <Box
       sx={{ 
         width: '100%',
-        height: '100%',
+        height: '64px',
         borderRadius: 'inherit',
         backgroundColor: darkMode ? '#1a2035' : 'rgba(255, 255, 255, 0.8)',
         mx: 'auto',
@@ -74,8 +74,8 @@ const UserTypeSelector = ({ onChange }) => {
         position: 'relative',
         p: 0,
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: 'stretch',
+        justifyContent: 'space-between',
         overflow: 'hidden',
         boxShadow: 'none'
       }}
@@ -85,11 +85,11 @@ const UserTypeSelector = ({ onChange }) => {
         sx={{
           position: 'absolute',
           left: getIndicatorPosition(),
-          width: 'calc(25% - 8px)',
-          height: '96%',
-          borderRadius: '12px',
+          width: '25%',
+          height: '64px',
+          borderRadius: 'inherit',
           backgroundColor: '#5D1C33',
-          transition: 'left 0.3s ease, width 0.3s ease',
+          transition: 'left 0.3s ease',
           zIndex: 1,
           opacity: 1,
           boxShadow: '0 4px 12px rgba(93, 28, 51, 0.3)'
@@ -101,7 +101,7 @@ const UserTypeSelector = ({ onChange }) => {
         onClick={() => changeUserType(USER_TYPES.ALL)}
         sx={{
           width: '25%',
-          height: '100%',
+          height: '64px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -110,11 +110,11 @@ const UserTypeSelector = ({ onChange }) => {
           position: 'relative',
           fontWeight: currentType === USER_TYPES.ALL ? 'bold' : 'normal',
           color: currentType === USER_TYPES.ALL ? '#ffffff' : (darkMode ? '#ffffff' : '#4B5563'),
-          transition: 'all 0.2s ease',
+          transition: 'all 0.3s ease',
+          padding: '0 8px',
           '&:hover': {
             color: '#ffffff',
-            backgroundColor: currentType !== USER_TYPES.ALL ? 'rgba(93, 28, 51, 0.3)' : 'transparent',
-            borderRadius: '10px'
+            backgroundColor: currentType !== USER_TYPES.ALL ? 'rgba(93, 28, 51, 0.3)' : 'transparent'
           }
         }}
       >
@@ -135,7 +135,7 @@ const UserTypeSelector = ({ onChange }) => {
           sx={{ 
             fontSize: '0.9rem',
             letterSpacing: '0.02em',
-            display: { xs: 'block', sm: 'block' }
+            whiteSpace: 'nowrap'
           }}
         >
           All Users
@@ -147,7 +147,7 @@ const UserTypeSelector = ({ onChange }) => {
         onClick={() => changeUserType(USER_TYPES.PROFESSIONALS)}
         sx={{
           width: '25%',
-          height: '100%',
+          height: '64px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -156,11 +156,11 @@ const UserTypeSelector = ({ onChange }) => {
           position: 'relative',
           fontWeight: currentType === USER_TYPES.PROFESSIONALS ? 'bold' : 'normal',
           color: currentType === USER_TYPES.PROFESSIONALS ? '#ffffff' : (darkMode ? '#ffffff' : '#4B5563'),
-          transition: 'all 0.2s ease',
+          transition: 'all 0.3s ease',
+          padding: '0 8px',
           '&:hover': {
             color: '#ffffff',
-            backgroundColor: currentType !== USER_TYPES.PROFESSIONALS ? 'rgba(93, 28, 51, 0.3)' : 'transparent',
-            borderRadius: '10px'
+            backgroundColor: currentType !== USER_TYPES.PROFESSIONALS ? 'rgba(93, 28, 51, 0.3)' : 'transparent'
           }
         }}
       >
@@ -181,7 +181,7 @@ const UserTypeSelector = ({ onChange }) => {
           sx={{ 
             fontSize: '0.9rem',
             letterSpacing: '0.02em',
-            display: { xs: 'block', sm: 'block' }
+            whiteSpace: 'nowrap'
           }}
         >
           Professionals
@@ -193,7 +193,7 @@ const UserTypeSelector = ({ onChange }) => {
         onClick={() => changeUserType(USER_TYPES.CLIENTS)}
         sx={{
           width: '25%',
-          height: '100%',
+          height: '64px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -202,11 +202,11 @@ const UserTypeSelector = ({ onChange }) => {
           position: 'relative',
           fontWeight: currentType === USER_TYPES.CLIENTS ? 'bold' : 'normal',
           color: currentType === USER_TYPES.CLIENTS ? '#ffffff' : (darkMode ? '#ffffff' : '#4B5563'),
-          transition: 'all 0.2s ease',
+          transition: 'all 0.3s ease',
+          padding: '0 8px',
           '&:hover': {
             color: '#ffffff',
-            backgroundColor: currentType !== USER_TYPES.CLIENTS ? 'rgba(93, 28, 51, 0.3)' : 'transparent',
-            borderRadius: '10px'
+            backgroundColor: currentType !== USER_TYPES.CLIENTS ? 'rgba(93, 28, 51, 0.3)' : 'transparent'
           }
         }}
       >
@@ -227,7 +227,7 @@ const UserTypeSelector = ({ onChange }) => {
           sx={{ 
             fontSize: '0.9rem',
             letterSpacing: '0.02em',
-            display: { xs: 'block', sm: 'block' }
+            whiteSpace: 'nowrap'
           }}
         >
           Clients
@@ -239,7 +239,7 @@ const UserTypeSelector = ({ onChange }) => {
         onClick={() => changeUserType(USER_TYPES.ADMINS)}
         sx={{
           width: '25%',
-          height: '100%',
+          height: '64px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -248,11 +248,11 @@ const UserTypeSelector = ({ onChange }) => {
           position: 'relative',
           fontWeight: currentType === USER_TYPES.ADMINS ? 'bold' : 'normal',
           color: currentType === USER_TYPES.ADMINS ? '#ffffff' : (darkMode ? '#ffffff' : '#4B5563'),
-          transition: 'all 0.2s ease',
+          transition: 'all 0.3s ease',
+          padding: '0 8px',
           '&:hover': {
             color: '#ffffff',
-            backgroundColor: currentType !== USER_TYPES.ADMINS ? 'rgba(93, 28, 51, 0.3)' : 'transparent',
-            borderRadius: '10px'
+            backgroundColor: currentType !== USER_TYPES.ADMINS ? 'rgba(93, 28, 51, 0.3)' : 'transparent'
           }
         }}
       >
@@ -273,7 +273,7 @@ const UserTypeSelector = ({ onChange }) => {
           sx={{ 
             fontSize: '0.9rem',
             letterSpacing: '0.02em',
-            display: { xs: 'block', sm: 'block' }
+            whiteSpace: 'nowrap'
           }}
         >
           Admins
