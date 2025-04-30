@@ -55,7 +55,6 @@ import { initDevTools } from "./utils/devTools";
 
 // Parse initialization
 import ParseInitializer from "./components/ParseInitializer";
-import RouteDebugger from "./components/RouteDebugger";
 
 // i18n (internationalization) setup
 import "./localization/i18n";
@@ -257,7 +256,6 @@ export default function App() {
             {getRoutes(routes)}
             {getFallbackRoute()}
           </Routes>
-          <RouteDebugger />
         </ThemeProvider>
       </ParseInitializer>
     </Suspense>

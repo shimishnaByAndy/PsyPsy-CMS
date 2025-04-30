@@ -14,6 +14,7 @@ Coded by www.creative-tim.com
 */
 
 import { useState, useEffect, useCallback } from "react";
+import Parse from "parse";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
@@ -22,12 +23,14 @@ import Icon from "@mui/material/Icon";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
+import LinearProgress from '@mui/material/LinearProgress';
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import MDAvatar from "components/MDAvatar";
+import MDProgress from "components/MDProgress";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -93,17 +96,14 @@ function Tables() {
     setError(null);
     
     try {
-      console.log('Calling UserService.getUsers...');
-      const { results, total } = await UserService.getUsers(
-        userType,
-        page,
-        limit,
-        search
-      );
-      console.log('UserService.getUsers successful, received results:', results.length, 'total:', total);
+      console.log('Calling fetchUsers cloud function');
+      const { stats, userTypes } = await Parse.Cloud.run("fetchUsers");
       
-      setUsers(results);
-      setTotalUsers(total);
+      console.log('User Stats:', stats);
+      console.log('Users by Type:', userTypes);
+      
+      setUsers(userTypes.all || []);
+      setTotalUsers(stats.total);
     } catch (err) {
       console.error("Error loading users:", err);
       console.error("Error details:", err.message, err.code);
@@ -113,7 +113,7 @@ function Tables() {
       setLoading(false);
       console.log('Finished loading users attempt');
     }
-  }, [userType, page, limit, search]);
+  }, []);
   
   // Effect to load users when dependencies change
   useEffect(() => {
@@ -155,7 +155,7 @@ function Tables() {
     { 
       Header: "User", 
       accessor: "user", 
-      width: "40%",
+      width: "30%",
       Cell: ({ row }) => (
         <MDBox display="flex" alignItems="center" lineHeight={1}>
           <MDAvatar 
@@ -177,7 +177,7 @@ function Tables() {
     { 
       Header: "Type", 
       accessor: "type", 
-      width: "20%",
+      width: "15%",
       Cell: ({ row }) => (
         <MDTypography variant="caption" fontWeight="medium">
           {getUserTypeLabel(row.original.userType)}
@@ -216,6 +216,21 @@ function Tables() {
       )
     },
     { 
+      Header: "Completion", 
+      accessor: "completion", 
+      width: "15%",
+      Cell: () => (
+        <MDBox display="flex" alignItems="center">
+          <MDTypography variant="caption" color="text" fontWeight="medium" mr={1}>
+            100%
+          </MDTypography>
+          <MDBox ml={0.5} width="9rem">
+            <MDProgress variant="gradient" color="info" value={100} />
+          </MDBox>
+        </MDBox>
+      )
+    },
+    { 
       Header: "Actions", 
       accessor: "actions", 
       width: "10%",
@@ -231,16 +246,28 @@ function Tables() {
     },
   ];
 
+  // Move the dummy data setup into a useEffect hook
+  useEffect(() => {
+    // Add dummy data for testing
+    const dummyData = [
+      {
+        id: "dummy1",
+        username: "dummy_user",
+        email: "dummy@example.com",
+        userType: 1, // Professional
+        createdAt: new Date(),
+        isBlocked: false,
+      },
+    ];
+
+    // Use dummy data for testing
+    setUsers(dummyData);
+  }, []); // Empty dependency array ensures this runs only once on mount
+
   return (
     <DashboardLayout>
       <DashboardNavbar onUserTypeChange={handleUserTypeChange} />
       <MDBox pt={6} pb={3}>
-        <Grid container spacing={6}>
-          <Grid item xs={12}>
-            <TestUserData />
-          </Grid>
-        </Grid>
-        
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
@@ -339,6 +366,122 @@ function Tables() {
                 />
               </MDBox>
             </Card>
+          </Grid>
+          <Grid container spacing={6}>
+            <Grid item xs={12}>
+              <Card>
+                <MDBox
+                  mx={2}
+                  mt={-3}
+                  p={3}
+                  variant="gradient"
+                  bgColor="info"
+                  borderRadius="lg"
+                  coloredShadow="info"
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <MDTypography variant="h6" color="white">
+                    Professionals
+                  </MDTypography>
+                </MDBox>
+                <MDBox pt={3} px={2}>
+                  <DataTable
+                    table={{ columns: userColumns, rows: users.filter(user => user.userType === 1) }}
+                    isSorted={false}
+                    entriesPerPage={{
+                      defaultValue: limit,
+                      entries: [5, 10, 15, 20, 25],
+                    }}
+                    showTotalEntries={true}
+                    noEndBorder
+                    pagination={{
+                      count: totalUsers,
+                      page,
+                      onPageChange: handlePageChange,
+                      onEntriesPerPageChange: handleLimitChange,
+                    }}
+                  />
+                </MDBox>
+              </Card>
+            </Grid>
+            <Grid item xs={12}>
+              <Card>
+                <MDBox
+                  mx={2}
+                  mt={-3}
+                  p={3}
+                  variant="gradient"
+                  bgColor="info"
+                  borderRadius="lg"
+                  coloredShadow="info"
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <MDTypography variant="h6" color="white">
+                    Clients
+                  </MDTypography>
+                </MDBox>
+                <MDBox pt={3} px={2}>
+                  <DataTable
+                    table={{ columns: userColumns, rows: users.filter(user => user.userType === 2) }}
+                    isSorted={false}
+                    entriesPerPage={{
+                      defaultValue: limit,
+                      entries: [5, 10, 15, 20, 25],
+                    }}
+                    showTotalEntries={true}
+                    noEndBorder
+                    pagination={{
+                      count: totalUsers,
+                      page,
+                      onPageChange: handlePageChange,
+                      onEntriesPerPageChange: handleLimitChange,
+                    }}
+                  />
+                </MDBox>
+              </Card>
+            </Grid>
+            <Grid item xs={12}>
+              <Card>
+                <MDBox
+                  mx={2}
+                  mt={-3}
+                  p={3}
+                  variant="gradient"
+                  bgColor="info"
+                  borderRadius="lg"
+                  coloredShadow="info"
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <MDTypography variant="h6" color="white">
+                    Admins
+                  </MDTypography>
+                </MDBox>
+                <MDBox pt={3} px={2}>
+                  <DataTable
+                    table={{ columns: userColumns, rows: users.filter(user => user.userType === 0) }}
+                    isSorted={false}
+                    entriesPerPage={{
+                      defaultValue: limit,
+                      entries: [5, 10, 15, 20, 25],
+                    }}
+                    showTotalEntries={true}
+                    noEndBorder
+                    pagination={{
+                      count: totalUsers,
+                      page,
+                      onPageChange: handlePageChange,
+                      onEntriesPerPageChange: handleLimitChange,
+                    }}
+                  />
+                </MDBox>
+              </Card>
+            </Grid>
           </Grid>
         </Grid>
       </MDBox>

@@ -168,12 +168,17 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       onClose={handleUserMenuClose}
       sx={{ mt: 1 }}
     >
-      <MenuItem onClick={handleLockApp}>
-        <Icon sx={{ mr: 1 }}>lock</Icon> Lock
-      </MenuItem>
-      <MenuItem onClick={handleLogout}>
-        <Icon sx={{ mr: 1 }}>logout</Icon> Logout
-      </MenuItem>
+      <MDBox display="flex" justifyContent="space-between" alignItems="center">
+        <MenuItem onClick={() => navigate("/profile")}> 
+          <Icon sx={{ mr: 1 }}>settings</Icon> Settings
+        </MenuItem>
+        <MenuItem onClick={handleLockApp}>
+          <Icon sx={{ mr: 1 }}>lock</Icon> Lock
+        </MenuItem>
+        <MenuItem onClick={handleLogout}>
+          <Icon sx={{ mr: 1 }}>logout</Icon> Logout
+        </MenuItem>
+      </MDBox>
     </Menu>
   );
 
@@ -182,37 +187,17 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
   // Use useMemo to create modified routes only when dependencies change
   const allRoutes = useMemo(() => {
-    // Setting the routes based on menu type
     const menu = routes.find((route) => route.menu)?.subRoutes || routes;
-    
-    // Add the settings option after Parse Data
-    const modifiedMenu = [...menu];
-    
-    // Find where to add the Settings option (after Parse Data)
-    const parseDataIndex = modifiedMenu.findIndex(item => item.key === "parse-data");
-    if (parseDataIndex !== -1) {
-      const settingsOption = {
-        type: "collapse",
-        name: `${username}`,
-        key: "profile",
-        icon: "settings",
-        route: "/profile",
-        iconColor: "white",
-      };
-      
-      // Insert the settings option right after Parse Data
-      modifiedMenu.splice(parseDataIndex + 1, 0, settingsOption);
-    }
-    
-    // Ensure all icons are white
+    const modifiedMenu = menu.filter(item => item.key !== "login" && item.key !== "profile" && item.key !== "settings");
+
     modifiedMenu.forEach(item => {
       if (item.type === "collapse") {
         item.iconColor = "white";
       }
     });
-    
+
     return modifiedMenu;
-  }, [routes, username]); // Only recalculate when routes or username changes
+  }, [routes]);
 
   // Memoize the rendered routes to prevent recreating on every render
   const renderedRoutes = useMemo(() => {
@@ -421,6 +406,41 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           mb={1}
         >
           <MDBox 
+            onClick={() => navigate("/profile")}
+            sx={{
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              width: '50%',
+              padding: '8px 0',
+              borderRadius: '4px',
+              transition: 'background-color 0.3s ease',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.1)'
+              }
+            }}
+          >
+            <Icon
+              sx={{
+                color: 'white',
+                fontSize: '1.3rem',
+                mb: 0.5,
+                filter: 'brightness(0) invert(1)'
+              }}
+            >
+              settings
+            </Icon>
+            <MDTypography
+              variant="button"
+              color="white"
+              fontWeight="regular"
+              sx={{ fontSize: '0.75rem' }}
+            >
+              Settings
+            </MDTypography>
+          </MDBox>
+          <MDBox 
             onClick={handleLogout}
             sx={{
               cursor: 'pointer',
@@ -441,7 +461,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
                 color: 'white',
                 fontSize: '1.3rem',
                 mb: 0.5,
-                filter: 'brightness(0) invert(1)' // Force white color
+                filter: 'brightness(0) invert(1)'
               }}
             >
               logout
@@ -476,7 +496,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
                 color: 'white',
                 fontSize: '1.3rem',
                 mb: 0.5,
-                filter: 'brightness(0) invert(1)' // Force white color
+                filter: 'brightness(0) invert(1)'
               }}
             >
               lock

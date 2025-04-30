@@ -328,15 +328,25 @@ export const ParseData = {
 const createMockUsers = (count = 10) => {
   console.log('Creating mock users for development');
   const userTypes = [0, 1, 2]; // Admin, Professional, Client
+  const names = [
+    'John Doe', 'Jane Smith', 'Robert Johnson', 'Emily Davis', 
+    'Michael Wilson', 'Sarah Brown', 'David Miller', 'Lisa Anderson',
+    'James Martinez', 'Jennifer Taylor', 'Thomas Lee', 'Mary Garcia',
+    'Daniel Rodriguez', 'Patricia Clark', 'Paul Walker', 'Susan Hill'
+  ];
   
   return Array.from({ length: count }).map((_, index) => {
     const userType = userTypes[index % userTypes.length];
     const id = `mock-user-${index + 1}`;
+    const nameIndex = index % names.length;
+    const firstName = names[nameIndex].split(' ')[0];
+    const lastName = names[nameIndex].split(' ')[1];
+    const username = `${firstName.toLowerCase()}${lastName.toLowerCase()}${index + 1}`;
     
     return {
       id,
-      username: `user${index + 1}`,
-      email: `user${index + 1}@example.com`,
+      username: username,
+      email: `${username}@example.com`,
       emailVerified: true,
       userType,
       createdAt: new Date(Date.now() - Math.floor(Math.random() * 10000000000)),
@@ -348,28 +358,28 @@ const createMockUsers = (count = 10) => {
       ...(userType === 1 && {
         professional: {
           id: `prof-${id}`,
-          firstName: `Pro`,
-          lastName: `User ${index + 1}`,
-          profType: 'Psychologist',
-          businessName: `Clinic ${index + 1}`,
-          servOfferedArr: ['Therapy', 'Consultation'],
+          firstName: firstName,
+          lastName: lastName,
+          profType: ['Psychologist', 'Therapist', 'Counselor'][Math.floor(Math.random() * 3)],
+          businessName: `${lastName} Practice`,
+          servOfferedArr: ['Therapy', 'Consultation', 'Assessment'],
           offeredLangArr: ['English', 'French'],
-          meetType: 'both',
-          expertises: ['Anxiety', 'Depression'],
-          bussEmail: `business${index + 1}@example.com`,
-          bussPhoneNb: `+1234567890${index}`
+          meetType: ['online', 'in-person', 'both'][Math.floor(Math.random() * 3)],
+          expertises: ['Anxiety', 'Depression', 'Stress Management'],
+          bussEmail: `business@${username}.com`,
+          bussPhoneNb: `+1${Math.floor(1000000000 + Math.random() * 9000000000)}`
         }
       }),
       ...(userType === 2 && {
         client: {
           id: `client-${id}`,
-          firstName: `Client`,
-          lastName: `User ${index + 1}`,
-          dob: new Date(1990, 0, 1),
-          gender: index % 2 === 0 ? 'male' : 'female',
-          spokenLangArr: ['English'],
-          phoneNb: `+9876543210${index}`,
-          searchRadius: 25
+          firstName: firstName,
+          lastName: lastName,
+          dob: new Date(1980 + Math.floor(Math.random() * 20), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
+          gender: Math.random() > 0.5 ? 'male' : 'female',
+          spokenLangArr: ['English', 'French'],
+          phoneNb: `+1${Math.floor(1000000000 + Math.random() * 9000000000)}`,
+          searchRadius: 10 + Math.floor(Math.random() * 40)
         }
       })
     };
@@ -458,17 +468,13 @@ export const UserService = {
         
         console.log('REST API URL:', url);
         
-        // Get the master key from environment variables - critical for accessing user data
-        const masterKey = process.env.REACT_APP_MASTER_KEY || 'LV4QUE9IqvLec8xIS0SOUPsfRITPVXIRbNf35UW4';
-        
-        // Fetch data with proper headers including master key
+        // Fetch data with proper headers
         const response = await fetch(url, {
           method: 'GET',
           headers: {
             'X-Parse-Application-Id': Parse.applicationId,
             'X-Parse-REST-API-Key': Parse.javaScriptKey,
             'X-Parse-Session-Token': sessionToken,
-            'X-Parse-Master-Key': masterKey, // This is critical for accessing user data
             'Content-Type': 'application/json'
           }
         });
@@ -549,10 +555,9 @@ export const UserService = {
         }
         
         console.log('Executing query with session token');
-        // Add both the sessionToken and useMasterKey options
+        // Only use session token, don't use master key in client-side code
         const options = { 
-          sessionToken, 
-          useMasterKey: true 
+          sessionToken
         };
         
         console.log('Query options:', options);

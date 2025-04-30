@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UserService, Parse } from '../services/parseService';
+import { UserService, Parse, ParseAuth } from '../services/parseService';
 import MDBox from './MDBox';
 import MDTypography from './MDTypography';
 import MDButton from './MDButton';
@@ -39,28 +39,54 @@ const TestUserData = () => {
     checkParseStatus();
   }, []);
   
-  // Function to fetch user data directly
-  const fetchUsers = async () => {
+  // Define a maximum number of retries and a delay between retries
+  const MAX_RETRIES = 3;
+  const RETRY_DELAY_MS = 2000;
+  
+  // Function to fetch user data directly with retry mechanism
+  const fetchUsers = async (retryCount = 0) => {
     setLoading(true);
     setError(null);
     
     try {
       console.log('TestUserData: Attempting to fetch users directly');
-      setConnectionStatus('connecting');
       
-      const { results, total, error: serviceError } = await UserService.getUsers('all', 0, 10, '');
+      // First check if user is authenticated
+      const isLoggedIn = ParseAuth.isLoggedIn();
+      const currentUser = ParseAuth.getCurrentUser();
+      const sessionToken = currentUser?.getSessionToken?.();
       
-      if (serviceError) {
-        throw new Error(serviceError);
+      console.log('User authentication check:', { 
+        isLoggedIn, 
+        sessionToken: sessionToken ? `${sessionToken.substring(0, 5)}...` : 'None',
+        userId: currentUser?.id
+      });
+      
+      if (!isLoggedIn || !currentUser) {
+        throw new Error('You must be logged in to fetch user data');
       }
       
-      console.log('TestUserData: Received user data:', results.length, 'of', total, 'users');
-      setUsers(results);
+      setConnectionStatus('connecting');
+      
+      const { stats, userTypes } = await Parse.Cloud.run("fetchUsers");
+      
+      // Log the stats and user types
+      console.log('User Stats:', stats);
+      console.log('Users by Type:', userTypes);
+      
+      // Set users from the userTypes object
+      setUsers(userTypes.all || []); // Assuming you want to display all users
       setConnectionStatus('connected');
     } catch (err) {
       console.error('TestUserData: Error fetching users:', err);
-      setError(err.message || 'Failed to fetch user data');
-      setConnectionStatus('error');
+      
+      if (retryCount < MAX_RETRIES) {
+        console.log(`Retrying fetch users... Attempt ${retryCount + 1} of ${MAX_RETRIES}`);
+        setTimeout(() => fetchUsers(retryCount + 1), RETRY_DELAY_MS);
+      } else {
+        setError(err.message || 'Failed to fetch user data');
+        setConnectionStatus('error');
+      }
     } finally {
       setLoading(false);
     }
@@ -175,8 +201,14 @@ const TestUserData = () => {
       
       {error && (
         <MDBox p={2} bgcolor="error.main" color="white" borderRadius={1}>
+          <MDTypography variant="body2" color="white" fontWeight="bold">
+            Error:
+          </MDTypography>
           <MDTypography variant="body2" color="white">
-            Error: {error}
+            {error}
+          </MDTypography>
+          <MDTypography variant="caption" color="white" fontStyle="italic" mt={1}>
+            Note: The app is displaying mock data because it couldn't fetch real user data.
           </MDTypography>
         </MDBox>
       )}
