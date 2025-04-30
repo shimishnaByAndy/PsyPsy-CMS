@@ -56,16 +56,19 @@ This document describes the structure of the response received from the `fetchUs
     "newUsersThisMonth": "number",
     "newUsersThisYear": "number",
     "ageRanges": {
+      "14-17": "number",
       "18-24": "number",
       "25-34": "number",
       "35-44": "number",
       "45-54": "number",
-      "55+": "number"
+      "55-64": "number",
+      "65+": "number"
     },
     "genderCounts": {
-      "male": "number",
-      "female": "number",
-      "other": "number"
+      "1": "number",
+      "2": "number",
+      "3": "number",
+      "4": "number"
     }
   }
 }
@@ -73,4 +76,5 @@ This document describes the structure of the response received from the `fetchUs
 
 ## Notes
 - The `clientPtr` object contains the profile details specific to the `Client` class.
-- Ensure to handle undefined values when accessing nested properties. 
+- Ensure to handle undefined values when accessing nested properties.
+- Gender mapping: 1 = Woman, 2 = Man, 3 = Other, 4 = Not Disclosed. 

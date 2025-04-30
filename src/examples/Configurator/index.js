@@ -15,24 +15,16 @@ Coded by www.creative-tim.com
 
 import { useState, useEffect } from "react";
 
-// react-github-btn
-import GitHubButton from "react-github-btn";
-
 // @mui material components
 import Divider from "@mui/material/Divider";
 import Switch from "@mui/material/Switch";
-import IconButton from "@mui/material/IconButton";
-import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
-
-// @mui icons
-import TwitterIcon from "@mui/icons-material/Twitter";
-import FacebookIcon from "@mui/icons-material/Facebook";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
+import MDProgress from "components/MDProgress";
 
 // Custom styles for the Configurator
 import ConfiguratorRoot from "examples/Configurator/ConfiguratorRoot";
@@ -41,93 +33,86 @@ import ConfiguratorRoot from "examples/Configurator/ConfiguratorRoot";
 import {
   useMaterialUIController,
   setOpenConfigurator,
-  setTransparentSidenav,
-  setWhiteSidenav,
-  setFixedNavbar,
-  setSidenavColor,
   setDarkMode,
 } from "context";
 
-function Configurator() {
+function Configurator({ stats = {}, userType = "clients" }) {
   const [controller, dispatch] = useMaterialUIController();
   const {
     openConfigurator,
-    fixedNavbar,
-    sidenavColor,
-    transparentSidenav,
-    whiteSidenav,
     darkMode,
   } = controller;
   
-  // Use a const instead of state to prevent rendering loops
-  const disabled = window.innerWidth < 1200;
-  const sidenavColors = ["primary", "dark", "info", "success", "warning", "error"];
+  // Stats configurator states
+  const [selectedPeriod, setSelectedPeriod] = useState("week");
+  const [showPercentages, setShowPercentages] = useState(true);
 
-  // Restore core handler functions that don't seem to cause loops
+  // Handle closing the configurator
   const handleCloseConfigurator = () => {
     setOpenConfigurator(dispatch, false);
   };
 
-  // Still keep these state modifiers disabled as they might cause loops
-  const handleTransparentSidenav = () => {
-    console.log('Transparent sidenav clicked (disabled)');
-    // setTransparentSidenav(dispatch, true);
-    // setWhiteSidenav(dispatch, false);
-  };
-
-  const handleWhiteSidenav = () => {
-    console.log('White sidenav clicked (disabled)');
-    // setWhiteSidenav(dispatch, true);
-    // setTransparentSidenav(dispatch, false);
-  };
-
-  const handleDarkSidenav = () => {
-    console.log('Dark sidenav clicked (disabled)');
-    // setWhiteSidenav(dispatch, false);
-    // setTransparentSidenav(dispatch, false);
-  };
-
-  // Restore theme toggles which are less likely to cause loops
-  const handleFixedNavbar = () => {
-    setFixedNavbar(dispatch, !fixedNavbar);
-  };
-
+  // Handle dark mode toggle
   const handleDarkMode = () => {
     setDarkMode(dispatch, !darkMode);
   };
 
-  // sidenav type buttons styles
-  const sidenavTypeButtonsStyles = ({
-    functions: { pxToRem },
-    palette: { white, dark, background },
-    borders: { borderWidth },
-  }) => ({
-    height: pxToRem(39),
-    background: darkMode ? background.sidenav : white.main,
-    color: darkMode ? white.main : dark.main,
-    border: `${borderWidth[1]} solid ${darkMode ? white.main : dark.main}`,
-
-    "&:hover, &:focus, &:focus:not(:hover)": {
-      background: darkMode ? background.sidenav : white.main,
-      color: darkMode ? white.main : dark.main,
-      border: `${borderWidth[1]} solid ${darkMode ? white.main : dark.main}`,
+  // Gender mapping
+  const genderMap = {
+    1: "Woman",
+    2: "Man",
+    3: "Other",
+    4: "Not Disclosed",
+  };
+  
+  // Default stats if none provided
+  const defaultStats = {
+    newUsersThisWeek: 0,
+    newUsersThisMonth: 0,
+    newUsersThisYear: 0,
+    total: 0,
+    genderCounts: {
+      1: 0, // Woman
+      2: 0, // Man
+      3: 0, // Other
+      4: 0, // Not Disclosed
     },
-  });
+    ageRanges: {
+      "14-17": 0,
+      "18-24": 0,
+      "25-34": 0,
+      "35-44": 0,
+      "45-54": 0,
+      "55-64": 0,
+      "65+": 0
+    }
+  };
 
-  // sidenav type active button styles
-  const sidenavTypeActiveButtonStyles = ({
-    functions: { pxToRem, linearGradient },
-    palette: { white, gradients, background },
-  }) => ({
-    height: pxToRem(39),
-    background: darkMode ? white.main : linearGradient(gradients.dark.main, gradients.dark.state),
-    color: darkMode ? background.sidenav : white.main,
-
-    "&:hover, &:focus, &:focus:not(:hover)": {
-      background: darkMode ? white.main : linearGradient(gradients.dark.main, gradients.dark.state),
-      color: darkMode ? background.sidenav : white.main,
-    },
-  });
+  // Merge provided stats with default stats
+  const displayStats = { ...defaultStats, ...stats };
+  
+  // Calculate total gender count for percentages
+  const totalGenderCount = Object.values(displayStats.genderCounts).reduce((a, b) => a + b, 0);
+  
+  // Generate color mapping for gender types
+  const genderColors = {
+    1: "success", // Woman - green
+    2: "info",    // Man - blue
+    3: "warning", // Other - orange/yellow
+    4: "dark",    // Not Disclosed - gray/dark
+  };
+  
+  // Display the appropriate title based on userType
+  const getTitle = () => {
+    switch (userType) {
+      case 'professionals':
+        return "Professional Stats";
+      case 'clients':
+        return "Client Stats";
+      default:
+        return "User Statistics";
+    }
+  };
 
   return (
     <ConfiguratorRoot variant="permanent" ownerState={{ openConfigurator }}>
@@ -140,9 +125,9 @@ function Configurator() {
         px={3}
       >
         <MDBox>
-          <MDTypography variant="h5">Material UI Configurator</MDTypography>
+          <MDTypography variant="h5">{getTitle()}</MDTypography>
           <MDTypography variant="body2" color="text">
-            See our dashboard options.
+            See our dashboard statistics.
           </MDTypography>
         </MDBox>
 
@@ -163,182 +148,128 @@ function Configurator() {
 
       <Divider />
 
-      <MDBox pt={0.5} pb={3} px={3}>
-        <MDBox>
-          <MDTypography variant="h6">Sidenav Colors</MDTypography>
-
-          <MDBox mb={0.5}>
-            {sidenavColors.map((color) => (
-              <IconButton
-                key={color}
-                sx={({
-                  borders: { borderWidth },
-                  palette: { white, dark, background },
-                  transitions,
-                }) => ({
-                  width: "24px",
-                  height: "24px",
-                  padding: 0,
-                  border: `${borderWidth[1]} solid ${darkMode ? background.sidenav : white.main}`,
-                  borderColor: () => {
-                    let borderColorValue = sidenavColor === color && dark.main;
-
-                    if (darkMode && sidenavColor === color) {
-                      borderColorValue = white.main;
-                    }
-
-                    return borderColorValue;
-                  },
-                  transition: transitions.create("border-color", {
-                    easing: transitions.easing.sharp,
-                    duration: transitions.duration.shorter,
-                  }),
-                  backgroundImage: ({ functions: { linearGradient }, palette: { gradients } }) =>
-                    linearGradient(gradients[color].main, gradients[color].state),
-
-                  "&:not(:last-child)": {
-                    mr: 1,
-                  },
-
-                  "&:hover, &:focus, &:active": {
-                    borderColor: darkMode ? white.main : dark.main,
-                  },
-                })}
-                onClick={() => setSidenavColor(dispatch, color)}
-              />
-            ))}
-          </MDBox>
-        </MDBox>
-
-        <MDBox mt={3} lineHeight={1}>
-          <MDTypography variant="h6">Sidenav Type</MDTypography>
-          <MDTypography variant="button" color="text">
-            Choose between different sidenav types.
-          </MDTypography>
-
-          <MDBox
-            sx={{
-              display: "flex",
-              mt: 2,
-              mr: 1,
-            }}
-          >
-            <MDButton
-              color="dark"
-              variant="gradient"
-              onClick={handleDarkSidenav}
-              disabled={disabled}
-              fullWidth
-              sx={
-                !transparentSidenav && !whiteSidenav
-                  ? sidenavTypeActiveButtonStyles
-                  : sidenavTypeButtonsStyles
-              }
-            >
-              Dark
-            </MDButton>
-            <MDBox sx={{ mx: 1, width: "8rem", minWidth: "8rem" }}>
-              <MDButton
-                color="dark"
-                variant="gradient"
-                onClick={handleTransparentSidenav}
-                disabled={disabled}
-                fullWidth
-                sx={
-                  transparentSidenav && !whiteSidenav
-                    ? sidenavTypeActiveButtonStyles
-                    : sidenavTypeButtonsStyles
-                }
-              >
-                Transparent
-              </MDButton>
-            </MDBox>
-            <MDButton
-              color="dark"
-              variant="gradient"
-              onClick={handleWhiteSidenav}
-              disabled={disabled}
-              fullWidth
-              sx={
-                whiteSidenav && !transparentSidenav
-                  ? sidenavTypeActiveButtonStyles
-                  : sidenavTypeButtonsStyles
-              }
-            >
-              White
-            </MDButton>
-          </MDBox>
-        </MDBox>
-        <MDBox
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mt={3}
-          lineHeight={1}
+      <MDBox pt={1.5} pb={3} px={3}>
+        {/* Total Users - Moved to top */}
+        <MDBox 
+          bgColor={darkMode ? "dark" : "light"}
+          color={darkMode ? "white" : "dark"}
+          p={2} 
+          mb={3}
+          borderRadius="lg"
+          boxShadow="md"
+          textAlign="center"
         >
-          <MDTypography variant="h6">Navbar Fixed</MDTypography>
+          <MDTypography variant="h6">Total {userType === 'professionals' ? 'Professionals' : 'Clients'}</MDTypography>
+          <MDTypography variant="h1" fontWeight="bold" mt={1}>
+            {displayStats.total}
+          </MDTypography>
+        </MDBox>
 
-          <Switch checked={fixedNavbar} onChange={handleFixedNavbar} />
+        {/* New User Stats */}
+        <MDBox>
+          <MDTypography variant="h6">New Users</MDTypography>
+          
+          <MDBox mt={2}>
+            <MDBox mb={1}>
+              <MDBox display="flex" alignItems="center" justifyContent="space-between">
+                <MDTypography variant="button" fontWeight="regular" color="text">
+                  This Week
+                </MDTypography>
+                <MDTypography variant="h6" fontWeight="bold">
+                  {displayStats.newUsersThisWeek}
+                </MDTypography>
+              </MDBox>
+            </MDBox>
+            
+            <MDBox mb={1}>
+              <MDBox display="flex" alignItems="center" justifyContent="space-between">
+                <MDTypography variant="button" fontWeight="regular" color="text">
+                  This Month
+                </MDTypography>
+                <MDTypography variant="h6" fontWeight="bold">
+                  {displayStats.newUsersThisMonth}
+                </MDTypography>
+              </MDBox>
+            </MDBox>
+            
+            <MDBox>
+              <MDBox display="flex" alignItems="center" justifyContent="space-between">
+                <MDTypography variant="button" fontWeight="regular" color="text">
+                  This Year
+                </MDTypography>
+                <MDTypography variant="h6" fontWeight="bold">
+                  {displayStats.newUsersThisYear}
+                </MDTypography>
+              </MDBox>
+            </MDBox>
+          </MDBox>
         </MDBox>
-        <Divider />
-        <MDBox display="flex" justifyContent="space-between" alignItems="center" lineHeight={1}>
-          <MDTypography variant="h6">Light / Dark</MDTypography>
 
-          <Switch checked={darkMode} onChange={handleDarkMode} />
-        </MDBox>
-        <Divider />
-        <MDBox mt={3} mb={2}>
-          <MDButton
-            component={Link}
-            href="https://www.creative-tim.com/learning-lab/react/quick-start/material-dashboard/"
-            target="_blank"
-            rel="noreferrer"
-            color={darkMode ? "light" : "dark"}
-            variant="outlined"
-            fullWidth
-          >
-            view documentation
-          </MDButton>
-        </MDBox>
-        <MDBox display="flex" justifyContent="center">
-          <GitHubButton
-            href="https://github.com/creativetimofficial/material-dashboard-react"
-            data-icon="octicon-star"
-            data-size="large"
-            data-show-count="true"
-            aria-label="Star creativetimofficial/material-dashboard-react on GitHub"
-          >
-            Star
-          </GitHubButton>
-        </MDBox>
-        <MDBox mt={2} textAlign="center">
-          <MDBox mb={0.5}>
-            <MDTypography variant="h6">Thank you for sharing!</MDTypography>
+        <Divider sx={{ my: 3 }} />
+
+        {/* Gender Distribution */}
+        <MDBox>
+          <MDBox display="flex" justifyContent="space-between" alignItems="center">
+            <MDTypography variant="h6">Gender Distribution</MDTypography>
           </MDBox>
 
-          <MDBox display="flex" justifyContent="center">
-            <MDBox mr={1.5}>
-              <MDButton
-                component={Link}
-                href="//twitter.com/intent/tweet?text=Check%20Material%20Dashboard%20React%20made%20by%20%40CreativeTim%20%23webdesign%20%23dashboard%20%23react%20%mui&url=https%3A%2F%2Fwww.creative-tim.com%2Fproduct%2Fmaterial-dashboard-react"
-                target="_blank"
-                rel="noreferrer"
-                color="dark"
-              >
-                <TwitterIcon />
-                &nbsp; Tweet
-              </MDButton>
-            </MDBox>
-            <MDButton
-              component={Link}
-              href="https://www.facebook.com/sharer/sharer.php?u=https://www.creative-tim.com/product/material-dashboard-react"
-              target="_blank"
-              rel="noreferrer"
-              color="dark"
-            >
-              <FacebookIcon />
-              &nbsp; Share
-            </MDButton>
+          <MDBox mt={2}>
+            {Object.entries(displayStats.genderCounts).map(([key, count]) => {
+              const gender = genderMap[key];
+              const percentage = totalGenderCount > 0 ? Math.round((count / totalGenderCount) * 100) : 0;
+              
+              return (
+                <MDBox key={key} mb={1}>
+                  <MDBox display="flex" alignItems="center" justifyContent="space-between" mb={0.5}>
+                    <MDTypography variant="button" fontWeight="regular" color="text">
+                      {gender}
+                    </MDTypography>
+                    <MDTypography variant="button" fontWeight="medium">
+                      {count}
+                      {` (${percentage}%)`}
+                    </MDTypography>
+                  </MDBox>
+                  <MDProgress
+                    variant="gradient"
+                    color={genderColors[key]}
+                    value={percentage}
+                  />
+                </MDBox>
+              );
+            })}
+          </MDBox>
+        </MDBox>
+
+        <Divider sx={{ my: 3 }} />
+
+        {/* Age Distribution */}
+        <MDBox>
+          <MDTypography variant="h6">Age Distribution</MDTypography>
+          
+          <MDBox mt={2}>
+            {Object.entries(displayStats.ageRanges).map(([range, count]) => {
+              const total = Object.values(displayStats.ageRanges).reduce((a, b) => a + b, 0);
+              const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+              
+              return (
+                <MDBox key={range} mb={1}>
+                  <MDBox display="flex" alignItems="center" justifyContent="space-between" mb={0.5}>
+                    <MDTypography variant="button" fontWeight="regular" color="text">
+                      {range}
+                    </MDTypography>
+                    <MDTypography variant="button" fontWeight="medium">
+                      {count}
+                      {` (${percentage}%)`}
+                    </MDTypography>
+                  </MDBox>
+                  <MDProgress
+                    variant="gradient"
+                    color="primary"
+                    value={percentage}
+                  />
+                </MDBox>
+              );
+            })}
           </MDBox>
         </MDBox>
       </MDBox>

@@ -19,6 +19,12 @@ import DataTable from "examples/Tables/DataTable";
 import UserDetail from "components/UserDetail";
 import Parse from "parse";
 
+// Material Dashboard 2 React context
+import {
+  useMaterialUIController,
+  setOpenConfigurator,
+} from "context";
+
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
@@ -60,24 +66,8 @@ function Tables() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [userDetailOpen, setUserDetailOpen] = useState(false);
   
-  // State for stats data
-  const [stats, setStats] = useState({
-    newUsersThisWeek: 0,
-    newUsersThisMonth: 0,
-    newUsersThisYear: 0,
-    ageRanges: {
-      "18-24": 0,
-      "25-34": 0,
-      "35-44": 0,
-      "45-54": 0,
-      "55+": 0
-    },
-    genderCounts: {
-      male: 0,
-      female: 0,
-      other: 0
-    }
-  });
+  // Material UI controller for Configurator
+  const [controller, dispatch] = useMaterialUIController();
   
   // Handle user type change
   const handleUserTypeChange = (type) => {
@@ -132,11 +122,6 @@ function Tables() {
       // Set the users data directly
       setUsers(users);
       setTotalUsers(result.totalUsers || 0); 
-      
-      // Set stats if available
-      if (result.stats) {
-        setStats(result.stats);
-      }
     } catch (err) {
       console.error("Error loading users with fetchUsers:", err);
       console.error("Error details:", err.message, err.code);
@@ -186,6 +171,14 @@ function Tables() {
   // Close user detail modal
   const handleCloseUserDetail = () => {
     setUserDetailOpen(false);
+  };
+  
+  // Gender mapping
+  const genderMap = {
+    1: "Woman",
+    2: "Man",
+    3: "Other",
+    4: "Not Disclosed",
   };
   
   // Get user type label
@@ -313,12 +306,11 @@ function Tables() {
         const clientPtr = row.original.clientPtr && row.original.clientPtr.attributes ? 
                           row.original.clientPtr.attributes : 
                           (row.original.clientPtr || {});
-        let genderLabel = "Other";
         
-        if (clientPtr.gender !== undefined) {
-          if (clientPtr.gender === 1) genderLabel = "Male";
-          else if (clientPtr.gender === 2) genderLabel = "Female";
-        }
+        // Get gender label from the mapping
+        const genderLabel = clientPtr.gender !== undefined && genderMap[clientPtr.gender] 
+                           ? genderMap[clientPtr.gender] 
+                           : "Unknown";
         
         return (
           <MDTypography variant="caption" fontWeight="medium">
@@ -386,117 +378,15 @@ function Tables() {
     },
   ];
 
+  // Function to open the stats configurator
+  const handleOpenConfigurator = () => {
+    setOpenConfigurator(dispatch, true);
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar onUserTypeChange={handleUserTypeChange} />
       <MDBox pt={6} pb={3}>
-        <Grid container spacing={3} mb={3}>
-          {/* Stats Cards */}
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox bgColor="white" borderRadius="lg" p={2} shadow="lg">
-              <Grid container spacing={2}>
-                <Grid item xs={8}>
-                  <MDTypography variant="h6" fontWeight="medium">Total Clients</MDTypography>
-                  <MDTypography variant="h4">{totalUsers}</MDTypography>
-                </Grid>
-                <Grid item xs={4} display="flex" justifyContent="center" alignItems="center">
-                  <MDBox 
-                    bgColor="info" 
-                    color="white" 
-                    width="4rem" 
-                    height="4rem" 
-                    borderRadius="lg"
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <Icon fontSize="large">people</Icon>
-                  </MDBox>
-                </Grid>
-              </Grid>
-            </MDBox>
-          </Grid>
-          
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox bgColor="white" borderRadius="lg" p={2} shadow="lg">
-              <Grid container spacing={2}>
-                <Grid item xs={8}>
-                  <MDTypography variant="h6" fontWeight="medium">New This Week</MDTypography>
-                  <MDTypography variant="h4">{stats.newUsersThisWeek || 0}</MDTypography>
-                </Grid>
-                <Grid item xs={4} display="flex" justifyContent="center" alignItems="center">
-                  <MDBox 
-                    bgColor="success" 
-                    color="white" 
-                    width="4rem" 
-                    height="4rem" 
-                    borderRadius="lg"
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <Icon fontSize="large">trending_up</Icon>
-                  </MDBox>
-                </Grid>
-              </Grid>
-            </MDBox>
-          </Grid>
-          
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox bgColor="white" borderRadius="lg" p={2} shadow="lg">
-              <Grid container spacing={2}>
-                <Grid item xs={8}>
-                  <MDTypography variant="h6" fontWeight="medium">New This Month</MDTypography>
-                  <MDTypography variant="h4">{stats.newUsersThisMonth || 0}</MDTypography>
-                </Grid>
-                <Grid item xs={4} display="flex" justifyContent="center" alignItems="center">
-                  <MDBox 
-                    bgColor="warning" 
-                    color="white" 
-                    width="4rem" 
-                    height="4rem" 
-                    borderRadius="lg"
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <Icon fontSize="large">date_range</Icon>
-                  </MDBox>
-                </Grid>
-              </Grid>
-            </MDBox>
-          </Grid>
-          
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox bgColor="white" borderRadius="lg" p={2} shadow="lg">
-              <Grid container spacing={2}>
-                <Grid item xs={8}>
-                  <MDTypography variant="h6" fontWeight="medium">Gender Ratio</MDTypography>
-                  <MDTypography variant="body2">
-                    Male: {stats.genderCounts?.male || 0} <br />
-                    Female: {stats.genderCounts?.female || 0} <br />
-                    Other: {stats.genderCounts?.other || 0}
-                  </MDTypography>
-                </Grid>
-                <Grid item xs={4} display="flex" justifyContent="center" alignItems="center">
-                  <MDBox 
-                    bgColor="primary" 
-                    color="white" 
-                    width="4rem" 
-                    height="4rem" 
-                    borderRadius="lg"
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <Icon fontSize="large">pie_chart</Icon>
-                  </MDBox>
-                </Grid>
-              </Grid>
-            </MDBox>
-          </Grid>
-        </Grid>
-        
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>

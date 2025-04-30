@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect, useMemo, Suspense } from "react";
+import { useState, useEffect, useMemo, Suspense, createContext } from "react";
 
 // react-router components
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
@@ -56,11 +56,22 @@ import { initDevTools } from "./utils/devTools";
 // Parse initialization
 import ParseInitializer from "./components/ParseInitializer";
 
+// Parse for cloud functions
+import Parse from "parse";
+
 // i18n (internationalization) setup
 import "./localization/i18n";
 
 // Custom PsyPsy color
 const PSYPSY_COLOR = "#899581";
+
+// App-wide stats context for use with Configurator
+export const StatsContext = createContext({
+  stats: {},
+  userType: 'clients',
+  setStats: () => {},
+  setUserType: () => {}
+});
 
 // Loading component for suspense fallback
 const LoadingFallback = () => (
@@ -91,6 +102,49 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  
+  // Stats state for the Configurator
+  const [stats, setStats] = useState({
+    newUsersThisWeek: 0,
+    newUsersThisMonth: 0,
+    newUsersThisYear: 0,
+    total: 0,
+    genderCounts: {
+      1: 0, // Woman
+      2: 0, // Man
+      3: 0, // Other
+      4: 0  // Not Disclosed
+    },
+    ageRanges: {
+      "14-17": 0,
+      "18-24": 0,
+      "25-34": 0,
+      "35-44": 0,
+      "45-54": 0,
+      "55-64": 0,
+      "65+": 0
+    }
+  });
+  const [userType, setUserType] = useState('clients');
+  
+  // Fetch stats from Parse Server
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        // Only fetch if user is authenticated
+        if (Parse.User.current()) {
+          const result = await Parse.Cloud.run("fetchUserStats", { userType });
+          if (result && result.stats) {
+            setStats(result.stats);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      }
+    };
+    
+    fetchStats();
+  }, [userType, pathname]); // Refetch when userType changes or route changes
 
   // SELECTIVELY RESTORE KEY FUNCTIONALITY
   
@@ -188,7 +242,7 @@ export default function App() {
       onClick={handleConfiguratorOpen}
     >
       <Icon fontSize="small" color="inherit">
-        settings
+        analytics
       </Icon>
     </MDBox>
   );
@@ -247,11 +301,11 @@ export default function App() {
                 onMouseEnter={handleOnMouseEnter}
                 onMouseLeave={handleOnMouseLeave}
               />
-              <Configurator />
+              <Configurator stats={stats} userType={userType} />
               {configsButton}
             </>
           )}
-          {layout === "vr" && <Configurator />}
+          {layout === "vr" && <Configurator stats={stats} userType={userType} />}
           <Routes>
             {getRoutes(routes)}
             {getFallbackRoute()}
