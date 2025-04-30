@@ -166,6 +166,11 @@ export default function App() {
     </MDBox>
   );
 
+  // Create a fallback route that doesn't use Navigate
+  const getFallbackRoute = () => {
+    return <Route path="*" element={<div />} />;
+  };
+
   return (
     <Suspense fallback={<LoadingFallback />}>
       <ParseInitializer>
@@ -188,7 +193,7 @@ export default function App() {
           {layout === "vr" && <Configurator />}
           <Routes>
             {getRoutes(routes)}
-            <Route path="*" element={<Navigate to="/dashboard" />} />
+            {getFallbackRoute()}
           </Routes>
         </ThemeProvider>
       </ParseInitializer>

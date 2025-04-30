@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 
 // react-router-dom components
 import { useLocation, NavLink, useNavigate } from "react-router-dom";
@@ -68,25 +68,30 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const collapseName = location.pathname.replace("/", "");
   const [userMenu, setUserMenu] = useState(null);
   const [username, setUsername] = useState("Guest");
+  const usernameUpdated = useRef(false);
   
   // Check Parse initialization
   const { isInitialized } = useParseInitialization();
   
-  // Update username when Parse is initialized
-  useEffect(() => {
-    if (isInitialized) {
-      try {
-        const currentUser = ParseAuth.getCurrentUser();
-        if (currentUser) {
-          // Get first name if available, otherwise fall back to username
-          const firstName = currentUser.get("firstName") || currentUser.get("first_name") || currentUser.get("username").split(" ")[0];
+  // Update username when component renders if Parse is initialized
+  // This avoids useEffect and potential infinite loops
+  if (isInitialized && !usernameUpdated.current) {
+    try {
+      const currentUser = ParseAuth.getCurrentUser();
+      if (currentUser) {
+        const firstName = currentUser.get("firstName") || 
+                         currentUser.get("first_name") || 
+                         currentUser.get("username").split(" ")[0];
+        if (firstName && firstName !== username) {
           setUsername(firstName);
+          usernameUpdated.current = true;
         }
-      } catch (error) {
-        console.error("Error getting current user:", error);
       }
+    } catch (error) {
+      console.error("Error getting current user:", error);
+      usernameUpdated.current = true; // Mark as updated even on error to prevent retries
     }
-  }, [isInitialized]);
+  }
   
   // Custom color for our app
   const customColor = color || "dark";
@@ -101,25 +106,17 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
 
+  // Remove the automatic mini sidenav setting based on window size
+  // This was likely causing infinite loops with the dispatch
   useEffect(() => {
-    // A function that sets the mini state of the sidenav.
-    function handleMiniSidenav() {
-      setMiniSidenav(dispatch, window.innerWidth < 1200);
-      setTransparentSidenav(dispatch, window.innerWidth < 1200 ? false : transparentSidenav);
-      setWhiteSidenav(dispatch, window.innerWidth < 1200 ? false : whiteSidenav);
+    // Only set sidenav state on initial load based on window size
+    // Do not add event listeners or other things that may cause loops
+    if (window.innerWidth < 1200 && !miniSidenav) {
+      setMiniSidenav(dispatch, true);
     }
-
-    /** 
-     The event listener that's calling the handleMiniSidenav function when resizing the window.
-    */
-    window.addEventListener("resize", handleMiniSidenav);
-
-    // Call the handleMiniSidenav function to set the state with the initial value.
-    handleMiniSidenav();
-
-    // Remove event listener on cleanup
-    return () => window.removeEventListener("resize", handleMiniSidenav);
-  }, [dispatch, location]);
+    
+    // No event listeners, no cleanup needed
+  }, []); // Empty dependency array to only run once
 
   // User menu handlers
   const handleUserMenuOpen = (event) => setUserMenu(event.currentTarget);
@@ -173,151 +170,155 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   // Create additional menu items for lock and logout
   const additionalMenuItems = []; // We'll handle these separately in the footer
 
-  // Setting the routes based on menu type
-  const menu = routes.find((route) => route.menu)?.subRoutes || routes;
-  
-  // Add the settings option after Parse Data
-  const modifiedMenu = [...menu];
-  
-  // Find where to add the Settings option (after Parse Data)
-  const parseDataIndex = modifiedMenu.findIndex(item => item.key === "parse-data");
-  if (parseDataIndex !== -1) {
-    const settingsOption = {
-      type: "collapse",
-      name: `${username}`,
-      key: "profile",
-      icon: "settings",
-      route: "/profile",
-      iconColor: "white",
-    };
+  // Use useMemo to create modified routes only when dependencies change
+  const allRoutes = useMemo(() => {
+    // Setting the routes based on menu type
+    const menu = routes.find((route) => route.menu)?.subRoutes || routes;
     
-    // Insert the settings option right after Parse Data
-    modifiedMenu.splice(parseDataIndex + 1, 0, settingsOption);
-  }
-  
-  // Ensure all icons are white
-  modifiedMenu.forEach(item => {
-    if (item.type === "collapse") {
-      item.iconColor = "white";
+    // Add the settings option after Parse Data
+    const modifiedMenu = [...menu];
+    
+    // Find where to add the Settings option (after Parse Data)
+    const parseDataIndex = modifiedMenu.findIndex(item => item.key === "parse-data");
+    if (parseDataIndex !== -1) {
+      const settingsOption = {
+        type: "collapse",
+        name: `${username}`,
+        key: "profile",
+        icon: "settings",
+        route: "/profile",
+        iconColor: "white",
+      };
+      
+      // Insert the settings option right after Parse Data
+      modifiedMenu.splice(parseDataIndex + 1, 0, settingsOption);
     }
-  });
-  
-  // Use only the modified menu routes
-  const allRoutes = [...modifiedMenu];
-
-  // Render all the routes from the routes.js (All the visible items on the Sidenav)
-  const renderRoutes = allRoutes.map(({ type, name, icon, title, route, href, key, onClick, iconColor, actions }) => {
-    let returnValue;
-
-    if (type === "collapse") {
-      if (onClick) {
-        // For items with onClick handler (lock and logout)
-        returnValue = (
-          <div key={key} onClick={onClick} style={{ cursor: "pointer" }}>
-            <SidenavCollapse name={name} icon={icon} active={key === collapseName} noCollapse iconColor={iconColor || "inherit"} />
-          </div>
-        );
-      } else if (href) {
-        returnValue = (
-          <Link
-            href={href}
-            key={key}
-            target="_blank"
-            rel="noreferrer"
-            sx={{ textDecoration: "none" }}
-          >
-            <SidenavCollapse
-              name={name}
-              icon={icon}
-              active={key === collapseName}
-              noCollapse={href}
-              iconColor={iconColor || "inherit"}
-            />
-          </Link>
-        );
-      } else {
-        returnValue = (
-          <NavLink key={key} to={route}>
-            <SidenavCollapse name={name} icon={icon} active={key === collapseName} iconColor={iconColor || "inherit"} />
-          </NavLink>
-        );
+    
+    // Ensure all icons are white
+    modifiedMenu.forEach(item => {
+      if (item.type === "collapse") {
+        item.iconColor = "white";
       }
-    } else if (type === "title") {
-      returnValue = (
-        <MDTypography
-          key={key}
-          color={textColor}
-          display="block"
-          variant="caption"
-          fontWeight="bold"
-          textTransform="uppercase"
-          pl={3}
-          mt={2}
-          mb={1}
-          ml={1}
-        >
-          {title}
-        </MDTypography>
-      );
-    } else if (type === "divider") {
-      returnValue = (
-        <Divider
-          key={key}
-          light={true}
-          sx={{
-            opacity: 0.3,
-            borderColor: 'rgba(255,255,255,0.2)'
-          }}
-        />
-      );
-    } else if (type === "actions-row") {
-      // Render multiple actions in a row
-      returnValue = (
-        <MDBox
-          key={key}
-          display="flex"
-          justifyContent="space-around"
-          px={2}
-          mt={1}
-          mb={1}
-        >
-          {actions.map((action) => (
-            <MDBox 
-              key={action.key}
-              onClick={action.onClick}
-              sx={{
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                width: '50%'
-              }}
+    });
+    
+    return modifiedMenu;
+  }, [routes, username]); // Only recalculate when routes or username changes
+
+  // Memoize the rendered routes to prevent recreating on every render
+  const renderedRoutes = useMemo(() => {
+    return allRoutes.map(({ type, name, icon, title, route, href, key, onClick, iconColor, actions }) => {
+      let returnValue;
+  
+      if (type === "collapse") {
+        if (onClick) {
+          // For items with onClick handler (lock and logout)
+          returnValue = (
+            <div key={key} onClick={onClick} style={{ cursor: "pointer" }}>
+              <SidenavCollapse name={name} icon={icon} active={key === collapseName} noCollapse iconColor={iconColor || "inherit"} />
+            </div>
+          );
+        } else if (href) {
+          returnValue = (
+            <Link
+              href={href}
+              key={key}
+              target="_blank"
+              rel="noreferrer"
+              sx={{ textDecoration: "none" }}
             >
-              <Icon
+              <SidenavCollapse
+                name={name}
+                icon={icon}
+                active={key === collapseName}
+                noCollapse={href}
+                iconColor={iconColor || "inherit"}
+              />
+            </Link>
+          );
+        } else {
+          returnValue = (
+            <NavLink key={key} to={route}>
+              <SidenavCollapse name={name} icon={icon} active={key === collapseName} iconColor={iconColor || "inherit"} />
+            </NavLink>
+          );
+        }
+      } else if (type === "title") {
+        returnValue = (
+          <MDTypography
+            key={key}
+            color={textColor}
+            display="block"
+            variant="caption"
+            fontWeight="bold"
+            textTransform="uppercase"
+            pl={3}
+            mt={2}
+            mb={1}
+            ml={1}
+          >
+            {title}
+          </MDTypography>
+        );
+      } else if (type === "divider") {
+        returnValue = (
+          <Divider
+            key={key}
+            light={true}
+            sx={{
+              opacity: 0.3,
+              borderColor: 'rgba(255,255,255,0.2)'
+            }}
+          />
+        );
+      } else if (type === "actions-row") {
+        // Render multiple actions in a row
+        returnValue = (
+          <MDBox
+            key={key}
+            display="flex"
+            justifyContent="space-around"
+            px={2}
+            mt={1}
+            mb={1}
+          >
+            {actions.map((action) => (
+              <MDBox 
+                key={action.key}
+                onClick={action.onClick}
                 sx={{
-                  color: action.iconColor || 'white',
-                  fontSize: '1.3rem',
-                  mb: 0.5
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  width: '50%'
                 }}
               >
-                {action.icon}
-              </Icon>
-              <MDTypography
-                variant="button"
-                color="white"
-                fontWeight="regular"
-                sx={{ fontSize: '0.75rem' }}
-              >
-                {action.name}
-              </MDTypography>
-            </MDBox>
-          ))}
-        </MDBox>
-      );
-    }
-
-    return returnValue;
-  });
+                <Icon
+                  sx={{
+                    color: action.iconColor || 'white',
+                    fontSize: '1.3rem',
+                    mb: 0.5
+                  }}
+                >
+                  {action.icon}
+                </Icon>
+                <MDTypography
+                  variant="button"
+                  color="white"
+                  fontWeight="regular"
+                  sx={{ fontSize: '0.75rem' }}
+                >
+                  {action.name}
+                </MDTypography>
+              </MDBox>
+            ))}
+          </MDBox>
+        );
+      }
+  
+      return returnValue;
+    });
+  }, [allRoutes, collapseName, textColor]);
 
   // Brand component displayed inside the Sidenav
   const Brand = () => (
@@ -368,7 +369,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           }}
         />
       </MDBox>
-      <List>{renderRoutes}</List>
+      <List>{renderedRoutes}</List>
       
       {/* Language switcher and city skyline */}
       <MDBox 

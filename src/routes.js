@@ -94,6 +94,14 @@ const protectedRoutes = [
 // Public routes - accessible without authentication
 const publicRoutes = [
   {
+    type: "collapse",
+    name: "Login",
+    key: "login",
+    icon: <Icon fontSize="small">login</Icon>,
+    route: "/authentication/login",
+    component: <Login />,
+  },
+  {
     name: "Lock",
     key: "lock",
     icon: <Icon fontSize="small">lock</Icon>,

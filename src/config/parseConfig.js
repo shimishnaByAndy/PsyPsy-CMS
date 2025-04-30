@@ -9,7 +9,8 @@ const devConfig = {
     serverURL: 'http://10.0.0.71:1337/parse',
     javascriptKey: process.env.REACT_APP_PARSE_JS_KEY,
     liveQuery: false,
-    enableLocalDatastore: true
+    enableLocalDatastore: true,
+    masterKey: process.env.MASTER_KEY
 };
 
 const prodConfig = {
@@ -17,7 +18,8 @@ const prodConfig = {
     serverURL: process.env.REACT_APP_PARSE_SERVER_URL,
     javascriptKey: process.env.REACT_APP_PARSE_JS_KEY,
     liveQuery: true,
-    enableLocalDatastore: false
+    enableLocalDatastore: false,
+    masterKey: process.env.MASTER_KEY
 };
   
 

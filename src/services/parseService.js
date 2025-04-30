@@ -4,61 +4,14 @@
 
 import Parse from 'parse';
 
-// Default connection parameters
-// Replace these with your actual Parse Server details
-const DEFAULT_APP_ID = 'your_app_id';
-const DEFAULT_SERVER_URL = 'https://your-parse-server.com/parse';
-const DEFAULT_JAVASCRIPT_KEY = 'your_javascript_key';
-const DEFAULT_MASTER_KEY = 'your_master_key'; // Only use in secure environments
-
 // Keys for localStorage
 const REMEMBER_ME_KEY = 'psypsy_remember_me';
 const SESSION_TOKEN_KEY = 'Parse/sessionToken';
 
 /**
- * Initializes Parse with the given parameters
- * @param {Object} options - Parse initialization options
- * @param {string} options.appId - Your Parse app ID
- * @param {string} options.serverURL - URL to your Parse server
- * @param {string} options.javascriptKey - JavaScript key for your Parse app
- * @param {boolean} options.enableLocalDatastore - Whether to enable local datastore (defaults to false)
- * @param {boolean} options.liveQuery - Whether to enable LiveQuery
- * @returns {Object} Parse instance
- */
-export const initializeParse = (options = {}) => {
-  const {
-    appId = DEFAULT_APP_ID,
-    serverURL = DEFAULT_SERVER_URL,
-    javascriptKey = DEFAULT_JAVASCRIPT_KEY,
-    enableLocalDatastore = false,
-    liveQuery = false,
-  } = options;
-
-  // Enable local datastore if specified
-  if (enableLocalDatastore) {
-    Parse.enableLocalDatastore();
-  }
-
-  // Before initialize Parse, check if session should be cleared
-  checkRememberMeState();
-
-  // Initialize Parse
-  Parse.initialize(appId, javascriptKey);
-  Parse.serverURL = serverURL;
-
-  // Enable LiveQuery if needed
-  if (liveQuery) {
-    Parse.liveQueryServerURL = serverURL.replace(/^https?:\/\//, 'wss://');
-  }
-
-  console.log('Parse initialized with appId:', appId);
-  return Parse;
-};
-
-/**
  * Checks if the user should be remembered and handles session state accordingly
  */
-const checkRememberMeState = () => {
+export const checkRememberMeState = () => {
   const rememberMe = localStorage.getItem(REMEMBER_ME_KEY) === 'true';
   
   // If remember me is not checked, clear the session immediately on app load
@@ -73,13 +26,25 @@ const checkRememberMeState = () => {
 /**
  * Clears the user session completely
  */
-const clearUserSession = () => {
+export const clearUserSession = () => {
   // Remove session token from localStorage
   localStorage.removeItem(SESSION_TOKEN_KEY);
   
-  // No need to call Parse.User.logOut() here because Parse hasn't been initialized yet
-  // The session will be effectively cleared when Parse reads from localStorage
+  // Also try to log out the current user if Parse is initialized
+  try {
+    if (Parse.User.current()) {
+      Parse.User.logOut();
+    }
+  } catch (e) {
+    console.log('Parse not initialized yet, session token removed from storage');
+  }
 };
+
+// Run the remember me check when this module loads
+// This should happen after Parse is initialized elsewhere
+setTimeout(() => {
+  checkRememberMeState();
+}, 0);
 
 /**
  * User authentication methods
@@ -347,13 +312,192 @@ export const ParseData = {
   }
 };
 
+/**
+ * User management service - Read-only operations
+ */
+export const UserService = {
+  /**
+   * Get users with filtering by type and search
+   * @param {string} userType - Filter by user type ('all', 'professionals', 'clients', 'admins')
+   * @param {number} page - Page number for pagination (0-based)
+   * @param {number} limit - Number of items per page
+   * @param {string} search - Search term for username or email
+   * @param {string} sortBy - Field to sort by
+   * @param {string} sortDirection - Sort direction ('asc' or 'desc')
+   * @returns {Promise<Object>} Object with results, total count, and pagination info
+   */
+  getUsers: async (
+    userType = 'all',
+    page = 0,
+    limit = 10,
+    search = '',
+    sortBy = 'createdAt',
+    sortDirection = 'desc'
+  ) => {
+    const query = new Parse.Query(Parse.User);
+    
+    // Apply user type filter
+    if (userType !== 'all') {
+      const userTypeMap = {
+        'professionals': 1,
+        'clients': 2,
+        'admins': 0
+      };
+      query.equalTo('userType', userTypeMap[userType]);
+    }
+    
+    // Apply search if provided
+    if (search) {
+      const usernameQuery = new Parse.Query(Parse.User);
+      usernameQuery.matches('username', new RegExp(search, 'i'));
+      
+      const emailQuery = new Parse.Query(Parse.User);
+      emailQuery.matches('email', new RegExp(search, 'i'));
+      
+      const mainQuery = Parse.Query.or(usernameQuery, emailQuery);
+      query._orQuery([mainQuery]);
+    }
+    
+    // Include pointers based on user type
+    query.include('professionalPtr');
+    query.include('clientPtr');
+    query.include('adminPtr');
+    
+    // Apply pagination
+    query.limit(limit);
+    query.skip(page * limit);
+    
+    // Apply sorting
+    if (sortDirection === 'asc') {
+      query.ascending(sortBy);
+    } else {
+      query.descending(sortBy);
+    }
+    
+    try {
+      // Use master key for querying users
+      const results = await query.find({ useMasterKey: true });
+      const count = await query.count({ useMasterKey: true });
+      
+      // Transform results to frontend-friendly format
+      const transformedResults = results.map(user => UserService.transformUserObject(user));
+      
+      return {
+        results: transformedResults,
+        total: count,
+        page,
+        limit
+      };
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      throw error;
+    }
+  },
+  
+  /**
+   * Get a user by ID
+   * @param {string} userId - User ID to fetch
+   * @returns {Promise<Object>} User object with related data
+   */
+  getUserById: async (userId) => {
+    const query = new Parse.Query(Parse.User);
+    query.equalTo('objectId', userId);
+    
+    // Include related objects
+    query.include('professionalPtr');
+    query.include('clientPtr');
+    query.include('adminPtr');
+    
+    try {
+      // Use master key for querying users
+      const user = await query.first({ useMasterKey: true });
+      
+      if (!user) {
+        throw new Error(`User with ID ${userId} not found`);
+      }
+      
+      return UserService.transformUserObject(user);
+    } catch (error) {
+      console.error(`Error fetching user with ID ${userId}:`, error);
+      throw error;
+    }
+  },
+  
+  /**
+   * Transform Parse User object to frontend-friendly format
+   * @param {Parse.User} parseUser - Parse User object
+   * @returns {Object} Transformed user object
+   */
+  transformUserObject: (parseUser) => {
+    const user = {
+      id: parseUser.id,
+      username: parseUser.get('username'),
+      email: parseUser.get('email'),
+      emailVerified: parseUser.get('emailVerified'),
+      userType: parseUser.get('userType'),
+      createdAt: parseUser.get('createdAt'),
+      updatedAt: parseUser.get('updatedAt'),
+      isBlocked: parseUser.get('isBlocked') || false,
+      roleNames: parseUser.get('roleNames') || []
+    };
+    
+    // Add professional data if available
+    if (parseUser.get('userType') === 1 && parseUser.get('professionalPtr')) {
+      const professional = parseUser.get('professionalPtr');
+      user.professional = {
+        id: professional.id,
+        firstName: professional.get('firstName'),
+        lastName: professional.get('lastName'),
+        profType: professional.get('profType'),
+        businessName: professional.get('businessName'),
+        servOfferedArr: professional.get('servOfferedArr') || [],
+        offeredLangArr: professional.get('offeredLangArr') || [],
+        meetType: professional.get('meetType'),
+        expertises: professional.get('expertises') || [],
+        bussEmail: professional.get('bussEmail'),
+        bussPhoneNb: professional.get('bussPhoneNb')
+      };
+    }
+    
+    // Add client data if available
+    if (parseUser.get('userType') === 2 && parseUser.get('clientPtr')) {
+      const client = parseUser.get('clientPtr');
+      user.client = {
+        id: client.id,
+        firstName: client.get('firstName'),
+        lastName: client.get('lastName'),
+        dob: client.get('dob'),
+        gender: client.get('gender'),
+        spokenLangArr: client.get('spokenLangArr') || [],
+        phoneNb: client.get('phoneNb'),
+        searchRadius: client.get('searchRadius')
+      };
+      
+      // Add geolocation if available
+      if (client.get('geoPt')) {
+        user.client.location = {
+          latitude: client.get('geoPt').latitude,
+          longitude: client.get('geoPt').longitude
+        };
+      }
+      
+      // Add address if available
+      if (client.get('addressObj')) {
+        user.client.address = client.get('addressObj');
+      }
+    }
+    
+    return user;
+  }
+};
+
 // Export Parse instance for direct usage if needed
 export { Parse };
 
 // Default export with all services
 export default {
-  initialize: initializeParse,
   Auth: ParseAuth,
   Data: ParseData,
+  User: UserService,
   Parse,
 }; 
