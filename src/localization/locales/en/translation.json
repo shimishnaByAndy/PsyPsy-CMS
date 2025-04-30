@@ -15,7 +15,17 @@
     "settings": "Settings",
     "noAccount": "Don't have an account?",
     "rememberMe": "Remember me",
-    "forgotPassword": "Forgot password?"
+    "forgotPassword": "Forgot password?",
+    "previous": "Previous",
+    "next": "Next",
+    "showing": "Showing",
+    "results": "Results",
+    "of": "of",
+    "filter": "Filter",
+    "apply": "Apply",
+    "clear": "Clear",
+    "noRecords": "No records found",
+    "loading": "Loading data..."
   },
   "footer": {
     "madeWith": "Made with",
@@ -105,6 +115,12 @@
       "monthsAgo": "{{count}}mo ago",
       "inactive": "Inactive",
       "never": "Never"
+    },
+    "filters": {
+      "title": "Filters",
+      "age": "Age",
+      "gender": "Gender",
+      "lastSeen": "Last Seen"
     }
   },
   "parseData": {

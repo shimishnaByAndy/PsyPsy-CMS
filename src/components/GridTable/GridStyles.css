@@ -1,0 +1,135 @@
+/* Custom styles for GridJS integration with Material Dashboard */
+
+.custom-gridjs-container {
+  border: none;
+  box-shadow: none;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.custom-gridjs-table {
+  border: none;
+  box-shadow: none;
+  width: 100%;
+}
+
+.custom-gridjs-th {
+  padding: 16px;
+  text-align: left;
+  background-color: #f8f9fa;
+  color: #344767;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  border-bottom: 1px solid #ddd;
+}
+
+.custom-gridjs-td {
+  padding: 16px;
+  font-size: 0.875rem;
+  color: #344767;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.custom-gridjs-search {
+  margin: 16px 0;
+  width: 100%;
+  max-width: 420px;
+}
+
+.custom-gridjs-search input {
+  border: 1px solid #d2d6da;
+  border-radius: 0.5rem;
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.custom-gridjs-search input:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+  outline: 0;
+}
+
+.custom-gridjs-footer {
+  padding: 16px;
+  border-top: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gridjs-pagination {
+  margin-top: 0;
+}
+
+.gridjs-pagination .gridjs-pages button {
+  border: 1px solid #d2d6da;
+  background-color: transparent;
+  color: #344767;
+  padding: 6px 12px;
+  margin: 0 3px;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: all 0.15s ease;
+}
+
+.gridjs-pagination .gridjs-pages button:hover:not(:disabled) {
+  background-color: #f8f9fa;
+  border-color: #d2d6da;
+  color: #344767;
+}
+
+.gridjs-pagination .gridjs-pages button.gridjs-currentPage {
+  background-color: #4CAF50;
+  border-color: #4CAF50;
+  color: white;
+}
+
+.gridjs-pagination .gridjs-summary {
+  color: #7b809a;
+  font-size: 0.875rem;
+}
+
+.gridjs-pagination .gridjs-pages button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gridjs-sort {
+  background-position: center right;
+  padding-right: 18px;
+}
+
+.gridjs-sort-asc,
+.gridjs-sort-desc {
+  background-size: 10px;
+}
+
+/* Custom button styling */
+.gridjs-view-btn {
+  background-color: transparent;
+  color: #2196F3;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  padding: 6px 10px;
+  border-radius: 0.5rem;
+  transition: background-color 0.15s ease;
+}
+
+.gridjs-view-btn:hover {
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+.gridjs-view-btn i {
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+/* Grid loading styles */
+.gridjs-loading-bar {
+  background-color: #4CAF50;
+} 

@@ -20,6 +20,11 @@ import DataTable from "examples/Tables/DataTable";
 import UserDetail from "components/UserDetail";
 import Parse from "parse";
 
+// Import new Grid components
+import GridTable from "components/GridTable";
+import GridTableFilter from "components/GridTableFilter";
+import "components/GridTable/GridStyles.css";
+
 // Material Dashboard 2 React context
 import {
   useMaterialUIController,
@@ -34,6 +39,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import LinearProgress from '@mui/material/LinearProgress';
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -63,7 +70,9 @@ function Tables() {
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");  
-  const [userType, setUserType] = useState(localStorage.getItem('selectedUserType') || 'all'); 
+  const [userType, setUserType] = useState(localStorage.getItem('selectedUserType') || 'all');
+  const [filters, setFilters] = useState({});
+  const [useGridTable, setUseGridTable] = useState(true);
   
   // State for user detail modal
   const [selectedUser, setSelectedUser] = useState(null);
@@ -93,6 +102,16 @@ function Tables() {
   const handleLimitChange = (newLimit) => {
     setLimit(newLimit);
     setPage(0); // Reset to first page when changing limit
+  };
+  
+  // Handle filters
+  const handleFilter = (newFilters) => {
+    setFilters(newFilters);
+    setPage(0); // Reset to first page when applying filters
+    
+    // Here you would normally trigger a new data fetch with the applied filters
+    // For demo purposes, we're just logging the filters
+    console.log('Applied filters:', newFilters);
   };
   
   // Load users data
@@ -408,30 +427,59 @@ function Tables() {
                 <MDTypography variant="h6" color="white">
                   {t("tables.clientManagement")}
                 </MDTypography>
-                <MDBox width="40%">
-                  <TextField
-                    fullWidth
-                    placeholder={t("tables.searchUsers")}
-                    value={search}
-                    onChange={handleSearch}
-                    variant="outlined"
-                    size="small"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Icon sx={{ color: "white" }}>search</Icon>
-                        </InputAdornment>
-                      ),
-                      sx: {
-                        color: "white",
-                        "&::placeholder": { color: "white" },
-                        "& .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255, 255, 255, 0.5)" },
-                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "white" }
-                      }
-                    }}
+                <MDBox display="flex" alignItems="center">
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={useGridTable}
+                        onChange={() => setUseGridTable(!useGridTable)}
+                        color="default"
+                        sx={{ 
+                          '& .MuiSwitch-track': { backgroundColor: 'white' },
+                          '& .MuiSwitch-thumb': { backgroundColor: useGridTable ? '#4CAF50' : 'white' }
+                        }}
+                      />
+                    }
+                    label={
+                      <MDTypography variant="button" color="white">
+                        {useGridTable ? "Grid Table" : "Default Table"}
+                      </MDTypography>
+                    }
+                    sx={{ mr: 2, color: 'white' }}
                   />
+                  <MDBox width="100%">
+                    <TextField
+                      fullWidth
+                      placeholder={t("tables.searchUsers")}
+                      value={search}
+                      onChange={handleSearch}
+                      variant="outlined"
+                      size="small"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Icon sx={{ color: "white" }}>search</Icon>
+                          </InputAdornment>
+                        ),
+                        sx: {
+                          color: "white",
+                          "&::placeholder": { color: "white" },
+                          "& .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255, 255, 255, 0.5)" },
+                          "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "white" }
+                        }
+                      }}
+                    />
+                  </MDBox>
                 </MDBox>
               </MDBox>
+              
+              {/* Display GridTableFilter only when GridTable is used */}
+              {useGridTable && (
+                <MDBox px={2} pt={3}>
+                  <GridTableFilter onFilter={handleFilter} />
+                </MDBox>
+              )}
+              
               <MDBox pt={3} px={2}>
                 {loading ? (
                   <MDBox display="flex" justifyContent="center" p={4}>
@@ -441,7 +489,22 @@ function Tables() {
                   <MDBox display="flex" justifyContent="center" p={4}>
                     <MDTypography color="error">{error}</MDTypography>
                   </MDBox>
+                ) : useGridTable ? (
+                  /* Render GridTable component */
+                  <GridTable
+                    data={users}
+                    columns={userColumns}
+                    loading={loading}
+                    error={error}
+                    onViewUser={handleViewUser}
+                    pagination={true}
+                    search={true}
+                    sort={true}
+                    limit={limit}
+                    totalCount={totalUsers}
+                  />
                 ) : (
+                  /* Render original DataTable component */
                   <DataTable
                     table={{ columns: userColumns, rows: users }}
                     isSorted={false}
