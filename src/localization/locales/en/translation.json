@@ -51,6 +51,62 @@
       "error": "Registration failed. Please try again."
     }
   },
+  "statistics": {
+    "title": "User Statistics",
+    "clientTitle": "Client Stats",
+    "professionalTitle": "Professional Stats",
+    "subtitle": "See our dashboard statistics.",
+    "total": "Total",
+    "totalClients": "Total Clients",
+    "totalProfessionals": "Total Professionals",
+    "newUsers": "New Users",
+    "timeframes": {
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "thisYear": "This Year"
+    },
+    "distributions": {
+      "gender": {
+        "title": "Gender Distribution",
+        "woman": "Woman",
+        "man": "Man",
+        "other": "Other",
+        "notDisclosed": "Not Disclosed"
+      },
+      "age": {
+        "title": "Age Distribution",
+        "range14_17": "14-17",
+        "range18_24": "18-24",
+        "range25_34": "25-34",
+        "range35_44": "35-44",
+        "range45_54": "45-54",
+        "range55_64": "55-64",
+        "range65Plus": "65+"
+      }
+    }
+  },
+  "tables": {
+    "clientManagement": "Client Management",
+    "searchUsers": "Search users...",
+    "columns": {
+      "name": "Name",
+      "age": "Age",
+      "gender": "Gender",
+      "phone": "Phone",
+      "lastSeen": "Last Seen",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "View"
+    },
+    "timeIndicators": {
+      "hoursAgo": "{{count}}h ago",
+      "daysAgo": "{{count}}d ago",
+      "monthsAgo": "{{count}}mo ago",
+      "inactive": "Inactive",
+      "never": "Never"
+    }
+  },
   "parseData": {
     "title": "Parse Server Data Example",
     "subtitle": "Connect and interact with your Parse Server database",

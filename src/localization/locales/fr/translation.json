@@ -51,6 +51,62 @@
       "error": "Échec de l'inscription. Veuillez réessayer."
     }
   },
+  "statistics": {
+    "title": "Statistiques Utilisateur",
+    "clientTitle": "Statistiques Clients",
+    "professionalTitle": "Statistiques Professionnels",
+    "subtitle": "Consultez nos statistiques.",
+    "total": "Total",
+    "totalClients": "Total des Clients",
+    "totalProfessionals": "Total des Professionnels",
+    "newUsers": "Nouveaux Utilisateurs",
+    "timeframes": {
+      "thisWeek": "Cette Semaine",
+      "thisMonth": "Ce Mois",
+      "thisYear": "Cette Année"
+    },
+    "distributions": {
+      "gender": {
+        "title": "Répartition par Genre",
+        "woman": "Femme",
+        "man": "Homme",
+        "other": "Autre",
+        "notDisclosed": "Non Divulgué"
+      },
+      "age": {
+        "title": "Répartition par Âge",
+        "range14_17": "14-17",
+        "range18_24": "18-24",
+        "range25_34": "25-34",
+        "range35_44": "35-44",
+        "range45_54": "45-54",
+        "range55_64": "55-64",
+        "range65Plus": "65+"
+      }
+    }
+  },
+  "tables": {
+    "clientManagement": "Gestion des Clients",
+    "searchUsers": "Rechercher des utilisateurs...",
+    "columns": {
+      "name": "Nom",
+      "age": "Âge",
+      "gender": "Genre",
+      "phone": "Téléphone",
+      "lastSeen": "Dernière Connexion",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "Voir"
+    },
+    "timeIndicators": {
+      "hoursAgo": "Il y a {{count}}h",
+      "daysAgo": "Il y a {{count}}j",
+      "monthsAgo": "Il y a {{count}}m",
+      "inactive": "Inactif",
+      "never": "Jamais"
+    }
+  },
   "parseData": {
     "title": "Exemple de données du serveur Parse",
     "subtitle": "Connectez-vous et interagissez avec votre base de données Parse Server",

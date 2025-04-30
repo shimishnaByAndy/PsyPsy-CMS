@@ -14,6 +14,7 @@ Coded by www.creative-tim.com
 */
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { UserService } from "services/parseService";
 import DataTable from "examples/Tables/DataTable";
 import UserDetail from "components/UserDetail";
@@ -49,6 +50,8 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import projectsTableData from "layouts/tables/data/projectsTableData";
 
 function Tables() {
+  const { t } = useTranslation();
+  
   // Get project table data
   const { columns: pColumns, rows: pRows } = projectsTableData();
   
@@ -173,12 +176,12 @@ function Tables() {
     setUserDetailOpen(false);
   };
   
-  // Gender mapping
+  // Gender mapping with translations
   const genderMap = {
-    1: "Woman",
-    2: "Man",
-    3: "Other",
-    4: "Not Disclosed",
+    1: t("statistics.distributions.gender.woman"),
+    2: t("statistics.distributions.gender.man"),
+    3: t("statistics.distributions.gender.other"),
+    4: t("statistics.distributions.gender.notDisclosed"),
   };
   
   // Get user type label
@@ -212,7 +215,7 @@ function Tables() {
   
   // Helper function to format last seen date with color
   const formatLastSeen = (lastSeenDate) => {
-    if (!lastSeenDate) return { text: 'Never', color: 'error' };
+    if (!lastSeenDate) return { text: t("tables.timeIndicators.never"), color: 'error' };
     
     const now = new Date();
     const lastSeen = new Date(lastSeenDate);
@@ -223,27 +226,27 @@ function Tables() {
     
     if (diffHours < 24) {
       return { 
-        text: `${Math.round(diffHours)}h ago`, 
+        text: t("tables.timeIndicators.hoursAgo", { count: Math.round(diffHours) }),
         color: 'success' 
       };
     } else if (diffDays < 7) {
       return { 
-        text: `${Math.round(diffDays)}d ago`, 
+        text: t("tables.timeIndicators.daysAgo", { count: Math.round(diffDays) }),
         color: 'success' 
       };
     } else if (diffDays < 30) {
       return { 
-        text: `${Math.round(diffDays)}d ago`, 
+        text: t("tables.timeIndicators.daysAgo", { count: Math.round(diffDays) }),
         color: 'warning' 
       };
     } else if (diffMonths < 3) {
       return { 
-        text: `${Math.round(diffMonths)}mo ago`, 
+        text: t("tables.timeIndicators.monthsAgo", { count: Math.round(diffMonths) }),
         color: 'warning' 
       };
     } else {
       return { 
-        text: 'Inactive', 
+        text: t("tables.timeIndicators.inactive"),
         color: 'error' 
       };
     }
@@ -252,7 +255,7 @@ function Tables() {
   // Prepare user table columns
   const userColumns = [
     { 
-      Header: "Name", 
+      Header: t("tables.columns.name"), 
       accessor: "name", 
       width: "30%",
       Cell: ({ row }) => {
@@ -275,7 +278,7 @@ function Tables() {
       }
     },
     { 
-      Header: "Age", 
+      Header: t("tables.columns.age"), 
       accessor: "age", 
       width: "15%",
       Cell: ({ row }) => {
@@ -299,7 +302,7 @@ function Tables() {
       }
     },
     { 
-      Header: "Gender", 
+      Header: t("tables.columns.gender"), 
       accessor: "gender", 
       width: "15%",
       Cell: ({ row }) => {
@@ -320,7 +323,7 @@ function Tables() {
       }
     },
     { 
-      Header: "Phone", 
+      Header: t("tables.columns.phone"), 
       accessor: "phone", 
       width: "20%",
       Cell: ({ row }) => {
@@ -336,7 +339,7 @@ function Tables() {
       }
     },
     { 
-      Header: "Last Seen", 
+      Header: t("tables.columns.lastSeen"), 
       accessor: "lastSeen", 
       width: "20%",
       Cell: ({ row }) => {
@@ -363,7 +366,7 @@ function Tables() {
       }
     },
     { 
-      Header: "Actions", 
+      Header: t("tables.columns.actions"), 
       accessor: "actions", 
       width: "10%",
       Cell: ({ row }) => (
@@ -372,7 +375,7 @@ function Tables() {
           color="info"
           onClick={() => handleViewUser(row.original.objectId || row.original.id)}
         >
-          <Icon>visibility</Icon>&nbsp;View
+          <Icon>visibility</Icon>&nbsp;{t("tables.actions.view")}
         </MDButton>
       )
     },
@@ -403,12 +406,12 @@ function Tables() {
                 alignItems="center"
               >
                 <MDTypography variant="h6" color="white">
-                  Client Management
+                  {t("tables.clientManagement")}
                 </MDTypography>
                 <MDBox width="40%">
                   <TextField
                     fullWidth
-                    placeholder="Search users..."
+                    placeholder={t("tables.searchUsers")}
                     value={search}
                     onChange={handleSearch}
                     variant="outlined"

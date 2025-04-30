@@ -14,6 +14,7 @@ Coded by www.creative-tim.com
 */
 
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 // @mui material components
 import Divider from "@mui/material/Divider";
@@ -38,6 +39,7 @@ import {
 
 function Configurator({ stats = {}, userType = "clients" }) {
   const [controller, dispatch] = useMaterialUIController();
+  const { t } = useTranslation();
   const {
     openConfigurator,
     darkMode,
@@ -57,12 +59,12 @@ function Configurator({ stats = {}, userType = "clients" }) {
     setDarkMode(dispatch, !darkMode);
   };
 
-  // Gender mapping
+  // Gender mapping with translation keys
   const genderMap = {
-    1: "Woman",
-    2: "Man",
-    3: "Other",
-    4: "Not Disclosed",
+    1: t("statistics.distributions.gender.woman"),
+    2: t("statistics.distributions.gender.man"),
+    3: t("statistics.distributions.gender.other"),
+    4: t("statistics.distributions.gender.notDisclosed"),
   };
   
   // Default stats if none provided
@@ -106,11 +108,11 @@ function Configurator({ stats = {}, userType = "clients" }) {
   const getTitle = () => {
     switch (userType) {
       case 'professionals':
-        return "Professional Stats";
+        return t("statistics.professionalTitle");
       case 'clients':
-        return "Client Stats";
+        return t("statistics.clientTitle");
       default:
-        return "User Statistics";
+        return t("statistics.title");
     }
   };
 
@@ -127,7 +129,7 @@ function Configurator({ stats = {}, userType = "clients" }) {
         <MDBox>
           <MDTypography variant="h5">{getTitle()}</MDTypography>
           <MDTypography variant="body2" color="text">
-            See our dashboard statistics.
+            {t("statistics.subtitle")}
           </MDTypography>
         </MDBox>
 
@@ -159,7 +161,11 @@ function Configurator({ stats = {}, userType = "clients" }) {
           boxShadow="md"
           textAlign="center"
         >
-          <MDTypography variant="h6">Total {userType === 'professionals' ? 'Professionals' : 'Clients'}</MDTypography>
+          <MDTypography variant="h6">
+            {userType === 'professionals' 
+              ? t("statistics.totalProfessionals") 
+              : t("statistics.totalClients")}
+          </MDTypography>
           <MDTypography variant="h1" fontWeight="bold" mt={1}>
             {displayStats.total}
           </MDTypography>
@@ -167,13 +173,13 @@ function Configurator({ stats = {}, userType = "clients" }) {
 
         {/* New User Stats */}
         <MDBox>
-          <MDTypography variant="h6">New Users</MDTypography>
+          <MDTypography variant="h6">{t("statistics.newUsers")}</MDTypography>
           
           <MDBox mt={2}>
             <MDBox mb={1}>
               <MDBox display="flex" alignItems="center" justifyContent="space-between">
                 <MDTypography variant="button" fontWeight="regular" color="text">
-                  This Week
+                  {t("statistics.timeframes.thisWeek")}
                 </MDTypography>
                 <MDTypography variant="h6" fontWeight="bold">
                   {displayStats.newUsersThisWeek}
@@ -184,7 +190,7 @@ function Configurator({ stats = {}, userType = "clients" }) {
             <MDBox mb={1}>
               <MDBox display="flex" alignItems="center" justifyContent="space-between">
                 <MDTypography variant="button" fontWeight="regular" color="text">
-                  This Month
+                  {t("statistics.timeframes.thisMonth")}
                 </MDTypography>
                 <MDTypography variant="h6" fontWeight="bold">
                   {displayStats.newUsersThisMonth}
@@ -195,7 +201,7 @@ function Configurator({ stats = {}, userType = "clients" }) {
             <MDBox>
               <MDBox display="flex" alignItems="center" justifyContent="space-between">
                 <MDTypography variant="button" fontWeight="regular" color="text">
-                  This Year
+                  {t("statistics.timeframes.thisYear")}
                 </MDTypography>
                 <MDTypography variant="h6" fontWeight="bold">
                   {displayStats.newUsersThisYear}
@@ -210,7 +216,7 @@ function Configurator({ stats = {}, userType = "clients" }) {
         {/* Gender Distribution */}
         <MDBox>
           <MDBox display="flex" justifyContent="space-between" alignItems="center">
-            <MDTypography variant="h6">Gender Distribution</MDTypography>
+            <MDTypography variant="h6">{t("statistics.distributions.gender.title")}</MDTypography>
           </MDBox>
 
           <MDBox mt={2}>
@@ -244,18 +250,32 @@ function Configurator({ stats = {}, userType = "clients" }) {
 
         {/* Age Distribution */}
         <MDBox>
-          <MDTypography variant="h6">Age Distribution</MDTypography>
+          <MDTypography variant="h6">{t("statistics.distributions.age.title")}</MDTypography>
           
           <MDBox mt={2}>
             {Object.entries(displayStats.ageRanges).map(([range, count]) => {
               const total = Object.values(displayStats.ageRanges).reduce((a, b) => a + b, 0);
               const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
               
+              // Map range to translation key
+              const getRangeKey = (range) => {
+                switch(range) {
+                  case "14-17": return "range14_17";
+                  case "18-24": return "range18_24";
+                  case "25-34": return "range25_34";
+                  case "35-44": return "range35_44";
+                  case "45-54": return "range45_54";
+                  case "55-64": return "range55_64";
+                  case "65+": return "range65Plus";
+                  default: return range;
+                }
+              };
+              
               return (
                 <MDBox key={range} mb={1}>
                   <MDBox display="flex" alignItems="center" justifyContent="space-between" mb={0.5}>
                     <MDTypography variant="button" fontWeight="regular" color="text">
-                      {range}
+                      {t(`statistics.distributions.age.${getRangeKey(range)}`)}
                     </MDTypography>
                     <MDTypography variant="button" fontWeight="medium">
                       {count}
