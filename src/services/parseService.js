@@ -403,7 +403,7 @@ export const UserService = {
    * @returns {Promise<Object>} Object with results, total count, and pagination info
    */
   getUsers: async (
-    userType = 'all',
+    userType = 2,//1-professional, 2-client
     page = 0,
     limit = 10,
     search = '',
