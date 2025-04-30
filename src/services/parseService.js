@@ -211,6 +211,7 @@ export const ParseData = {
    */
   getById: async (className, objectId) => {
     const ParseObject = Parse.Object.extend(className);
+    console.log('Executing query for class:', className);
     const query = new Parse.Query(ParseObject);
     
     try {
@@ -276,6 +277,7 @@ export const ParseData = {
    */
   query: async (className, conditions = {}, limit = 100, skip = 0, sortBy = 'createdAt', ascending = false) => {
     const ParseObject = Parse.Object.extend(className);
+    console.log('Executing query for class:', className);
     const query = new Parse.Query(ParseObject);
     
     // Apply conditions
@@ -514,65 +516,66 @@ export const UserService = {
         // If REST API fails, try the regular SDK approach
         // Create a standard Parse.User query
         console.log('Creating Parse.User query');
-        const query = new Parse.Query(Parse.User);
+        // Commenting out the Parse.Query execution for _User class
+        // const query = new Parse.Query(Parse.User);
         
         // Apply user type filter
-        if (userType !== 'all') {
-          const userTypeMap = {
-            'professionals': 1,
-            'clients': 2,
-            'admins': 0
-          };
-          console.log('Applying user type filter:', userType, 'mapped to:', userTypeMap[userType]);
-          query.equalTo('userType', userTypeMap[userType]);
-        }
+        // if (userType !== 'all') {
+        //   const userTypeMap = {
+        //     'professionals': 1,
+        //     'clients': 2,
+        //     'admins': 0
+        //   };
+        //   console.log('Applying user type filter:', userType, 'mapped to:', userTypeMap[userType]);
+        //   query.equalTo('userType', userTypeMap[userType]);
+        // }
         
         // Apply search if provided
-        if (search) {
-          console.log('Applying search filter:', search);
-          // Create a compound query for search
-          const usernameQuery = new Parse.Query(Parse.User);
-          usernameQuery.matches('username', new RegExp(search, 'i'));
+        // if (search) {
+        //   console.log('Applying search filter:', search);
+        //   // Create a compound query for search
+        //   const usernameQuery = new Parse.Query(Parse.User);
+        //   usernameQuery.matches('username', new RegExp(search, 'i'));
           
-          const emailQuery = new Parse.Query(Parse.User);
-          emailQuery.matches('email', new RegExp(search, 'i'));
+        //   const emailQuery = new Parse.Query(Parse.User);
+        //   emailQuery.matches('email', new RegExp(search, 'i'));
           
-          // Combine the queries with OR
-          query._orQuery([usernameQuery, emailQuery]);
-        }
+        //   // Combine the queries with OR
+        //   query._orQuery([usernameQuery, emailQuery]);
+        // }
         
         // Apply pagination
-        console.log('Applying pagination:', { page, limit, skip: page * limit });
-        query.limit(limit);
-        query.skip(page * limit);
+        // console.log('Applying pagination:', { page, limit, skip: page * limit });
+        // query.limit(limit);
+        // query.skip(page * limit);
         
         // Apply sorting
-        console.log('Applying sorting:', { sortBy, sortDirection });
-        if (sortDirection === 'asc') {
-          query.ascending(sortBy);
-        } else {
-          query.descending(sortBy);
-        }
+        // console.log('Applying sorting:', { sortBy, sortDirection });
+        // if (sortDirection === 'asc') {
+        //   query.ascending(sortBy);
+        // } else {
+        //   query.descending(sortBy);
+        // }
         
-        console.log('Executing query with session token');
-        // Only use session token, don't use master key in client-side code
-        const options = { 
-          sessionToken
-        };
+        // console.log('Executing query with session token');
+        // // Only use session token, don't use master key in client-side code
+        // const options = { 
+        //   sessionToken
+        // };
         
-        console.log('Query options:', options);
-        const results = await query.find(options);
-        console.log('Query successful with session token, received results:', results.length);
+        // console.log('Query options:', options);
+        // const results = await query.find(options);
+        // console.log('Query successful with session token, received results:', results.length);
         
-        const count = await query.count(options);
-        console.log('Total count:', count);
+        // const count = await query.count(options);
+        // console.log('Total count:', count);
         
         // Transform results to frontend-friendly format
-        const transformedResults = results.map(user => UserService.transformUserObject(user));
+        // const transformedResults = results.map(user => UserService.transformUserObject(user));
         
         return {
-          results: transformedResults,
-          total: count,
+          results: [],
+          total: 0,
           page,
           limit
         };
