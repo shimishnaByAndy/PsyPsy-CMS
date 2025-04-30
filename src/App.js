@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect, useMemo, Suspense } from "react";
 
 // react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
@@ -55,6 +55,7 @@ import { initDevTools } from "./utils/devTools";
 
 // Parse initialization
 import ParseInitializer from "./components/ParseInitializer";
+import RouteDebugger from "./components/RouteDebugger";
 
 // i18n (internationalization) setup
 import "./localization/i18n";
@@ -90,12 +91,20 @@ export default function App() {
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
-  // Set the custom color for the sidenav when the component mounts
+  // SELECTIVELY RESTORE KEY FUNCTIONALITY
+  
+  // Set the custom color for the sidenav when the component mounts - only once
   useEffect(() => {
-    setSidenavColor(dispatch, "success");
-  }, [dispatch]);
-
+    // Only set once to prevent loops
+    const colorSet = sessionStorage.getItem('sidenavColorSet');
+    if (!colorSet) {
+      setSidenavColor(dispatch, "success");
+      sessionStorage.setItem('sidenavColorSet', 'true');
+    }
+  }, []); // Empty dependency array prevents loops
+  
   // Initialize development tools if in development mode
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
@@ -103,10 +112,32 @@ export default function App() {
       // initDevTools();
     }
   }, []);
+  
+  // Setting page scroll to 0 when changing the route
+  useEffect(() => {
+    document.documentElement.scrollTop = 0;
+    document.scrollingElement.scrollTop = 0;
+  }, [pathname]);
+
+  // Set the layout based on the current route
+  useEffect(() => {
+    // Check if the current route is an authentication route
+    const isAuthRoute = pathname.includes('/authentication/');
+    const layoutType = isAuthRoute ? 'page' : 'dashboard';
+    
+    console.log('Route changed to:', pathname);
+    console.log('Setting layout to:', layoutType);
+    
+    if (layout !== layoutType) {
+      // Update layout state in the controller
+      dispatch({ type: 'LAYOUT', value: layoutType });
+    }
+  }, [pathname, layout, dispatch]);
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
     if (miniSidenav && !onMouseEnter) {
+      // Conditional update to prevent unnecessary state changes
       setMiniSidenav(dispatch, false);
       setOnMouseEnter(true);
     }
@@ -115,19 +146,16 @@ export default function App() {
   // Close sidenav when mouse leave mini sidenav
   const handleOnMouseLeave = () => {
     if (onMouseEnter) {
+      // Conditional update to prevent unnecessary state changes
       setMiniSidenav(dispatch, true);
       setOnMouseEnter(false);
     }
   };
 
   // Change the openConfigurator state
-  const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
-
-  // Setting page scroll to 0 when changing the route
-  useEffect(() => {
-    document.documentElement.scrollTop = 0;
-    document.scrollingElement.scrollTop = 0;
-  }, [pathname]);
+  const handleConfiguratorOpen = () => {
+    setOpenConfigurator(dispatch, !openConfigurator);
+  };
 
   const getRoutes = (allRoutes) =>
     allRoutes.map((route) => {
@@ -166,9 +194,43 @@ export default function App() {
     </MDBox>
   );
 
-  // Create a fallback route that doesn't use Navigate
+  // Create a fallback route that safely handles navigation without using Navigate
   const getFallbackRoute = () => {
-    return <Route path="*" element={<div />} />;
+    return (
+      <Route 
+        path="*" 
+        element={
+          <div style={{display: 'none'}}>
+            {/* Use an effect inside a component to handle redirects */}
+            <RedirectHandler />
+          </div>
+        } 
+      />
+    );
+  };
+  
+  // Helper component to handle redirects safely with useEffect
+  const RedirectHandler = () => {
+    const location = useLocation();
+    
+    useEffect(() => {
+      const path = location.pathname;
+      // Only redirect if not on a valid route
+      if (path === "/" || path === "/*") {
+        console.log('RedirectHandler triggered for path:', path);
+        console.log('Authentication state:', window.__PSYPSY_AUTH_GUARD__?.isAuthenticated ? 'Authenticated' : 'Not authenticated');
+        
+        if (window.__PSYPSY_AUTH_GUARD__?.isAuthenticated) {
+          console.log('Redirecting to dashboard using navigate');
+          navigate('/dashboard', { replace: true });
+        } else {
+          console.log('Redirecting to login using navigate');
+          navigate('/authentication/login', { replace: true });
+        }
+      }
+    }, [location, navigate]);
+    
+    return null;
   };
 
   return (
@@ -195,6 +257,7 @@ export default function App() {
             {getRoutes(routes)}
             {getFallbackRoute()}
           </Routes>
+          <RouteDebugger />
         </ThemeProvider>
       </ParseInitializer>
     </Suspense>

@@ -37,6 +37,7 @@ import DataTable from "examples/Tables/DataTable";
 
 // Project components
 import UserDetail from "components/UserDetail";
+import TestUserData from "components/TestUserData";
 
 // Services
 import { UserService } from "services/parseService";
@@ -87,30 +88,42 @@ function Tables() {
   
   // Load users data
   const loadUsers = useCallback(async () => {
+    console.log('Starting to load users with:', { userType, page, limit, search });
     setLoading(true);
     setError(null);
     
     try {
+      console.log('Calling UserService.getUsers...');
       const { results, total } = await UserService.getUsers(
         userType,
         page,
         limit,
         search
       );
+      console.log('UserService.getUsers successful, received results:', results.length, 'total:', total);
       
       setUsers(results);
       setTotalUsers(total);
     } catch (err) {
       console.error("Error loading users:", err);
+      console.error("Error details:", err.message, err.code);
+      console.error("Error stack:", err.stack);
       setError(err.message || "Failed to load users");
     } finally {
       setLoading(false);
+      console.log('Finished loading users attempt');
     }
   }, [userType, page, limit, search]);
   
   // Effect to load users when dependencies change
   useEffect(() => {
+    console.log('Tables component mounted or dependencies changed');
     loadUsers();
+    
+    // Cleanup function
+    return () => {
+      console.log('Tables component unmounting or dependencies changing');
+    };
   }, [loadUsers]);
   
   // Handle viewing user details
@@ -222,6 +235,12 @@ function Tables() {
     <DashboardLayout>
       <DashboardNavbar onUserTypeChange={handleUserTypeChange} />
       <MDBox pt={6} pb={3}>
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <TestUserData />
+          </Grid>
+        </Grid>
+        
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>

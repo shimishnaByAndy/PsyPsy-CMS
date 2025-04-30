@@ -82,6 +82,7 @@ function Basic() {
 
   const login = async () => {
     setError(null);
+    console.log('Login attempted with:', { username, rememberMe });
     
     // Basic validation before attempting to log in
     if (!username.trim()) {
@@ -95,8 +96,10 @@ function Basic() {
     }
     
     try {
+      console.log('Calling ParseAuth.loginWithRememberMe');
       // Use the new loginWithRememberMe function and pass the rememberMe state
       await ParseAuth.loginWithRememberMe(username, password, rememberMe);
+      console.log('Login successful, session token saved');
       
       // Store the username in localStorage if rememberMe is true
       if (rememberMe) {
@@ -105,8 +108,11 @@ function Basic() {
         localStorage.removeItem('lastLoginUsername');
       }
       
-      const from = location.state?.from?.pathname || "/dashboard";
-      navigate(from, { replace: true });
+      console.log('Navigating to dashboard after successful login');
+      // Use a slight delay to ensure all states are updated before navigation
+      setTimeout(() => {
+        navigate('/dashboard', { replace: true });
+      }, 100);
     } catch (error) {
       console.error("Error while logging in user", error);
       

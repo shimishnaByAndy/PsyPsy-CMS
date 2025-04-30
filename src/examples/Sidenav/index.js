@@ -111,12 +111,22 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   useEffect(() => {
     // Only set sidenav state on initial load based on window size
     // Do not add event listeners or other things that may cause loops
-    if (window.innerWidth < 1200 && !miniSidenav) {
-      setMiniSidenav(dispatch, true);
-    }
+    const handleResize = () => {
+      if (window.innerWidth < 1200) {
+        setMiniSidenav(dispatch, true);
+      } else {
+        setMiniSidenav(dispatch, false);
+      }
+    };
+
+    // Initial check
+    handleResize();
     
-    // No event listeners, no cleanup needed
-  }, []); // Empty dependency array to only run once
+    // Cleanup and remove this listener when the component unmounts
+    // We don't need to constantly check for resizing during normal use
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [dispatch]); // Only depend on dispatch, which is stable
 
   // User menu handlers
   const handleUserMenuOpen = (event) => setUserMenu(event.currentTarget);

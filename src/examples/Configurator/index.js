@@ -58,41 +58,43 @@ function Configurator() {
     whiteSidenav,
     darkMode,
   } = controller;
-  const [disabled, setDisabled] = useState(false);
+  
+  // Use a const instead of state to prevent rendering loops
+  const disabled = window.innerWidth < 1200;
   const sidenavColors = ["primary", "dark", "info", "success", "warning", "error"];
 
-  // Use the useEffect hook to change the button state for the sidenav type based on window size.
-  useEffect(() => {
-    // A function that sets the disabled state of the buttons for the sidenav type.
-    function handleDisabled() {
-      return window.innerWidth > 1200 ? setDisabled(false) : setDisabled(true);
-    }
+  // Restore core handler functions that don't seem to cause loops
+  const handleCloseConfigurator = () => {
+    setOpenConfigurator(dispatch, false);
+  };
 
-    // The event listener that's calling the handleDisabled function when resizing the window.
-    window.addEventListener("resize", handleDisabled);
-
-    // Call the handleDisabled function to set the state with the initial value.
-    handleDisabled();
-
-    // Remove event listener on cleanup
-    return () => window.removeEventListener("resize", handleDisabled);
-  }, []);
-
-  const handleCloseConfigurator = () => setOpenConfigurator(dispatch, false);
+  // Still keep these state modifiers disabled as they might cause loops
   const handleTransparentSidenav = () => {
-    setTransparentSidenav(dispatch, true);
-    setWhiteSidenav(dispatch, false);
+    console.log('Transparent sidenav clicked (disabled)');
+    // setTransparentSidenav(dispatch, true);
+    // setWhiteSidenav(dispatch, false);
   };
+
   const handleWhiteSidenav = () => {
-    setWhiteSidenav(dispatch, true);
-    setTransparentSidenav(dispatch, false);
+    console.log('White sidenav clicked (disabled)');
+    // setWhiteSidenav(dispatch, true);
+    // setTransparentSidenav(dispatch, false);
   };
+
   const handleDarkSidenav = () => {
-    setWhiteSidenav(dispatch, false);
-    setTransparentSidenav(dispatch, false);
+    console.log('Dark sidenav clicked (disabled)');
+    // setWhiteSidenav(dispatch, false);
+    // setTransparentSidenav(dispatch, false);
   };
-  const handleFixedNavbar = () => setFixedNavbar(dispatch, !fixedNavbar);
-  const handleDarkMode = () => setDarkMode(dispatch, !darkMode);
+
+  // Restore theme toggles which are less likely to cause loops
+  const handleFixedNavbar = () => {
+    setFixedNavbar(dispatch, !fixedNavbar);
+  };
+
+  const handleDarkMode = () => {
+    setDarkMode(dispatch, !darkMode);
+  };
 
   // sidenav type buttons styles
   const sidenavTypeButtonsStyles = ({
