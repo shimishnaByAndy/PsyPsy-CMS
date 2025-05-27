@@ -16,7 +16,6 @@ Coded by www.creative-tim.com
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { UserService } from "services/parseService";
-import DataTable from "examples/Tables/DataTable";
 import UserDetail from "components/UserDetail";
 import Parse from "parse";
 
@@ -24,6 +23,9 @@ import Parse from "parse";
 import GridTable from "components/GridTable";
 import GridTableFilter from "components/GridTableFilter";
 import "components/GridTable/GridStyles.css";
+
+// Import the new GridTableWithFilter component
+import GridTableWithFilter from "components/GridTable";
 
 // Material Dashboard 2 React context
 import {
@@ -70,9 +72,8 @@ function Tables() {
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");  
-  const [userType, setUserType] = useState(localStorage.getItem('selectedUserType') || 'all');
+  const [userType, setUserType] = useState(localStorage.getItem('selectedUserType') || 2);
   const [filters, setFilters] = useState({});
-  const [useGridTable, setUseGridTable] = useState(true);
   
   // State for user detail modal
   const [selectedUser, setSelectedUser] = useState(null);
@@ -133,9 +134,9 @@ function Tables() {
       console.log('fetchUsers result:', result); 
       
       // Log the first user as an example to debug structure
-      if (result.users && result.users.length > 0) {
-        console.log('First user example:', JSON.stringify(result.users[0], null, 2));
-      }
+      // if (result.users && result.users.length > 0) {
+      //   console.log('First user example:', JSON.stringify(result.users[0], null, 2));
+      // }
       
       // Parse server returns Parse objects - no need for extra transformation
       const users = result.users || [];
@@ -155,7 +156,7 @@ function Tables() {
     }
   }, []);
   
-  // Effect to load users when dependencies change
+  // Ensure the GridTableWithFilter is populated with the fetched user data
   useEffect(() => {
     console.log('Tables component mounted or dependencies changed');
     loadUsers();
@@ -226,7 +227,7 @@ function Tables() {
     // Remove leading 1 if present (country code)
     const tenDigits = digits.length === 11 && digits.charAt(0) === '1' 
       ? digits.substring(1) 
-      : digits.substring(0, 10);
+      : digits.substring(0, 10); 
     
     // Format as (XXX) XXX-XXXX
     return `(${tenDigits.substring(0, 3)}) ${tenDigits.substring(3, 6)}-${tenDigits.substring(6, 10)}`;
@@ -237,7 +238,7 @@ function Tables() {
     if (!lastSeenDate) return { text: t("tables.timeIndicators.never"), color: 'error' };
     
     const now = new Date();
-    const lastSeen = new Date(lastSeenDate);
+    const lastSeen = new Date(lastSeenDate); 
     const diffMs = now - lastSeen;
     const diffHours = diffMs / (1000 * 60 * 60);
     const diffDays = diffHours / 24;
@@ -278,19 +279,18 @@ function Tables() {
       accessor: "name", 
       width: "30%",
       Cell: ({ row }) => {
-        const clientPtr = row.original.clientPtr && row.original.clientPtr.attributes ? 
-                          row.original.clientPtr.attributes : 
-                          (row.original.clientPtr || {});
-        
+        const clientPtr = row.original.clientPtr || {};
+        const firstName = clientPtr.firstName || 'N/A';
+        const lastName = clientPtr.lastName || '';
+        const email = row.original.email || 'N/A';
+
         return (
           <MDBox lineHeight={1}>
             <MDTypography display="block" variant="button" fontWeight="medium">
-              {clientPtr.firstName ? 
-                `${clientPtr.firstName} ${clientPtr.lastName || ''}` : 
-                row.original.email || 'N/A'}
+              {firstName} {lastName}
             </MDTypography>
             <MDTypography variant="caption" color="text" fontWeight="regular">
-              {row.original.email || 'N/A'}
+              {email}
             </MDTypography>
           </MDBox>
         );
@@ -301,18 +301,14 @@ function Tables() {
       accessor: "age", 
       width: "15%",
       Cell: ({ row }) => {
-        const clientPtr = row.original.clientPtr && row.original.clientPtr.attributes ? 
-                          row.original.clientPtr.attributes : 
-                          (row.original.clientPtr || {});
+        const clientPtr = row.original.clientPtr || {};
         let age = 'N/A';
-        
         if (clientPtr.dob) {
           const dobDate = new Date(clientPtr.dob);
           if (dobDate instanceof Date && !isNaN(dobDate)) {
             age = new Date().getFullYear() - dobDate.getFullYear();
           }
         }
-        
         return (
           <MDTypography variant="caption" fontWeight="medium">
             {age}
@@ -325,15 +321,10 @@ function Tables() {
       accessor: "gender", 
       width: "15%",
       Cell: ({ row }) => {
-        const clientPtr = row.original.clientPtr && row.original.clientPtr.attributes ? 
-                          row.original.clientPtr.attributes : 
-                          (row.original.clientPtr || {});
-        
-        // Get gender label from the mapping
+        const clientPtr = row.original.clientPtr || {};
         const genderLabel = clientPtr.gender !== undefined && genderMap[clientPtr.gender] 
                            ? genderMap[clientPtr.gender] 
                            : "Unknown";
-        
         return (
           <MDTypography variant="caption" fontWeight="medium">
             {genderLabel}
@@ -346,10 +337,7 @@ function Tables() {
       accessor: "phone", 
       width: "20%",
       Cell: ({ row }) => {
-        const clientPtr = row.original.clientPtr && row.original.clientPtr.attributes ? 
-                          row.original.clientPtr.attributes : 
-                          (row.original.clientPtr || {});
-                          
+        const clientPtr = row.original.clientPtr || {};
         return (
           <MDTypography variant="caption" fontWeight="medium">
             {formatCanadianPhoneNumber(clientPtr.phoneNb)}
@@ -385,6 +373,19 @@ function Tables() {
       }
     },
     { 
+      Header: t("tables.columns.updatedAt"), 
+      accessor: "updatedAt", 
+      width: "20%",
+      Cell: ({ row }) => {
+        const updatedAt = row.original.updatedAt || 'N/A';
+        return (
+          <MDTypography variant="caption" fontWeight="medium">
+            {updatedAt}
+          </MDTypography>
+        );
+      }
+    },
+    { 
       Header: t("tables.columns.actions"), 
       accessor: "actions", 
       width: "10%",
@@ -404,6 +405,10 @@ function Tables() {
   const handleOpenConfigurator = () => {
     setOpenConfigurator(dispatch, true);
   };
+
+  useEffect(() => {
+    console.log('Fetched users:', users);
+  }, [users]);
 
   return (
     <DashboardLayout>
@@ -428,25 +433,6 @@ function Tables() {
                   {t("tables.clientManagement")}
                 </MDTypography>
                 <MDBox display="flex" alignItems="center">
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={useGridTable}
-                        onChange={() => setUseGridTable(!useGridTable)}
-                        color="default"
-                        sx={{ 
-                          '& .MuiSwitch-track': { backgroundColor: 'white' },
-                          '& .MuiSwitch-thumb': { backgroundColor: useGridTable ? '#4CAF50' : 'white' }
-                        }}
-                      />
-                    }
-                    label={
-                      <MDTypography variant="button" color="white">
-                        {useGridTable ? "Grid Table" : "Default Table"}
-                      </MDTypography>
-                    }
-                    sx={{ mr: 2, color: 'white' }}
-                  />
                   <MDBox width="100%">
                     <TextField
                       fullWidth
@@ -474,11 +460,9 @@ function Tables() {
               </MDBox>
               
               {/* Display GridTableFilter only when GridTable is used */}
-              {useGridTable && (
-                <MDBox px={2} pt={3}>
-                  <GridTableFilter onFilter={handleFilter} />
-                </MDBox>
-              )}
+              <MDBox px={2} pt={3}>
+                <GridTableFilter onFilter={handleFilter} />
+              </MDBox>
               
               <MDBox pt={3} px={2}>
                 {loading ? (
@@ -489,9 +473,8 @@ function Tables() {
                   <MDBox display="flex" justifyContent="center" p={4}>
                     <MDTypography color="error">{error}</MDTypography>
                   </MDBox>
-                ) : useGridTable ? (
-                  /* Render GridTable component */
-                  <GridTable
+                ) : (
+                  <GridTableWithFilter
                     data={users}
                     columns={userColumns}
                     loading={loading}
@@ -502,24 +485,6 @@ function Tables() {
                     sort={true}
                     limit={limit}
                     totalCount={totalUsers}
-                  />
-                ) : (
-                  /* Render original DataTable component */
-                  <DataTable
-                    table={{ columns: userColumns, rows: users }}
-                    isSorted={false}
-                    entriesPerPage={{
-                      defaultValue: limit,
-                      entries: [5, 10, 15, 20, 25],
-                    }}
-                    showTotalEntries={true}
-                    noEndBorder
-                    pagination={{
-                      count: totalUsers,
-                      page,
-                      onPageChange: handlePageChange,
-                      onEntriesPerPageChange: handleLimitChange,
-                    }}
                   />
                 )}
               </MDBox>

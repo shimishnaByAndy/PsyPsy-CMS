@@ -54,9 +54,9 @@ function StatsConfigurator({ open, onClose, stats, userType }) {
   // Display the appropriate title based on userType
   const getTitle = () => {
     switch (userType) {
-      case 'professionals':
+      case 1:
         return "Professional Stats";
-      case 'clients':
+      case 2:
         return "Client Stats";
       default:
         return "User Statistics";

@@ -1,0 +1,202 @@
+# OpenRouter.ai MCP Documentation
+
+OpenRouter.ai MCP (Model Context Protocol) provides a set of functions for interacting with various AI models through OpenRouter's API. This document covers the available functions, parameters, and includes examples of actual calls.
+
+## Available Functions
+
+### 1. Search Models
+`mcp_openrouterai_search_models` - Search and filter available models based on various criteria.
+
+**Parameters:**
+- `query` (string): Search term to filter models by name or description
+- `limit` (number): Maximum number of results to return (default: 10)
+- `capabilities` (object): Filter by model capabilities (functions, tools, vision, json_mode)
+- `provider` (string): Filter by specific provider
+- `maxPromptPrice` / `maxCompletionPrice`: Maximum price filters
+- `minContextLength` / `maxContextLength`: Context length filters
+
+**Example Call:**
+```javascript
+mcp_openrouterai_search_models({
+  query: "gpt",
+  limit: 5
+})
+```
+
+**Example Response:**
+```json
+{
+  "id": "search-1746977054994",
+  "object": "list",
+  "data": [
+    {
+      "id": "inception/mercury-coder-small-beta",
+      "name": "Inception: Mercury Coder Small Beta",
+      "description": "Mercury Coder Small is the first diffusion large language model (dLLM)...",
+      "context_length": 32000,
+      "pricing": {
+        "prompt": "$0.00000025/1K tokens",
+        "completion": "$0.000001/1K tokens"
+      },
+      "capabilities": {
+        "functions": false,
+        "tools": false,
+        "vision": false,
+        "json_mode": false
+      }
+    },
+    // Additional models...
+  ],
+  "created": 1746977054,
+  "metadata": {
+    "total_models": 322,
+    "filtered_count": 5,
+    "applied_filters": {
+      "query": "gpt",
+      "limit": 5
+    }
+  }
+}
+```
+
+### 2. Get Model Info
+`mcp_openrouterai_get_model_info` - Get detailed information about a specific model.
+
+**Parameters:**
+- `model` (string): The model ID to get information for
+
+**Example Call:**
+```javascript
+mcp_openrouterai_get_model_info({
+  model: "openai/gpt-4.1"
+})
+```
+
+**Example Response:**
+```json
+{
+  "id": "info-1746977058590",
+  "object": "model",
+  "created": 1746977058,
+  "owned_by": "openai",
+  "permission": [],
+  "root": "openai/gpt-4.1",
+  "parent": null,
+  "data": {
+    "id": "openai/gpt-4.1",
+    "name": "OpenAI: GPT-4.1",
+    "description": "GPT-4.1 is a flagship large language model optimized for advanced instruction following...",
+    "context_length": 1047576,
+    "pricing": {
+      "prompt": "$0.000002/1K tokens",
+      "completion": "$0.000008/1K tokens"
+    },
+    "capabilities": {
+      "functions": false,
+      "tools": false,
+      "vision": false,
+      "json_mode": false
+    }
+  }
+}
+```
+
+### 3. Validate Model
+`mcp_openrouterai_validate_model` - Check if a model ID is valid.
+
+**Parameters:**
+- `model` (string): The model ID to validate
+
+**Example Call:**
+```javascript
+mcp_openrouterai_validate_model({
+  model: "google/gemini-1.5-pro"
+})
+```
+
+**Example Response:**
+```
+Error: Model not found: google/gemini-1.5-pro
+```
+
+### 4. Chat Completion
+`mcp_openrouterai_chat_completion` - Send a message to a model and get a response.
+
+**Parameters:**
+- `messages` (array): An array of message objects with roles and content
+- `model` (string): The model ID to use
+- `temperature` (number): Sampling temperature (0-2)
+
+**Example Call:**
+```javascript
+mcp_openrouterai_chat_completion({
+  messages: [
+    {
+      role: "system",
+      content: "You are a helpful assistant."
+    },
+    {
+      role: "user",
+      content: "What's the capital of France?"
+    }
+  ],
+  model: "thudm/glm-4-32b:free",
+  temperature: 0.7
+})
+```
+
+**Example Response:**
+```json
+{
+  "id": "gen-1746977067426",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "message": {
+        "role": "assistant",
+        "content": "\nThe capital of France is Paris."
+      }
+    }
+  ],
+  "created": 1746977067,
+  "model": "thudm/glm-4-32b:free",
+  "object": "chat.completion",
+  "usage": {
+    "prompt_tokens": 20,
+    "completion_tokens": 9,
+    "total_tokens": 29
+  }
+}
+```
+
+## Usage Guide
+
+1. **Search for Models** - Begin by searching for available models using `mcp_openrouterai_search_models`. This allows you to discover the range of models available and filter them by your requirements.
+
+2. **Examine Model Details** - Once you've identified potential models, use `mcp_openrouterai_get_model_info` to get detailed information about specific models, including context length, pricing, and capabilities.
+
+3. **Validate Model Availability** - Before using a model, you can validate that it exists and is available using `mcp_openrouterai_validate_model`.
+
+4. **Chat with a Model** - Use `mcp_openrouterai_chat_completion` to have a conversation with your selected model.
+
+## Model Pricing and Selection Tips
+
+- **Free Models** - Look for models with `:free` in their ID, which have $0 pricing for both prompt and completion tokens.
+- **Specialized Models** - Different models excel at different tasks. For example:
+  - Code generation: Look for models like "Mercury Coder"
+  - Multilingual: Models like "GLM 4 32B" support both English and Chinese
+  - Long-context reasoning: Models like "GPT-4.1" support over 1M tokens of context
+
+- **Context Length** - Consider the maximum context length needed for your application
+- **Cost Efficiency** - Compare prompt and completion pricing for frequently used models
+
+## Error Handling
+
+When using OpenRouter.ai MCP functions, be prepared to handle these common errors:
+
+1. **Invalid Model ID** - If you specify a model that doesn't exist
+2. **Rate Limiting** - If you exceed usage limits
+3. **Authentication Issues** - If there are problems with API authentication
+4. **Timeout Errors** - For particularly long or complex requests
+
+Always implement proper error handling to manage these scenarios in your application.

@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Grid } from 'gridjs-react';
 import { useTranslation } from 'react-i18next';
 import { html } from 'gridjs';
 import 'gridjs/dist/theme/mermaid.css';
+//import GridTableFilter from '../GridTableFilter';
+import moment from 'moment';
+import { UserService } from '../../services/parseService';
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -12,7 +15,7 @@ import Icon from "@mui/material/Icon";
 import Card from "@mui/material/Card";
 import CircularProgress from "@mui/material/CircularProgress";
 
-function GridTable({ 
+function GridTableWithFilter({ 
   data, 
   columns, 
   loading, 
@@ -27,11 +30,52 @@ function GridTable({
   const { t } = useTranslation();
   const [tableData, setTableData] = useState([]);
   const [tableColumns, setTableColumns] = useState([]);
+  const [filteredData, setFilteredData] = useState(data);
   
+  // Handle filtering logic
+  const handleFilter = (filters) => {
+    console.log('Filters:', filters);
+    let newData = data;
+
+    if (filters.gender) {
+      newData = newData.filter(item => item.userInfo && item.userInfo.gender === filters.gender);
+    }
+
+    if (filters.ageRange) {
+      newData = newData.filter(item => item.userInfo && item.userInfo.age >= filters.ageRange[0] && item.userInfo.age <= filters.ageRange[1]);
+    }
+
+    if (filters.lastSeen) {
+      newData = newData.filter(item => {
+        if (!item.userInfo || !item.userInfo.lastSeen) return false;
+        const lastSeenDate = moment(item.userInfo.lastSeen);
+        switch (filters.lastSeen) {
+          case 'today':
+            return moment().diff(lastSeenDate, 'hours') <= 24;
+          case 'week': 
+            return moment().diff(lastSeenDate, 'days') <= 7;
+          case 'month':
+            return moment().diff(lastSeenDate, 'days') <= 30;
+          case 'quarter':
+            return moment().diff(lastSeenDate, 'months') <= 3;
+          case 'inactive':
+            return moment().diff(lastSeenDate, 'days') > 30;
+          default:
+            return true;
+        }
+      });
+    }
+
+    setFilteredData(newData);
+  };
+
   // Process columns and data for Grid.js format
   useEffect(() => {
-    if (!data || !columns) return;
+    if (!filteredData || !columns) return;
     
+    console.log('Processing columns:', columns);
+    console.log('Processing data:', filteredData);
+
     // Transform columns to GridJS format
     const formattedColumns = columns.map(col => {
       // Skip actions column as we'll handle it separately
@@ -69,7 +113,8 @@ function GridTable({
     });
     
     // Transform data to plain arrays for GridJS
-    const formattedData = data.map(item => {
+    const formattedData = filteredData.map(item => {
+      console.log('Transform data to plain arrays for GridJS :', item);
       // Map each item to an array of values based on columns
       return columns.map(col => {
         // For action column, return id for later use
@@ -101,9 +146,12 @@ function GridTable({
       });
     });
     
+    console.log('Formatted columns:', formattedColumns);
+    console.log('Formatted data:', formattedData);
+
     setTableColumns(formattedColumns);
     setTableData(formattedData);
-  }, [data, columns, t]);
+  }, [filteredData, columns, t]);
   
   // Initialize event handlers after table is mounted
   useEffect(() => {
@@ -162,6 +210,47 @@ function GridTable({
     }
   };
   
+  // Fetch client data and populate the table
+  useEffect(() => {
+    const fetchClientData = async () => {
+      try {
+        const result = await UserService.getUsers(2, 0, 10, '', 'createdAt', 'desc');
+        console.log('API response:', result); // Log the full response
+        if (result && result.users) {
+          setFilteredData(result.users);
+        } else {
+          console.error('Unexpected API response structure:', result);
+        }
+      } catch (error) {
+        console.error('Error fetching client data:', error);
+        console.error('Error details:', error.response || error.message); // Log detailed error
+      }
+    };
+
+    //fetchClientData();
+  }, []);
+  
+  // Add console logs to debug data flow
+  useEffect(() => {
+    console.log('GridTableWithFilter mounted');
+    console.log('Initial data:', data);
+    console.log('Initial columns:', columns);
+  }, []);
+
+  useEffect(() => {
+    console.log('Filtered data updated:', filteredData);
+  }, [filteredData]);
+
+  useEffect(() => {
+    console.log('Formatted columns:', columns);
+    console.log('Formatted data:', data);
+  }, [tableColumns, tableData]);
+  
+  // Bypass the filtering logic
+  useEffect(() => {
+    setFilteredData(data);
+  }, [data]);
+
   return (
     <MDBox>
       {loading ? (
@@ -218,4 +307,4 @@ function GridTable({
   );
 }
 
-export default GridTable; 
+export default GridTableWithFilter; 

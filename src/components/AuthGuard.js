@@ -87,6 +87,12 @@ const AuthGuard = React.memo(({ children }) => {
     return null;
   }
   
+  // DEVELOPMENT MODE: Always allow access for development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Development mode: bypassing authentication for all routes');
+    return children;
+  }
+  
   // For authentication routes, pass through except login when already authenticated
   if (path.includes('/authentication/')) {
     if (path.includes('/login') && guard.isAuthenticated) {

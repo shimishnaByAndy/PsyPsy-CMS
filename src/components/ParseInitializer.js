@@ -124,6 +124,9 @@ const ParseInitializer = ({ children }) => {
       console.error('Error initializing Parse:', error);
       console.error('Error details:', error.message, error.code);
       console.error('Error stack:', error.stack);
+      // Still set as initialized to allow the app to load even if Parse fails
+      console.log('Setting initialized to true despite Parse error to allow app to load');
+      setIsInitialized(true);
     }
   }, []); // Empty dependency array to run only once
 

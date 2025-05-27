@@ -162,7 +162,7 @@ function Configurator({ stats = {}, userType = "clients" }) {
           textAlign="center"
         >
           <MDTypography variant="h6">
-            {userType === 'professionals' 
+            {userType === 1
               ? t("statistics.totalProfessionals") 
               : t("statistics.totalClients")}
           </MDTypography>

@@ -5,12 +5,12 @@
 // Configuration setup - reads values from environment variables or uses defaults
 const devConfig = {
     // These should be the actual Parse Server details
-    appId: process.env.REACT_APP_PARSE_APP_ID,
+    appId: process.env.REACT_APP_PARSE_APP_ID || 'psypsy-cms-dev',
     serverURL: 'http://10.0.0.71:1337/parse',
-    javascriptKey: process.env.REACT_APP_PARSE_JS_KEY,
+    javascriptKey: process.env.REACT_APP_PARSE_JS_KEY || 'psypsy-js-key-dev',
     liveQuery: false,
     enableLocalDatastore: true,
-    masterKey: process.env.REACT_APP_MASTER_KEY
+    masterKey: process.env.REACT_APP_MASTER_KEY || 'psypsy-master-key-dev'
 };
 
 const prodConfig = {

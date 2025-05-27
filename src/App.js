@@ -68,7 +68,7 @@ const PSYPSY_COLOR = "#899581";
 // App-wide stats context for use with Configurator
 export const StatsContext = createContext({
   stats: {},
-  userType: 'clients',
+  userType: 2,
   setStats: () => {},
   setUserType: () => {}
 });
@@ -125,7 +125,7 @@ export default function App() {
       "65+": 0
     }
   });
-  const [userType, setUserType] = useState('clients');
+  const [userType, setUserType] = useState(2); // 0 for admin, 1 for professional, 2 for client
   
   // Fetch stats from Parse Server
   useEffect(() => {
@@ -133,7 +133,7 @@ export default function App() {
       try {
         // Only fetch if user is authenticated
         if (Parse.User.current()) {
-          const result = await Parse.Cloud.run("fetchUserStats", { userType });
+          const result = await Parse.Cloud.run("fetchClientStats", { userType });
           if (result && result.stats) {
             setStats(result.stats);
           }
