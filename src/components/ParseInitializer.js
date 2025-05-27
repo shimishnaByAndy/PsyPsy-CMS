@@ -26,14 +26,14 @@ const ParseInitializer = ({ children }) => {
   useEffect(() => {
     // Return early if already initialized to prevent any possibility of loops
     if (window.PARSE_INITIALIZED) {
-      console.log('Parse already initialized, skipping initialization');
+      console.log('ParseInitializer: Parse already initialized, skipping initialization');
       setIsInitialized(true);
       return;
     }
     
     // Mark as initialized before doing anything else
     window.PARSE_INITIALIZED = true;
-    console.log('Starting Parse initialization process');
+    console.log('ParseInitializer: Starting Parse initialization process');
     
     // Initialize Parse with the configuration
     try {
@@ -42,7 +42,7 @@ const ParseInitializer = ({ children }) => {
       // Ensure we have a master key - use direct value as fallback
       const finalMasterKey = masterKey || 'LV4QUE9IqvLec8xIS0SOUPsfRITPVXIRbNf35UW4';
       
-      console.log('Parse configuration:', { 
+      console.log('ParseInitializer: Parse configuration:', { 
         appId: appId ? '****' + (appId.substr(-4) || 'undefined') : 'undefined',
         javascriptKey: javascriptKey ? '****' + (javascriptKey.substr(-4) || '') : 'undefined',
         serverURL,
@@ -52,7 +52,7 @@ const ParseInitializer = ({ children }) => {
       });
       
       if (!appId || !javascriptKey || !serverURL) {
-        console.error('Missing critical Parse configuration:',
+        console.error('ParseInitializer: Missing critical Parse configuration:',
           !appId ? 'App ID missing' : '',
           !javascriptKey ? 'JavaScript Key missing' : '',
           !serverURL ? 'Server URL missing' : ''
@@ -60,72 +60,54 @@ const ParseInitializer = ({ children }) => {
       }
       
       // Initialize Parse FIRST with the master key
-      console.log('Calling Parse.initialize with credentials and master key');
+      console.log('ParseInitializer: Calling Parse.initialize with credentials and master key');
       Parse.initialize(appId, javascriptKey, finalMasterKey);
-      console.log('Setting Parse.serverURL:', serverURL);
+      console.log('ParseInitializer: Setting Parse.serverURL:', serverURL);
       Parse.serverURL = serverURL;
       
       // Verify initialization
-      console.log('Verifying Parse initialization:');
+      console.log('ParseInitializer: Verifying Parse initialization:');
       console.log('- Parse.applicationId:', Parse.applicationId === appId ? 'Set correctly' : 'MISMATCH!');
       console.log('- Parse.javaScriptKey:', Parse.javaScriptKey === javascriptKey ? 'Set correctly' : 'MISMATCH!');
       console.log('- Parse.serverURL:', Parse.serverURL === serverURL ? 'Set correctly' : 'MISMATCH!');
       console.log('- Parse.masterKey:', Parse.masterKey ? 'Provided' : 'Not provided');
       
-      // Try to restore session from localStorage if no current user
-      if (!Parse.User.current()) {
-        const sessionToken = localStorage.getItem('Parse/sessionToken');
-        if (sessionToken) {
-          console.log('Found session token in localStorage, attempting to restore session');
-          
-          // Use become() with a promise instead of await
-          Parse.User.become(sessionToken).then(user => {
-            if (user) {
-              console.log('Session restored successfully for user:', user.getUsername());
-            }
-          }).catch(sessionError => {
-            console.error('Failed to restore session:', sessionError.message);
-            localStorage.removeItem('Parse/sessionToken');
-          });
-        }
-      }
-      
       // Enable local datastore AFTER initialization if specified
       if (enableLocalDatastore) {
-        console.log('Enabling Parse local datastore');
+        console.log('ParseInitializer: Enabling Parse local datastore');
         Parse.enableLocalDatastore();
       }
       
       // Enable LiveQuery if needed
       if (liveQuery) {
         const liveQueryURL = serverURL.replace(/^https?:\/\//, 'wss://');
-        console.log('Setting up LiveQuery with URL:', liveQueryURL);
+        console.log('ParseInitializer: Setting up LiveQuery with URL:', liveQueryURL);
         Parse.liveQueryServerURL = liveQueryURL;
       }
       
       // Check remember me state after initialization
-      console.log('Checking remember me state');
+      console.log('ParseInitializer: Checking remember me state');
       checkRememberMeState();
       
       // Handler function for beforeunload
       const handleBeforeUnload = () => {
         const rememberMe = localStorage.getItem('psypsy_remember_me') === 'true';
         if (!rememberMe) {
-          console.log('App closing - session will be cleared since remember me is not enabled');
+          console.log('ParseInitializer: App closing - session will be cleared since remember me is not enabled');
         }
       };
       
       // Set up beforeunload event listener
       window.addEventListener('beforeunload', handleBeforeUnload);
       
-      console.log('Parse initialization completed successfully');
+      console.log('ParseInitializer: Parse initialization completed successfully');
       setIsInitialized(true);
     } catch (error) {
-      console.error('Error initializing Parse:', error);
-      console.error('Error details:', error.message, error.code);
-      console.error('Error stack:', error.stack);
+      console.error('ParseInitializer: Error initializing Parse:', error);
+      console.error('ParseInitializer: Error details:', error.message, error.code);
+      console.error('ParseInitializer: Error stack:', error.stack);
       // Still set as initialized to allow the app to load even if Parse fails
-      console.log('Setting initialized to true despite Parse error to allow app to load');
+      console.log('ParseInitializer: Setting initialized to true despite Parse error to allow app to load');
       setIsInitialized(true);
     }
   }, []); // Empty dependency array to run only once

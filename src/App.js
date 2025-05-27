@@ -56,6 +56,9 @@ import { initDevTools } from "./utils/devTools";
 // Parse initialization
 import ParseInitializer from "./components/ParseInitializer";
 
+// Authentication redirect component
+import AuthenticatedRedirect from "./components/AuthenticatedRedirect";
+
 // Parse for cloud functions
 import Parse from "parse";
 
@@ -247,43 +250,14 @@ export default function App() {
     </MDBox>
   );
 
-  // Create a fallback route that safely handles navigation without using Navigate
+  // Create a fallback route that safely handles navigation
   const getFallbackRoute = () => {
     return (
       <Route 
         path="*" 
-        element={
-          <div style={{display: 'none'}}>
-            {/* Use an effect inside a component to handle redirects */}
-            <RedirectHandler />
-          </div>
-        } 
+        element={<AuthenticatedRedirect />} 
       />
     );
-  };
-  
-  // Helper component to handle redirects safely with useEffect
-  const RedirectHandler = () => {
-    const location = useLocation();
-    
-    useEffect(() => {
-      const path = location.pathname;
-      // Only redirect if not on a valid route
-      if (path === "/" || path === "/*") {
-        console.log('RedirectHandler triggered for path:', path);
-        console.log('Authentication state:', window.__PSYPSY_AUTH_GUARD__?.isAuthenticated ? 'Authenticated' : 'Not authenticated');
-        
-        if (window.__PSYPSY_AUTH_GUARD__?.isAuthenticated) {
-          console.log('Redirecting to dashboard using navigate');
-          navigate('/dashboard', { replace: true });
-        } else {
-          console.log('Redirecting to login using navigate');
-          navigate('/authentication/login', { replace: true });
-        }
-      }
-    }, [location, navigate]);
-    
-    return null;
   };
 
   return (
@@ -307,6 +281,8 @@ export default function App() {
           )}
           {layout === "vr" && <Configurator stats={stats} userType={userType} />}
           <Routes>
+            {/* Root path redirect based on authentication */}
+            <Route path="/" element={<AuthenticatedRedirect />} />
             {getRoutes(routes)}
             {getFallbackRoute()}
           </Routes>

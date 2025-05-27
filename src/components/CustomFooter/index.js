@@ -28,12 +28,17 @@ function CustomFooter({ light }) {
         justifyContent="center"
         alignItems="center"
         flexWrap="wrap"
-        color={light ? "white" : "text"}
         fontSize={size.sm}
         px={1.5}
+        sx={{ color: light ? "white" : "#9e9e9e" }}
       >
         {t('footer.madeWith')}
-        <MDBox fontSize={size.md} color={light ? "white" : "dark"} mb={-0.5} mx={0.25}>
+        <MDBox 
+          fontSize={size.md} 
+          mb={-0.5} 
+          mx={0.25}
+          sx={{ color: light ? "white" : "#9e9e9e" }}
+        >
           <Icon color="inherit" fontSize="inherit">
             favorite
           </Icon>

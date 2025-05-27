@@ -17,9 +17,9 @@ export const checkRememberMeState = () => {
   // If remember me is not checked, clear the session immediately on app load
   if (!rememberMe) {
     clearUserSession();
-    console.log('Remember me not enabled, cleared previous session');
+    console.log('ParseService: Remember me not enabled, cleared previous session');
   } else {
-    console.log('Remember me is enabled, keeping session');
+    console.log('ParseService: Remember me is enabled, keeping session');
   }
 };
 
@@ -82,16 +82,20 @@ export const ParseAuth = {
   login: async (username, password) => {
     try {
       const user = await Parse.User.logIn(username, password);
-      console.log('User logged in successfully');
+      console.log('ParseAuth: User logged in successfully');
       
       // Store session token in local storage explicitly (for redundancy)
       const sessionToken = user.getSessionToken();
       localStorage.setItem('Parse/sessionToken', sessionToken);
-      console.log('Session token stored in localStorage');
+      console.log('ParseAuth: Session token stored in localStorage');
+      
+      // Set default remember me to true for better UX
+      localStorage.setItem(REMEMBER_ME_KEY, 'true');
+      console.log('ParseAuth: Remember me enabled by default');
       
       return user;
     } catch (error) {
-      console.error('Error logging in:', error);
+      console.error('ParseAuth: Error logging in:', error);
       throw error;
     }
   },

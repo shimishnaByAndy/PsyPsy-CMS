@@ -19,23 +19,37 @@ if (isDev) {
 }
 
 function createWindow() {
+  console.log('Creating Electron window...');
+  
   // Create the browser window
   mainWindow = new BrowserWindow({
     width: 1440,
     height: 900,
+    show: true, // Ensure window shows
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     }
   });
+  
+  console.log('Window created successfully');
 
   // Load the app
   const startUrl = isDev 
-    ? 'http://localhost:3000' 
+    ? 'http://localhost:3003' 
     : `file://${path.join(__dirname, '../build/index.html')}`;
   
-  mainWindow.loadURL(startUrl);
+  console.log('Loading URL:', startUrl);
+  console.log('isDev:', isDev);
+  
+  mainWindow.loadURL(startUrl)
+    .then(() => {
+      console.log('URL loaded successfully');
+    })
+    .catch((error) => {
+      console.error('Error loading URL:', error);
+    });
 
   // Open DevTools in development mode
   if (isDev) {

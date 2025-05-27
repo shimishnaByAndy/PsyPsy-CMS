@@ -11,6 +11,19 @@
                 "TEMPLATES_USE": "en",
                 "ENABLE_GUI": "false"
             }
+        },
+        "animate-ui Docs": {
+            "url": "https://gitmcp.io/animate-ui/animate-ui/tree/main/apps/www"
+        },
+        "mui-x Docs": {
+            "url": "https://gitmcp.io/mui/mui-x"
+        },
+        "iterm-mcp": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "iterm-mcp"
+            ]
         }
     }
 }
