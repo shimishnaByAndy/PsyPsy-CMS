@@ -43,7 +43,10 @@ function BasicLayout({ image, children }) {
         width="100%"
         minHeight="100vh"
         sx={{
-          position: "relative",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          zIndex: 0,
           backgroundImage: ({ functions: { rgba } }) =>
             image && `url(${image})`,
           backgroundSize: "cover",

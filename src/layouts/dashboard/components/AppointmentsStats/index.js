@@ -7,12 +7,16 @@
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { useTheme } from '@mui/material/styles';
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
 function AppointmentsStats({ appointmentsData = {} }) {
+  const theme = useTheme();
+
   // Check if data is available
   const isDataAvailable = appointmentsData && Object.keys(appointmentsData).length > 0;
   
@@ -39,21 +43,33 @@ function AppointmentsStats({ appointmentsData = {} }) {
   };
 
   return (
-    <Card sx={{ height: "100%" }}>
-      <MDBox pt={3} px={3}>
-        <MDTypography variant="h6" fontWeight="medium">
+    <Card sx={{
+      height: "100%",
+      borderTop: `3px solid ${theme.palette.primary.main}`,
+      transition: theme.transitions.create('box-shadow', {
+        duration: theme.transitions.duration.short,
+      }),
+      '&:hover': {
+        boxShadow: theme.shadows[8],
+      },
+    }}>
+      <MDBox pt={2} px={2} display="flex" flexDirection="column" alignItems="center">
+        <MDBox mb={0.5} color="primary.main">
+          <CalendarMonthIcon fontSize="large"/>
+        </MDBox>
+        <MDTypography variant="h6" fontWeight="medium" textAlign="center">
           Appointments Statistics
         </MDTypography>
         {!isDataAvailable && (
-          <MDTypography variant="caption" color="warning" display="block" mt={1}>
-            ⚠️ Using mock data - Cloud function integration pending
+          <MDTypography variant="caption" color="warning" display="block" mt={0.5} textAlign="center">
+            ⚠️ Using mock data
           </MDTypography>
         )}
       </MDBox>
-      <MDBox pt={1} pb={2} px={3}>
+      <MDBox pt={1.5} pb={1.5} px={2}>
         {/* Total Appointments */}
-        <MDBox mb={3} textAlign="center">
-          <MDTypography variant="h2" fontWeight="bold" color="info">
+        <MDBox mb={1} textAlign="center">
+          <MDTypography variant="h3" fontWeight="bold" color="info">
             {totalAppointments}
           </MDTypography>
           <MDTypography variant="caption" color="text">
@@ -62,28 +78,52 @@ function AppointmentsStats({ appointmentsData = {} }) {
         </MDBox>
 
         {/* Time Slot Availability */}
-        <MDBox mb={3}>
-          <MDTypography variant="button" fontWeight="medium" color="text" mb={2}>
+        <MDBox mb={1.5}>
+          <MDTypography variant="overline" fontWeight="medium" color="text" mb={1} sx={{ textTransform: "uppercase" }}>
             Time Slot Offers
           </MDTypography>
           
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={6}>
-              <MDBox textAlign="center" py={2} bgcolor="success.main" borderRadius="lg">
-                <MDTypography variant="h4" fontWeight="bold" color="white">
+              <MDBox 
+                textAlign="center" 
+                py={1} 
+                bgcolor="success.main" 
+                borderRadius="lg"
+                sx={{
+                  border: `1px solid ${theme.palette.success.dark}`,
+                  transition: 'transform 0.2s ease-in-out',
+                  '&:hover': {
+                    transform: 'scale(1.03)'
+                  }
+                }}
+              >
+                <MDTypography variant="h6" fontWeight="bold" color={theme.palette.getContrastText(theme.palette.success.main)}>
                   {timeSlotStats.withTimeSlot}
                 </MDTypography>
-                <MDTypography variant="caption" color="white">
+                <MDTypography variant="caption" color={theme.palette.getContrastText(theme.palette.success.main)} sx={{ fontSize: '0.7rem' }}>
                   With Time Slots
                 </MDTypography>
               </MDBox>
             </Grid>
             <Grid item xs={6}>
-              <MDBox textAlign="center" py={2} bgcolor="warning.main" borderRadius="lg">
-                <MDTypography variant="h4" fontWeight="bold" color="white">
+              <MDBox 
+                textAlign="center" 
+                py={1} 
+                bgcolor="warning.main" 
+                borderRadius="lg"
+                sx={{
+                  border: `1px solid ${theme.palette.warning.dark}`,
+                  transition: 'transform 0.2s ease-in-out',
+                  '&:hover': {
+                    transform: 'scale(1.03)'
+                  }
+                }}
+              >
+                <MDTypography variant="h6" fontWeight="bold" color={theme.palette.getContrastText(theme.palette.warning.main)}>
                   {timeSlotStats.withoutTimeSlot}
                 </MDTypography>
-                <MDTypography variant="caption" color="white">
+                <MDTypography variant="caption" color={theme.palette.getContrastText(theme.palette.warning.main)} sx={{ fontSize: '0.7rem' }}>
                   Without Time Slots
                 </MDTypography>
               </MDBox>
@@ -92,30 +132,30 @@ function AppointmentsStats({ appointmentsData = {} }) {
         </MDBox>
 
         {/* Meeting Preferences */}
-        <MDBox mb={3}>
-          <MDTypography variant="button" fontWeight="medium" color="text" mb={2}>
+        <MDBox mb={1.5}>
+          <MDTypography variant="overline" fontWeight="medium" color="text" mb={1} sx={{ textTransform: "uppercase" }}>
             Meeting Preferences
           </MDTypography>
           
           {/* Online */}
-          <MDBox mb={2}>
-            <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={0.5}>
+          <MDBox mb={0.75}>
+            <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={0.1}>
               <MDBox display="flex" alignItems="center">
-                <Chip label="Online" color="info" size="small" sx={{ mr: 1 }} />
-                <MDTypography variant="caption" color="text">
+                <Chip label="Online" color="info" size="small" sx={{ mr: 0.5, height: '18px', fontSize: '0.65rem' }} />
+                <MDTypography variant="caption" color="text" sx={{ fontSize: '0.7rem' }}>
                   Online
                 </MDTypography>
               </MDBox>
               <MDBox textAlign="right">
-                <MDTypography variant="caption" fontWeight="medium">
+                <MDTypography variant="caption" fontWeight="medium" sx={{ fontSize: '0.7rem' }}>
                   {meetingPreferences.online} ({getPercentage(meetingPreferences.online, totalAppointments)}%)
                 </MDTypography>
               </MDBox>
             </MDBox>
             <MDBox
               width="100%"
-              height="6px"
-              borderRadius="3px"
+              height="4px"
+              borderRadius="sm"
               bgcolor="grey.300"
               position="relative"
             >
@@ -129,24 +169,24 @@ function AppointmentsStats({ appointmentsData = {} }) {
           </MDBox>
 
           {/* In-Person */}
-          <MDBox mb={2}>
-            <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={0.5}>
+          <MDBox mb={0.75}>
+            <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={0.1}>
               <MDBox display="flex" alignItems="center">
-                <Chip label="In-Person" color="success" size="small" sx={{ mr: 1 }} />
-                <MDTypography variant="caption" color="text">
+                <Chip label="In-Person" color="success" size="small" sx={{ mr: 0.5, height: '18px', fontSize: '0.65rem' }} />
+                <MDTypography variant="caption" color="text" sx={{ fontSize: '0.7rem' }}>
                   In-Person
                 </MDTypography>
               </MDBox>
               <MDBox textAlign="right">
-                <MDTypography variant="caption" fontWeight="medium">
+                <MDTypography variant="caption" fontWeight="medium" sx={{ fontSize: '0.7rem' }}>
                   {meetingPreferences.inPerson} ({getPercentage(meetingPreferences.inPerson, totalAppointments)}%)
                 </MDTypography>
               </MDBox>
             </MDBox>
             <MDBox
               width="100%"
-              height="6px"
-              borderRadius="3px"
+              height="4px"
+              borderRadius="sm"
               bgcolor="grey.300"
               position="relative"
             >
@@ -160,24 +200,24 @@ function AppointmentsStats({ appointmentsData = {} }) {
           </MDBox>
 
           {/* Both */}
-          <MDBox mb={2}>
-            <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={0.5}>
+          <MDBox mb={0.75}>
+            <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={0.1}>
               <MDBox display="flex" alignItems="center">
-                <Chip label="Both" color="primary" size="small" sx={{ mr: 1 }} />
-                <MDTypography variant="caption" color="text">
+                <Chip label="Both" color="primary" size="small" sx={{ mr: 0.5, height: '18px', fontSize: '0.65rem' }} />
+                <MDTypography variant="caption" color="text" sx={{ fontSize: '0.7rem' }}>
                   Both
                 </MDTypography>
               </MDBox>
               <MDBox textAlign="right">
-                <MDTypography variant="caption" fontWeight="medium">
+                <MDTypography variant="caption" fontWeight="medium" sx={{ fontSize: '0.7rem' }}>
                   {meetingPreferences.both} ({getPercentage(meetingPreferences.both, totalAppointments)}%)
                 </MDTypography>
               </MDBox>
             </MDBox>
             <MDBox
               width="100%"
-              height="6px"
-              borderRadius="3px"
+              height="4px"
+              borderRadius="sm"
               bgcolor="grey.300"
               position="relative"
             >
@@ -193,37 +233,67 @@ function AppointmentsStats({ appointmentsData = {} }) {
 
         {/* Language Preferences */}
         <MDBox>
-          <MDTypography variant="button" fontWeight="medium" color="text" mb={2}>
+          <MDTypography variant="overline" fontWeight="medium" color="text" mb={1} sx={{ textTransform: "uppercase" }}>
             Language Preferences
           </MDTypography>
           
-          <Grid container spacing={1}>
-            <Grid item xs={4}>
-              <MDBox textAlign="center" py={1}>
-                <MDTypography variant="h6" fontWeight="bold" color="primary">
+          <Grid container spacing={0.75} justifyContent="center">
+            {/* French */}
+            <Grid item xs={4} sm={3} md={4}>
+              <MDBox 
+                textAlign="center" 
+                py={0.75} 
+                px={0.25}
+                borderRadius="md"
+                sx={{
+                  backgroundColor: theme.palette.grey[100],
+                  border: `1px solid ${theme.palette.grey[300]}`, 
+                }}
+              >
+                <MDTypography variant="body2" fontWeight="bold" color="primary">
                   {languagePreferences.french}
                 </MDTypography>
-                <MDTypography variant="caption" color="text">
+                <MDTypography variant="caption" color="text" sx={{ fontSize: '0.6rem'}}>
                   Français
                 </MDTypography>
               </MDBox>
             </Grid>
-            <Grid item xs={4}>
-              <MDBox textAlign="center" py={1}>
-                <MDTypography variant="h6" fontWeight="bold" color="info">
+            {/* English */}
+            <Grid item xs={4} sm={3} md={4}>
+              <MDBox 
+                textAlign="center" 
+                py={0.75} 
+                px={0.25}
+                borderRadius="md"
+                sx={{
+                  backgroundColor: theme.palette.grey[100],
+                  border: `1px solid ${theme.palette.grey[300]}`, 
+                }}
+              >
+                <MDTypography variant="body2" fontWeight="bold" color="info">
                   {languagePreferences.english}
                 </MDTypography>
-                <MDTypography variant="caption" color="text">
+                <MDTypography variant="caption" color="text" sx={{ fontSize: '0.6rem'}}>
                   English
                 </MDTypography>
               </MDBox>
             </Grid>
-            <Grid item xs={4}>
-              <MDBox textAlign="center" py={1}>
-                <MDTypography variant="h6" fontWeight="bold" color="success">
+            {/* Both */}
+            <Grid item xs={4} sm={3} md={4}>
+              <MDBox 
+                textAlign="center" 
+                py={0.75} 
+                px={0.25}
+                borderRadius="md"
+                sx={{
+                  backgroundColor: theme.palette.grey[100],
+                  border: `1px solid ${theme.palette.grey[300]}`, 
+                }}
+              >
+                <MDTypography variant="body2" fontWeight="bold" color="success">
                   {languagePreferences.both}
                 </MDTypography>
-                <MDTypography variant="caption" color="text">
+                <MDTypography variant="caption" color="text" sx={{ fontSize: '0.6rem'}}>
                   Both
                 </MDTypography>
               </MDBox>

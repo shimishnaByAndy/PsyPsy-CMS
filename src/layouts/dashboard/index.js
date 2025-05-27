@@ -124,20 +124,25 @@ function Dashboard() {
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3}>
-        {/* Main Dashboard - 3 Containers */}
+        {/* REMOVE Key Metrics Overview */}
+        {/* <MDBox mb={3}> */}
+        {/*  <KeyMetricsOverviewCard /> */}
+        {/* </MDBox> */}
+
+        {/* Main Dashboard - 3 Containers in a row */}
         <Grid container spacing={3}>
           {/* Professionals Stats */}
-          <Grid item xs={12} lg={4}>
+          <Grid item xs={12} md={6} lg={4}> {/* Reverted to lg={4} */}
             <ProfessionalsStats professionalsData={dashboardData.professionals} />
           </Grid>
           
           {/* Clients Stats */}
-          <Grid item xs={12} lg={4}>
+          <Grid item xs={12} md={6} lg={4}> {/* Reverted to lg={4} */}
             <ClientsStats clientsData={dashboardData.clients} />
           </Grid>
           
           {/* Appointments Stats */}
-          <Grid item xs={12} lg={4}>
+          <Grid item xs={12} md={12} lg={4}> {/* Reverted to lg={4}, md was 6, now 12 for consistency on medium or if only one row */}
             <AppointmentsStats appointmentsData={dashboardData.appointments} />
           </Grid>
         </Grid>

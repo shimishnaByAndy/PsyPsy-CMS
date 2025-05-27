@@ -6,15 +6,39 @@
 // @mui material components
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
+import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural';
+import { useTheme } from '@mui/material/styles';
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
 function ClientsStats({ clientsData = {} }) {
+  const theme = useTheme();
+
+  // Define canonical age ranges
+  const canonicalAgeRanges = [
+    "14-17", "18-24", "25-34", "35-44", "45-54", "55-64", "65+"
+  ];
+
   // Check if data is available
   const isDataAvailable = clientsData && Object.keys(clientsData).length > 0;
   
+  // Default age groups matching the canonical structure
+  const defaultAgeGroups = canonicalAgeRanges.reduce((acc, range) => {
+    acc[range] = 0;
+    return acc;
+  }, {});
+
+  // Example of populating defaultAgeGroups for mock data
+  const mockAgeGroupData = {
+    "18-24": 45,
+    "25-34": 78,
+    "35-44": 62,
+    "45-54": 38,
+    "55-64": 24, // Assuming '56+' from original mock maps to '55-64' or '65+'
+  };
+
   const {
     totalClients = isDataAvailable ? clientsData.totalClients : 247,
     genderStats = isDataAvailable ? clientsData.genderStats : {
@@ -22,35 +46,50 @@ function ClientsStats({ clientsData = {} }) {
       women: 144,
       other: 16
     },
-    ageGroups = isDataAvailable ? clientsData.ageGroups : [
-      { range: "18-25", count: 45 },
-      { range: "26-35", count: 78 },
-      { range: "36-45", count: 62 },
-      { range: "46-55", count: 38 },
-      { range: "56+", count: 24 }
-    ]
+    // Process incoming ageGroups or use structured mock data
+    ageGroupStats = isDataAvailable 
+      ? clientsData.ageGroups // Assuming clientsData.ageGroups is an object like { "18-24": 45, ... }
+      : mockAgeGroupData
   } = clientsData;
+
+  // Combine provided stats with canonical ranges, ensuring all ranges are present
+  const processedAgeGroups = canonicalAgeRanges.map(range => ({
+    range,
+    count: (ageGroupStats && ageGroupStats[range]) || 0 // Use count from data or default to 0
+  }));
 
   const getGenderPercentage = (count) => {
     return ((count / totalClients) * 100).toFixed(1);
   };
 
   return (
-    <Card sx={{ height: "100%" }}>
-      <MDBox pt={3} px={3}>
-        <MDTypography variant="h6" fontWeight="medium">
+    <Card sx={{
+      height: "100%",
+      borderTop: `3px solid ${theme.palette.success.main}`,
+      transition: theme.transitions.create('box-shadow', {
+        duration: theme.transitions.duration.short,
+      }),
+      '&:hover': {
+        boxShadow: theme.shadows[8],
+      },
+    }}>
+      <MDBox pt={2} px={2} display="flex" flexDirection="column" alignItems="center">
+        <MDBox mb={0.5} color="success.main">
+          <FaceRetouchingNaturalIcon fontSize="large"/>
+        </MDBox>
+        <MDTypography variant="h6" fontWeight="medium" textAlign="center">
           Clients Statistics
         </MDTypography>
         {!isDataAvailable && (
-          <MDTypography variant="caption" color="warning" display="block" mt={1}>
-            ⚠️ Using mock data - Cloud function integration pending
+          <MDTypography variant="caption" color="warning" display="block" mt={0.5} textAlign="center">
+            ⚠️ Using mock data
           </MDTypography>
         )}
       </MDBox>
-      <MDBox pt={1} pb={2} px={3}>
+      <MDBox pt={1.5} pb={1.5} px={2}>
         {/* Total Clients */}
-        <MDBox mb={3} textAlign="center">
-          <MDTypography variant="h2" fontWeight="bold" color="success">
+        <MDBox mb={1} textAlign="center">
+          <MDTypography variant="h3" fontWeight="bold" color="success">
             {totalClients}
           </MDTypography>
           <MDTypography variant="caption" color="text">
@@ -59,115 +98,126 @@ function ClientsStats({ clientsData = {} }) {
         </MDBox>
 
         {/* Gender Distribution */}
-        <MDBox mb={3}>
-          <MDTypography variant="button" fontWeight="medium" color="text" mb={2}>
+        <MDBox 
+          mb={1.5}
+          p={1}
+          borderRadius="md"
+          sx={{
+            backgroundColor: theme.palette.grey[50],
+            border: `1px solid ${theme.palette.grey[200]}`
+          }}
+        >
+          <MDTypography variant="overline" fontWeight="medium" color="text" mb={1.5} sx={{ textTransform: "uppercase" }}>
             Gender Distribution
           </MDTypography>
           
           {/* Men */}
-          <MDBox mb={2}>
-            <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={0.5}>
-              <MDTypography variant="caption" color="text">
-                Men
-              </MDTypography>
-              <MDBox textAlign="right">
-                <MDTypography variant="caption" fontWeight="medium">
-                  {genderStats.men} ({getGenderPercentage(genderStats.men)}%)
-                </MDTypography>
+          <MDBox mb={0.75}>
+            <MDTypography variant="caption" color="text" display="block" mb={0.1}>
+              Men
+            </MDTypography>
+            <MDBox display="flex" alignItems="center">
+              <MDBox 
+                width="70%"
+                height="5px"
+                borderRadius="sm"
+                bgcolor="grey.300"
+                position="relative"
+                mr={1}
+              >
+                <MDBox
+                  width={`${getGenderPercentage(genderStats.men)}%`}
+                  height="100%"
+                  borderRadius="sm"
+                  bgcolor="info.main"
+                />
               </MDBox>
-            </MDBox>
-            <MDBox
-              width="100%"
-              height="6px"
-              borderRadius="3px"
-              bgcolor="grey.300"
-              position="relative"
-            >
-              <MDBox
-                width={`${getGenderPercentage(genderStats.men)}%`}
-                height="100%"
-                borderRadius="3px"
-                bgcolor="info.main"
-              />
+              <MDTypography variant="caption" fontWeight="medium">
+                {genderStats.men} ({getGenderPercentage(genderStats.men)}%)
+              </MDTypography>
             </MDBox>
           </MDBox>
 
           {/* Women */}
-          <MDBox mb={2}>
-            <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={0.5}>
-              <MDTypography variant="caption" color="text">
-                Women
-              </MDTypography>
-              <MDBox textAlign="right">
-                <MDTypography variant="caption" fontWeight="medium">
-                  {genderStats.women} ({getGenderPercentage(genderStats.women)}%)
-                </MDTypography>
+          <MDBox mb={0.75}>
+            <MDTypography variant="caption" color="text" display="block" mb={0.1}>
+              Women
+            </MDTypography>
+            <MDBox display="flex" alignItems="center">
+              <MDBox 
+                width="70%" 
+                height="5px" 
+                borderRadius="sm"
+                bgcolor="grey.300"
+                position="relative"
+                mr={1}
+              >
+                <MDBox
+                  width={`${getGenderPercentage(genderStats.women)}%`}
+                  height="100%"
+                  borderRadius="sm"
+                  bgcolor="primary.main"
+                />
               </MDBox>
-            </MDBox>
-            <MDBox
-              width="100%"
-              height="6px"
-              borderRadius="3px"
-              bgcolor="grey.300"
-              position="relative"
-            >
-              <MDBox
-                width={`${getGenderPercentage(genderStats.women)}%`}
-                height="100%"
-                borderRadius="3px"
-                bgcolor="primary.main"
-              />
+              <MDTypography variant="caption" fontWeight="medium">
+                {genderStats.women} ({getGenderPercentage(genderStats.women)}%)
+              </MDTypography>
             </MDBox>
           </MDBox>
 
           {/* Other */}
-          <MDBox mb={2}>
-            <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={0.5}>
-              <MDTypography variant="caption" color="text">
-                Other
-              </MDTypography>
-              <MDBox textAlign="right">
-                <MDTypography variant="caption" fontWeight="medium">
-                  {genderStats.other} ({getGenderPercentage(genderStats.other)}%)
-                </MDTypography>
+          <MDBox mb={0}>
+            <MDTypography variant="caption" color="text" display="block" mb={0.1}>
+              Other
+            </MDTypography>
+            <MDBox display="flex" alignItems="center">
+              <MDBox 
+                width="70%" 
+                height="5px" 
+                borderRadius="sm"
+                bgcolor="grey.300"
+                position="relative"
+                mr={1}
+              >
+                <MDBox
+                  width={`${getGenderPercentage(genderStats.other)}%`}
+                  height="100%"
+                  borderRadius="sm"
+                  bgcolor="success.main"
+                />
               </MDBox>
-            </MDBox>
-            <MDBox
-              width="100%"
-              height="6px"
-              borderRadius="3px"
-              bgcolor="grey.300"
-              position="relative"
-            >
-              <MDBox
-                width={`${getGenderPercentage(genderStats.other)}%`}
-                height="100%"
-                borderRadius="3px"
-                bgcolor="success.main"
-              />
+              <MDTypography variant="caption" fontWeight="medium">
+                {genderStats.other} ({getGenderPercentage(genderStats.other)}%)
+              </MDTypography>
             </MDBox>
           </MDBox>
         </MDBox>
 
         {/* Age Groups */}
         <MDBox>
-          <MDTypography variant="button" fontWeight="medium" color="text" mb={2}>
+          <MDTypography variant="overline" fontWeight="medium" color="text" mb={0.5} sx={{ textTransform: "uppercase" }}>
             Age Groups
           </MDTypography>
-          <Grid container spacing={1}>
-            {ageGroups.map((group, index) => (
-              <Grid item xs={4} key={group.range}>
-                <MDBox textAlign="center" py={1}>
-                  <MDTypography variant="h6" fontWeight="bold" color="dark">
-                    {group.count}
-                  </MDTypography>
-                  <MDTypography variant="caption" color="text">
-                    {group.range} years
-                  </MDTypography>
-                </MDBox>
-              </Grid>
-            ))}
-          </Grid>
+          {processedAgeGroups.map((group) => (
+            <MDBox 
+              key={group.range} 
+              display="flex" 
+              justifyContent="space-between" 
+              alignItems="center" 
+              py={0.25}
+              borderBottom={`1px solid ${theme.palette.grey[100]}`}
+              sx={{ 
+                '&:last-child': { borderBottom: 'none' }
+              }}
+            >
+              <MDTypography variant="caption" color="text" sx={{ fontSize: '0.7rem' }}>
+                {group.range} yrs
+              </MDTypography>
+              <MDTypography variant="caption" fontWeight="medium" color="dark" sx={{ fontSize: '0.7rem' }}>
+                {group.count}
+              </MDTypography>
+            </MDBox>
+          ))}
         </MDBox>
       </MDBox>
     </Card>
