@@ -10,7 +10,7 @@ import {
   useSpring,
 } from 'motion/react';
 
-import { cn } from './utils.ts';
+import { cn } from 'utils';
 
 type StarLayerProps = HTMLMotionProps<'div'> & {
   count: number;
@@ -109,7 +109,7 @@ function StarsBackground({
     <div
       data-slot="stars-background"
       className={cn(
-        'relative size-full overflow-hidden',
+        'relative size-full overflow-visible',
         className,
       )}
       onMouseMove={handleMouseMove}

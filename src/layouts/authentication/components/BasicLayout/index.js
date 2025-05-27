@@ -32,6 +32,9 @@ import PageLayout from "examples/LayoutContainers/PageLayout";
 // Import the LanguageSwitcher
 import LanguageSwitcher from "components/LanguageSwitcher";
 
+// Import ShimmerBackground
+import { ShimmerBackground } from "../../../../components/animate-ui/backgrounds/shimmer.tsx";
+
 // Authentication pages components
 import Footer from "layouts/authentication/components/Footer";
 
@@ -64,6 +67,19 @@ function BasicLayout({ image, children }) {
           }
         }}
       >
+        {/* Shimmer overlay - covers entire background */}
+        <MDBox
+          position="absolute"
+          top={0}
+          left={0}
+          width="100%"
+          height="100%"
+          zIndex={1.5}
+          sx={{ pointerEvents: 'none' }}
+        >
+          <ShimmerBackground intensity="strong" />
+        </MDBox>
+
         <MDBox 
           position="relative"
           zIndex={2}
