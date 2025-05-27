@@ -21,7 +21,6 @@ import { useTranslation } from "react-i18next";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import MuiLink from "@mui/material/Link";
-import Alert from "@mui/material/Alert";
 
 // @mui icons
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -35,6 +34,9 @@ import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 import SimpleErrorMessage from "components/SimpleErrorMessage";
 import SimpleSwitch from "components/SimpleSwitch";
+
+// Animate UI components
+import { IconButton } from "components/animate-ui/buttons/icon-button";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
@@ -162,20 +164,41 @@ function Basic() {
           >
             PsyPsy
           </MDTypography>
-          <Grid container spacing={3} justifyContent="center" sx={{ mt: 3, mb: 0.5 }}>
+          <Grid container spacing={3} justifyContent="center" sx={{ mt: 4, mb: 1 }}>
             <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="https://www.facebook.com/profile.php?id=61558742723032" target="_blank" variant="body1" color="white">
-                <FacebookIcon color="inherit" />
+              <MDTypography component="div" variant="body1" color="white" sx={{ display: 'flex', justifyContent: 'center' }}>
+                <IconButton
+                  icon={FacebookIcon}
+                  href="https://www.facebook.com/profile.php?id=61558742723032"
+                  target="_blank"
+                  color={[255, 255, 255]} // White icons
+                  rippleColor={[255, 255, 255]} // White ripple
+                  size={24}
+                />
               </MDTypography>
             </Grid>
             <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="https://www.instagram.com/psypsy_sante/" target="_blank" variant="body1" color="white">
-                <InstagramIcon color="inherit" />
+              <MDTypography component="div" variant="body1" color="white" sx={{ display: 'flex', justifyContent: 'center' }}>
+                <IconButton
+                  icon={InstagramIcon}
+                  href="https://www.instagram.com/psypsy_sante/"
+                  target="_blank"
+                  color={[255, 255, 255]} // White icons
+                  rippleColor={[255, 255, 255]} // White ripple
+                  size={24}
+                />
               </MDTypography>
             </Grid>
             <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="http://www.psypsy.ca" target="_blank" variant="body1" color="white">
-                <LanguageIcon color="inherit" />
+              <MDTypography component="div" variant="body1" color="white" sx={{ display: 'flex', justifyContent: 'center' }}>
+                <IconButton
+                  icon={LanguageIcon}
+                  href="http://www.psypsy.ca"
+                  target="_blank"
+                  color={[255, 255, 255]} // White icons
+                  rippleColor={[255, 255, 255]} // White ripple
+                  size={24}
+                />
               </MDTypography>
             </Grid>
           </Grid>
@@ -204,7 +227,22 @@ function Basic() {
             </MDBox>
             
             <MDBox mt={2} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth onClick={login}>
+              <MDButton 
+                variant="gradient" 
+                color="info" 
+                fullWidth 
+                onClick={login}
+                sx={{
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    transform: 'translateY(-1px)',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                  },
+                  '&:active': {
+                    transform: 'translateY(0px)',
+                  }
+                }}
+              >
                 {t("auth.login.submit")}
               </MDButton>
             </MDBox>

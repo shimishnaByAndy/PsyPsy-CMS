@@ -124,6 +124,52 @@ function Dashboard() {
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3}>
+        {/* TEMPORARY ADMIN CREATION BUTTON */}
+        {/* <MDBox mb={3} p={3} sx={{ 
+          backgroundColor: '#fff3cd', 
+          borderRadius: 2, 
+          border: '3px solid #ff6b35',
+          boxShadow: '0 4px 8px rgba(255, 107, 53, 0.3)'
+        }}>
+          <MDTypography variant="h5" color="warning" mb={2} sx={{ fontWeight: 'bold' }}>
+            🚨 TEMPORARY ADMIN CREATOR 🚨
+          </MDTypography>
+          <MDTypography variant="h6" color="text" mb={2}>
+            Create admin user: andy@admin.ca / password: aaaaaa
+          </MDTypography>
+          
+          <Button
+            variant="contained"
+            color="warning"
+            size="large"
+            onClick={createAdminUser}
+            disabled={adminCreating}
+            sx={{ 
+              mr: 2, 
+              fontSize: '1.2rem',
+              padding: '12px 24px',
+              backgroundColor: '#ff6b35',
+              '&:hover': {
+                backgroundColor: '#e55a2b'
+              }
+            }}
+          >
+            {adminCreating ? '⏳ Creating Admin...' : '🔧 CREATE ADMIN USER'}
+          </Button>
+          
+          {adminResult && (
+            <Alert severity="success" sx={{ mt: 2 }}>
+              {adminResult}
+            </Alert>
+          )}
+          
+          {adminError && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              ❌ Error: {adminError}
+            </Alert>
+          )}
+        </MDBox> */}
+
         {/* REMOVE Key Metrics Overview */}
         {/* <MDBox mb={3}> */}
         {/*  <KeyMetricsOverviewCard /> */}

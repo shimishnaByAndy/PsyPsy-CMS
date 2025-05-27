@@ -42,6 +42,7 @@ import Billing from "./layouts/billing";
 import RTL from "./layouts/rtl";
 import Notifications from "./layouts/notifications";
 import Profile from "./layouts/profile";
+import Strings from "./layouts/strings";  // Import the new Strings component
 import Login from "./layouts/authentication/login";  // Login page with Parse integration
 import Lock from "./layouts/authentication/lock";    // Lock screen
 import ParseDataExample from "./layouts/parse-data";  // Parse data management example
@@ -83,11 +84,19 @@ const protectedRoutes = [
   },
   {
     type: "collapse",
+    name: "Strings",
+    key: "strings",
+    icon: <Icon fontSize="small">translate</Icon>,
+    route: "/strings",
+    component: <ProtectedRoute component={<Strings />} />,
+  },
+  {
+    type: "collapse",
     name: "Settings",
     key: "settings",
     icon: <Icon fontSize="small">settings</Icon>,
     route: "/settings",
-    component: <ProtectedRoute component={<Billing />} />,
+    component: <ProtectedRoute component={<Profile />} />,
   },
   {
     type: "collapse",

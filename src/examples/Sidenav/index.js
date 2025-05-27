@@ -169,7 +169,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       sx={{ mt: 1 }}
     >
       <MDBox display="flex" justifyContent="space-between" alignItems="center">
-        <MenuItem onClick={() => navigate("/profile")}> 
+        <MenuItem onClick={() => navigate("/settings")}> 
           <Icon sx={{ mr: 1 }}>settings</Icon> Settings
         </MenuItem>
         <MenuItem onClick={handleLockApp}>
@@ -406,7 +406,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           mb={1}
         >
           <MDBox 
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate("/settings")}
             sx={{
               cursor: 'pointer',
               display: 'flex',

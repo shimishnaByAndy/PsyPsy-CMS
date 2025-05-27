@@ -13,19 +13,13 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { UserService } from "services/parseService";
 import UserDetail from "components/UserDetail";
-import Parse from "parse";
 
-// Import new Grid components
-import GridTable from "components/GridTable";
-import GridTableFilter from "components/GridTableFilter";
-import "components/GridTable/GridStyles.css";
-
-// Import the new GridTableWithFilter component
-import GridTableWithFilter from "components/GridTable";
+// Import new MUI-X DataGrid components
+import ClientsDataGrid from "components/ClientsDataGrid";
+import ProfessionalsDataGrid from "components/ProfessionalsDataGrid";
 
 // Material Dashboard 2 React context
 import {
@@ -37,43 +31,49 @@ import {
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
-import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import LinearProgress from '@mui/material/LinearProgress';
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Chip from "@mui/material/Chip";
+import Box from "@mui/material/Box";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
-import MDAvatar from "components/MDAvatar";
-import MDProgress from "components/MDProgress";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
-// Data
-import projectsTableData from "layouts/tables/data/projectsTableData";
-
 function Tables() {
   const { t } = useTranslation();
   
-  // Get project table data
-  const { columns: pColumns, rows: pRows } = projectsTableData();
+  // State for tab management
+  const [activeTab, setActiveTab] = useState(0); // 0 = Clients, 1 = Professionals
   
-  // State for users data
-  const [users, setUsers] = useState([]);
-  const [totalUsers, setTotalUsers] = useState(0); 
-  const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(10);
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null);
+  // State for search and filters
   const [search, setSearch] = useState("");  
   const [userType, setUserType] = useState(localStorage.getItem('selectedUserType') || 2);
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({
+    gender: 'all',
+    ageRange: 'all',
+    status: 'all'
+  });
+  
+  // Professional-specific filters
+  const [professionalFilters, setProfessionalFilters] = useState({
+    profType: 'all',
+    meetType: 'all',
+    gender: 'all',
+    language: 'all',
+    expertise: 'all'
+  });
   
   // State for user detail modal
   const [selectedUser, setSelectedUser] = useState(null);
@@ -86,329 +86,127 @@ function Tables() {
   const handleUserTypeChange = (type) => {
     setUserType(type);
     localStorage.setItem('selectedUserType', type);
-    setPage(0); // Reset to first page
   };
   
   // Handle search
   const handleSearch = (e) => {
     setSearch(e.target.value);
-    setPage(0); // Reset to first page
   };
   
-  // Handle pagination
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
+  // Handle filter changes
+  const handleFilterChange = (filterType, value) => {
+    if (activeTab === 0) {
+      setFilters(prev => ({
+        ...prev,
+        [filterType]: value
+      }));
+    } else {
+      setProfessionalFilters(prev => ({
+        ...prev,
+        [filterType]: value
+      }));
+    }
   };
-  
-  const handleLimitChange = (newLimit) => {
-    setLimit(newLimit);
-    setPage(0); // Reset to first page when changing limit
-  };
-  
-  // Handle filters
-  const handleFilter = (newFilters) => {
-    setFilters(newFilters);
-    setPage(0); // Reset to first page when applying filters
-    
-    // Here you would normally trigger a new data fetch with the applied filters
-    // For demo purposes, we're just logging the filters
-    console.log('Applied filters:', newFilters);
-  };
-  
-  // Load users data
-  const loadUsers = useCallback(async () => {
-    console.log('Starting to load users with fetchUsers'); 
-    setLoading(true);
-    setError(null);
 
-    try {
-      console.log('Calling fetchUsers cloud function');
-      const result = await Parse.Cloud.run("fetchUsers", {
-        userType: 2, // Fetch only clients 
-        page: 1,     // First page
-        limit: 10,   // Number of items per page
-        search: '',  // No search term
-        sortBy: 'createdAt', // Sort by creation date
-        sortDirection: 'desc' // Sort in descending order 
-      });
-      console.log('fetchUsers result:', result); 
-      
-      // Log the first user as an example to debug structure
-      // if (result.users && result.users.length > 0) {
-      //   console.log('First user example:', JSON.stringify(result.users[0], null, 2));
-      // }
-      
-      // Parse server returns Parse objects - no need for extra transformation
-      const users = result.users || [];
-      console.log('Users data:', users);
-      
-      // Set the users data directly
-      setUsers(users);
-      setTotalUsers(result.totalUsers || 0); 
-    } catch (err) {
-      console.error("Error loading users with fetchUsers:", err);
-      console.error("Error details:", err.message, err.code);
-      console.error("Error stack:", err.stack);
-      setError(err.message || "Failed to load users");
-    } finally {
-      setLoading(false);
-      console.log('Finished loading users attempt with fetchUsers');
-    }
-  }, []);
-  
-  // Ensure the GridTableWithFilter is populated with the fetched user data
-  useEffect(() => {
-    console.log('Tables component mounted or dependencies changed');
-    loadUsers();
-    
-    // Cleanup function
-    return () => {
-      console.log('Tables component unmounting or dependencies changing');
-    };
-  }, [loadUsers]);
-  
-  // Ensure proper user table structure
-  useEffect(() => {
-    if (users.length > 0) {
-      console.log('User structure check:', users[0]);
-    }
-  }, [users]);
+  // Handle tab change
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+    setSearch(''); // Clear search when switching tabs
+  };
   
   // Handle viewing user details
   const handleViewUser = (userId) => {
     console.log('Viewing user with ID:', userId);
-    const user = users.find(u => {
-      // Handle both normal objects and Parse objects
-      return (u.objectId === userId) || (u.id === userId);
-    });
+    // For now, we'll create a mock user object for the detail view
+    // In a real implementation, you'd fetch the full user details
+    const mockUser = {
+      id: userId,
+      userType: 2, // Client
+      username: 'client_user',
+      email: 'client@example.com',
+      emailVerified: true,
+      isBlocked: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      clientPtr: {
+        firstName: 'John',
+        lastName: 'Doe',
+        dob: new Date('1990-01-01'),
+        gender: 2,
+        phoneNb: '+15551234567',
+        spokenLangArr: ['English', 'French']
+      }
+    };
     
-    if (user) {
-      console.log('Found user to view:', user);
-      setSelectedUser(user);
-      setUserDetailOpen(true);
-    } else {
-      console.error('User not found with ID:', userId);
-    }
+    setSelectedUser(mockUser);
+    setUserDetailOpen(true);
+  };
+
+  // Handle viewing professional details
+  const handleViewProfessional = (professionalId) => {
+    console.log('Viewing professional with ID:', professionalId);
+    // For now, we'll create a mock professional object for the detail view
+    // In a real implementation, you'd fetch the full professional details
+    const mockProfessional = {
+      id: professionalId,
+      userType: 1, // Professional
+      username: 'prof_user',
+      email: 'professional@psypsy.com',
+      emailVerified: true,
+      isBlocked: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      professionalPtr: {
+        firstName: 'Sarah',
+        lastName: 'Johnson',
+        dob: new Date('1985-01-01'),
+        gender: 1,
+        profType: 1,
+        businessName: 'Wellness Psychology Center',
+        bussEmail: 'professional@psypsy.com',
+        phoneNb: { number: '+15551234567', canShare: true },
+        offeredLangArr: ['English', 'French']
+      }
+    };
+    
+    setSelectedUser(mockProfessional);
+    setUserDetailOpen(true);
   };
   
   // Close user detail modal
   const handleCloseUserDetail = () => {
     setUserDetailOpen(false);
+    setSelectedUser(null);
   };
-  
-  // Gender mapping with translations
-  const genderMap = {
-    1: t("statistics.distributions.gender.woman"),
-    2: t("statistics.distributions.gender.man"),
-    3: t("statistics.distributions.gender.other"),
-    4: t("statistics.distributions.gender.notDisclosed"),
-  };
-  
-  // Get user type label
-  const getUserTypeLabel = (userType) => {
-    switch (userType) {
-      case 0: return "Admin";
-      case 1: return "Professional";
-      case 2: return "Client";
-      default: return `Type ${userType}`;
-    }
-  };
-  
-  // Helper function to format Canadian phone numbers
-  const formatCanadianPhoneNumber = (phoneNumber) => {
-    if (!phoneNumber) return 'N/A';
-    
-    // Remove all non-digit characters
-    const digits = phoneNumber.replace(/\D/g, '');
-    
-    // Check if we have a valid number of digits
-    if (digits.length < 10) return phoneNumber; // Return original if not enough digits
-    
-    // Remove leading 1 if present (country code)
-    const tenDigits = digits.length === 11 && digits.charAt(0) === '1' 
-      ? digits.substring(1) 
-      : digits.substring(0, 10); 
-    
-    // Format as (XXX) XXX-XXXX
-    return `(${tenDigits.substring(0, 3)}) ${tenDigits.substring(3, 6)}-${tenDigits.substring(6, 10)}`;
-  };
-  
-  // Helper function to format last seen date with color
-  const formatLastSeen = (lastSeenDate) => {
-    if (!lastSeenDate) return { text: t("tables.timeIndicators.never"), color: 'error' };
-    
-    const now = new Date();
-    const lastSeen = new Date(lastSeenDate); 
-    const diffMs = now - lastSeen;
-    const diffHours = diffMs / (1000 * 60 * 60);
-    const diffDays = diffHours / 24;
-    const diffMonths = diffDays / 30;
-    
-    if (diffHours < 24) {
-      return { 
-        text: t("tables.timeIndicators.hoursAgo", { count: Math.round(diffHours) }),
-        color: 'success' 
-      };
-    } else if (diffDays < 7) {
-      return { 
-        text: t("tables.timeIndicators.daysAgo", { count: Math.round(diffDays) }),
-        color: 'success' 
-      };
-    } else if (diffDays < 30) {
-      return { 
-        text: t("tables.timeIndicators.daysAgo", { count: Math.round(diffDays) }),
-        color: 'warning' 
-      };
-    } else if (diffMonths < 3) {
-      return { 
-        text: t("tables.timeIndicators.monthsAgo", { count: Math.round(diffMonths) }),
-        color: 'warning' 
-      };
-    } else {
-      return { 
-        text: t("tables.timeIndicators.inactive"),
-        color: 'error' 
-      };
-    }
-  };
-  
-  // Prepare user table columns
-  const userColumns = [
-    { 
-      Header: t("tables.columns.name"), 
-      accessor: "name", 
-      width: "30%",
-      Cell: ({ row }) => {
-        const clientPtr = row.original.clientPtr || {};
-        const firstName = clientPtr.firstName || 'N/A';
-        const lastName = clientPtr.lastName || '';
-        const email = row.original.email || 'N/A';
-
-        return (
-          <MDBox lineHeight={1}>
-            <MDTypography display="block" variant="button" fontWeight="medium">
-              {firstName} {lastName}
-            </MDTypography>
-            <MDTypography variant="caption" color="text" fontWeight="regular">
-              {email}
-            </MDTypography>
-          </MDBox>
-        );
-      }
-    },
-    { 
-      Header: t("tables.columns.age"), 
-      accessor: "age", 
-      width: "15%",
-      Cell: ({ row }) => {
-        const clientPtr = row.original.clientPtr || {};
-        let age = 'N/A';
-        if (clientPtr.dob) {
-          const dobDate = new Date(clientPtr.dob);
-          if (dobDate instanceof Date && !isNaN(dobDate)) {
-            age = new Date().getFullYear() - dobDate.getFullYear();
-          }
-        }
-        return (
-          <MDTypography variant="caption" fontWeight="medium">
-            {age}
-          </MDTypography>
-        );
-      }
-    },
-    { 
-      Header: t("tables.columns.gender"), 
-      accessor: "gender", 
-      width: "15%",
-      Cell: ({ row }) => {
-        const clientPtr = row.original.clientPtr || {};
-        const genderLabel = clientPtr.gender !== undefined && genderMap[clientPtr.gender] 
-                           ? genderMap[clientPtr.gender] 
-                           : "Unknown";
-        return (
-          <MDTypography variant="caption" fontWeight="medium">
-            {genderLabel}
-          </MDTypography>
-        );
-      }
-    },
-    { 
-      Header: t("tables.columns.phone"), 
-      accessor: "phone", 
-      width: "20%",
-      Cell: ({ row }) => {
-        const clientPtr = row.original.clientPtr || {};
-        return (
-          <MDTypography variant="caption" fontWeight="medium">
-            {formatCanadianPhoneNumber(clientPtr.phoneNb)}
-          </MDTypography>
-        );
-      }
-    },
-    { 
-      Header: t("tables.columns.lastSeen"), 
-      accessor: "lastSeen", 
-      width: "20%",
-      Cell: ({ row }) => {
-        // Use updatedAt as last seen date
-        const lastSeenDate = row.original.updatedAt || row.original.createdAt;
-        const { text, color } = formatLastSeen(lastSeenDate);
-        
-        return (
-          <MDBox ml={-1}>
-            <MDBox
-              component="span"
-              py={0.75}
-              px={1.5}
-              borderRadius="lg"
-              bgColor={color}
-              color="white"
-              fontSize="xs"
-              fontWeight="medium"
-            >
-              {text}
-            </MDBox>
-          </MDBox>
-        );
-      }
-    },
-    { 
-      Header: t("tables.columns.updatedAt"), 
-      accessor: "updatedAt", 
-      width: "20%",
-      Cell: ({ row }) => {
-        const updatedAt = row.original.updatedAt || 'N/A';
-        return (
-          <MDTypography variant="caption" fontWeight="medium">
-            {updatedAt}
-          </MDTypography>
-        );
-      }
-    },
-    { 
-      Header: t("tables.columns.actions"), 
-      accessor: "actions", 
-      width: "10%",
-      Cell: ({ row }) => (
-        <MDButton 
-          variant="text" 
-          color="info"
-          onClick={() => handleViewUser(row.original.objectId || row.original.id)}
-        >
-          <Icon>visibility</Icon>&nbsp;{t("tables.actions.view")}
-        </MDButton>
-      )
-    },
-  ];
 
   // Function to open the stats configurator
   const handleOpenConfigurator = () => {
     setOpenConfigurator(dispatch, true);
   };
 
-  useEffect(() => {
-    console.log('Fetched users:', users);
-  }, [users]);
+  // Clear all filters
+  const clearFilters = () => {
+    if (activeTab === 0) {
+      setFilters({
+        gender: 'all',
+        ageRange: 'all',
+        status: 'all'
+      });
+    } else {
+      setProfessionalFilters({
+        profType: 'all',
+        meetType: 'all',
+        gender: 'all',
+        language: 'all',
+        expertise: 'all'
+      });
+    }
+    setSearch('');
+  };
+
+  // Count active filters
+  const currentFilters = activeTab === 0 ? filters : professionalFilters;
+  const activeFiltersCount = Object.values(currentFilters).filter(value => value !== 'all').length + (search ? 1 : 0);
 
   return (
     <DashboardLayout>
@@ -430,17 +228,16 @@ function Tables() {
                 alignItems="center"
               >
                 <MDTypography variant="h6" color="white">
-                  {t("tables.clientManagement")}
+                  {activeTab === 0 ? t("tables.clientManagement") : "Professional Management"}
                 </MDTypography>
-                <MDBox display="flex" alignItems="center">
-                  <MDBox width="100%">
-                    <TextField
-                      fullWidth
-                      placeholder={t("tables.searchUsers")}
+                <MDBox display="flex" alignItems="center" gap={2}>
+                                      <TextField
+                      placeholder={activeTab === 0 ? t("tables.searchUsers") : "Search professionals..."}
                       value={search}
                       onChange={handleSearch}
                       variant="outlined"
                       size="small"
+                      sx={{ minWidth: 250 }}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -449,47 +246,259 @@ function Tables() {
                         ),
                         sx: {
                           color: "white",
-                          "&::placeholder": { color: "white" },
-                          "& .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255, 255, 255, 0.5)" },
-                          "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "white" }
+                          "& .MuiOutlinedInput-notchedOutline": { 
+                            borderColor: "rgba(255, 255, 255, 0.5)" 
+                          },
+                          "&:hover .MuiOutlinedInput-notchedOutline": { 
+                            borderColor: "white" 
+                          },
+                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": { 
+                            borderColor: "white" 
+                          }
                         }
                       }}
+                      InputLabelProps={{
+                        sx: { color: "white" }
+                      }}
                     />
-                  </MDBox>
                 </MDBox>
               </MDBox>
               
-              {/* Display GridTableFilter only when GridTable is used */}
-              <MDBox px={2} pt={3}>
-                <GridTableFilter onFilter={handleFilter} />
+              {/* Tabs Section */}
+              <MDBox px={3} pt={2}>
+                <Tabs 
+                  value={activeTab} 
+                  onChange={handleTabChange}
+                  sx={{
+                    '& .MuiTabs-indicator': {
+                      backgroundColor: 'primary.main',
+                    },
+                    '& .MuiTab-root': {
+                      textTransform: 'none',
+                      fontWeight: 'medium',
+                      fontSize: '0.875rem',
+                    },
+                  }}
+                >
+                  <Tab label="Clients" />
+                  <Tab label="Professionals" />
+                </Tabs>
               </MDBox>
               
-              <MDBox pt={3} px={2}>
-                {loading ? (
-                  <MDBox display="flex" justifyContent="center" p={4}>
-                    <CircularProgress />
-                  </MDBox>
-                ) : error ? (
-                  <MDBox display="flex" justifyContent="center" p={4}>
-                    <MDTypography color="error">{error}</MDTypography>
-                  </MDBox>
+              {/* Filters Section */}
+              <MDBox px={3} pt={3} pb={2}>
+                <MDBox display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+                  <MDTypography variant="h6" fontWeight="medium">
+                    {t("tables.filters.title")}
+                    {activeFiltersCount > 0 && (
+                      <Chip 
+                        label={`${activeFiltersCount} active`} 
+                        size="small" 
+                        color="primary" 
+                        sx={{ ml: 1 }}
+                      />
+                    )}
+                  </MDTypography>
+                  {activeFiltersCount > 0 && (
+                    <MDButton 
+                      variant="text" 
+                      color="secondary" 
+                      size="small"
+                      onClick={clearFilters}
+                    >
+                      Clear All
+                    </MDButton>
+                  )}
+                </MDBox>
+                
+                <Grid container spacing={2}>
+                  {activeTab === 0 ? (
+                    // Client Filters
+                    <>
+                      <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>{t("tables.filters.gender")}</InputLabel>
+                          <Select
+                            value={filters.gender}
+                            label={t("tables.filters.gender")}
+                            onChange={(e) => handleFilterChange('gender', e.target.value)}
+                          >
+                            <MenuItem value="all">All Genders</MenuItem>
+                            <MenuItem value="1">{t("statistics.distributions.gender.woman")}</MenuItem>
+                            <MenuItem value="2">{t("statistics.distributions.gender.man")}</MenuItem>
+                            <MenuItem value="3">{t("statistics.distributions.gender.other")}</MenuItem>
+                            <MenuItem value="4">{t("statistics.distributions.gender.notDisclosed")}</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      
+                      <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>{t("tables.filters.age")}</InputLabel>
+                          <Select
+                            value={filters.ageRange}
+                            label={t("tables.filters.age")}
+                            onChange={(e) => handleFilterChange('ageRange', e.target.value)}
+                          >
+                            <MenuItem value="all">All Ages</MenuItem>
+                            <MenuItem value="18-24">{t("statistics.distributions.age.range18_24")}</MenuItem>
+                            <MenuItem value="25-34">{t("statistics.distributions.age.range25_34")}</MenuItem>
+                            <MenuItem value="35-44">{t("statistics.distributions.age.range35_44")}</MenuItem>
+                            <MenuItem value="45-54">{t("statistics.distributions.age.range45_54")}</MenuItem>
+                            <MenuItem value="55-64">{t("statistics.distributions.age.range55_64")}</MenuItem>
+                            <MenuItem value="65+">{t("statistics.distributions.age.range65Plus")}</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      
+                      <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Status</InputLabel>
+                          <Select
+                            value={filters.status}
+                            label="Status"
+                            onChange={(e) => handleFilterChange('status', e.target.value)}
+                          >
+                            <MenuItem value="all">All Status</MenuItem>
+                            <MenuItem value="active">Active</MenuItem>
+                            <MenuItem value="pending">Pending</MenuItem>
+                            <MenuItem value="blocked">Blocked</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      
+                      <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>{t("tables.filters.lastSeen")}</InputLabel>
+                          <Select
+                            value={filters.lastSeen || 'all'}
+                            label={t("tables.filters.lastSeen")}
+                            onChange={(e) => handleFilterChange('lastSeen', e.target.value)}
+                          >
+                            <MenuItem value="all">All Time</MenuItem>
+                            <MenuItem value="today">Today</MenuItem>
+                            <MenuItem value="week">This Week</MenuItem>
+                            <MenuItem value="month">This Month</MenuItem>
+                            <MenuItem value="inactive">Inactive</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    </>
+                  ) : (
+                    // Professional Filters
+                    <>
+                      <Grid item xs={12} sm={6} md={2.4}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Profession</InputLabel>
+                          <Select
+                            value={professionalFilters.profType}
+                            label="Profession"
+                            onChange={(e) => handleFilterChange('profType', e.target.value)}
+                          >
+                            <MenuItem value="all">All Professions</MenuItem>
+                            <MenuItem value="1">Psychologist</MenuItem>
+                            <MenuItem value="2">Social Worker</MenuItem>
+                            <MenuItem value="3">Psychoeducator</MenuItem>
+                            <MenuItem value="4">Marriage & Family Therapist</MenuItem>
+                            <MenuItem value="5">Licensed Professional Counselor</MenuItem>
+                            <MenuItem value="6">Clinical Social Worker</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      
+                      <Grid item xs={12} sm={6} md={2.4}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Consultation Type</InputLabel>
+                          <Select
+                            value={professionalFilters.meetType}
+                            label="Consultation Type"
+                            onChange={(e) => handleFilterChange('meetType', e.target.value)}
+                          >
+                            <MenuItem value="all">All Types</MenuItem>
+                            <MenuItem value="1">In-person only</MenuItem>
+                            <MenuItem value="2">Online only</MenuItem>
+                            <MenuItem value="3">Both in-person and online</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      
+                      <Grid item xs={12} sm={6} md={2.4}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Gender</InputLabel>
+                          <Select
+                            value={professionalFilters.gender}
+                            label="Gender"
+                            onChange={(e) => handleFilterChange('gender', e.target.value)}
+                          >
+                            <MenuItem value="all">All Genders</MenuItem>
+                            <MenuItem value="1">Woman</MenuItem>
+                            <MenuItem value="2">Man</MenuItem>
+                            <MenuItem value="3">Other</MenuItem>
+                            <MenuItem value="4">Not disclosed</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      
+                      <Grid item xs={12} sm={6} md={2.4}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Language</InputLabel>
+                          <Select
+                            value={professionalFilters.language}
+                            label="Language"
+                            onChange={(e) => handleFilterChange('language', e.target.value)}
+                          >
+                            <MenuItem value="all">All Languages</MenuItem>
+                            <MenuItem value="English">English</MenuItem>
+                            <MenuItem value="French">French</MenuItem>
+                            <MenuItem value="Spanish">Spanish</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      
+                      <Grid item xs={12} sm={6} md={2.4}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Expertise</InputLabel>
+                          <Select
+                            value={professionalFilters.expertise}
+                            label="Expertise"
+                            onChange={(e) => handleFilterChange('expertise', e.target.value)}
+                          >
+                            <MenuItem value="all">All Specializations</MenuItem>
+                            <MenuItem value="Anxiety">Anxiety</MenuItem>
+                            <MenuItem value="Depression">Depression</MenuItem>
+                            <MenuItem value="Trauma">Trauma</MenuItem>
+                            <MenuItem value="Couples">Couples Therapy</MenuItem>
+                            <MenuItem value="Child">Child Psychology</MenuItem>
+                            <MenuItem value="Addiction">Addiction</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    </>
+                  )}
+                </Grid>
+              </MDBox>
+              
+              {/* MUI-X DataGrid */}
+              <MDBox px={3} pb={3}>
+                {activeTab === 0 ? (
+                  <ClientsDataGrid
+                    searchTerm={search}
+                    filters={filters}
+                    onViewClient={handleViewUser}
+                    height={600}
+                  />
                 ) : (
-                  <GridTableWithFilter
-                    data={users}
-                    columns={userColumns}
-                    loading={loading}
-                    error={error}
-                    onViewUser={handleViewUser}
-                    pagination={true}
-                    search={true}
-                    sort={true}
-                    limit={limit}
-                    totalCount={totalUsers}
+                  <ProfessionalsDataGrid
+                    searchTerm={search}
+                    filters={professionalFilters}
+                    onViewProfessional={handleViewProfessional}
+                    height={600}
                   />
                 )}
               </MDBox>
             </Card>
           </Grid>
+
         </Grid>
       </MDBox>
       

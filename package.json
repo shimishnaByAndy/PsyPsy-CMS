@@ -12,7 +12,9 @@
     "electron:dev-alt": "concurrently --kill-others --success first \"npx cross-env BROWSER=none PORT=3003 npm start\" \"wait-on http://localhost:3003 && npx cross-env ELECTRON_DISABLE_SECURITY_WARNINGS=true NODE_ENV=development electron .\"",
     "electron:restart": "npx cross-env ELECTRON_DISABLE_SECURITY_WARNINGS=true NODE_ENV=development electron .",
     "electron:build": "npm run build && electron-builder",
-    "package": "electron-builder build --mac --win --linux -c.extraMetadata.main=electron/main.js --publish never"
+    "package": "electron-builder build --mac --win --linux -c.extraMetadata.main=electron/main.js --publish never",
+    "create-admin": "node scripts/createAdmin.js",
+    "sync-i18n": "node scripts/sync-i18n.js"
   },
   "build": {
     "appId": "com.psypsy.cms",
@@ -55,6 +57,8 @@
     "@iconify/react": "^5.2.1",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.3",
+    "@mui/system": "^5.12.3",
+    "@mui/x-data-grid": "^6.19.11",
     "apexcharts": "^4.2.0",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.3.0",

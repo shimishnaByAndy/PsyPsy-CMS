@@ -11,6 +11,11 @@
   font-size: 0.875rem;
   font-weight: 400;
   cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.simple-switch-label:hover {
+  color: #c0c0c0;
 }
 
 .simple-switch {
@@ -20,11 +25,19 @@
   background-color: #e9e9e9;
   border-radius: 24px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.2s ease;
+}
+
+.simple-switch:hover {
+  background-color: #dcdcdc;
 }
 
 .simple-switch.checked {
   background-color: #899581;
+}
+
+.simple-switch.checked:hover {
+  background-color: #7a8672;
 }
 
 .simple-switch-toggle {
@@ -35,7 +48,12 @@
   height: 20px;
   background-color: white;
   border-radius: 50%;
-  transition: transform 0.3s;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.simple-switch:hover .simple-switch-toggle {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .simple-switch.checked .simple-switch-toggle {

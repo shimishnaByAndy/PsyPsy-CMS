@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+<!--LOADER: when server problems-->
+    <string name="loadingServer">Chargement...</string>
+<!--Welcome screen-->
+    <string name="hello">Bonjour!</string>
+    <string name="startPageTitle1">S'aider en</string>
+    <string name="startPageTitle2">toute simplicité</string>
+    <string name="startPageDescr">Offrez ou recevez\nde l'aide en santé mentale</string>
+    <string name="startPgDescrBold1">Offrez</string>
+    <string name="startPgDescrBold2">recevez</string>
+    <string name="howUseAppTitle">Vous êtes ici en tant que client ou professionnel ?</string>
+    <string name="alreadyHaveAccLogin">Déjà enregistré?</string>
+    <string name="reconnLogin">Reconnectez-vous</string>
+    <string name="clientBtnT">Je cherche un service</string>
+    <string name="professBtnT">Je suis un professionnel</string>
+    <string name="clientBtnAccessibilityLabel">Sélectionner le type de compte client. Je cherche un service.</string>
+    <string name="professBtnAccessibilityLabel">Sélectionner le type de compte professionnel. Je suis un professionnel.</string>
+    <string name="clientBtnAccessibilityHint">Choisissez cette option si vous cherchez des services de santé mentale</string>
+    <string name="professBtnAccessibilityHint">Choisissez cette option si vous êtes un professionnel de la santé mentale offrant des services</string>
+    <string name="alreadyHaveAccT">Sélectionnez votre type de compte</string>
+    <string name="hasClientAcc"></string>
+    <string name="cancelBtn">Annuler</string>
+<!--Onboarding images-->
+<!--Client-->
+    <string name="onboardTitle1">Définissez</string>
+    <string name="onboardTitle1_2">vos besoins</string>
+    <string name="onboardDescr1">Indiquez vos préférences pour trouver le professionnel adapté à vos besoins en santé mentale et bien-être.</string>
+    <string name="onboardTitle2">Planifiez</string>
+    <string name="onboardTitle2_2">facilement</string>
+    <string name="onboardDescr2">Recevez des propositions de rendez-vous personnalisées, en personne ou en téléconsultation.</string>
+    <string name="onboardTitle3">Amorcer la</string>
+    <string name="onboardTitle3_2">consultation</string>
+    <string name="onboardDescr3">Consultez les détails de votre séance et débuter le suivi.</string>
+<!--Profesionnel-->
+    <string name="onboardTitle1P">Présentez vos</string>
+    <string name="onboardTitle1P_2">compétences</string>
+    <string name="onboardDescr1P">Mettez en lumière vos spécialités et services pour connecter avec les clients qui ont besoin de vous.</string>
+    <string name="onboardTitle2P">Définissez vos</string>
+    <string name="onboardTitle2P_2">disponibilités</string>
+    <string name="onboardDescr2P">Indiquez vos créneaux libres pour recevoir des propositions de rendez-vous adaptées à votre emploi du temps.</string>
+    <string name="onboardTitle3P">Développez</string>
+    <string name="onboardTitle3P_2">votre pratique</string>
+    <string name="onboardDescr3P">Accédez à une communauté croissante de clients et augmentez vos revenus avec notre plateforme.</string>
+    <string name="nextBtn">Suivant</string>
+    <string name="cancelBtn">Annuler</string>
+<!--Sign Up Page-->
+    <string name="signupClientT">S'inscrire en tant\nque client</string>
+    <string name="signupClientT2">Client</string>
+    <string name="signupProfT">S'inscrire en tant que\nprofessionnel</string>
+    <string name="welcomeBackT">Re-bienvenue\nparmi nous !</string>
+    <string name="createNewAcc">Méthode d'inscription</string>
+    <string name="connectToAcc">Méthode de connexion</string>
+    <string name="alreadyHasAcc">Vous avez déjà un compte?</string>
+    <string name="connectAcc">Connectez-vous</string>
+    <string name="noAccSignup">Vous n'avez pas de compte?</string>
+    <string name="signupAcc">Inscrivez-vous</string>
+    <string name="emailSignupT">Inscription par courriel</string>
+    <string name="emailLoginT">Connexion par courriel</string>
+<!--Signin buttons-->
+    <string name="backBtn2">Retour</string>
+    <string name="backBtn">Précédent</string>
+    <string name="contApple">Continuer avec Apple</string>
+    <string name="contGoogle">Continuer avec Google</string>
+    <string name="contEmail">Continuer via Courriel</string>
+    <string name="connectApple">Se connecter avec Apple</string>
+    <string name="connectGoogle">Google</string>
+    <string name="connectEmail">Se connecter via Courriel</string>
+    <string name="byProceedAgree">En poursuivant,</string>
+    <string name="byProceedAgree2">j'accepte</string>
+    <string name="usrTerms">Les conditions d'utilisation</string>
+    <string name="privacyPolicy">La politique de confidentialité</string>
+    <string name="switchToProffAcc">Êtes-vous un professionnel de la santé mentale?</string>
+    <string name="switchToClientAcc">Cherchez-vous un accompagnement en santé mentale?</string>
+    <string name="clickHereAcc">Créez votre profil ici.</string>
+<!--Signup/login-->
+    <!--Errors-->
+    <string name="appleSigninErr">Oh non! Quelque chose s'est mal passé. Veuillez réessayer.</string>
+    <!--Email-->
+    <string name="loginWelcomeBack">Content de vous revoir!</string>
+    <string name="loginWrongUsrPswT">Erreur de connexion</string>
+    <string name="loginWrongUsrPsw">L'adresse de courriel et/ou le mot de passe que vous avez saisi est invalide.\n\nVeuillez vérifier vos informations et réessayer.</string>
+    <string name="alreadyHaveAcc">Vous avez déjà un compte?</string>
+    <string name="loggingIn">Connexion...</string>
+    <string name="creatingAccount"> Création de compte...</string>
+    <string name="forgotPsw">J'ai oublié mon mot de passe</string>
+    <string name="resetUrPsw">Réinitialiser le mot de passe</string>
+    <string name="sendPswLink">Envoyer le lien du mot de passe</string>
+    <string name="pswLinkSent">Lien de mot de passe envoyé</string>
+    <string name="resetPswDescr">Si vous avez déjà un compte et que vous avez oublié votre mot de passe, entrez votre courriel et nous vous enverrons un lien de réinitialisation du mot de passe..</string>
+    <string name="accForEmailAlreadyExistsT">Échec de l'inscription</string>
+    <string name="accForEmailAlreadyExists">Un compte existe déjà pour cette adresse courriel.</string>
+    <string name="otherSignupErr">Une erreur s'est produite lors de l'inscription. Veuillez réessayer.</string>
+    <!--Email already linked for other userType-->
+    <string name="appleLoginErrorTitle">Compte déjà existant</string>  
+    <string name="appleLoginErrorMsg">Un compte associé à ce compte Apple existe déjà avec un autre type d'utilisateur</string>  
+    <string name="appleLoginErrorMsg2">Veuillez vous connecter avec cet utilisateur ou utiliser une autre adresse e-mail pour continuer</string>  
+    <string name="contExistingAcc">Se connecter au compte existant</string>  
+    <string name="useAnotherEmailButton">Annuler</string>  
+    <!--My Account-->
+    <string name="myAcccountT">Mon compte</string>
+    <string name="logIn">CONNEXION</string>
+    <string name="logInn">Connexion</string>
+    <string name="yourEmail">Votre adresse courriel</string>
+    <string name="yourPsw">Votre mot de passe</string>
+    <string name="emailNotValid">Entrez une adresse valide: nom@domaine.com</string>
+    <string name="pswNotValid">Le mot de passe doit contenir 6 caractères</string>
+    <string name="change">Changer</string>
+    <string name="reset">Réinitialiser le mot de passe</string>
+    <!--ios keyboard toolbar-->
+    <string name="prevKbBtn">Précédent</string>
+    <string name="doneKbBtn">Terminer</string>
+    <string name="nextKbBtn">Suivant</string>
+    <string name="okBtn">Ok</string>
+<!--Internet connection required-->
+    <string name="noConnection">Connexion Internet requise</string>
+    <string name="connectionReq">S'il vous plaît, vérifiez votre connexion à internet et réessayez!</string>
+<!--Annuler Onboarding-->
+    <string name="cancelOnboardTitle">Annulation de l'inscription</string>  
+    <string name="cancelOnboardMsg">Vous êtes sur le point d'annuler votre inscription. Cette action est irréversible et entraînera la suppression définitive de votre compte et de vos informations.</string>  
+    <string name="cancelOnboardMsg2">Souhaitez-vous vraiment continuer ?</string>  
+    <string name="confirmCancelOnboard">Oui, annuler mon inscription</string>  
+    <string name="continueOnboard">Non, continuer l'inscription</string> 
+    <string name="deletingAcc">Suppression de votre compte...</string> 
+<!--Profile setup-->
+    <string name="profileSetup">Configuration du profil</string>
+    <string name="infoPrivateDescr">Les informations resteront privées.\nElles ne sont utilisées que pour des fins de correspondance.</string>
+    <string name="aboutYouT">Parlez-nous un peu de vous</string>
+    <string name="aboutYouTC">vous</string>
+    <string name="yourDobT">Votre date de naissance</string>
+    <string name="dateHint">JJ</string>
+    <string name="monthHint">MM</string>
+    <string name="yearHint">AAAA</string>
+    <string name="invalidBirthYrT">Date de naissance invalide</string>
+    <string name="invalidBirthYrD">Veuillez entrer une date de naissance valide au format\nJJ / MM / YYYY\nex: 01 / 30 / 2000</string>
+    <string name="genderChoiceT">Veuillez sélectionner votre genre</string>
+    <string name="man">Homme</string>
+    <string name="woman">Femme</string>
+    <string name="nonBinary">Non-binaire</string>
+    <string name="notDisclosed">Préfère ne pas répondre</string>
+    <string name="otherGender">Autre</string>
+    <string name="nonSpecificGender">Genre non spécifié</string>
+    <string name="yearsOld">ans</string>
+    <string name="extrInfoReq">Parent ou un tuteur légal nécessaires pour finalisation</string>
+    <string name="lessThan14Descr">Selon les informations fournies, vous êtes âgé de moins de 14 ans. Afin de procéder à la finalisation de votre compte, demandez à un parent ou un tuteur légal afin d'obtenir son consentement au processus de psychothérapie pour lequel vous envisagez de faire une demande. Si vous avez des questions, n'hésitez pas à contacter le service à la clientèle PsPsy.</string>
+    <string name="chooseLangT">Choisissez vos langues parlées</string>
+    <string name="enterOwnLang">ou, ajoutez votre langue</string>
+    <string name="enterLangHint">Rechercher une langue</string>
+    <string name="noLangMatchT">Aucune langue trouvée</string>
+    <string name="noLangMatch">Aucune suggestion de langue disponible pour ce que vous avez saisi.\n\nVeuillez vérifier votre entrée ou essayer une autre langue.</string>
+    <string name="yourNameT">Votre nom et votre prénom</string>
+    <string name="hFName">Votre prénom</string>
+    <string name="hLName">Votre nom</string>
+    <string name="patientFileT">Configurez votre dossier patient</string>
+    <string name="infoNotSharedDescr">Ces informations ne seront partagées avec le professionnel que lorsque vous confirmerez un rendez-vous avec lui</string>
+    <string name="fNameMandatT">Prénom manquant</string>
+    <string name="lNameMandatT">Nom manquant</string>
+    <string name="fillInYourFName">Veuillez inscrire votre prénom</string>
+    <string name="fillInYourLName">Veuillez inscrire votre nom</string>
+    <!--Phone Input-->
+    <string name="phoneNb">Numéro de téléphone cellulaire</string>
+    <string name="validCodeSent">*Un code de validation vous sera envoyé</string>
+    <string name="isHuman">Prouvez-nous que \n vous êtes un être humain !</string>
+    <string name="codeByTxt">Nous vous enverrons un code par message texte.</string>
+    <string name="sendCode">Envoyer le code</string>
+    <string name="invalidNumberT">Numéro de téléphone invalide</string>
+    <string name="invalidNumber">Veuillez entrer un numéro de téléphone cellulaire canadien valide à 10 chiffres. \n\n Ex. : 514-123-4567</string>
+    <!--Twilio Code Input-->
+    <string name="enterCode">Entrez le code \n que vous avez reçu.</string>
+    <string name="resendCode">Envoyez le code à nouveau.</string>
+    <string name="soonAvail">Service disponible prochainement.</string>
+    <string name="createAcc">Créer un compte</string>
+    <string name="txtMsgAccessCode">Votre code de validation pour l'application PsyPsy:</string>
+    <!--Address-->
+    <string name="yourAddress">Votre adresse à domicile</string>
+    <string name="yourAddr">Rechercher votre adresse</string>
+    <string name="yourAddressDescr">Pour vous proposer les rendez-vous à proximité de chez vous</string>
+    <string name="clearBtn">Effacer</string>
+    <string name="searchRadiusT">Rayon de recherche</string>
+    <string name="searchRadiusTS">Rayon de recherche</string>
+    <string name="searchRadiusDescr">Définissez la zone de recherche</string>
+    <string name="addrNotFoundT">Adresse introuvable</string>
+    <string name="addrNotFoundDescr">Veuillez rechercher votre adresse et cliquer sur celle qui apparaît sous le champ de recherche.\n\n(Suggestions fournies par Google)</string>
+    <string name="allDone">C'est fait!</string>
+    <string name="findHelp">Trouvez les soins qui\nvous conviennent!</string>
+    <string name="findClients">Trouvons de nouveaux\nclients pour vous!</string>
+    <!--Professional onboarding questions-->
+    <!--Prof Type-->
+    <string name="onboardProfTypeT">Choisissez votre\ntype de compte\nprofessionnel</string>
+    <string name="onboardProfTypeTC">professionnel</string>
+    <!--Services-->
+    <string name="onboardServicesT">Définissez vos services</string>
+    <string name="onboardServicesDescr">Ajoutez les services que vous offrez et définissez un tarif pour chacun</string>
+    <!--Expertises-->
+    <string name="onboardExpertisesT">Sélectionnez vos expertises</string>  
+    <string name="onboardExpertisesDescr">Choisissez les domaines dans lesquels vous êtes spécialisé</string> 
+    <string name="onboardExpertiseSubCategT">Choisissez les domaines spécifiques</string>  
+    <string name="forExpertise">Expertise:</string>  
+    <string name="subcategsSel">spécialisations ajoutées</string>  
+    <string name="apptSubcategsSel">séléctions</string>  
+    <string name="apptSubcategSel">Une séléction</string>  
+    <string name="subcategSel">Une spécialisation ajoutée</string>  
+    <!--Services Popup-->
+    <string name="addServBtn">Ajouter</string>
+    <string name="serviceTarifPerH">Fixez votre tarif de consultation</string>
+    <string name="serviceTarifRT">Tarif</string>
+    <string name="errInvalidTarif">Veuillez entrer un tarif valide</string>
+    <string name="expertisesSelT">Sélectionnez vos expertises</string>
+    <string name="setTarifT">Définissez votre tarif et la durée de consultation</string>
+    <string name="forServ">Service: </string>
+    <string name="hour">heure</string>
+    <string name="hours">heures</string>
+    <string name="servIncludesTaxT">Le tarif indiqué inclut-il les taxes ?</string>
+    <string name="tarifIncludesTax">Oui, le tarif est taxes incluses</string>
+    <string name="notChargingTax">Non, je ne facture pas de taxes</string>
+    <string name="servIsTaxExempt">Non, ce service est exonéré de taxes</string>
+    <string name="consultTarif">Tarif par séance</string>  
+    <string name="forLbl">pour</string>  
+    <string name="removeServiceOpt">Retirer service</string>  
+    <string name="removeExpertiseOpt">Retirer expertise</string>  
+    <string name="modifyServiceOpt">Modifier</string>  
+    <string name="modifySubcategsOpt">Modifier les spécialisations</string>  
+    <!--Expertises for service selection popup errorrs-->
+    <string name="selAtLeastOneExpertiseErr">Aucune expertise sélectionnée !</string>
+    <string name="tarifNotSetErr">Fixez votre tarif de consultation !</string>
+    <!--Service not found-->
+    <string name="servNotFoundT">Expertise introuvable ?</string>
+    <string name="servNotFoundDescr">Suggérez une expertise manquante, et nous l'ajouterons après validation.</string>
+    <string name="servNotFoundBtn">Suggérer une expertise</string>
+    <string name="servSuggErr">Description insuffisante. Ajoutez plus de détails.</string>
+    <!--Service not popup-->
+    <string name="servSuggH">Décrivez l'expertise</string>
+    <string name="servSuggBtn">Envoyer la demande</string>
+    <string name="servSuggSent">Votre suggestion a été envoyée!</string>
+    <!--Professional Dob-->
+    <string name="profDobT">Votre date de\nnaissance</string>
+    <string name="profDobDescr">Cette information nous permet de vérifier votre identité et d'assurer la conformité.</string>
+    <string name="profDobTH">Jour / Mois / Année</string>
+    <!--Name-->
+    <string name="aboutYouT">Votre nom\net prénom</string>
+    <string name="aboutYouDescr">Partagés uniquement avec les clients à qui vous proposez des disponibilités.</string>
+    <!--Gender-->
+    <string name="profGenderT">Veuillez sélectionner votre genre</string>
+    <string name="profGenderDescr">Cette information aide à l'arrimage, car certains clients ont une préférence pour le genre de leur thérapeute.</string>
+    <!--Lang offered-->
+    <string name="langOfferedT">Langue(s) disponible(s) pour vos services</string>
+    <string name="langOfferedDescr">Sélectionnez toutes les langues que vous maîtrisez pour aider davantage de clients.</string>
+    <!--Mother tongue-->
+    <string name="motherTongueT">Sélectionnez votre langue maternelle</string>
+    <string name="motherTongueDescr">Parmi les langues offertes, laquelle est votre langue maternelle ?</string>
+    <string name="noneOfTheseLang">Aucune de ces langues</string>
+    <!--Educational Institute-->
+    <string name="educationalInstituteT">Où avez-vous obtenu votre diplôme ?</string>
+    <string name="educationalInstituteDescr">Cela nous aide à confirmer votre formation et à garantir la qualité des services offerts sur la plateforme.</string>
+    <string name="eduInstH">Nom de l'établissement</string>
+    <!--Bussines Name-->
+    <string name="businessNameT">Nom de votre pratique professionnelle</string>
+    <string name="businessNameDescr">Si vous exercez sous votre nom, indiquez-le. Il apparaîtra sur vos factures.</string>
+    <string name="businessNameH">Nom sous lequel vous exercez</string>
+    <string name="businessNameErr">Ce champ est requis. Merci d'indiquer un nom.</string>
+    <!--Meeting type-->
+    <string name="meetingTypeT">Modalité de suivi</string>
+    <string name="meetingTypeDescr">Sélectionnez les types de consultations que vous offrez.</string>
+    <string name="meetInPerson">En présentiel</string>
+    <string name="meetOnline">En visioconférence</string>
+    <string name="meetBoth">Les deux options</string>
+    <!--Bussines Address-->
+    <string name="bussinessAddrT">Adresse de consultation</string>
+    <string name="bussinessAddrDescr">Requise pour proposer des rendez-vous à proximité.</string>
+    <!--Tax info-->
+    <string name="taxInfoT">Numéros de taxes</string>
+    <string name="taxInfoDescr">Optionnel - Indiquez vos numéros de TPS/TVQ pour les factures ou laissez ce champ vide.</string>
+    <string name="taxGST">Entrez votre numéro de TPS (GST)</string>
+    <string name="taxQST">Entrez votre numéro de TVQ (QST)</string>
+    <!--Third Party Payers-->
+    <string name="thirdPartyPayerPT">Acceptez-vous les clients avec un tiers payeur ?</string>
+    <string name="thirdPartyPayerPDescr">Sélectionnez les organismes avec lesquels vous acceptez les clients pris en charge.</string>
+    <!--Order permit number-->
+    <string name="nbTfHint">Saisissez le numéro</string>
+    <string name="yrTfTitle">Année d'obtention</string>
+    <string name="orderNbErr">Ce champ est requis.</string>
+    <string name="orderNbYrT">Année d'obtention du permis</string>
+    <string name="orderNbYrH">Format: AAAA (ex. 2024)</string>
+    <string name="permitNbTfT">Numéros de permis professionnel</string>
+    <!--Served Clientele-->
+    <string name="servedClienteleT">Clientèle desservie</string>
+    <string name="servedClienteleDescr">Sélectionnez les groupes de clients avec lesquels vous travaillez.</string>
+    <!--Availability-->
+    <string name="availabilityT">Définissez vos disponibilités</string>
+    <string name="availabilityDescr">Sélectionnez les jours et les plages horaires où vous souhaitez recevoir des demandes de rendez-vous. Vous pourrez les modifier à tout moment.</string>
+    <!--Bussiness email-->
+    <string name="bussEmailT">Adresse courriel professionnelle</string>
+    <string name="bussEmailDescr">Utilisée pour l'envoi de vos factures PDF ainsi que pour répondre à toute demande du client après la confirmation de votre rendez-vous.</string>
+    <string name="bussEmailTfH">Votre courriel professionnel</string>
+    <string name="bussEmailTfErr">Courriel invalide.</string>
+    <!--Phone nb-->
+    <string name="profPhoneNbT">Entrez votre numéro de téléphone</string>
+    <string name="profPhoneNbDescr">Ce numéro pourra être utilisé exceptionnellement, notamment en cas d'annulation de dernière minute.</string>
+    <string name="notSharePhoneNb">Ne pas partager mon numéro\navec les clients</string>
+    <!--Bussines Profile-->
+    <string name="profCredentialsT">Veuillez fournir vos références professionnelles</string>
+    <string name="nameRow">Nom complet</string>
+    <string name="permitNbRow">Numéro de permis pratique</string>
+    <string name="permitYearRow">Année d'obtention</string>
+    <string name="permitInstitutrRow">Institut de formation</string>
+    <!--SETTINGS PAGE PRROF-->
+    <string name="editBtn">Modifier</string>
+    <!--About you-->
+    <string name="titleAboutYourselfP">Vos informations personnelles</string>
+    <string name="descrAboutYourselfP">Ces informations resteront privées.\nElles sont uniquement utilisées pour l'arrimage.</string>
+    <!--Bussiness Conatact details-->
+    <string name="bussProfileT">Coordonnées professionnelles</string>
+    <string name="bussProfileDescr">Ces informations apparaîtront sur les factures générées pour vos clients.</string>
+    <string name="businessNameDescrSett">Apparaîtra sur vos factures.</string>
+    <string name="businessNameTSett">Nom de pratique</string>
+    <string name="bussEmailTSett">Courriel</string>
+    <!--Bussiness profile-->
+    <string name="bussInfoT">Informations sur votre pratique</string>
+    <string name="profTypeRT">Type</string>
+    <string name="offeredServRT">Services et tarifs</string>
+    <string name="offeredLangRT">Langues de consultation</string>
+    <string name="motherTongueDescr">(*) Indique votre langue maternelle</string>
+    <string name="meetTypeRT">Mode de consultation</string>
+    <string name="servedClienteleRT">Clientèle desservie</string>
+    <string name="accThirdPartyRT">Tiers payeurs acceptés</string>
+    <string name="noAccThirdPartyPayer">Aucun</string>
+    <!--Academic-->
+    <string name="profAndLegalInfoT">Informations académiques</string>
+    <string name="profAndLegalInfoDescr">Les numéros de permis apparaîtront sur les factures générées pour vos clients.</string>
+    <string name="eduInstituteRT">Institution diplômante</string>
+    <string name="addBtn">+ Ajouter</string>
+    <string name="psychoNbRT">Numéro de permis de psychothérapeute de l'OPQ</string>
+    <!--Permit/Tax numbers-->
+    <!--Notifications-->
+    <string name="newOffersRT">Nouvelles offres</string>
+    <string name="newOffersRDescr">Vous serez averti lorsque de nouvelles demandes de rendez-vous correspondant à vos services seront publiées.</string>
+    <string name="apptConfRT">Confirmation de rendez-vous</string>
+    <string name="apptConfRDescr">Vous serez averti lorsqu'un client accepte l'un de vos créneaux proposés.</string>
+    <string name="clientCancelledRT">Annulation de rendez-vous</string>
+    <string name="clientCancelledRDescr">Vous serez averti lorsqu'un client annule un rendez-vous confirmé.</string>
+    <string name="apptReminderRT">Suivi des rendez-vous</string>
+    <string name="apptReminderRDescr">Rappel des rendez-vous à venir.</string>
+    <string name="apptCompletedRT">Finalisation du rendez-vous </string>
+    <string name="apptCompletedRDescr">Recevez une notification après l'heure du rendez-vous pour le marquer comme complété et générer automatiquement la facture.</string>
+    <!--Main Page PROf-->
+    <!--Tab names-->
+    <string name="opportTabBtn">Offres</string>
+    <string name="activeTabBtn">En cours</string>
+    <string name="receiptsTabBtn">Reçus</string>
+    <!--Empty statuses Professional-->
+    <string name="noOpportListT">Aucune offre\npour le moment!</string>
+    <string name="noOpportListTP">Les demandes de rendez-vous\ncorrespondant à votre profil\napparaîtront ici.</string>
+    <string name="pastDateEmptyStatusShort">Impossible d'afficher les demandes pour une date passée.</string>  
+    <string name="pastDateEmptyStatusLong">Cette date est déjà passée. Vous ne pouvez pas consulter ou postuler à des demandes antérieures.</string>  
+    <string name="noAppListTP">Aucun rendez-vous à venir</string>
+    <string name="noAppListDescrP">Consultez les offres\net proposez des créneaux horaires\npour remplir votre agenda.</string>
+    <string name="noReceiptListTP">Aucun reçu disponible</string>
+    <string name="noReceiptListDescrP">Une fois vos consultations terminées, vos reçus seront générés automatiquement ici.</string>
+    <!--lazy loading-->
+    <string name="lazyLoadingLoading">Chargement en cours...</string>
+    <string name="lazyLoadingEnd">C'est tout pour le moment !</string>
+    <!--Offers page professional-->
+    <string name="noAvailInCommon">aucune en commun</string>
+    <string name="availPerfectMatch">toutes compatibles</string>
+    <string name="extraAvailP">autres</string>
+    <string name="extraAvail">autre</string>
+    <string name="availInCommon">en commun</string>
+    <string name="onLbl">sur</string>
+    <!--MAin Page CLIENT-->
+    <string name="newTabBtn">Accueil</string>
+    <string name="appointTabBtn">Rendez-vous</string>
+    <string name="receiptTabBtn">Historique</string>
+    <string name="appointmentsBtn">Rendez-vous</string>
+    <string name="settingsBtn">Profil &amp; Paramètres</string>
+    <!--HOME-->
+    <string name="talkToProfessional">Planifiez un rendez-vous\navec un professionnel\nen quelques clics</string>
+    <string name="readyToSeekHelp">Dès que vous serez prêt,\npubliez votre votre demande\net recevez des propositions\nde rendez-vous.</string>
+    <string name="postNeedsExperts">Décrivez vos besoins et des\nspécialistes vous contacteront</string>
+    <string name="postNewAppointment">Planifier un rendez-vous</string>
+    <string name="bookAnAppointment">Planifier un rendez-vous</string>
+    <string name="bookAnAppointmentHint">Ouvre le formulaire de prise de rendez-vous pour planifier une séance avec un professionnel de la santé mentale</string>
+    <!--Empty status-->
+    <string name="noAppListTC">Aucun rendez-vous</string>
+    <string name="noAppListDescrC">Planifiez un rendez-vous\navec un professionnel\ndès maintenant!</string>
+    <!--Empty status-->
+    <string name="noPastAppointmentsTC">Aucun historique !</string>
+    <string name="noPastAppointmentsDescrC">Planifiez un rendez-vous\net amorcez votre suivi.</string>
+    <string name="noReceiptsDescr">Une fois vos rendez-vous\ncomplétés, vous trouverez ici\nles reçus correspondants.</string>
+    <!--Tableview-->
+    <string name="lookingForPsychologist">À la recherche d'un psychologue</string>
+    <string name="generalCounselling">pour un conseil général</string>
+    <string name="availabilityAmMiddayPm">Dès que possible - Matin, Midi, Soir</string>
+    <!--New Appointment-->
+    <string name="newAppReq">Demande de rendez-vous</string>
+    <string name="unanswered">Non répondu</string>
+    <string name="serviceConsultType">Quel type de consultation recherchez-vous ?</string>
+    <string name="serviceConsultTypeS">Type de consultation</string>
+    <string name="isAppointmentForYou">Est-ce que ce rendez-vous\nest pour vous ?</string>
+    <string name="isAppointmentForYouS">Rendez-vous pour</string>
+    <string name="noApptIsFor">Le rendez-vous est pour</string>
+    <string name="birthdateHt">Date de naissance:</string>
+    <string name="ageHtM">Né le</string>
+    <string name="ageHtF">Née le</string>
+    <string name="ageHt">Né(e) le</string>
+    <string name="yrsOld">ans</string>
+    <string name="genderHt">Genre:</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="serviceType">Type de consultation recherché</string>
+    <string name="consultReason">Motif de consultation</string>
+    <string name="consultReasons">Motifs de consultation</string>
+    <string name="profTypeRowT">Spécialiste sélectionné</string>
+    <string name="profTypesRowT">Spécialistes sélectionnés</string>
+    <string name="modifyBtn">Modifier</string>
+    <string name="typeOfConsultFilled">Sélection effectuée</string>
+    <string name="severalProfTypes">spécialistes sél.</string>
+    <string name="serviceTypeS">Type de consultation</string>
+    <string name="selType">Sélectionner</string>
+    <string name="addProfType">Ajouter un spécialiste</string>
+    <string name="addSeveralProfTypeInfo">Astuce: En sélectionnant plusieurs types de spécialistes, vous recevrez plusieurs offres pour une même demande, cela peut vous aider à obtenir un rendez-vous plus rapidement.</string>
+    <string name="addSeveralProfTypeInfoB">Astuce:</string>
+    <string name="languageComfort">Dans quelles langues êtes-vous à l'aise pour la séance ?</string>
+    <string name="languageComfortB">Autre langue (complémentaire)</string>
+    <string name="addOtherLang">Ajouter une langue</string>
+    <string name="addOtherLangDescr">* Un professionnel parlant cette langue vous sera suggéré en priorité, si disponible.</string>
+    <string name="addBtnn">Ajouter</string>
+    <string name="prefFr">Francais</string>
+    <string name="prefEn">Anglais</string>
+    <string name="noPrefLang">Pas de préférence</string>
+    <string name="languageComfortS">Langue priorisé</string>
+    <string name="meetingPreference">Comment souhaitez-vous vous rencontrer ?</string>
+    <string name="meetingPreferenceS">Modalité de rencontre</string>
+    <string name="inPersonOrOnline">Présentiel ou visio</string>
+    <string name="inPerson">Présentiel</string>
+    <string name="online">Visioconférence</string>
+    <string name="maxBudgetT">Souhaitez-vous recevoir uniquement des offres de rendez-vous en dessous d'un certain tarif ?</string>
+    <string name="maxBudgetTS">Tarif maximal</string>
+    <string name="maxBudgetH">Entrez un montant, ex. 100$</string>
+    <string name="therapistGenderPreference">Avez-vous une préférence pour le genre du thérapeute?</string>
+    <string name="therapistGenderPreferenceS">Préférence de genre</string>
+    <string name="searchRadiusN">Zone de déplacement pour laquelle vous recevrez des offres</string>
+    <string name="searchRadiusNC">Rayon de recherche</string>
+    <string name="availabilityQuestion">Quand êtes-vous disponible ?</string>
+    <string name="availabilityQuestionS">Disponibilités</string>
+    <string name="selectAvailT">Sélectionnez vos disponibilités\njours et périodes</string>
+    <string name="selDaysAvail">Choisir les jours spécifiques</string>
+    <string name="selectedDaysAvail">Jours spécifiques sélectionnés</string>
+    <string name="selPeriodsAvail">Choisir des périodes prédéfinies</string>
+    <string name="selectedPeriodsAvail">Périodes sélectionnées</string>
+    <string name="selPeriodsAvailT">Choisir vos périodes de disponibilité</string>
+    <string name="noPrefAvail">Pas de préférence</string>
+    <string name="monT">Lundi</string>
+    <string name="tueT">Mardi</string>
+    <string name="wedT">Mercredi</string>
+    <string name="thuT">Jeudi</string>
+    <string name="friT">Vendredi</string>
+    <string name="satT">Samedi</string>
+    <string name="sunT">Dimanche</string>
+    <string name="morningT">Matin</string>
+    <string name="dayT">Après-midi</string>
+    <string name="eveningT">Soir</string>
+    <string name="change">Changer</string>
+    <string name="mon">L</string>
+    <string name="tue">M</string>
+    <string name="wed">M</string>
+    <string name="thu">J</string>
+    <string name="fri">V</string>
+    <string name="sat">S</string>
+    <string name="sun">D</string>
+    <string name="noPref">Pas de préférence</string>
+    <string name="noneSelected">Aucune disponibilité</string>
+    <string name="weekdaysMorningAndDay">Matinées et après-midis en semaine</string>
+    <string name="weekdaysMorningAndEvening">Matinées et soirées en semaine</string>
+    <string name="weekdaysDayAndEvening">Journées et soirées en semaine</string>
+    <string name="weekdaysMorning">Matinées en semaine</string>
+    <string name="weekdaysDaytime">Journées en semaine</string>
+    <string name="weekdaysEvening">Soirées en semaine</string>
+    <string name="weekendMorning">Matinées la fin de semaine</string>
+    <string name="weekendDaytime">Journées la fin de semaine</string>
+    <string name="weekendEvening">Soirées la fin de semaine</string>
+    <string name="allMorning">Tous les matins</string>
+    <string name="allDaytime">Toutes les journées</string>
+    <string name="allEvening">Tous les soirs</string>
+    <string name="multipleWeekdays">Plusieurs créneaux en semaine</string>
+    <string name="multipleWeekends">Plusieurs créneaux la fin de semaine</string>
+    <string name="multipleWeek">Plusieurs créneaux sur la semaine</string>
+    <string name="specificChoices">Sélections spécifiques</string>
+    <string name="allSelected">Toute la semaine</string>
+    <string name="weekendsMorningAndDay">Matinées et après-midis la fin de semaine</string>
+    <string name="weekendsMorningAndEvening">Matinées et soirées la fin de semaine</string>
+    <string name="weekendsDayAndEvening">Journées et soirées la fin de semaine</string>
+    <string name="allWeekMorning">Tous les matins de la semaine</string>
+    <string name="allWeekAfternoon">Tous les après-midis de la semaine</string>
+    <string name="allWeekEvening">Tous les soirs de la semaine</string>
+    <string name="allWeekMorningAndAfternoon">Matinées et après-midis toute la semaine</string>
+    <string name="allWeekMorningAndEvening">Matinées et soirées toute la semaine</string>
+    <string name="allWeekAfternoonAndEvening">Après-midis et soirées toute la semaine</string>
+    <string name="allWeekAllDay">Disponible en tout temp</string>
+    <string name="weekendsAllDay">Toute la journée la fin de semaine</string>
+    <string name="weekendsMorning">Matinées la fin de semaine</string>
+    <string name="weekendsDaytime">Journées la fin de semaine</string>
+    <string name="weekendsEvening">Soirées la fin de semaine</string>
+    <string name="multipleWeekends">Plusieurs créneaux la fin de semaine</string>
+    <string name="monday">Lundi</string>
+    <string name="tuesday">Mardi</string>
+    <string name="wednesday">Mercredi</string>
+    <string name="thursday">Jeudi</string>
+    <string name="friday">Vendredi</string>
+    <string name="saturday">Samedi</string>
+    <string name="sunday">Dimanche</string>
+    <string name="morning">en matinée</string>
+    <string name="afternoon">en après-midi</string>
+    <string name="evening">le soir</string>
+    <string name="allDay">toute la journée</string>
+    <string name="and">et</string>
+    <string name="weekdays">Jours de semaine</string>
+    <string name="weekends">Jours de fin de semaine</string>
+    <string name="allWeek">Tous les jours</string>
+    <string name="andWeekends">et jours de fin de semaine</string>
+    <string name="availAlways">en tout temps</string>
+    <!--After date-->
+    <string name="specificDateQuestion">Préférez-vous chercher après une date précise ?</string>
+    <string name="specificDateQuestionS">Après une date précise</string>
+    <string name="startingDate">Après: </string>
+    <string name="afterDateSelT">Sélectionnez une date</string>
+    <string name="setBtn">Définir</string>
+    <string name="cancelBtn">Annuler</string>
+    <!--Third party payer-->
+    <string name="thirdPartyPayerT">Vos frais sont-ils couverts par un organisme tiers payeur ?</string>
+    <string name="thirdPartyPayer">Tiers payeur:</string>
+    <string name="thirdPartyPayerTS">Tiers payeur</string>
+    <string name="thirdPartyPayerPopupT">Sélectionnez votre tiers payeur</string>
+    <string name="tppFileNumber">Numéro de dossier</string>
+    <string name="tppFileNumberDescr">Ce numéro sera partagé uniquement lorsque vous confirmerez un rendez-vous avec un professionnel.</string>
+    <!--Terms-->
+    <string name="termsAndConditions">Conditions générales</string>
+    <string name="cancellationPolicy">Politique d'annulation</string>
+    <string name="acceptTerms">En publiant cette demande, j'accepte les {0} et la {1}.</string>
+    <string name="postRequestButton">Publier la demande de rendez-vous</string>
+    <string name="infoText">Une fois cette demande publiée, tout professionnel ayant les spécialités et disponibilités correspondantes pourra vous proposer ses services.</string>
+    <string name="datePublishedAlert">Votre demande a été publiée !</string>
+    <string name="acceptTermsAlert">Veuillez accepter les Conditions générales et la Politique d'annulation.</string>
+    <string name="acceptTermsHint">En publiant cette demande:</string>
+    <string name="acceptTermsHint2">J'accepte les</string>
+    <string name="acceptTermsHint3">Conditions Générales</string>
+    <string name="acceptTermsHint4">et la</string>
+    <string name="acceptTermsHint5">Politique d'Annulation</string>
+    <string name="termsAndPolicyTS">Conditions acceptées</string>
+    <!--Appointment not for you-->
+    <string name="whoIsItFor">Dites-nous pour qui ce rendez-vous est destiné</string>
+    <string name="personFNameH">Prénom de la personne</string>
+    <string name="personLNameH">Nom de la personne</string>
+    <string name="personBirthDate">Sa date de naissance</string>
+    <string name="popupHintGenre">Choisissez le genre de la personne</string>
+    <string name="personGenderQ">Quel est le genre de la personne?</string>
+    <string name="saveBtn">Enregistrer</string>
+    <!--Service type-->
+    <string name="serviceTypePopupT">Choisissez le type de consultation recherché</string>
+    <string name="changingServiceDescr">NB: Modifier ce choix réinitialisera vos séléctions des spécialistes et motifs de consultation</string>
+    <string name="changingServiceDescrB">NB:</string>
+    <string name="profTypePopupT">Sélectionnez un ou plusieurs types de spécialistes</string>
+    <string name="consultReasonPopupT">Sélectionnez le(s) motif(s) de consultation</string>
+    <string name="clientNoteT">Vous pouvez ajouter des précisions si besoin</string>
+    <string name="clientNoteSectT">Informations complémentaires</string>
+    <string name="infoDescrPopupT">Choisissez le spécialiste\nadapté à vos besoins</string>
+    <string name="confirmBtn">Confirmer</string>
+    <!--AI suggest-->
+    <string name="aiSuggestT">Vous hésitez sur le type\nde spécialiste?</string>
+    <string name="infoTextsDescr">Lisez les descriptions des spécialistes pour mieux comprendre leur rôle.</string>
+    <string name="infoTextsBtn">Voir les descriptions des spécialistes</string>
+    <string name="orSep">OU</string>
+    <string name="aiSuggestDescr">Laissez notre système d'intelligence artificielle vous suggérer le type de spécialiste adapté à votre situation.</string>
+    <string name="aiSuggestBtn">Obtenir des suggestions avec l'IA</string>
+    <string name="aiPopupT">Décrivez votre situation</string>
+    <string name="skipQBtn">Sauter la question</string>
+    <string name="prevQBtn">Précédent</string>
+    <string name="nextQBtn">Suivant</string>
+    <string name="taT">Vous pouvez ajouter des précisions si besoin</string>
+    <string name="taT2">- Optionnel -</string>
+    <string name="nbCharDescr">* Soyez concis: maximum 150 caractères</string>
+    <string name="nbCharUsed">Caractères utilisés :</string>
+    <string name="doneKbBtn">Terminé</string>
+    <string name="taHint">Événements récents, préoccupations spécifiques ou tout autre détail que vous souhaitez mentionner</string>
+    <string name="aiLoadingT">En cours de traitement…</string>
+    <string name="aiLoadingST">Nous identifions les types de professionnels qui pourraient correspondre à vos besoins et votre situation !</string>
+    <string name="aiResultT">Suggestions basées sur vos réponses</string>
+    <string name="english">Anglais</string>
+    <string name="french">Français</string>
+    <!--APPT tableview-->
+    <string name="lookingFor">Cherche </string>
+    <string name="lookingForLC">cherche </string>
+    <string name="forConsRLbl">motif</string>
+    <string name="forSubcategsLbl">pour</string>
+    <string name="subcategLbl">en lien avec</string>
+    <string name="notInProfile">hors profil</string>
+    <string name="notInYourExpertises">motif de consultation hors profil</string>
+    <string name="notInYourExpertisesPlural">motifs de consultation hors profil</string>
+    <string name="noAnsYet">Pas de réponses encore</string>
+    <string name="apptGenderPref">Préférence de spécialiste</string>
+    <string name="apptRequired">Rendez-vous souhaité:</string>
+    <string name="apptAsap">dès que possible</string>
+    <string name="afterDate">après le </string>
+    <string name="availLbl">Disponibilités:</string>
+    <string name="consultTypeP">Type:</string>
+    <string name="forConcernedP">Demande pour:</string>
+    <string name="opportHeaderLbl">opportunités compatibles</string>
+    <!--TIME SLOT OFFER PAGE-->
+    <string name="offerTimeSlotsT">Ajoutez des créneaux horaires</string>
+    <string name="timeSlotsToBeSentTS">Ce crénau sera envoyé au client</string>
+    <string name="timeSlotsToBeSentTP">Ces crénaux seront proposés au client</string>
+    <string name="offerTimeSlotBtn">Postuler avec ce créneau</string>
+    <string name="offerTimeSlotsBtn">Postuler avec ces créneaux</string>
+    <string name="addTimeSlotBtn">Ajouter un créneau horaire</string>
+    <string name="timeSlotInfo">Ajoutez jusqu'à 5 créneaux horaires, qui seront envoyés au client. Il pourra en sélectionner un et confirmer le rendez-vous. Vous serez notifié dès son acceptation.</string>
+    <string name="maxTimeSlotsReached">Vous ne pouvez pas choisir plus de 5 créneaux.</string>
+    <string name="matchedAvailability">Disponibilités en commun</string>  
+    <string name="matchedAvailShort">Dispo. en commun</string>  
+    <string name="noMatchFound">Aucune disponibilité correspondante</string>  
+    <string name="noMatchFoundDescr">Proposez un créneau parmi les disponibilités du client.</string>  
+    <string name="matchedAvailabilityDescr">Périodes où vous êtes tous les deux disponibles.</string> 
+    <string name="unmatchedAvailability">Autres disponibilités du client</string>  
+    <string name="unmatchedAvailabilityDescr">Le client est aussi disponible sur ces périodes.</string>  
+    <string name="professionalOtherAvailability">Vos autres disponibilités</string>  
+    <string name="professionalOtherAvailabilityDescr">Vos disponibilités hors compatibilité avec ceux du client.</string>  
+    <string name="addTimelotManually">Choisir un créneau dans le calendrier</string>  
+    <string name="selectDate">Sélectionnez vos dates.</string>
+    <string name="selectTime">Sélectionnez un ou plusieurs crénaux.</string>
+    <string name="timeSlotAlreadySelected">Ce créneau est déjà sélectionné!</string>
+    <string name="toTimeLink">à</string>
+    <string name="removeSlot">Supprimer le créneau</string>
+    <string name="reviewAndSend">Réviser et envoyer</string>
+    <string name="closeWin">Fermer</string>
+    <string name="serviceOverview">Détails de l'offre</string>
+    <!--cancel alert-->
+    <!-- Titre de la boîte de dialogue -->
+    <string name="errorSendingOffer">Une erreur est survenue lors de l'envoi de votre proposition.\n\nVeuillez réessayer.</string>
+    <string name="discardChangesConfirm">Souhaitez-vous annuler votre proposition en cours ?</string>
+    <string name="cancelOffer">Non, continuer</string>
+    <string name="discardOffer">Oui, annuler</string>
+    <!--Steps-->
+    <string name="timeOfferTitle">Votre proposition de rendez-vous</string>
+    <string name="confirmServDetailsT">Revoyez les détails</string>
+    <string name="addMsgT">Laissez un message (optionnel)</string>
+    <string name="addMsgHint">Expliquez brièvement votre approche ou précisez un détail</string>
+    <string name="servTypeRowT">type</string>
+    <string name="thirdPartyPayerRowT">tiers payeur</string>
+    <string name="thirdPartyPayerRowDescr">Le numéro de dossier vous sera accessible\nsi votre proposition est acceptée.</string>
+    <string name="takenInCharge">Pris en charge</string>
+    <string name="tarifRowT">tarif</string>
+    <string name="consultLenRowT">durée</string>
+    <string name="taxesRowT">taxes</string>
+    <string name="nonTaxable">Non taxable</string>
+    <string name="taxesIncl">Taxes incluses</string>
+    <string name="toNextBtn">Suivant</string>
+    <string name="selectDateAndTime">Séléctionnez les dates et créneaux de votre choix</string>
+    <string name="proposedTimeSlots">Vos créneaux proposés</string>
+    <string name="profNoteMsg">Note accompagnatrice</string>
+    <string name="profNoteMsgDescr">Optionnel: un mot pour expliquer votre approche ou adresser une remarque au client.</string>
+    <string name="serviceLineHeader">service:</string>
+    <string name="consultLenLineHeader">durée:</string>
+    <string name="tarifLineHeader">tarif:</string>
+    <string name="thirdPartyLineHeader">tiers payeur:</string>
+    <string name="sendTimeSlots">Envoyer ma proposition</string>
+    <string name="sendingTimeSlots">Envoy en cours ..</string>
+    <string name="successAplliedToAppt">Proposition envoyée !</string>
+    <string name="uveApplied">Vous avez proposé</string>
+    <string name="timeSlots">crénaux</string>
+    <string name="timeSlot">crénau</string>
+    <string name="acceptTermsHintP">En soumettant cette proposition:</string>
+    <!--APPT OFFERS PAGE-->
+    <string name="apptOffersT">Offres de rendez-vous</string>
+    <string name="apptOffersEmptyT">En attente d'offres</string>
+    <string name="apptOffersEmptyDescr">Les professionnels\nvous proposeront bientôt\ndes créneaux horaires</string>
+    <string name="cancelApptBtn">Annuler la demande de rendez-vous</string>
+    <string name="withProfType">Spécialiste: </string>
+    <string name="forProfType">Pour: </string>
+    <!--CANCEL APPT POPUP-->
+    <string name="cancellingAppt">Annulation ...</string>
+    <string name="cancelledAppt">Rendez-vous annulé !</string>
+    <string name="cancelAppointmentRequest">Annuler la demande de rendez-vous</string>  
+    <string name="cancelConfirmationText">Vous êtes sur le point d'annuler votre demande de rendez-vous</string>  
+    <string name="cancelConfReasonT">Sélectionnez la raison ci-dessous</string>  
+    <string name="foundApptElsewhere">J'ai trouvé un rendez-vous ailleurs</string>  
+    <string name="noLongerNeedAppt">Je n'ai plus besoin de rendez-vous</string>  
+    <string name="ratherNotSay">Je préfère ne pas dire</string>  
+    <string name="otherReason">Autre raison</string>  
+    <string name="termsAndCancellationPolicy">Conditions &amp; politique d'annulation</string> 
+    <string name="confirmCancel">Oui, confirmer l'annulation</string>  
+    <string name="keepAppt">Non, garder la demande</string>  
+    <!--HISTORY TAB-->
+    <string name="tabHistoryTitle">Historique des rendez-vous</string>
+    <!--NOTIFICATIONS PAGE-->
+    <string name="noNotifsT">Aucune notification\npour l'instant</string>
+    <string name="noNotifsDescr">Restez à l'affût !\nLes mises à jour importantes\nconcernant vos rendez-vous\napparaîtront ici</string>
+    <string name="notifPageT">Mes notifications</string>
+    <!--SETTINGS PAGE CLIENT-->
+    <string name="settingsPageT">Profil &amp; Paramètres</string>
+    <string name="titleYourContactInfo">Vos coordonnées</string>
+    <string name="descYourContactInfo">Partagées uniquement pour les rendez-vous confirmés</string>
+    <string name="titleYourContactInfo">Vos coordonnées</string>
+    <string name="titleName">Nom</string>
+    <string name="titleBirthYear">Date de naissance</string>
+    <string name="titleGender">Genre</string>
+    <string name="titleLanguagesSpoken">Langues parlées</string>
+    <string name="titlePhoneNb">Numéro de téléphone</string>
+    <string name="titleAddress">Addresse</string>
+    <string name="addressHint">Pour rechercher des\nrendez-vous à proximité</string>
+    <string name="titleAboutYourself">Vos informations personnelles</string>
+    <string name="descAboutYourself">Ces informations sont utilisées pour vous mettre en relation avec les professionnels</string>
+    <string name="titlePaymentPreference">Comment préférez-vous payer&amp;nbsp;?</string>
+    <string name="descPaymentPreference">Sélectionnez votre méthode de paiement pour vos rendez-vous</string>
+    <string name="btnConnectBankAccount">Connecter un compte bancaire</string>
+    <string name="titleNotificationSettings">Paramètres de notification</string>
+    <string name="titleNewReplies">Nouvelles popositions</string>
+    <string name="profOffersTimeSlot">Un professionnel vous a proposé un rendez-vous</string>
+    <string name="descNewReplies">Vous serez averti(e) lorsque des utilisateurs publieront de nouvelles demandes de rendez-vous</string>
+    <string name="titleConfirmedAppointments">Rendez-vous confirmés</string>
+    <string name="descConfirmedAppointments">Rappels et notifications d'annulation pour vos rendez-vous confirmés</string>
+    <string name="titleSysNotifs">Notifications du système</string>
+    <string name="titleSysNotifsDescr">Restez informé des mises à jour importantes concernant votre compte et l'application Psypsy</string>
+    <string name="titleCreatedDate">Date de création</string>
+    <string name="titleEmailUsed">Courriel</string>
+    <string name="connectedWApple">Connexion\navec Apple</string>
+    <string name="titleYourPsyPsyAccount">Votre compte PsyPsy</string>
+    <string name="btnSignOut">Se déconnecter</string>
+    <string name="logOut">Se déconnecter</string>
+    <string name="logingOut">Déconnexion...</string>
+    <string name="logOutTitle">Se déconnecter</string>
+    <string name="logOutDescr">Votre compte restera ici, revenez chaque fois que vous avez besoin de trouver un rendez-vous !</string>
+    <string name="logOutBtnYes">Oui, déconnexion</string>
+    <string name="logOutBtnNo">Non, rester connecté</string>
+    <!---->
+    <string name="btnDelAcc">Supprimer mon compte</string>
+    <string name="btnDeleteAccount">Supprimer le compte</string>
+    <string name="appVersion">Version de l'app: </string>
+    <!--General Alert ERROR-->
+    <string name="error_title">Erreur</string>
+    <string name="error_message">\nUne erreur est survenue. Veuillez réessayer.</string>
+    <string name="retry">Réessayer</string>
+    <string name="cancel">Annuler</string>
+    <string name="ok">OK</string>
+    <string name="serverTimeoutErrT">Problème de connexion</string>
+    <string name="serverTimeoutErr">Nous rencontrons des difficultés pour nous connecter au serveur. Veuillez vérifier votre connexion internet et réessayer.</string>
+    <!--Alert Popup message anim-->
+    <string name="answerAllQ">Veuillez répondre à toutes les questions!</string>
+    <string name="apptPublished">Publié !\nEn attente d'offres</string>
+    <string name="acceptTermsMsg">Acceptez les conditions pour continuer!</string>
+    <!--Name Editor-->
+    <string name="editName">Modifier le nom</string>
+    <string name="firstName">Prénom</string>
+    <string name="lastName">Nom de famille</string>
+    <string name="firstNameHint">Entrez votre prénom</string>
+    <string name="lastNameHint">Entrez votre nom de famille</string>
+    <string name="firstNameTooShort">Le prénom est obligatoire</string>
+    <string name="lastNameTooShort">Le nom de famille est obligatoire</string>
+    <string name="invalidFirstNameFormat">Le prénom contient des caractères non valides</string>
+    <string name="invalidLastNameFormat">Le nom de famille contient des caractères non valides</string>
+    <string name="errorSavingName">Erreur lors de la sauvegarde du nom. Veuillez réessayer.</string>
+    <string name="savingChanges">Sauvegarde en cours...</string>
+    <string name="save">Sauvegarder</string>
+    <string name="unsavedChangesTitle">Modifications non sauvegardées</string>
+    <string name="unsavedChangesMessage">Vous avez des modifications non sauvegardées. Êtes-vous sûr de vouloir quitter sans sauvegarder?</string>
+    <string name="discardChanges">Ignorer les modifications</string>
+    <string name="reconnLoginAccessibilityLabel">Se reconnecter au compte existant</string>
+    <string name="reconnLoginAccessibilityHint">Connectez-vous si vous avez déjà un compte PsyPsy</string>
+</resources>

@@ -9,7 +9,8 @@
             "env": {
                 "DATA_DIR": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/mcp-data",
                 "TEMPLATES_USE": "en",
-                "ENABLE_GUI": "false"
+                "ENABLE_GUI": "false",
+                "NODE_ENV": "production"
             }
         },
         "animate-ui Docs": {
@@ -20,10 +21,7 @@
         },
         "iterm-mcp": {
             "command": "npx",
-            "args": [
-                "-y",
-                "iterm-mcp"
-            ]
+            "args": ["-y", "iterm-mcp"]
         }
     }
 }
