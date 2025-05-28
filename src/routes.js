@@ -37,7 +37,8 @@ Coded by www.creative-tim.com
 
 // Material Dashboard 2 React layouts
 import Dashboard from "./layouts/dashboard";
-import Tables from "./layouts/tables";
+import Clients from "./layouts/clients";
+import Professionals from "./layouts/professionals";
 import Billing from "./layouts/billing";
 import RTL from "./layouts/rtl";
 import Notifications from "./layouts/notifications";
@@ -72,7 +73,7 @@ const protectedRoutes = [
     key: "professionals",
     icon: <Icon fontSize="small">people_alt</Icon>,
     route: "/professionals",
-    component: <ProtectedRoute component={<Tables />} />,
+    component: <ProtectedRoute component={<Professionals />} />,
   },
   {
     type: "collapse",
@@ -80,7 +81,7 @@ const protectedRoutes = [
     key: "clients",
     icon: <Icon fontSize="small">group</Icon>,
     route: "/clients",
-    component: <ProtectedRoute component={<Tables />} />,
+    component: <ProtectedRoute component={<Clients />} />,
   },
   {
     type: "collapse",
