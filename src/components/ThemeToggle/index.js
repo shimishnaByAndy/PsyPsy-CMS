@@ -16,6 +16,7 @@ function ThemeToggle() {
   const { darkMode } = controller;
 
   const toggleTheme = () => {
+    console.log('ThemeToggle: Switching theme from', darkMode ? 'dark' : 'light', 'to', !darkMode ? 'dark' : 'light');
     setDarkMode(dispatch, !darkMode);
   };
 

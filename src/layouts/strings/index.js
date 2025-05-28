@@ -18,10 +18,7 @@ import { useState, useEffect, useMemo } from "react";
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Chip from "@mui/material/Chip";
-import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -32,7 +29,6 @@ import TablePagination from "@mui/material/TablePagination";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import Paper from "@mui/material/Paper";
 import InputAdornment from "@mui/material/InputAdornment";
 import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -57,7 +53,7 @@ import Footer from "examples/Footer";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
-import SimpleErrorMessage from "components/SimpleErrorMessage";
+import ConnectionError from "components/ConnectionError";
 
 // Parse
 import Parse from 'parse';
@@ -68,6 +64,7 @@ function Strings() {
   const [modifiedStrings, setModifiedStrings] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [connectionError, setConnectionError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
@@ -75,6 +72,7 @@ function Strings() {
   const [editingKey, setEditingKey] = useState(null);
   const [editingValue, setEditingValue] = useState("");
   const [authError, setAuthError] = useState(false);
+  const [testMode, setTestMode] = useState(null); // 'network', 'server', 'parse', null
 
   // Check authentication status
   useEffect(() => {
@@ -88,25 +86,63 @@ function Strings() {
       }
     } catch (error) {
       console.error('Error checking authentication:', error);
+      
+      // Check if it's a Parse Server connection error
+      if (error.message && (error.message.includes('XMLHttpRequest failed') || error.message.includes('Parse API'))) {
+        setConnectionError({
+          type: 'parse',
+          title: 'Parse Server Unavailable',
+          message: 'Unable to connect to Parse Server. Authentication and data services are currently unavailable.'
+        });
+      }
+      
       setAuthError(true);
     }
   }, []);
+
+  // Auto-load strings when component mounts
+  useEffect(() => {
+    console.log(`🚀 Component mounted, auto-loading strings for language: ${language}`);
+    loadStrings(language);
+  }, []); // Only run on mount
+
+  // Load strings when language changes
+  useEffect(() => {
+    if (language) {
+      console.log(`🔄 Language changed to: ${language}, reloading strings`);
+      loadStrings(language);
+    }
+  }, [language]); // Run when language changes
 
   // Load strings from XML files
   const loadStrings = async (lang) => {
     setLoading(true);
     setError(null);
+    setConnectionError(null);
     
     try {
-      console.log(`Loading strings for language: ${lang}`);
+      console.log(`🔄 Loading strings for language: ${lang}`);
+      console.log(`📁 Attempting to fetch from: /assets/i18n/${lang}/strings.xml`);
+      
+      // Simulate different types of errors in test mode
+      if (testMode === 'network') {
+        throw new TypeError('Failed to fetch');
+      } else if (testMode === 'server') {
+        throw new Error('HTTP 500: Internal Server Error');
+      } else if (testMode === 'parse') {
+        throw new Error('XMLHttpRequest failed: "Unable to connect to the Parse API"');
+      }
+      
       const response = await fetch(`/assets/i18n/${lang}/strings.xml`);
+      console.log(`📡 Response status: ${response.status} ${response.statusText}`);
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: Failed to load ${lang} strings from /assets/i18n/${lang}/strings.xml`);
       }
       
       const xmlText = await response.text();
-      console.log(`Received XML text for ${lang}, length: ${xmlText.length} characters`);
+      console.log(`📄 Received XML text for ${lang}, length: ${xmlText.length} characters`);
+      console.log(`📄 First 200 characters: ${xmlText.substring(0, 200)}...`);
       
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(xmlText, "text/xml");
@@ -114,13 +150,14 @@ function Strings() {
       // Check for XML parsing errors
       const parseError = xmlDoc.getElementsByTagName("parsererror");
       if (parseError.length > 0) {
+        console.error(`❌ XML parsing error:`, parseError[0].textContent);
         throw new Error(`XML parsing error: ${parseError[0].textContent}`);
       }
       
       const stringElements = xmlDoc.getElementsByTagName("string");
       const parsedStrings = {};
       
-      console.log(`Found ${stringElements.length} string elements in ${lang} XML`);
+      console.log(`🔍 Found ${stringElements.length} string elements in ${lang} XML`);
       
       for (let i = 0; i < stringElements.length; i++) {
         const element = stringElements[i];
@@ -131,20 +168,59 @@ function Strings() {
         }
       }
       
-      setStrings(parsedStrings);
-      console.log(`Successfully loaded ${Object.keys(parsedStrings).length} strings for ${lang}`);
+      console.log(`✅ Successfully parsed ${Object.keys(parsedStrings).length} strings for ${lang}`);
+      console.log(`📋 Sample strings:`, Object.keys(parsedStrings).slice(0, 5));
+      console.log(`📋 Sample string values:`, Object.keys(parsedStrings).slice(0, 3).map(key => ({ key, value: parsedStrings[key] })));
       
-      // Clear any previous errors
+      setStrings(parsedStrings);
+      console.log(`🎯 Strings state updated with ${Object.keys(parsedStrings).length} entries`);
+      
+      // Clear any previous errors and test mode
       setError(null);
+      setConnectionError(null);
+      setTestMode(null);
       
     } catch (err) {
-      console.error("Error loading strings:", err);
-      setError(`Failed to load ${lang} strings: ${err.message}`);
+      console.error("❌ Error loading strings:", err);
+      console.error("❌ Error details:", {
+        name: err.name,
+        message: err.message,
+        stack: err.stack
+      });
+      
+      // Categorize error types
+      if (err.name === 'TypeError' && err.message.includes('Failed to fetch')) {
+        // Network error
+        setConnectionError({
+          type: 'network',
+          title: 'No Internet Connection',
+          message: 'Unable to load strings. Please check your internet connection and try again.'
+        });
+      } else if (err.message.includes('XMLHttpRequest failed') || err.message.includes('Parse API')) {
+        // Parse Server error
+        setConnectionError({
+          type: 'parse',
+          title: 'Server Connection Failed',
+          message: 'Unable to connect to Parse Server. The service may be temporarily unavailable.'
+        });
+      } else if (err.message.includes('HTTP 404') || err.message.includes('HTTP 500')) {
+        // Server error
+        setConnectionError({
+          type: 'server',
+          title: 'Server Error',
+          message: `Server returned an error (${err.message}). Please try again later.`
+        });
+      } else {
+        // Generic error
+        setError(`Failed to load ${lang} strings: ${err.message}`);
+      }
       
       // Set empty strings object on error
       setStrings({});
+      console.log(`🔄 Set empty strings object due to error`);
     } finally {
       setLoading(false);
+      console.log(`🏁 Loading completed for ${lang}`);
     }
   };
 
@@ -158,11 +234,6 @@ function Strings() {
     setSearchTerm(""); // Clear search
     setPage(0); // Reset pagination
   };
-
-  // Load strings when language changes
-  useEffect(() => {
-    loadStrings(language);
-  }, [language]);
 
   // Generate category for a string key
   const getCategory = (key) => {
@@ -199,6 +270,12 @@ function Strings() {
 
   // Filter and prepare data
   const filteredData = useMemo(() => {
+    console.log(`🔄 Processing strings data:`, {
+      stringsCount: Object.keys(strings).length,
+      modifiedCount: Object.keys(modifiedStrings).length,
+      searchTerm: searchTerm
+    });
+    
     const data = Object.entries(strings).map(([key, value]) => ({
       key,
       originalValue: value,
@@ -207,22 +284,34 @@ function Strings() {
       isModified: modifiedStrings[key] !== undefined,
     }));
 
+    console.log(`📊 Prepared ${data.length} data rows`);
+    console.log(`📋 Sample data:`, data.slice(0, 3));
+
     if (searchTerm) {
-      return data.filter(item => 
+      const filtered = data.filter(item => 
         item.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.originalValue.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.currentValue.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.category.toLowerCase().includes(searchTerm.toLowerCase())
       );
+      console.log(`🔍 Filtered to ${filtered.length} rows with search term: "${searchTerm}"`);
+      return filtered;
     }
 
+    console.log(`✅ Returning ${data.length} unfiltered rows`);
     return data;
   }, [strings, modifiedStrings, searchTerm]);
 
   // Handle pagination
   const paginatedData = useMemo(() => {
     const startIndex = page * rowsPerPage;
-    return filteredData.slice(startIndex, startIndex + rowsPerPage);
+    const endIndex = startIndex + rowsPerPage;
+    const paginated = filteredData.slice(startIndex, endIndex);
+    
+    console.log(`📄 Pagination: page ${page + 1}, showing ${startIndex + 1}-${Math.min(endIndex, filteredData.length)} of ${filteredData.length} total rows`);
+    console.log(`📄 Paginated data:`, paginated.length, 'rows');
+    
+    return paginated;
   }, [filteredData, page, rowsPerPage]);
 
   // Handle edit start
@@ -263,6 +352,13 @@ function Strings() {
       delete newModified[key];
       return newModified;
     });
+  };
+
+  // Retry loading strings
+  const handleRetry = () => {
+    setConnectionError(null);
+    setError(null);
+    loadStrings(language);
   };
 
   // Clear session and redirect to login
@@ -505,6 +601,100 @@ function Strings() {
                   </Grid>
                 </Grid>
 
+                {/* Debug Information (only in development) */}
+                {process.env.NODE_ENV === 'development' && (
+                  <Alert severity="info" sx={{ mb: 3, borderRadius: 2 }}>
+                    <MDTypography variant="body2" fontWeight="bold" mb={1}>
+                      Debug Information:
+                    </MDTypography>
+                    <MDTypography variant="caption" component="div">
+                      • Language: {language.toUpperCase()}<br/>
+                      • Loading: {loading ? 'Yes' : 'No'}<br/>
+                      • Strings loaded: {Object.keys(strings).length}<br/>
+                      • Modified strings: {Object.keys(modifiedStrings).length}<br/>
+                      • Filtered data: {filteredData.length}<br/>
+                      • Search term: "{searchTerm}"<br/>
+                      • Current page: {page + 1}<br/>
+                      • Rows per page: {rowsPerPage}<br/>
+                      • Auth error: {authError ? 'Yes' : 'No'}<br/>
+                      • Connection error: {connectionError ? `Yes (${connectionError.type})` : 'No'}<br/>
+                      • Test mode: {testMode || 'None'}<br/>
+                      • XML URL: /assets/i18n/{language}/strings.xml
+                    </MDTypography>
+                    
+                    {/* Test Connection Errors */}
+                    <MDBox sx={{ mt: 2 }}>
+                      <MDTypography variant="body2" fontWeight="bold" mb={1}>
+                        Test Connection Errors:
+                      </MDTypography>
+                      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                        <MDButton
+                          size="small"
+                          color="info"
+                          variant="outlined"
+                          onClick={() => {
+                            setTestMode('network');
+                            loadStrings(language);
+                          }}
+                          disabled={loading}
+                        >
+                          Test Network Error
+                        </MDButton>
+                        <MDButton
+                          size="small"
+                          color="warning"
+                          variant="outlined"
+                          onClick={() => {
+                            setTestMode('server');
+                            loadStrings(language);
+                          }}
+                          disabled={loading}
+                        >
+                          Test Server Error
+                        </MDButton>
+                        <MDButton
+                          size="small"
+                          color="error"
+                          variant="outlined"
+                          onClick={() => {
+                            setTestMode('parse');
+                            loadStrings(language);
+                          }}
+                          disabled={loading}
+                        >
+                          Test Parse Error
+                        </MDButton>
+                        <MDButton
+                          size="small"
+                          color="success"
+                          variant="outlined"
+                          onClick={() => {
+                            setConnectionError(null);
+                            setError(null);
+                            setTestMode(null);
+                            loadStrings(language);
+                          }}
+                          disabled={loading}
+                        >
+                          Load Normal
+                        </MDButton>
+                        <MDButton
+                          size="small"
+                          color="secondary"
+                          variant="outlined"
+                          onClick={() => {
+                            setConnectionError(null);
+                            setError(null);
+                            setTestMode(null);
+                          }}
+                        >
+                          Clear Errors
+                        </MDButton>
+                      </Stack>
+                    </MDBox>
+                  </Alert>
+                )}
+
                 {/* Search and Actions */}
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} mb={3}>
                   <TextField
@@ -558,306 +748,244 @@ function Strings() {
                   </Alert>
                 )}
 
+                {/* Connection Error */}
+                {connectionError && (
+                  <MDBox sx={{ mb: 3 }}>
+                    <ConnectionError
+                      title={connectionError.title}
+                      message={connectionError.message}
+                      type={connectionError.type}
+                      onRetry={handleRetry}
+                      variant="card"
+                    />
+                  </MDBox>
+                )}
+
                 {/* Table */}
                 <Card sx={{ overflow: 'hidden', borderRadius: 2 }}>
-                  <TableContainer sx={{ maxHeight: 600 }}>
-                    <Table stickyHeader>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell sx={{ 
-                            fontWeight: 'bold', 
-                            backgroundColor: 'grey.100',
-                            borderBottom: '2px solid',
-                            borderColor: 'grey.300',
-                            width: '20%',
-                            minWidth: 180,
-                            fontSize: '0.875rem'
+                  <div style={{ maxHeight: 600, overflow: 'auto' }}>
+                    <table style={{ 
+                      width: '100%', 
+                      borderCollapse: 'collapse',
+                      tableLayout: 'fixed'
+                    }}>
+                      <thead>
+                        <tr style={{ backgroundColor: '#f5f5f5', position: 'sticky', top: 0 }}>
+                          <th style={{ 
+                            border: '1px solid #ddd', 
+                            padding: '12px', 
+                            textAlign: 'left',
+                            fontWeight: 'bold',
+                            width: '25%'
                           }}>
-                            <MDBox display="flex" alignItems="center">
-                              <MDTypography variant="button" fontWeight="bold" color="text">
-                                String Key
-                              </MDTypography>
-                            </MDBox>
-                          </TableCell>
-                          <TableCell sx={{ 
-                            fontWeight: 'bold', 
-                            backgroundColor: 'grey.100',
-                            borderBottom: '2px solid',
-                            borderColor: 'grey.300',
-                            width: '15%',
-                            minWidth: 120,
-                            textAlign: 'center'
+                            String Key
+                          </th>
+                          <th style={{ 
+                            border: '1px solid #ddd', 
+                            padding: '12px', 
+                            textAlign: 'center',
+                            fontWeight: 'bold',
+                            width: '15%'
                           }}>
-                            <MDBox display="flex" alignItems="center" justifyContent="center">
-                              <MDTypography variant="button" fontWeight="bold" color="text">
-                                Category
-                              </MDTypography>
-                            </MDBox>
-                          </TableCell>
-                          <TableCell sx={{ 
-                            fontWeight: 'bold', 
-                            backgroundColor: 'grey.100',
-                            borderBottom: '2px solid',
-                            borderColor: 'grey.300',
-                            width: '25%',
-                            minWidth: 200
+                            Category
+                          </th>
+                          <th style={{ 
+                            border: '1px solid #ddd', 
+                            padding: '12px', 
+                            textAlign: 'left',
+                            fontWeight: 'bold',
+                            width: '45%'
                           }}>
-                            <MDBox display="flex" alignItems="center">
-                              <MDTypography variant="button" fontWeight="bold" color="text">
-                                Original Value
-                              </MDTypography>
-                            </MDBox>
-                          </TableCell>
-                          <TableCell sx={{ 
-                            fontWeight: 'bold', 
-                            backgroundColor: 'grey.100',
-                            borderBottom: '2px solid',
-                            borderColor: 'grey.300',
-                            width: '25%',
-                            minWidth: 200
+                            Current Value
+                          </th>
+                          <th style={{ 
+                            border: '1px solid #ddd', 
+                            padding: '12px', 
+                            textAlign: 'center',
+                            fontWeight: 'bold',
+                            width: '15%'
                           }}>
-                            <MDBox display="flex" alignItems="center">
-                              <MDTypography variant="button" fontWeight="bold" color="text">
-                                Current Value
-                              </MDTypography>
-                            </MDBox>
-                          </TableCell>
-                          <TableCell sx={{ 
-                            fontWeight: 'bold', 
-                            backgroundColor: 'grey.100',
-                            borderBottom: '2px solid',
-                            borderColor: 'grey.300',
-                            width: '15%',
-                            minWidth: 120,
-                            textAlign: 'center'
-                          }}>
-                            <MDBox display="flex" alignItems="center" justifyContent="center">
-                              <MDTypography variant="button" fontWeight="bold" color="text">
-                                Actions
-                              </MDTypography>
-                            </MDBox>
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {paginatedData.map((row, index) => (
-                          <TableRow 
-                            key={row.key}
-                            sx={{ 
-                              backgroundColor: row.isModified ? 'warning.light' : (index % 2 === 0 ? 'grey.50' : 'white'),
-                              '&:hover': { 
-                                backgroundColor: row.isModified ? 'warning.main' : 'grey.100',
-                                '& .MuiTableCell-root': {
-                                  color: row.isModified ? 'white' : 'inherit'
-                                }
-                              },
-                              transition: 'all 0.2s ease'
-                            }}
-                          >
-                            <TableCell sx={{ 
-                              width: '20%',
-                              minWidth: 180,
-                              maxWidth: 180,
-                              padding: '12px 16px',
-                              verticalAlign: 'top'
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {loading ? (
+                          <tr>
+                            <td colSpan={4} style={{ 
+                              border: '1px solid #ddd', 
+                              padding: '20px', 
+                              textAlign: 'center' 
                             }}>
-                              <MDTypography 
-                                variant="caption" 
-                                fontWeight="bold" 
-                                color="text"
-                                sx={{
-                                  wordBreak: 'break-word',
-                                  fontSize: '0.75rem',
-                                  lineHeight: 1.4
-                                }}
-                              >
-                                {row.key}
-                              </MDTypography>
-                            </TableCell>
-                            <TableCell sx={{ 
-                              width: '15%',
-                              minWidth: 120,
-                              maxWidth: 120,
-                              padding: '12px 8px',
-                              textAlign: 'center',
-                              verticalAlign: 'top'
+                              <CircularProgress size={24} />
+                              <br />
+                              Loading strings...
+                            </td>
+                          </tr>
+                        ) : paginatedData.length === 0 ? (
+                          <tr>
+                            <td colSpan={4} style={{ 
+                              border: '1px solid #ddd', 
+                              padding: '20px', 
+                              textAlign: 'center' 
                             }}>
-                              <Chip 
-                                label={row.category} 
-                                size="small" 
-                                color={getCategoryColor(row.category)}
-                                variant="outlined"
-                                sx={{
-                                  fontSize: '0.7rem',
-                                  height: 24,
-                                  maxWidth: '100%',
-                                  '& .MuiChip-label': {
-                                    padding: '0 8px',
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis'
-                                  }
-                                }}
-                              />
-                            </TableCell>
-                            <TableCell sx={{ 
-                              width: '25%',
-                              minWidth: 200,
-                              maxWidth: 200,
-                              padding: '12px 16px',
-                              verticalAlign: 'top'
+                              {Object.keys(strings).length === 0 
+                                ? `No strings found for ${language.toUpperCase()}` 
+                                : 'No strings match your search criteria'
+                              }
+                            </td>
+                          </tr>
+                        ) : (
+                          paginatedData.map((row, index) => {
+                            // DEBUG: Log the actual row data structure
+                            console.log(`🔍 Row ${index}:`, {
+                              key: row.key,
+                              category: row.category,
+                              currentValue: row.currentValue,
+                              isModified: row.isModified,
+                              fullRow: row
+                            });
+                            
+                            return (
+                            <tr key={row.key} style={{ 
+                              backgroundColor: index % 2 === 0 ? '#f9f9f9' : 'white' 
                             }}>
-                              <MDTypography 
-                                variant="body2" 
-                                color="text" 
-                                sx={{ 
-                                  whiteSpace: 'pre-wrap',
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                  display: '-webkit-box',
-                                  WebkitLineClamp: 4,
-                                  WebkitBoxOrient: 'vertical',
-                                  fontSize: '0.8rem',
-                                  lineHeight: 1.4,
-                                  wordBreak: 'break-word'
-                                }}
-                              >
-                                {row.originalValue}
-                              </MDTypography>
-                            </TableCell>
-                            <TableCell sx={{ 
-                              width: '25%',
-                              minWidth: 200,
-                              maxWidth: 200,
-                              padding: '12px 16px',
-                              verticalAlign: 'top'
-                            }}>
-                              {editingKey === row.key ? (
-                                <TextField
-                                  fullWidth
-                                  multiline
-                                  rows={4}
-                                  value={editingValue}
-                                  onChange={(e) => setEditingValue(e.target.value)}
+                              <td style={{ 
+                                border: '1px solid #ddd', 
+                                padding: '12px',
+                                verticalAlign: 'top',
+                                width: '25%'
+                              }}>
+                                <div style={{ fontFamily: 'monospace', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                                  {row.key}
+                                </div>
+                                {row.isModified && (
+                                  <Chip 
+                                    label="Modified" 
+                                    size="small" 
+                                    color="warning"
+                                    style={{ marginTop: 4, height: 16, fontSize: '0.6rem' }}
+                                  />
+                                )}
+                              </td>
+                              
+                              <td style={{ 
+                                border: '1px solid #ddd', 
+                                padding: '12px',
+                                textAlign: 'center',
+                                verticalAlign: 'top',
+                                width: '15%'
+                              }}>
+                                <Chip 
+                                  label={row.category} 
+                                  size="small" 
+                                  color={getCategoryColor(row.category)}
                                   variant="outlined"
-                                  size="small"
-                                  autoFocus
-                                  sx={{ 
-                                    '& .MuiOutlinedInput-root': {
-                                      borderRadius: 1,
-                                      fontSize: '0.8rem'
-                                    },
-                                    '& .MuiInputBase-input': {
-                                      padding: '8px 12px'
-                                    }
-                                  }}
                                 />
-                              ) : (
-                                <MDTypography 
-                                  variant="body2" 
-                                  color="text" 
-                                  sx={{ 
-                                    whiteSpace: 'pre-wrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    display: '-webkit-box',
-                                    WebkitLineClamp: 4,
-                                    WebkitBoxOrient: 'vertical',
-                                    fontSize: '0.8rem',
-                                    lineHeight: 1.4,
-                                    wordBreak: 'break-word'
-                                  }}
-                                >
-                                  {row.currentValue}
-                                </MDTypography>
-                              )}
-                            </TableCell>
-                            <TableCell sx={{ 
-                              width: '15%',
-                              minWidth: 120,
-                              maxWidth: 120,
-                              padding: '12px 8px',
-                              textAlign: 'center',
-                              verticalAlign: 'top'
-                            }}>
-                              <Stack direction="row" spacing={0.5} justifyContent="center" alignItems="flex-start">
+                              </td>
+                              
+                              <td style={{ 
+                                border: '1px solid #ddd', 
+                                padding: '12px',
+                                verticalAlign: 'top',
+                                width: '45%'
+                              }}>
                                 {editingKey === row.key ? (
-                                  <>
-                                    <Tooltip title="Save Changes">
-                                      <IconButton 
-                                        size="small" 
-                                        color="success"
-                                        onClick={() => handleEditSave(row.key)}
-                                        sx={{ 
-                                          backgroundColor: 'success.light',
-                                          '&:hover': { backgroundColor: 'success.main' },
-                                          width: 32,
-                                          height: 32
-                                        }}
-                                      >
-                                        <SaveIcon fontSize="small" />
-                                      </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="Cancel Edit">
-                                      <IconButton 
-                                        size="small" 
-                                        color="error"
-                                        onClick={handleEditCancel}
-                                        sx={{ 
-                                          backgroundColor: 'error.light',
-                                          '&:hover': { backgroundColor: 'error.main' },
-                                          width: 32,
-                                          height: 32
-                                        }}
-                                      >
-                                        <CancelIcon fontSize="small" />
-                                      </IconButton>
-                                    </Tooltip>
-                                  </>
+                                  <TextField
+                                    fullWidth
+                                    multiline
+                                    rows={3}
+                                    value={editingValue}
+                                    onChange={(e) => setEditingValue(e.target.value)}
+                                    variant="outlined"
+                                    size="small"
+                                    autoFocus
+                                  />
                                 ) : (
-                                  <>
-                                    <Tooltip title="Edit String">
-                                      <IconButton 
-                                        size="small" 
-                                        color="primary"
-                                        onClick={() => handleEditStart(row.key, row.currentValue)}
-                                        sx={{ 
-                                          backgroundColor: 'primary.light',
-                                          '&:hover': { backgroundColor: 'primary.main' },
-                                          width: 32,
-                                          height: 32
-                                        }}
-                                      >
-                                        <EditIcon fontSize="small" />
-                                      </IconButton>
-                                    </Tooltip>
-                                    {row.isModified && (
-                                      <Tooltip title="Reset to Original">
+                                  <div>
+                                    <div style={{ fontSize: '0.8rem', wordBreak: 'break-word' }}>
+                                      {row.currentValue}
+                                    </div>
+                                    {row.isModified && row.originalValue !== row.currentValue && (
+                                      <div style={{ 
+                                        fontSize: '0.7rem',
+                                        opacity: 0.7,
+                                        fontStyle: 'italic',
+                                        marginTop: 4,
+                                        textDecoration: 'line-through'
+                                      }}>
+                                        Original: {row.originalValue.length > 50 
+                                          ? row.originalValue.substring(0, 50) + '...' 
+                                          : row.originalValue}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </td>
+                              
+                              <td style={{ 
+                                border: '1px solid #ddd', 
+                                padding: '12px',
+                                textAlign: 'center',
+                                verticalAlign: 'top',
+                                width: '15%'
+                              }}>
+                                <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
+                                  {editingKey === row.key ? (
+                                    <>
+                                      <Tooltip title="Save Changes">
                                         <IconButton 
                                           size="small" 
-                                          color="warning"
-                                          onClick={() => handleResetString(row.key)}
-                                          sx={{ 
-                                            backgroundColor: 'warning.light',
-                                            '&:hover': { backgroundColor: 'warning.main' },
-                                            width: 32,
-                                            height: 32
-                                          }}
+                                          color="success"
+                                          onClick={() => handleEditSave(row.key)}
                                         >
-                                          <RestoreIcon fontSize="small" />
+                                          <SaveIcon fontSize="small" />
                                         </IconButton>
                                       </Tooltip>
-                                    )}
-                                  </>
-                                )}
-                              </Stack>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-
+                                      <Tooltip title="Cancel">
+                                        <IconButton 
+                                          size="small" 
+                                          color="error"
+                                          onClick={handleEditCancel}
+                                        >
+                                          <CancelIcon fontSize="small" />
+                                        </IconButton>
+                                      </Tooltip>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Tooltip title="Edit String">
+                                        <IconButton 
+                                          size="small" 
+                                          color="primary"
+                                          onClick={() => handleEditStart(row.key, row.currentValue)}
+                                        >
+                                          <EditIcon fontSize="small" />
+                                        </IconButton>
+                                      </Tooltip>
+                                      {row.isModified && (
+                                        <Tooltip title="Reset to Original">
+                                          <IconButton 
+                                            size="small" 
+                                            color="warning"
+                                            onClick={() => handleResetString(row.key)}
+                                          >
+                                            <RestoreIcon fontSize="small" />
+                                          </IconButton>
+                                        </Tooltip>
+                                      )}
+                                    </>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  
                   {/* Pagination */}
                   <TablePagination
                     component="div"
@@ -870,10 +998,12 @@ function Strings() {
                       setPage(0);
                     }}
                     rowsPerPageOptions={[10, 25, 50, 100]}
-                    sx={{ 
+                    sx={{
                       borderTop: '1px solid',
-                      borderColor: 'grey.200',
-                      backgroundColor: 'grey.50'
+                      borderColor: 'grey.300',
+                      '& .MuiTablePagination-toolbar': {
+                        minHeight: 52
+                      }
                     }}
                   />
                 </Card>

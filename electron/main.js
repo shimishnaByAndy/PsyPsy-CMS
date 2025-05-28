@@ -27,8 +27,11 @@ function createWindow() {
     height: 900,
     show: true, // Ensure window shows
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
       contextIsolation: true,
+      enableRemoteModule: false,
+      webSecurity: false, // Allow cross-origin requests for Parse Server
+      allowRunningInsecureContent: true, // Allow HTTP requests in development
       preload: path.join(__dirname, 'preload.js')
     }
   });
@@ -37,7 +40,7 @@ function createWindow() {
 
   // Load the app
   const startUrl = isDev 
-    ? 'http://localhost:3001' 
+    ? 'http://localhost:3000' 
     : `file://${path.join(__dirname, '../build/index.html')}`;
   
   console.log('Loading URL:', startUrl);
@@ -46,6 +49,18 @@ function createWindow() {
   mainWindow.loadURL(startUrl)
     .then(() => {
       console.log('URL loaded successfully');
+      // Add additional debugging
+      mainWindow.webContents.on('did-finish-load', () => {
+        console.log('Page finished loading');
+      });
+      
+      mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+        console.error('Failed to load page:', errorCode, errorDescription);
+      });
+      
+      mainWindow.webContents.on('console-message', (event, level, message) => {
+        console.log('Renderer console:', level, message);
+      });
     })
     .catch((error) => {
       console.error('Error loading URL:', error);
