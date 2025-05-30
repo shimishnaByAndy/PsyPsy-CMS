@@ -160,5 +160,133 @@
     "general": "Une erreur est survenue",
     "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
     "requiredField": "Ce champ est obligatoire"
+  },
+  "strings": {
+    "title": "Gestion des Chaînes",
+    "subtitle": "Gérer les chaînes d'application pour différentes langues",
+    "language": "Langue",
+    "both": "LES DEUX",
+    "english": "AN",
+    "french": "FR",
+    "searchPlaceholder": "Rechercher des chaînes par clé, valeur ou catégorie...",
+    "filters": {
+      "category": "Catégorie",
+      "status": "Statut",
+      "allCategories": "Toutes les Catégories",
+      "allStrings": "Toutes les Chaînes",
+      "modifiedOnly": "Modifiées Seulement",
+      "unmodifiedOnly": "Non Modifiées Seulement"
+    },
+    "activeFilters": "Filtres Actifs",
+    "clearAll": "Tout Effacer",
+    "export": "Exporter {{count}} Modifications",
+    "generating": "Génération...",
+    "columns": {
+      "category": "Catégorie",
+      "englishValue": "Valeur Anglaise",
+      "frenchValue": "Valeur Française",
+      "currentValue": "Valeur Actuelle",
+      "actions": "Actions"
+    },
+    "categories": {
+      "welcome": "Accueil et Intégration",
+      "authentication": "Authentification",
+      "profile": "Profil et Paramètres",
+      "forms": "Formulaires et Validation",
+      "navigation": "Navigation et Interface",
+      "errors": "Erreurs et Messages",
+      "other": "Autre"
+    },
+    "badges": {
+      "modified": "MODIFIÉ"
+    },
+    "actions": {
+      "edit": "Modifier la Chaîne",
+      "save": "Sauvegarder les Modifications",
+      "cancel": "Annuler",
+      "reset": "Rétablir l'Original"
+    },
+    "warnings": {
+      "modified": "⚠️ Modifié",
+      "original": "Original: {{value}}"
+    },
+    "messages": {
+      "noModifications": "Aucune modification à sauvegarder",
+      "exportSuccess": "strings2_{{language}}.xml généré avec succès avec {{count}} chaînes modifiées",
+      "authRequired": "Authentification Requise:",
+      "authMessage": "Vous n'êtes pas connecté. Certaines fonctionnalités peuvent être limitées. Veuillez vous connecter pour une fonctionnalité complète.",
+      "loginButton": "Connexion"
+    },
+    "errors": {
+      "loadFailed": "Échec du chargement des chaînes {{language}}: {{error}}",
+      "saveFailed": "Échec de la sauvegarde des chaînes: {{error}}",
+      "networkError": "Aucune Connexion Internet",
+      "networkMessage": "Impossible de charger les chaînes. Veuillez vérifier votre connexion internet et réessayer.",
+      "serverError": "Échec de Connexion au Serveur",
+      "serverMessage": "Impossible de se connecter au serveur Parse. Le service peut être temporairement indisponible.",
+      "parseError": "Erreur Serveur",
+      "parseMessage": "Le serveur a renvoyé une erreur ({{error}}). Veuillez réessayer plus tard."
+    }
+  },
+  "clients": {
+    "title": "Gestion des Clients",
+    "subtitle": "Gérer et visualiser les informations des clients",
+    "searchPlaceholder": "Rechercher des clients...",
+    "columns": {
+      "name": "Nom et Email",
+      "age": "Âge",
+      "gender": "Genre",
+      "phone": "Téléphone",
+      "location": "Localisation",
+      "languages": "Langues",
+      "lastSeen": "Dernière Connexion",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "filters": {
+      "gender": "Genre",
+      "ageRange": "Tranche d'Âge",
+      "status": "Statut",
+      "lastSeen": "Dernière Connexion",
+      "allGenders": "Tous les Genres",
+      "allAges": "Tous les Âges",
+      "allStatuses": "Tous les Statuts",
+      "allActivity": "Toute Activité"
+    },
+    "genderOptions": {
+      "woman": "Femme",
+      "man": "Homme",
+      "other": "Autre",
+      "notDisclosed": "Non Divulgué"
+    },
+    "statusOptions": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "pending": "En Attente",
+      "suspended": "Suspendu"
+    },
+    "lastSeenOptions": {
+      "today": "Aujourd'hui",
+      "thisWeek": "Cette Semaine",
+      "thisMonth": "Ce Mois",
+      "older": "Plus Ancien"
+    },
+    "actions": {
+      "view": "Voir les Détails",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    }
+  },
+  "professionals": {
+    "title": "Gestion des Professionnels",
+    "subtitle": "Gérer les professionnels de la santé mentale"
+  },
+  "dashboard": {
+    "title": "Tableau de Bord",
+    "subtitle": "Bienvenue dans PsyPsy CMS",
+    "quickActions": "Actions Rapides",
+    "recentActivity": "Activité Récente",
+    "systemHealth": "État du Système",
+    "keyMetrics": "Métriques Clés"
   }
 } 

@@ -19,8 +19,6 @@ import { useState, useEffect, useMemo, Suspense, createContext } from "react";
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 // @mui material components
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 import Icon from "@mui/material/Icon";
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -31,17 +29,17 @@ import MDBox from "./components/MDBox";
 import Sidenav from "./examples/Sidenav";
 import Configurator from "./examples/Configurator";
 
-// Material Dashboard 2 React themes
-import theme from "./assets/theme";
-
-// Material Dashboard 2 React Dark Mode themes
-import themeDark from "./assets/theme-dark";
-
 // Material Dashboard 2 React routes
 import routes from "./routes";
 
 // Material Dashboard 2 React contexts
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator, setSidenavColor } from "./context";
+
+// Global Theme Provider - Our new comprehensive theme system
+import GlobalThemeProvider from "./components/GlobalThemeProvider";
+
+// PsyPsy Theme Provider - Custom theme utilities for components
+import PsyPsyThemeProvider from "./components/ThemeProvider";
 
 // Images
 import brandWhite from "./assets/images/logo-ct.png";
@@ -263,30 +261,31 @@ export default function App() {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <ParseInitializer>
-        <ThemeProvider theme={darkMode ? themeDark : theme}>
-          <CssBaseline />
-          {layout === "dashboard" && (
-            <>
-              <Sidenav
-                color="success"
-                brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-                brandName="PsyPsy CMS"
-                routes={routes}
-                onMouseEnter={handleOnMouseEnter}
-                onMouseLeave={handleOnMouseLeave}
-              />
-              <Configurator stats={stats} userType={userType} />
-              {configsButton}
-            </>
-          )}
-          {layout === "vr" && <Configurator stats={stats} userType={userType} />}
-          <Routes>
-            {/* Root path redirect based on authentication */}
-            <Route path="/" element={<AuthenticatedRedirect />} />
-            {getRoutes(routes)}
-            {getFallbackRoute()}
-          </Routes>
-        </ThemeProvider>
+        <GlobalThemeProvider>
+          <PsyPsyThemeProvider>
+            {layout === "dashboard" && (
+              <>
+                <Sidenav
+                  color="success"
+                  brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
+                  brandName="PsyPsy CMS"
+                  routes={routes}
+                  onMouseEnter={handleOnMouseEnter}
+                  onMouseLeave={handleOnMouseLeave}
+                />
+                <Configurator stats={stats} userType={userType} />
+                {configsButton}
+              </>
+            )}
+            {layout === "vr" && <Configurator stats={stats} userType={userType} />}
+            <Routes>
+              {/* Root path redirect based on authentication */}
+              <Route path="/" element={<AuthenticatedRedirect />} />
+              {getRoutes(routes)}
+              {getFallbackRoute()}
+            </Routes>
+          </PsyPsyThemeProvider>
+        </GlobalThemeProvider>
       </ParseInitializer>
     </Suspense>
   );

@@ -39,6 +39,7 @@ Coded by www.creative-tim.com
 import Dashboard from "./layouts/dashboard";
 import Clients from "./layouts/clients";
 import Professionals from "./layouts/professionals";
+import Appointments from "./layouts/appointments";  // Import the new Appointments component
 import Billing from "./layouts/billing";
 import RTL from "./layouts/rtl";
 import Notifications from "./layouts/notifications";
@@ -48,6 +49,7 @@ import Login from "./layouts/authentication/login";  // Login page with Parse in
 import Lock from "./layouts/authentication/lock";    // Lock screen
 import ParseDataExample from "./layouts/parse-data";  // Parse data management example
 import DarkoneExample from "./darkone/DarkoneExample"; // Darkone components example
+import TestUserDetail from "./layouts/test-userdetail"; // Test page for UserDetail component
 
 // Protected route wrapper
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -102,10 +104,10 @@ const protectedRoutes = [
   {
     type: "collapse",
     name: "Appointments",
-    key: "billing",
+    key: "appointments",
     icon: <Icon fontSize="small">calendar_today</Icon>,
-    route: "/billing",
-    component: <ProtectedRoute component={<Dashboard />} />,
+    route: "/appointments",
+    component: <ProtectedRoute component={<Appointments />} />,
   },
   {
     type: "collapse",
@@ -114,6 +116,14 @@ const protectedRoutes = [
     icon: <Icon fontSize="small">cloud</Icon>,
     route: "/parse-data",
     component: <ProtectedRoute component={<ParseDataExample />} />,
+  },
+  {
+    type: "collapse",
+    name: "Test UserDetail",
+    key: "test-userdetail",
+    icon: <Icon fontSize="small">person</Icon>,
+    route: "/test-userdetail",
+    component: <ProtectedRoute component={<TestUserDetail />} />,
   },
 ];
 

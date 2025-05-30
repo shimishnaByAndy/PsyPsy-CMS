@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import MuiLink from "@mui/material/Link";
+import IconButton from "@mui/material/IconButton";
 
 // @mui icons
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -36,7 +37,7 @@ import SimpleErrorMessage from "components/SimpleErrorMessage";
 import SimpleSwitch from "components/SimpleSwitch";
 
 // Animate UI components
-import { IconButton } from "components/animate-ui/buttons/icon-button";
+import { IconButton as AnimateIconButton } from "components/animate-ui/buttons/icon-button";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
@@ -139,7 +140,17 @@ function Basic() {
 
   return (
     <BasicLayout image={bgImage}>
-      <Card sx={{ width: '350px', maxWidth: '350px', minWidth: '300px' }}>
+      <Card sx={{ 
+        width: '350px', 
+        maxWidth: '350px', 
+        minWidth: '300px',
+        overflow: 'visible', // Allow the logo header to show above the card
+        position: 'relative', // Ensure proper stacking context
+        '&:hover': {
+          transform: 'none', // Override global card hover effect
+          boxShadow: 'inherit' // Keep the existing shadow, don't enhance it
+        }
+      }}>
         <MDBox
           variant="gradient"
           bgColor="info"
@@ -150,6 +161,10 @@ function Basic() {
           p={2}
           mb={1}
           textAlign="center"
+          sx={{
+            position: 'relative',
+            zIndex: 10 // Ensure the logo header appears above everything
+          }}
         >
           <MDTypography 
             variant="logo" 
@@ -164,41 +179,56 @@ function Basic() {
           >
             PsyPsy
           </MDTypography>
-          <Grid container spacing={3} justifyContent="center" sx={{ mt: 4, mb: 1 }}>
+          <Grid container spacing={3} justifyContent="center" sx={{ mt: 8, mb: 1 }}>
             <Grid item xs={2}>
               <MDTypography component="div" variant="body1" color="white" sx={{ display: 'flex', justifyContent: 'center' }}>
                 <IconButton
-                  icon={FacebookIcon}
                   href="https://www.facebook.com/profile.php?id=61558742723032"
                   target="_blank"
-                  color={[255, 255, 255]} // White icons
-                  rippleColor={[255, 255, 255]} // White ripple
-                  size={24}
-                />
+                  sx={{
+                    color: '#FFFFFF !important',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      transform: 'none' // Prevent any transform on hover
+                    }
+                  }}
+                >
+                  <FacebookIcon sx={{ fontSize: 24, color: '#FFFFFF !important' }} />
+                </IconButton>
               </MDTypography>
             </Grid>
             <Grid item xs={2}>
               <MDTypography component="div" variant="body1" color="white" sx={{ display: 'flex', justifyContent: 'center' }}>
                 <IconButton
-                  icon={InstagramIcon}
                   href="https://www.instagram.com/psypsy_sante/"
                   target="_blank"
-                  color={[255, 255, 255]} // White icons
-                  rippleColor={[255, 255, 255]} // White ripple
-                  size={24}
-                />
+                  sx={{
+                    color: '#FFFFFF !important',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      transform: 'none' // Prevent any transform on hover
+                    }
+                  }}
+                >
+                  <InstagramIcon sx={{ fontSize: 24, color: '#FFFFFF !important' }} />
+                </IconButton>
               </MDTypography>
             </Grid>
             <Grid item xs={2}>
               <MDTypography component="div" variant="body1" color="white" sx={{ display: 'flex', justifyContent: 'center' }}>
                 <IconButton
-                  icon={LanguageIcon}
                   href="http://www.psypsy.ca"
                   target="_blank"
-                  color={[255, 255, 255]} // White icons
-                  rippleColor={[255, 255, 255]} // White ripple
-                  size={24}
-                />
+                  sx={{
+                    color: '#FFFFFF !important',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      transform: 'none' // Prevent any transform on hover
+                    }
+                  }}
+                >
+                  <LanguageIcon sx={{ fontSize: 24, color: '#FFFFFF !important' }} />
+                </IconButton>
               </MDTypography>
             </Grid>
           </Grid>
@@ -207,7 +237,7 @@ function Basic() {
           {error && <SimpleErrorMessage message={error} />}
           
           <MDBox component="form" role="form">
-            <MDBox mb={2}>
+            <MDBox mb={3}>
               <MDInput
                 type="text"
                 label={t("auth.login.username")}
@@ -226,7 +256,7 @@ function Basic() {
               />
             </MDBox>
             
-            <MDBox mt={2} mb={1}>
+            <MDBox mt={4} mb={1}>
               <MDButton 
                 variant="gradient" 
                 color="info" 
@@ -235,11 +265,7 @@ function Basic() {
                 sx={{
                   transition: 'all 0.2s ease',
                   '&:hover': {
-                    transform: 'translateY(-1px)',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                  },
-                  '&:active': {
-                    transform: 'translateY(0px)',
                   }
                 }}
               >

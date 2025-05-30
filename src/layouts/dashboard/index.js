@@ -5,6 +5,7 @@
 
 * Enhanced dashboard for mental health professionals management
 * Based on Material Dashboard 2 React - v2.2.0
+* Now with PsyPsy theme integration and dark mode support
 
  =========================================================
 */
@@ -14,7 +15,6 @@ import { useState, useEffect } from "react";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
-import CircularProgress from "@mui/material/CircularProgress";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -22,17 +22,85 @@ import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import Footer from "examples/Footer";
 
 // PsyPsy Dashboard components
 import ProfessionalsStats from "layouts/dashboard/components/ProfessionalsStats";
 import ClientsStats from "layouts/dashboard/components/ClientsStats";
 import AppointmentsStats from "layouts/dashboard/components/AppointmentsStats";
 
+// Custom components
+import EmptyState from "components/EmptyState";
+import LoadingState from "components/LoadingState";
+
+// PsyPsy Theme System
+import { useTheme, useThemeStyles } from "components/ThemeProvider";
+
 // Services
 import DashboardService from "services/dashboardService";
 
 function Dashboard() {
+  const { colors, isDarkMode } = useTheme();
+
+  // Theme-aware styles
+  const styles = useThemeStyles((colors, theme) => ({
+    loadingContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '60vh',
+      backgroundColor: colors.backgroundDefault,
+    },
+    loadingContent: {
+      textAlign: 'center',
+      padding: theme.spacing.xl,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: colors.backgroundPaper,
+      boxShadow: theme.shadows.md,
+    },
+    errorContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '60vh',
+    },
+    errorContent: {
+      textAlign: 'center',
+      padding: theme.spacing.xl,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: colors.backgroundPaper,
+      border: `2px solid ${colors.errorRed}`,
+      boxShadow: theme.shadows.md,
+    },
+    retryButton: {
+      backgroundColor: colors.mainColor,
+      color: colors.txt,
+      border: 'none',
+      borderRadius: theme.borderRadius.md,
+      padding: `${theme.spacing.md} ${theme.spacing.lg}`,
+      cursor: 'pointer',
+      fontSize: theme.typography.sizeMD,
+      fontWeight: theme.typography.weightMedium,
+      transition: theme.transitions.normal,
+      '&:hover': {
+        backgroundColor: colors.prevMainColor,
+        transform: 'translateY(-1px)',
+        boxShadow: theme.shadows.lg,
+      },
+    },
+    dashboardContainer: {
+      backgroundColor: colors.backgroundDefault,
+      minHeight: '100vh',
+      padding: theme.spacing.lg,
+    },
+    statsGrid: {
+      '& .MuiGrid-item': {
+        display: 'flex',
+        flexDirection: 'column',
+      },
+    },
+  }));
+
   // State management
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState({
@@ -72,19 +140,19 @@ function Dashboard() {
     }
   };
 
+  const handleRetry = () => {
+    loadDashboardData();
+  };
+
   // Loading state
   if (loading) {
     return (
       <DashboardLayout>
-        <DashboardNavbar />
-        <MDBox py={3} display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-          <MDBox textAlign="center">
-            <CircularProgress size={60} />
-            <MDTypography variant="h6" color="text" mt={2}>
-              Loading Dashboard...
-            </MDTypography>
-          </MDBox>
-        </MDBox>
+        <LoadingState 
+          type="dashboard" 
+          size="large"
+          variant="spinner"
+        />
       </DashboardLayout>
     );
   }
@@ -93,108 +161,42 @@ function Dashboard() {
   if (error) {
     return (
       <DashboardLayout>
-        <DashboardNavbar />
-        <MDBox py={3} display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-          <MDBox textAlign="center">
-            <MDTypography variant="h6" color="error" mb={2}>
-              {error}
-            </MDTypography>
-            <MDBox
-              component="button"
-              onClick={loadDashboardData}
-              sx={{
-                backgroundColor: 'primary.main',
-                color: 'white',
-                border: 'none',
-                borderRadius: 1,
-                px: 3,
-                py: 1,
-                cursor: 'pointer'
-              }}
-            >
-              Retry
-            </MDBox>
-          </MDBox>
-        </MDBox>
+        <EmptyState
+          type="connection-error"
+          size="large"
+          title="Dashboard Error"
+          description={error}
+          actionLabel="Retry"
+          onActionClick={handleRetry}
+          showRefresh={true}
+          onRefresh={handleRetry}
+        />
       </DashboardLayout>
     );
   }
 
+  // Main dashboard content
   return (
     <DashboardLayout>
-      <DashboardNavbar />
       <MDBox py={3}>
-        {/* TEMPORARY ADMIN CREATION BUTTON */}
-        {/* <MDBox mb={3} p={3} sx={{ 
-          backgroundColor: '#fff3cd', 
-          borderRadius: 2, 
-          border: '3px solid #ff6b35',
-          boxShadow: '0 4px 8px rgba(255, 107, 53, 0.3)'
-        }}>
-          <MDTypography variant="h5" color="warning" mb={2} sx={{ fontWeight: 'bold' }}>
-            🚨 TEMPORARY ADMIN CREATOR 🚨
-          </MDTypography>
-          <MDTypography variant="h6" color="text" mb={2}>
-            Create admin user: andy@admin.ca / password: aaaaaa
-          </MDTypography>
-          
-          <Button
-            variant="contained"
-            color="warning"
-            size="large"
-            onClick={createAdminUser}
-            disabled={adminCreating}
-            sx={{ 
-              mr: 2, 
-              fontSize: '1.2rem',
-              padding: '12px 24px',
-              backgroundColor: '#ff6b35',
-              '&:hover': {
-                backgroundColor: '#e55a2b'
-              }
-            }}
-          >
-            {adminCreating ? '⏳ Creating Admin...' : '🔧 CREATE ADMIN USER'}
-          </Button>
-          
-          {adminResult && (
-            <Alert severity="success" sx={{ mt: 2 }}>
-              {adminResult}
-            </Alert>
-          )}
-          
-          {adminError && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              ❌ Error: {adminError}
-            </Alert>
-          )}
-        </MDBox> */}
-
-        {/* REMOVE Key Metrics Overview */}
-        {/* <MDBox mb={3}> */}
-        {/*  <KeyMetricsOverviewCard /> */}
-        {/* </MDBox> */}
-
-        {/* Main Dashboard - 3 Containers in a row */}
         <Grid container spacing={3}>
           {/* Professionals Stats */}
-          <Grid item xs={12} md={6} lg={4}> {/* Reverted to lg={4} */}
-            <ProfessionalsStats professionalsData={dashboardData.professionals} />
+          <Grid item xs={12} md={6} lg={4}>
+            <ProfessionalsStats data={dashboardData.professionals} />
           </Grid>
-          
+
           {/* Clients Stats */}
-          <Grid item xs={12} md={6} lg={4}> {/* Reverted to lg={4} */}
-            <ClientsStats clientsData={dashboardData.clients} />
+          <Grid item xs={12} md={6} lg={4}>
+            <ClientsStats data={dashboardData.clients} />
           </Grid>
-          
+
           {/* Appointments Stats */}
-          <Grid item xs={12} md={12} lg={4}> {/* Reverted to lg={4}, md was 6, now 12 for consistency on medium or if only one row */}
-            <AppointmentsStats appointmentsData={dashboardData.appointments} />
+          <Grid item xs={12} md={6} lg={4}>
+            <AppointmentsStats data={dashboardData.appointments} />
           </Grid>
         </Grid>
-
-        {/* User Positions Map -- REMOVED */}
       </MDBox>
+      <Footer />
     </DashboardLayout>
   );
 }

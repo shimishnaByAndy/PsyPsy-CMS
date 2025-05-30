@@ -15,7 +15,8 @@ import {
   IconButton, 
   Tooltip,
   Typography,
-  Stack
+  Stack,
+  Alert
 } from '@mui/material';
 import {
   Visibility as ViewIcon,
@@ -24,6 +25,13 @@ import {
   Business as BusinessIcon,
   Psychology as PsychologyIcon
 } from '@mui/icons-material';
+
+// Material Dashboard 2 React components
+import MDButton from "components/MDButton";
+
+// Custom components
+import EmptyState from 'components/EmptyState';
+import LoadingState from 'components/LoadingState';
 
 // Import the professional service
 import { ProfessionalService } from '../../services/professionalService';
@@ -35,6 +43,7 @@ const ProfessionalsDataGrid = ({
   height = 600 
 }) => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [professionals, setProfessionals] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [paginationModel, setPaginationModel] = useState({
@@ -44,6 +53,9 @@ const ProfessionalsDataGrid = ({
   const [sortModel, setSortModel] = useState([
     { field: 'createdAt', sort: 'desc' }
   ]);
+
+  // Check if there are active filters or search
+  const hasActiveFilters = searchTerm.trim() !== '' || Object.values(filters).some(value => value !== 'all' && value !== '');
 
   // Define columns for the DataGrid
   const columns = [
@@ -330,6 +342,7 @@ const ProfessionalsDataGrid = ({
   // Fetch professionals data
   const fetchProfessionals = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const sortBy = sortModel.length > 0 ? sortModel[0].field : 'createdAt';
       const sortDirection = sortModel.length > 0 ? sortModel[0].sort : 'desc';
@@ -347,6 +360,7 @@ const ProfessionalsDataGrid = ({
       setTotalCount(response.total || 0);
     } catch (error) {
       console.error('Error fetching professionals:', error);
+      setError(error.message || 'Failed to load professionals');
       setProfessionals([]);
       setTotalCount(0);
     } finally {
@@ -369,37 +383,89 @@ const ProfessionalsDataGrid = ({
     setSortModel(newModel);
   };
 
+  const handleRefresh = () => {
+    fetchProfessionals();
+  };
+
+  const handleClearFilters = () => {
+    // This would need to be passed down from parent component
+    if (onViewProfessional) {
+      onViewProfessional(null); // Signal to clear filters
+    }
+  };
+
   return (
-    <Box sx={{ height, width: '100%' }}>
-      <DataGrid
-        rows={professionals}
-        columns={columns}
-        loading={loading}
-        paginationModel={paginationModel}
-        onPaginationModelChange={handlePaginationModelChange}
-        sortModel={sortModel}
-        onSortModelChange={handleSortModelChange}
-        pageSizeOptions={[5, 10, 25, 50]}
-        rowCount={totalCount}
-        paginationMode="server"
-        sortingMode="server"
-        disableRowSelectionOnClick
-        sx={{
-          '& .MuiDataGrid-cell': {
-            borderBottom: '1px solid rgba(224, 224, 224, 0.5)',
-          },
-          '& .MuiDataGrid-columnHeaders': {
-            backgroundColor: 'rgba(0, 0, 0, 0.04)',
-            borderBottom: '2px solid rgba(224, 224, 224, 0.8)',
-          },
-          '& .MuiDataGrid-row:hover': {
-            backgroundColor: 'rgba(25, 118, 210, 0.04)',
-          },
-          '& .MuiDataGrid-footerContainer': {
-            borderTop: '2px solid rgba(224, 224, 224, 0.8)',
+    <Box sx={{ width: '100%' }}>
+      {error && (
+        <Alert 
+          severity="error" 
+          sx={{ mb: 2 }}
+          action={
+            <MDButton size="small" onClick={handleRefresh}>
+              Retry
+            </MDButton>
           }
-        }}
-      />
+        >
+          {error}
+        </Alert>
+      )}
+      
+      {/* Loading State */}
+      {loading && (
+        <LoadingState 
+          type="professionals" 
+          size="medium"
+          variant="skeleton"
+          rows={paginationModel.pageSize}
+        />
+      )}
+
+      {/* Empty States */}
+      {!loading && !error && professionals.length === 0 && (
+        <EmptyState
+          type={hasActiveFilters ? 'search-professionals' : 'professionals'}
+          size="medium"
+          actionLabel={hasActiveFilters ? 'Clear Filters' : 'Refresh Data'}
+          onActionClick={hasActiveFilters ? handleClearFilters : handleRefresh}
+          showRefresh={!hasActiveFilters}
+          onRefresh={handleRefresh}
+        />
+      )}
+      
+      {/* Data Grid */}
+      {!loading && !error && professionals.length > 0 && (
+        <Box sx={{ height, width: '100%' }}>
+          <DataGrid
+            rows={professionals}
+            columns={columns}
+            loading={false} // We handle loading state manually
+            paginationModel={paginationModel}
+            onPaginationModelChange={handlePaginationModelChange}
+            sortModel={sortModel}
+            onSortModelChange={handleSortModelChange}
+            pageSizeOptions={[5, 10, 25, 50]}
+            rowCount={totalCount}
+            paginationMode="server"
+            sortingMode="server"
+            disableRowSelectionOnClick
+            sx={{
+              '& .MuiDataGrid-cell': {
+                borderBottom: '1px solid rgba(224, 224, 224, 0.5)',
+              },
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                borderBottom: '2px solid rgba(224, 224, 224, 0.8)',
+              },
+              '& .MuiDataGrid-row:hover': {
+                backgroundColor: 'rgba(25, 118, 210, 0.04)',
+              },
+              '& .MuiDataGrid-footerContainer': {
+                borderTop: '2px solid rgba(224, 224, 224, 0.8)',
+              }
+            }}
+          />
+        </Box>
+      )}
     </Box>
   );
 };

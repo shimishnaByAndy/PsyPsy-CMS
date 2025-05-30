@@ -49,7 +49,7 @@ import MDButton from "components/MDButton";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import Footer from "examples/Footer";
 
 function Tables() {
   const { t } = useTranslation();
@@ -210,7 +210,6 @@ function Tables() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar onUserTypeChange={handleUserTypeChange} />
       <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>

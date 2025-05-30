@@ -26,7 +26,6 @@ import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 // Settings components
@@ -57,8 +56,7 @@ function Overview() {
   
   return (
     <DashboardLayout>
-      <DashboardNavbar />
-      <MDBox py={3}>
+      <MDBox pt={6} pb={3}>
         <Grid container spacing={3}>
           {/* Left Column - Admin Management */}
           <Grid item xs={12} lg={8}>

@@ -14,21 +14,49 @@ Coded by www.creative-tim.com
 */
 
 /**
- * The base colors for the Material Dashboard 2 React.
- * You can add new color using this file.
- * You can customized the colors for the entire Material Dashboard 2 React using thie file.
+ * PsyPsy CMS Dark Theme Colors
+ * Dark mode adaptation of the exact app color scheme
  */
+
+// PsyPsy Brand Colors - Dark Mode Adaptations
+const psypsyDarkColors = {
+  // Main brand colors adapted for dark mode
+  mainColor: "#899581",        // Keep main brand color
+  mainColorTxt: "#A9AC99",     // Lighter for better contrast on dark
+  prevMainColor: "#B3B8A2",    // Lighter shade for dark mode
+  mainDark: "#FFFFFF",         // White text for dark mode
+  txt: "#FFFFFF",              // White text
+  bgLight: "#1a1f1c",          // Dark background (dark green-grey)
+  bgLight2: "#1f1a1d",         // Dark background variant 2
+  mainMedium: "#7d2a47",       // Lighter burgundy for dark mode
+  filledGreen: "#2F7A1E",      // Lighter green for dark mode
+  mainLight: "#2a2f26",        // Dark variant of main light
+  btnNotSel: "#2a2d29",        // Dark button not selected
+  tableBgLight: "#1e1e1e",     // Dark table background
+  tableBgSuperLight: "#252525", // Dark table background super light
+  accent1: "#4D3E5A",          // Lighter purple for dark mode
+  accent2: "#9BA085",          // Lighter grey-green for dark mode
+  mTyStatus: "#B7B7B7",        // Lighter status color
+  hintTxt: "#BD9E93",          // Lighter hint text
+  errorRed: "#FF4444",         // Lighter error red for dark mode
+  cancelBg: "#4A2A2A",         // Dark cancel background
+  confirmGreen: "#21CA83",     // Lighter confirm green
+  noAnsYet: "#B8B8B8",         // Lighter no answer color
+  apptOffer: "#B8B8B8",        // Lighter appointment offer
+  apptApplied: "#7d2a47",      // Same as mainMedium
+  closeHandle: "#4A4A4A",      // Darker close handle
+};
 
 const colors = {
   background: {
-    default: "#1a2035",
-    sidenav: "#1f283e",
-    card: "#202940",
+    default: psypsyDarkColors.bgLight,      // "#1a1f1c" - Dark green-grey
+    sidenav: "#1f2420",                     // Slightly different for sidenav
+    card: psypsyDarkColors.tableBgLight,    // "#1e1e1e" - Dark card background
   },
 
   text: {
-    main: "#ffffffcc",
-    focus: "#ffffffcc",
+    main: psypsyDarkColors.mainDark,        // "#FFFFFF" - White text
+    focus: psypsyDarkColors.mainDark,       // "#FFFFFF" - White text
   },
 
   transparent: {
@@ -36,8 +64,8 @@ const colors = {
   },
 
   white: {
-    main: "#ffffff",
-    focus: "#ffffff",
+    main: psypsyDarkColors.txt,             // "#FFFFFF"
+    focus: psypsyDarkColors.txt,            // "#FFFFFF"
   },
 
   black: {
@@ -47,96 +75,101 @@ const colors = {
   },
 
   primary: {
-    main: "#e91e63",
-    focus: "#e91e63",
+    main: psypsyDarkColors.mainColor,       // "#899581" - Main brand color
+    focus: psypsyDarkColors.prevMainColor,  // "#B3B8A2" - Lighter for focus
   },
 
   secondary: {
-    main: "#7b809a",
-    focus: "#8f93a9",
+    main: psypsyDarkColors.mainMedium,      // "#7d2a47" - Burgundy
+    focus: psypsyDarkColors.accent1,        // "#4D3E5A" - Purple accent
   },
 
   info: {
-    main: "#1A73E8",
-    focus: "#1662C4",
+    main: psypsyDarkColors.mainColor,       // "#899581" - Using main color for info
+    focus: psypsyDarkColors.prevMainColor,  // "#B3B8A2" - Lighter for focus
   },
 
   success: {
-    main: "#4CAF50",
-    focus: "#67bb6a",
+    main: psypsyDarkColors.filledGreen,     // "#2F7A1E" - Success green
+    focus: psypsyDarkColors.confirmGreen,   // "#21CA83" - Confirm green
   },
 
   warning: {
-    main: "#fb8c00",
-    focus: "#fc9d26",
+    main: "#FFC107",                        // Keep standard warning yellow
+    focus: psypsyDarkColors.hintTxt,        // "#BD9E93" - Hint text for focus
   },
 
   error: {
-    main: "#F44335",
-    focus: "#f65f53",
+    main: psypsyDarkColors.errorRed,        // "#FF4444" - Error red
+    focus: psypsyDarkColors.cancelBg,       // "#4A2A2A" - Cancel background
   },
 
   light: {
-    main: "#f0f2f566",
-    focus: "#f0f2f566",
+    main: psypsyDarkColors.mainLight,       // "#2a2f26" - Dark light variant
+    focus: psypsyDarkColors.bgLight,        // "#1a1f1c" - Background
   },
 
   dark: {
-    main: "#344767",
-    focus: "#2c3c58",
+    main: psypsyDarkColors.mainDark,        // "#FFFFFF" - White for dark mode
+    focus: psypsyDarkColors.accent1,        // "#4D3E5A" - Purple accent
   },
 
   grey: {
-    100: "#f8f9fa",
-    200: "#f0f2f5",
-    300: "#dee2e6",
-    400: "#ced4da",
-    500: "#adb5bd",
-    600: "#6c757d",
-    700: "#495057",
-    800: "#343a40",
-    900: "#212529",
+    100: psypsyDarkColors.tableBgSuperLight, // "#252525"
+    200: psypsyDarkColors.tableBgLight,      // "#1e1e1e"
+    300: psypsyDarkColors.btnNotSel,         // "#2a2d29"
+    400: psypsyDarkColors.mainLight,         // "#2a2f26"
+    500: psypsyDarkColors.closeHandle,       // "#4A4A4A"
+    600: psypsyDarkColors.mTyStatus,         // "#B7B7B7"
+    700: psypsyDarkColors.accent2,           // "#9BA085"
+    800: psypsyDarkColors.hintTxt,           // "#BD9E93"
+    900: psypsyDarkColors.noAnsYet,          // "#B8B8B8"
   },
 
   gradients: {
     primary: {
-      main: "#EC407A",
-      state: "#D81B60",
+      main: psypsyDarkColors.mainColor,     // "#899581"
+      state: psypsyDarkColors.prevMainColor, // "#B3B8A2"
     },
 
     secondary: {
-      main: "#747b8a",
-      state: "#495361",
+      main: psypsyDarkColors.mainMedium,    // "#7d2a47"
+      state: psypsyDarkColors.accent1,      // "#4D3E5A"
+    },
+
+    psypsy: {
+      main: psypsyDarkColors.mainMedium,    // "#7d2a47"
+      state: "#8d3a57",                     // Slightly lighter burgundy
     },
 
     info: {
-      main: "#49a3f1",
-      state: "#1A73E8",
+      main: psypsyDarkColors.mainColor,     // "#899581"
+      state: psypsyDarkColors.prevMainColor, // "#B3B8A2"
     },
 
     success: {
-      main: "#66BB6A",
-      state: "#43A047",
+      main: psypsyDarkColors.filledGreen,   // "#2F7A1E"
+      state: psypsyDarkColors.confirmGreen, // "#21CA83"
     },
 
     warning: {
-      main: "#FFA726",
-      state: "#FB8C00",
+      main: "#FFC107",                      // Standard warning
+      state: psypsyDarkColors.hintTxt,      // "#BD9E93"
     },
 
     error: {
-      main: "#EF5350",
-      state: "#E53935",
+      main: psypsyDarkColors.errorRed,      // "#FF4444"
+      state: psypsyDarkColors.cancelBg,     // "#4A2A2A"
     },
 
     light: {
-      main: "#EBEFF4",
-      state: "#CED4DA",
+      main: psypsyDarkColors.mainLight,     // "#2a2f26"
+      state: psypsyDarkColors.bgLight,      // "#1a1f1c"
     },
 
     dark: {
-      main: "#323a54",
-      state: "#1a2035",
+      main: psypsyDarkColors.mainDark,      // "#FFFFFF"
+      state: psypsyDarkColors.accent1,      // "#4D3E5A"
     },
   },
 
@@ -204,61 +237,60 @@ const colors = {
 
   badgeColors: {
     primary: {
-      background: "#f8b3ca",
-      text: "#cc084b",
+      background: psypsyDarkColors.mainColor,     // "#899581"
+      text: psypsyDarkColors.txt,                 // "#FFFFFF"
     },
 
     secondary: {
-      background: "#d7d9e1",
-      text: "#6c757d",
+      background: psypsyDarkColors.mainMedium,    // "#7d2a47"
+      text: psypsyDarkColors.txt,                 // "#FFFFFF"
     },
 
     info: {
-      background: "#aecef7",
-      text: "#095bc6",
+      background: psypsyDarkColors.mainColor,     // "#899581"
+      text: psypsyDarkColors.txt,                 // "#FFFFFF"
     },
 
     success: {
-      background: "#bce2be",
-      text: "#339537",
+      background: psypsyDarkColors.filledGreen,   // "#2F7A1E"
+      text: psypsyDarkColors.txt,                 // "#FFFFFF"
     },
 
     warning: {
-      background: "#ffd59f",
-      text: "#c87000",
+      background: "#FFC107",                      // Standard warning
+      text: psypsyDarkColors.mainDark,            // "#FFFFFF"
     },
 
     error: {
-      background: "#fcd3d0",
-      text: "#f61200",
+      background: psypsyDarkColors.errorRed,      // "#FF4444"
+      text: psypsyDarkColors.txt,                 // "#FFFFFF"
     },
 
     light: {
-      background: "#ffffff",
-      text: "#c7d3de",
+      background: psypsyDarkColors.mainLight,     // "#2a2f26"
+      text: psypsyDarkColors.mainDark,            // "#FFFFFF"
     },
 
     dark: {
-      background: "#8097bf",
-      text: "#1e2e4a",
+      background: psypsyDarkColors.mainDark,      // "#FFFFFF"
+      text: "#000000",                            // Black text on white
     },
   },
 
   coloredShadows: {
-    primary: "#e91e62",
-    secondary: "#110e0e",
-    info: "#00bbd4",
-    success: "#4caf4f",
-    warning: "#ff9900",
-    error: "#f44336",
-    light: "#adb5bd",
-    dark: "#404040",
+    primary: "#899581",
+    secondary: "#7d2a47", 
+    info: "#899581",
+    success: "#2F7A1E",
+    warning: "#FFC107",
+    error: "#FF4444",
+    light: "#2a2f26",
+    dark: "#FFFFFF",
   },
 
-  inputBorderColor: "#d2d6da",
-
+  inputBorderColor: "#4A4A4A",
   tabs: {
-    indicator: { boxShadow: "#ddd" },
+    indicator: { boxShadow: "#899581" },
   },
 };
 

@@ -14,63 +14,63 @@ Coded by www.creative-tim.com
 */
 
 import { useState, useEffect, useMemo } from "react";
+import { useTranslation } from 'react-i18next';
 
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Chip from "@mui/material/Chip";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TablePagination from "@mui/material/TablePagination";
 import TextField from "@mui/material/TextField";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import InputAdornment from "@mui/material/InputAdornment";
 import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
 
 // @mui icons
 import SearchIcon from "@mui/icons-material/Search";
-import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
-import RestoreIcon from "@mui/icons-material/Restore";
 import LoginIcon from "@mui/icons-material/Login";
 import TranslateIcon from "@mui/icons-material/Translate";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import InfoIcon from "@mui/icons-material/Info";
+import FilterListIcon from "@mui/icons-material/FilterList";
 
 // Material Dashboard 2 React components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import ConnectionError from "components/ConnectionError";
 
+// Custom components
+import StringsDataGrid from "components/StringsDataGrid";
+
+// Theme and styling
+import { THEME, componentStyles } from "config/theme";
+
 // Parse
 import Parse from 'parse';
 
 function Strings() {
-  const [language, setLanguage] = useState("en"); // en or fr
+  const { t, i18n } = useTranslation();
+  
+  const [language, setLanguage] = useState("both"); // en, fr, or both
   const [strings, setStrings] = useState({});
+  const [frenchStrings, setFrenchStrings] = useState({});
+  const [englishStrings, setEnglishStrings] = useState({});
   const [modifiedStrings, setModifiedStrings] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [connectionError, setConnectionError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
-  const [editingKey, setEditingKey] = useState(null);
-  const [editingValue, setEditingValue] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [modifiedFilter, setModifiedFilter] = useState('all'); // 'all', 'modified', 'unmodified'
   const [authError, setAuthError] = useState(false);
   const [testMode, setTestMode] = useState(null); // 'network', 'server', 'parse', null
 
@@ -91,26 +91,36 @@ function Strings() {
       if (error.message && (error.message.includes('XMLHttpRequest failed') || error.message.includes('Parse API'))) {
         setConnectionError({
           type: 'parse',
-          title: 'Parse Server Unavailable',
-          message: 'Unable to connect to Parse Server. Authentication and data services are currently unavailable.'
+          title: t('strings.errors.serverError'),
+          message: t('strings.errors.serverMessage')
         });
       }
       
       setAuthError(true);
     }
-  }, []);
+  }, [t]);
 
   // Auto-load strings when component mounts
   useEffect(() => {
     console.log(`🚀 Component mounted, auto-loading strings for language: ${language}`);
-    loadStrings(language);
+    if (language === "both") {
+      loadStrings("en");
+      loadStrings("fr");
+    } else {
+      loadStrings(language);
+    }
   }, []); // Only run on mount
 
   // Load strings when language changes
   useEffect(() => {
     if (language) {
       console.log(`🔄 Language changed to: ${language}, reloading strings`);
-      loadStrings(language);
+      if (language === "both") {
+        loadStrings("en");
+        loadStrings("fr");
+      } else {
+        loadStrings(language);
+      }
     }
   }, [language]); // Run when language changes
 
@@ -172,7 +182,15 @@ function Strings() {
       console.log(`📋 Sample strings:`, Object.keys(parsedStrings).slice(0, 5));
       console.log(`📋 Sample string values:`, Object.keys(parsedStrings).slice(0, 3).map(key => ({ key, value: parsedStrings[key] })));
       
-      setStrings(parsedStrings);
+      if (lang === 'fr') {
+        setFrenchStrings(parsedStrings);
+        setStrings(frenchStrings);
+      } else if (lang === 'en') {
+        setEnglishStrings(parsedStrings);
+        setStrings(englishStrings);
+      } else {
+        setStrings(parsedStrings);
+      }
       console.log(`🎯 Strings state updated with ${Object.keys(parsedStrings).length} entries`);
       
       // Clear any previous errors and test mode
@@ -193,30 +211,38 @@ function Strings() {
         // Network error
         setConnectionError({
           type: 'network',
-          title: 'No Internet Connection',
-          message: 'Unable to load strings. Please check your internet connection and try again.'
+          title: t('strings.errors.networkError'),
+          message: t('strings.errors.networkMessage')
         });
       } else if (err.message.includes('XMLHttpRequest failed') || err.message.includes('Parse API')) {
         // Parse Server error
         setConnectionError({
           type: 'parse',
-          title: 'Server Connection Failed',
-          message: 'Unable to connect to Parse Server. The service may be temporarily unavailable.'
+          title: t('strings.errors.serverError'),
+          message: t('strings.errors.serverMessage')
         });
       } else if (err.message.includes('HTTP 404') || err.message.includes('HTTP 500')) {
         // Server error
         setConnectionError({
           type: 'server',
-          title: 'Server Error',
-          message: `Server returned an error (${err.message}). Please try again later.`
+          title: t('strings.errors.parseError'),
+          message: t('strings.errors.parseMessage', { error: err.message })
         });
       } else {
         // Generic error
-        setError(`Failed to load ${lang} strings: ${err.message}`);
+        setError(t('strings.errors.loadFailed', { language: lang, error: err.message }));
       }
       
       // Set empty strings object on error
-      setStrings({});
+      if (lang === 'fr') {
+        setFrenchStrings({});
+        setStrings(frenchStrings);
+      } else if (lang === 'en') {
+        setEnglishStrings({});
+        setStrings(englishStrings);
+      } else {
+        setStrings({});
+      }
       console.log(`🔄 Set empty strings object due to error`);
     } finally {
       setLoading(false);
@@ -230,102 +256,44 @@ function Strings() {
     
     setLanguage(newLang);
     setModifiedStrings({}); // Clear modifications when switching languages
-    setEditingKey(null); // Clear editing state
     setSearchTerm(""); // Clear search
-    setPage(0); // Reset pagination
   };
 
-  // Generate category for a string key
-  const getCategory = (key) => {
-    if (key.includes('welcome') || key.includes('onboard') || key.includes('start')) {
-      return 'Welcome & Onboarding';
-    } else if (key.includes('login') || key.includes('signup') || key.includes('auth') || key.includes('psw')) {
-      return 'Authentication';
-    } else if (key.includes('profile') || key.includes('account') || key.includes('setting')) {
-      return 'Profile & Settings';
-    } else if (key.includes('valid') || key.includes('form') || key.includes('input')) {
-      return 'Forms & Validation';
-    } else if (key.includes('btn') || key.includes('nav') || key.includes('menu') || key.includes('cancel') || key.includes('next') || key.includes('back')) {
-      return 'Navigation & UI';
-    } else if (key.includes('error') || key.includes('invalid') || key.includes('fail') || key.includes('wrong')) {
-      return 'Errors & Messages';
-    } else {
-      return 'Other';
-    }
-  };
-
-  // Get category color
-  const getCategoryColor = (category) => {
-    const colors = {
-      'Welcome & Onboarding': 'success',
-      'Authentication': 'warning',
-      'Profile & Settings': 'info',
-      'Forms & Validation': 'primary',
-      'Navigation & UI': 'secondary',
-      'Errors & Messages': 'error',
-      'Other': 'default'
+  // Get unique categories for filter
+  const getUniqueCategories = () => {
+    const allData = language === "both" 
+      ? Array.from(new Set([...Object.keys(englishStrings), ...Object.keys(frenchStrings)]))
+      : Object.keys(language === 'en' ? englishStrings : frenchStrings);
+    
+    const getCategory = (key) => {
+      if (key.includes('welcome') || key.includes('onboard') || key.includes('start')) {
+        return t('strings.categories.welcome');
+      } else if (key.includes('login') || key.includes('signup') || key.includes('auth') || key.includes('psw')) {
+        return t('strings.categories.authentication');
+      } else if (key.includes('profile') || key.includes('account') || key.includes('setting')) {
+        return t('strings.categories.profile');
+      } else if (key.includes('valid') || key.includes('form') || key.includes('input')) {
+        return t('strings.categories.forms');
+      } else if (key.includes('btn') || key.includes('nav') || key.includes('menu') || key.includes('cancel') || key.includes('next') || key.includes('back')) {
+        return t('strings.categories.navigation');
+      } else if (key.includes('error') || key.includes('invalid') || key.includes('fail') || key.includes('wrong')) {
+        return t('strings.categories.errors');
+      } else {
+        return t('strings.categories.other');
+      }
     };
-    return colors[category] || 'default';
+    
+    return [...new Set(allData.map(key => getCategory(key)))].sort();
   };
 
-  // Filter and prepare data
-  const filteredData = useMemo(() => {
-    console.log(`🔄 Processing strings data:`, {
-      stringsCount: Object.keys(strings).length,
-      modifiedCount: Object.keys(modifiedStrings).length,
-      searchTerm: searchTerm
-    });
+  // Handle string modification
+  const handleStringModified = (key, newValue) => {
+    const originalValue = language === 'en' ? englishStrings[key] : frenchStrings[key];
     
-    const data = Object.entries(strings).map(([key, value]) => ({
-      key,
-      originalValue: value,
-      currentValue: modifiedStrings[key] !== undefined ? modifiedStrings[key] : value,
-      category: getCategory(key),
-      isModified: modifiedStrings[key] !== undefined,
-    }));
-
-    console.log(`📊 Prepared ${data.length} data rows`);
-    console.log(`📋 Sample data:`, data.slice(0, 3));
-
-    if (searchTerm) {
-      const filtered = data.filter(item => 
-        item.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.originalValue.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.currentValue.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      console.log(`🔍 Filtered to ${filtered.length} rows with search term: "${searchTerm}"`);
-      return filtered;
-    }
-
-    console.log(`✅ Returning ${data.length} unfiltered rows`);
-    return data;
-  }, [strings, modifiedStrings, searchTerm]);
-
-  // Handle pagination
-  const paginatedData = useMemo(() => {
-    const startIndex = page * rowsPerPage;
-    const endIndex = startIndex + rowsPerPage;
-    const paginated = filteredData.slice(startIndex, endIndex);
-    
-    console.log(`📄 Pagination: page ${page + 1}, showing ${startIndex + 1}-${Math.min(endIndex, filteredData.length)} of ${filteredData.length} total rows`);
-    console.log(`📄 Paginated data:`, paginated.length, 'rows');
-    
-    return paginated;
-  }, [filteredData, page, rowsPerPage]);
-
-  // Handle edit start
-  const handleEditStart = (key, value) => {
-    setEditingKey(key);
-    setEditingValue(value);
-  };
-
-  // Handle edit save
-  const handleEditSave = (key) => {
-    if (editingValue !== strings[key]) {
+    if (newValue !== originalValue) {
       setModifiedStrings(prev => ({
         ...prev,
-        [key]: editingValue
+        [key]: newValue
       }));
     } else {
       // If value is same as original, remove from modified strings
@@ -335,18 +303,10 @@ function Strings() {
         return newModified;
       });
     }
-    setEditingKey(null);
-    setEditingValue("");
-  };
-
-  // Handle edit cancel
-  const handleEditCancel = () => {
-    setEditingKey(null);
-    setEditingValue("");
   };
 
   // Handle reset string to original value
-  const handleResetString = (key) => {
+  const handleStringReset = (key) => {
     setModifiedStrings(prev => {
       const newModified = { ...prev };
       delete newModified[key];
@@ -407,7 +367,7 @@ function Strings() {
   // Save modified strings to strings2.xml
   const saveModifiedStrings = async () => {
     if (Object.keys(modifiedStrings).length === 0) {
-      setError("No modifications to save");
+      setError(t('strings.messages.noModifications'));
       return;
     }
 
@@ -428,7 +388,10 @@ function Strings() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       
-      setSuccess(`Successfully generated strings2_${language}.xml with ${Object.keys(modifiedStrings).length} modified strings`);
+      setSuccess(t('strings.messages.exportSuccess', { 
+        language: language, 
+        count: Object.keys(modifiedStrings).length 
+      }));
       
       // Clear modifications after successful save
       setTimeout(() => {
@@ -438,7 +401,7 @@ function Strings() {
       
     } catch (err) {
       console.error("Error saving strings:", err);
-      setError(`Failed to save strings: ${err.message}`);
+      setError(t('strings.errors.saveFailed', { error: err.message }));
     } finally {
       setLoading(false);
     }
@@ -446,11 +409,10 @@ function Strings() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
       <MDBox pt={6} pb={3}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <Card sx={{ overflow: 'visible' }}>
+            <Card sx={{ overflow: 'visible', minWidth: '1000px' }}>
               <MDBox
                 mx={2}
                 mt={-3}
@@ -463,566 +425,361 @@ function Strings() {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
+                sx={componentStyles.pageHeader}
               >
                 <MDBox>
                   <MDTypography variant="h5" color="white" display="flex" alignItems="center" fontWeight="bold">
                     <TranslateIcon sx={{ mr: 1.5, fontSize: 28 }} />
-                    String Management
+                    {t('strings.title')}
                   </MDTypography>
                   <MDTypography variant="body2" color="white" opacity={0.9} mt={0.5}>
-                    Manage application strings for different languages
+                    {t('strings.subtitle')}
                   </MDTypography>
                 </MDBox>
                 
-                {/* Enhanced Language Toggle */}
-                <MDBox display="flex" alignItems="center" gap={2}>
-                  <MDBox 
-                    display="flex" 
-                    alignItems="center" 
-                    sx={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                      borderRadius: 3,
-                      padding: '8px 16px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)'
+                {/* Fixed Language Toggle */}
+                <MDBox 
+                  display="flex" 
+                  flexDirection="column"
+                  alignItems="flex-end"
+                  gap={1}
+                >
+                  <MDBox
+                    sx={{ 
+                      width: THEME.components.languageToggle.containerWidth,
+                      height: THEME.components.languageToggle.containerHeight,
+                      borderRadius: THEME.components.languageToggle.borderRadius,
+                      backgroundColor: THEME.components.languageToggle.backgroundColor,
+                      position: 'relative',
+                      p: 0.5,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      overflow: 'hidden',
                     }}
                   >
-                    <MDTypography variant="button" color="white" mr={2} fontWeight="medium">
-                      Language:
-                    </MDTypography>
+                    {/* Sliding Indicator */}
+                    <MDBox
+                      sx={{
+                        position: 'absolute',
+                        left: language === 'both' ? '4px' : language === 'en' ? 'calc(33.33% + 2px)' : 'calc(66.66% + 2px)',
+                        width: 'calc(33.33% - 4px)',
+                        height: '32px',
+                        borderRadius: '24px',
+                        backgroundColor: THEME.components.languageToggle.indicatorColor,
+                        transition: THEME.components.languageToggle.transition,
+                        zIndex: 1
+                      }}
+                    />
                     
-                    <MDBox display="flex" alignItems="center" gap={1}>
-                      <Chip 
-                        label="EN" 
-                        size="small" 
-                        onClick={() => !loading && handleLanguageChange('en')}
+                    {/* BOTH Button - Now First */}
+                    <MDBox
+                      onClick={() => !loading && handleLanguageChange('both')}
+                      sx={{
+                        width: '33.33%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        zIndex: 2,
+                        position: 'relative',
+                      }}
+                    >
+                      <MDTypography
+                        variant="button"
+                        color="white"
+                        fontWeight={language === 'both' ? 'medium' : 'regular'}
                         sx={{ 
-                          backgroundColor: language === 'en' ? 'white' : 'rgba(255, 255, 255, 0.2)',
-                          color: language === 'en' ? 'info.main' : 'white',
-                          fontWeight: 'bold',
-                          cursor: loading ? 'not-allowed' : 'pointer',
-                          minWidth: 40,
-                          '&:hover': {
-                            backgroundColor: language === 'en' ? 'white' : 'rgba(255, 255, 255, 0.3)',
-                          }
+                          fontSize: THEME.typography.sizeSM,
+                          letterSpacing: '0.02em',
+                          opacity: language === 'both' ? 1 : 0.8
                         }}
-                      />
-                      
-                      <MDTypography variant="body2" color="white" mx={0.5}>
-                        |
+                      >
+                        {t('strings.both')}
                       </MDTypography>
-                      
-                      <Chip 
-                        label="FR" 
-                        size="small" 
-                        onClick={() => !loading && handleLanguageChange('fr')}
-                        sx={{ 
-                          backgroundColor: language === 'fr' ? 'white' : 'rgba(255, 255, 255, 0.2)',
-                          color: language === 'fr' ? 'info.main' : 'white',
-                          fontWeight: 'bold',
-                          cursor: loading ? 'not-allowed' : 'pointer',
-                          minWidth: 40,
-                          '&:hover': {
-                            backgroundColor: language === 'fr' ? 'white' : 'rgba(255, 255, 255, 0.3)',
-                          }
-                        }}
-                      />
                     </MDBox>
-                    
-                    {loading && (
-                      <CircularProgress size={16} sx={{ ml: 1.5, color: 'white' }} />
-                    )}
+
+                    {/* EN Button - Now Second */}
+                    <MDBox
+                        onClick={() => !loading && handleLanguageChange('en')}
+                      sx={{
+                        width: '33.33%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        zIndex: 2,
+                        position: 'relative',
+                      }}
+                    >
+                      <MDTypography
+                        variant="button"
+                        color="white"
+                        fontWeight={language === 'en' ? 'medium' : 'regular'}
+                        sx={{ 
+                          fontSize: THEME.typography.sizeSM,
+                          letterSpacing: '0.02em',
+                          opacity: language === 'en' ? 1 : 0.8
+                        }}
+                      >
+                        {t('strings.english')}
+                      </MDTypography>
+                    </MDBox>
+                      
+                    {/* FR Button - Now Third */}
+                    <MDBox
+                        onClick={() => !loading && handleLanguageChange('fr')}
+                      sx={{
+                        width: '33.33%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        zIndex: 2,
+                        position: 'relative',
+                      }}
+                    >
+                      <MDTypography
+                        variant="button"
+                        color="white"
+                        fontWeight={language === 'fr' ? 'medium' : 'regular'}
+                        sx={{ 
+                          fontSize: THEME.typography.sizeSM,
+                          letterSpacing: '0.02em',
+                          opacity: language === 'fr' ? 1 : 0.8
+                        }}
+                      >
+                        {t('strings.french')}
+                      </MDTypography>
+                    </MDBox>
                   </MDBox>
+                  
+                  {loading && (
+                    <CircularProgress 
+                      size={18} 
+                      sx={{ 
+                        color: 'white',
+                      }} 
+                    />
+                  )}
                 </MDBox>
               </MDBox>
               
               <MDBox p={3}>
-                {/* Authentication Warning */}
-                {authError && (
-                  <Alert 
-                    severity="warning" 
-                    sx={{ mb: 3, borderRadius: 2 }}
-                    action={
-                      <MDButton
-                        size="small"
-                        color="warning"
-                        onClick={handleLoginRedirect}
-                        startIcon={<LoginIcon />}
-                      >
-                        Login
-                      </MDButton>
-                    }
-                  >
-                    <strong>Authentication Required:</strong> You are not logged in. 
-                    Some features may be limited. Please log in for full functionality.
-                  </Alert>
-                )}
-
-                {/* Statistics Cards */}
-                <Grid container spacing={3} mb={3}>
-                  <Grid item xs={12} sm={6} md={3}>
-                    <Card sx={{ p: 2, textAlign: 'center', backgroundColor: 'grey.50' }}>
-                      <MDTypography variant="h4" color="info" fontWeight="bold">
-                        {loading ? "..." : Object.keys(strings).length}
-                      </MDTypography>
-                      <MDTypography variant="caption" color="text">
-                        Total Strings
-                      </MDTypography>
-                    </Card>
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
-                    <Card sx={{ p: 2, textAlign: 'center', backgroundColor: 'warning.light', color: 'white' }}>
-                      <MDTypography variant="h4" color="white" fontWeight="bold">
-                        {Object.keys(modifiedStrings).length}
-                      </MDTypography>
-                      <MDTypography variant="caption" color="white">
-                        Modified
-                      </MDTypography>
-                    </Card>
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
-                    <Card sx={{ p: 2, textAlign: 'center', backgroundColor: 'success.light', color: 'white' }}>
-                      <MDTypography variant="h4" color="white" fontWeight="bold">
-                        {filteredData.length}
-                      </MDTypography>
-                      <MDTypography variant="caption" color="white">
-                        Showing
-                      </MDTypography>
-                    </Card>
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
-                    <Card sx={{ p: 2, textAlign: 'center', backgroundColor: 'info.light', color: 'white' }}>
-                      <MDTypography variant="h4" color="white" fontWeight="bold">
-                        {new Set(filteredData.map(item => item.category)).size}
-                      </MDTypography>
-                      <MDTypography variant="caption" color="white">
-                        Categories
-                      </MDTypography>
-                    </Card>
-                  </Grid>
-                </Grid>
-
-                {/* Debug Information (only in development) */}
-                {process.env.NODE_ENV === 'development' && (
-                  <Alert severity="info" sx={{ mb: 3, borderRadius: 2 }}>
-                    <MDTypography variant="body2" fontWeight="bold" mb={1}>
-                      Debug Information:
-                    </MDTypography>
-                    <MDTypography variant="caption" component="div">
-                      • Language: {language.toUpperCase()}<br/>
-                      • Loading: {loading ? 'Yes' : 'No'}<br/>
-                      • Strings loaded: {Object.keys(strings).length}<br/>
-                      • Modified strings: {Object.keys(modifiedStrings).length}<br/>
-                      • Filtered data: {filteredData.length}<br/>
-                      • Search term: "{searchTerm}"<br/>
-                      • Current page: {page + 1}<br/>
-                      • Rows per page: {rowsPerPage}<br/>
-                      • Auth error: {authError ? 'Yes' : 'No'}<br/>
-                      • Connection error: {connectionError ? `Yes (${connectionError.type})` : 'No'}<br/>
-                      • Test mode: {testMode || 'None'}<br/>
-                      • XML URL: /assets/i18n/{language}/strings.xml
-                    </MDTypography>
-                    
-                    {/* Test Connection Errors */}
-                    <MDBox sx={{ mt: 2 }}>
-                      <MDTypography variant="body2" fontWeight="bold" mb={1}>
-                        Test Connection Errors:
-                      </MDTypography>
-                      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                        <MDButton
-                          size="small"
-                          color="info"
-                          variant="outlined"
-                          onClick={() => {
-                            setTestMode('network');
-                            loadStrings(language);
-                          }}
-                          disabled={loading}
-                        >
-                          Test Network Error
-                        </MDButton>
+                {/* Fixed Height Container to Prevent Layout Shifts */}
+                <MDBox 
+                  sx={{ 
+                    minHeight: '800px',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}
+                >
+                  {/* Authentication Warning */}
+                  {authError && (
+                    <Alert 
+                      severity="warning" 
+                      sx={{ mb: 3, borderRadius: 2 }}
+                      action={
                         <MDButton
                           size="small"
                           color="warning"
-                          variant="outlined"
-                          onClick={() => {
-                            setTestMode('server');
-                            loadStrings(language);
-                          }}
-                          disabled={loading}
+                          onClick={handleLoginRedirect}
+                          startIcon={<LoginIcon />}
                         >
-                          Test Server Error
+                          {t('strings.messages.loginButton')}
                         </MDButton>
-                        <MDButton
-                          size="small"
-                          color="error"
-                          variant="outlined"
-                          onClick={() => {
-                            setTestMode('parse');
-                            loadStrings(language);
-                          }}
-                          disabled={loading}
-                        >
-                          Test Parse Error
-                        </MDButton>
-                        <MDButton
-                          size="small"
-                          color="success"
-                          variant="outlined"
-                          onClick={() => {
-                            setConnectionError(null);
-                            setError(null);
-                            setTestMode(null);
-                            loadStrings(language);
-                          }}
-                          disabled={loading}
-                        >
-                          Load Normal
-                        </MDButton>
-                        <MDButton
-                          size="small"
-                          color="secondary"
-                          variant="outlined"
-                          onClick={() => {
-                            setConnectionError(null);
-                            setError(null);
-                            setTestMode(null);
-                          }}
-                        >
-                          Clear Errors
-                        </MDButton>
-                      </Stack>
-                    </MDBox>
-                  </Alert>
-                )}
-
-                {/* Search and Actions */}
-                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} mb={3}>
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Search strings by key, value, or category..."
-                    value={searchTerm}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                      setPage(0); // Reset pagination when searching
-                    }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{ 
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
                       }
-                    }}
-                  />
-                  
-                  {/* Save Button */}
-                  {Object.keys(modifiedStrings).length > 0 && (
-                    <MDButton
-                      variant="gradient"
-                      color="success"
-                      onClick={saveModifiedStrings}
-                      disabled={loading}
-                      startIcon={<FileDownloadIcon />}
-                      sx={{ minWidth: 200 }}
                     >
-                      {loading ? "Generating..." : `Export ${Object.keys(modifiedStrings).length} Changes`}
-                    </MDButton>
+                      <strong>{t('strings.messages.authRequired')}</strong> {t('strings.messages.authMessage')}
+                    </Alert>
                   )}
-                </Stack>
 
-                {/* Error/Success Messages */}
-                {error && (
-                  <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
-                    {error}
-                  </Alert>
-                )}
-                
-                {success && (
-                  <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}>
-                    {success}
-                  </Alert>
-                )}
+                  {/* Search and Actions */}
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} mb={3}>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder={t('strings.searchPlaceholder')}
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={componentStyles.searchInput}
+                    />
+                    
+                    {/* Category Filter */}
+                    <FormControl sx={{ minWidth: 200 }}>
+                      <InputLabel>{t('strings.filters.category')}</InputLabel>
+                      <Select
+                        value={categoryFilter}
+                        label={t('strings.filters.category')}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                        startAdornment={<FilterListIcon sx={{ mr: 1, color: 'action.active' }} />}
+                      >
+                        <MenuItem value="all">{t('strings.filters.allCategories')}</MenuItem>
+                        {getUniqueCategories().map(category => (
+                          <MenuItem key={category} value={category}>
+                            {category}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
 
-                {/* Connection Error */}
-                {connectionError && (
-                  <MDBox sx={{ mb: 3 }}>
-                    <ConnectionError
-                      title={connectionError.title}
-                      message={connectionError.message}
-                      type={connectionError.type}
-                      onRetry={handleRetry}
-                      variant="card"
+                    {/* Modified Status Filter */}
+                    <FormControl sx={{ minWidth: 150 }}>
+                      <InputLabel>{t('strings.filters.status')}</InputLabel>
+                      <Select
+                        value={modifiedFilter}
+                        label={t('strings.filters.status')}
+                        onChange={(e) => setModifiedFilter(e.target.value)}
+                      >
+                        <MenuItem value="all">{t('strings.filters.allStrings')}</MenuItem>
+                        <MenuItem value="modified">{t('strings.filters.modifiedOnly')}</MenuItem>
+                        <MenuItem value="unmodified">{t('strings.filters.unmodifiedOnly')}</MenuItem>
+                      </Select>
+                    </FormControl>
+                    
+                    {/* Save Button */}
+                    {Object.keys(modifiedStrings).length > 0 && (
+                      <MDButton
+                        variant="gradient"
+                        color="success"
+                        onClick={saveModifiedStrings}
+                        disabled={loading}
+                        startIcon={<FileDownloadIcon />}
+                        sx={{ 
+                          minWidth: 200,
+                          borderRadius: THEME.components.button.borderRadius,
+                          fontSize: THEME.components.button.fontSize,
+                          fontWeight: THEME.components.button.fontWeight,
+                        }}
+                      >
+                        {loading ? t('strings.generating') : t('strings.export', { count: Object.keys(modifiedStrings).length })}
+                      </MDButton>
+                    )}
+                  </Stack>
+
+                  {/* Active Filters Indicator */}
+                  {(categoryFilter !== 'all' || modifiedFilter !== 'all' || searchTerm) && (
+                    <MDBox 
+                      display="flex" 
+                      alignItems="center" 
+                      gap={1} 
+                      flexWrap="wrap"
+                      p={2}
+                      mb={2}
+                      sx={{ 
+                        backgroundColor: THEME.colors.backgroundSubtle, 
+                        borderRadius: THEME.borderRadius.md,
+                        border: `1px solid ${THEME.colors.border}`
+                      }}
+                    >
+                      <MDTypography variant="body2" fontWeight="medium" color="text">
+                        {t('strings.activeFilters')}:
+                      </MDTypography>
+                      
+                      {searchTerm && (
+                        <Chip
+                          label={`${t('common.search')}: "${searchTerm}"`}
+                          size="small"
+                          onDelete={() => setSearchTerm('')}
+                          color="primary"
+                          variant="outlined"
+                        />
+                      )}
+                      
+                      {categoryFilter !== 'all' && (
+                        <Chip
+                          label={`${t('strings.filters.category')}: ${categoryFilter}`}
+                          size="small"
+                          onDelete={() => setCategoryFilter('all')}
+                          color="info"
+                          variant="outlined"
+                        />
+                      )}
+                      
+                      {modifiedFilter !== 'all' && (
+                        <Chip
+                          label={`${t('strings.filters.status')}: ${modifiedFilter === 'modified' ? t('strings.filters.modifiedOnly') : t('strings.filters.unmodifiedOnly')}`}
+                          size="small"
+                          onDelete={() => setModifiedFilter('all')}
+                          color="warning"
+                          variant="outlined"
+                        />
+                      )}
+                      
+                      <MDButton
+                        size="small"
+                        variant="outlined"
+                        color="error"
+                        onClick={() => {
+                          setSearchTerm('');
+                          setCategoryFilter('all');
+                          setModifiedFilter('all');
+                        }}
+                        sx={{ ml: 1 }}
+                      >
+                        {t('strings.clearAll')}
+                      </MDButton>
+                    </MDBox>
+                  )}
+
+                  {/* Error/Success Messages */}
+                  {error && (
+                    <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+                      {error}
+                    </Alert>
+                  )}
+                  
+                  {success && (
+                    <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}>
+                      {success}
+                    </Alert>
+                  )}
+
+                  {/* Connection Error */}
+                  {connectionError && (
+                    <MDBox sx={{ mb: 3 }}>
+                      <ConnectionError
+                        title={connectionError.title}
+                        message={connectionError.message}
+                        type={connectionError.type}
+                        onRetry={handleRetry}
+                        variant="card"
+                      />
+                    </MDBox>
+                  )}
+
+                  {/* Strings DataGrid with Fixed Height */}
+                  <MDBox sx={{ flex: 1, minHeight: '600px' }}>
+                    <StringsDataGrid
+                      language={language}
+                      englishStrings={englishStrings}
+                      frenchStrings={frenchStrings}
+                      modifiedStrings={modifiedStrings}
+                      onStringModified={handleStringModified}
+                      onStringReset={handleStringReset}
+                      searchTerm={searchTerm}
+                      categoryFilter={categoryFilter}
+                      modifiedFilter={modifiedFilter}
+                      height={600}
                     />
                   </MDBox>
-                )}
-
-                {/* Table */}
-                <Card sx={{ overflow: 'hidden', borderRadius: 2 }}>
-                  <div style={{ maxHeight: 600, overflow: 'auto' }}>
-                    <table style={{ 
-                      width: '100%', 
-                      borderCollapse: 'collapse',
-                      tableLayout: 'fixed'
-                    }}>
-                      <thead>
-                        <tr style={{ backgroundColor: '#f5f5f5', position: 'sticky', top: 0 }}>
-                          <th style={{ 
-                            border: '1px solid #ddd', 
-                            padding: '12px', 
-                            textAlign: 'left',
-                            fontWeight: 'bold',
-                            width: '25%'
-                          }}>
-                            String Key
-                          </th>
-                          <th style={{ 
-                            border: '1px solid #ddd', 
-                            padding: '12px', 
-                            textAlign: 'center',
-                            fontWeight: 'bold',
-                            width: '15%'
-                          }}>
-                            Category
-                          </th>
-                          <th style={{ 
-                            border: '1px solid #ddd', 
-                            padding: '12px', 
-                            textAlign: 'left',
-                            fontWeight: 'bold',
-                            width: '45%'
-                          }}>
-                            Current Value
-                          </th>
-                          <th style={{ 
-                            border: '1px solid #ddd', 
-                            padding: '12px', 
-                            textAlign: 'center',
-                            fontWeight: 'bold',
-                            width: '15%'
-                          }}>
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {loading ? (
-                          <tr>
-                            <td colSpan={4} style={{ 
-                              border: '1px solid #ddd', 
-                              padding: '20px', 
-                              textAlign: 'center' 
-                            }}>
-                              <CircularProgress size={24} />
-                              <br />
-                              Loading strings...
-                            </td>
-                          </tr>
-                        ) : paginatedData.length === 0 ? (
-                          <tr>
-                            <td colSpan={4} style={{ 
-                              border: '1px solid #ddd', 
-                              padding: '20px', 
-                              textAlign: 'center' 
-                            }}>
-                              {Object.keys(strings).length === 0 
-                                ? `No strings found for ${language.toUpperCase()}` 
-                                : 'No strings match your search criteria'
-                              }
-                            </td>
-                          </tr>
-                        ) : (
-                          paginatedData.map((row, index) => {
-                            // DEBUG: Log the actual row data structure
-                            console.log(`🔍 Row ${index}:`, {
-                              key: row.key,
-                              category: row.category,
-                              currentValue: row.currentValue,
-                              isModified: row.isModified,
-                              fullRow: row
-                            });
-                            
-                            return (
-                            <tr key={row.key} style={{ 
-                              backgroundColor: index % 2 === 0 ? '#f9f9f9' : 'white' 
-                            }}>
-                              <td style={{ 
-                                border: '1px solid #ddd', 
-                                padding: '12px',
-                                verticalAlign: 'top',
-                                width: '25%'
-                              }}>
-                                <div style={{ fontFamily: 'monospace', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                                  {row.key}
-                                </div>
-                                {row.isModified && (
-                                  <Chip 
-                                    label="Modified" 
-                                    size="small" 
-                                    color="warning"
-                                    style={{ marginTop: 4, height: 16, fontSize: '0.6rem' }}
-                                  />
-                                )}
-                              </td>
-                              
-                              <td style={{ 
-                                border: '1px solid #ddd', 
-                                padding: '12px',
-                                textAlign: 'center',
-                                verticalAlign: 'top',
-                                width: '15%'
-                              }}>
-                                <Chip 
-                                  label={row.category} 
-                                  size="small" 
-                                  color={getCategoryColor(row.category)}
-                                  variant="outlined"
-                                />
-                              </td>
-                              
-                              <td style={{ 
-                                border: '1px solid #ddd', 
-                                padding: '12px',
-                                verticalAlign: 'top',
-                                width: '45%'
-                              }}>
-                                {editingKey === row.key ? (
-                                  <TextField
-                                    fullWidth
-                                    multiline
-                                    rows={3}
-                                    value={editingValue}
-                                    onChange={(e) => setEditingValue(e.target.value)}
-                                    variant="outlined"
-                                    size="small"
-                                    autoFocus
-                                  />
-                                ) : (
-                                  <div>
-                                    <div style={{ fontSize: '0.8rem', wordBreak: 'break-word' }}>
-                                      {row.currentValue}
-                                    </div>
-                                    {row.isModified && row.originalValue !== row.currentValue && (
-                                      <div style={{ 
-                                        fontSize: '0.7rem',
-                                        opacity: 0.7,
-                                        fontStyle: 'italic',
-                                        marginTop: 4,
-                                        textDecoration: 'line-through'
-                                      }}>
-                                        Original: {row.originalValue.length > 50 
-                                          ? row.originalValue.substring(0, 50) + '...' 
-                                          : row.originalValue}
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-                              </td>
-                              
-                              <td style={{ 
-                                border: '1px solid #ddd', 
-                                padding: '12px',
-                                textAlign: 'center',
-                                verticalAlign: 'top',
-                                width: '15%'
-                              }}>
-                                <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
-                                  {editingKey === row.key ? (
-                                    <>
-                                      <Tooltip title="Save Changes">
-                                        <IconButton 
-                                          size="small" 
-                                          color="success"
-                                          onClick={() => handleEditSave(row.key)}
-                                        >
-                                          <SaveIcon fontSize="small" />
-                                        </IconButton>
-                                      </Tooltip>
-                                      <Tooltip title="Cancel">
-                                        <IconButton 
-                                          size="small" 
-                                          color="error"
-                                          onClick={handleEditCancel}
-                                        >
-                                          <CancelIcon fontSize="small" />
-                                        </IconButton>
-                                      </Tooltip>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Tooltip title="Edit String">
-                                        <IconButton 
-                                          size="small" 
-                                          color="primary"
-                                          onClick={() => handleEditStart(row.key, row.currentValue)}
-                                        >
-                                          <EditIcon fontSize="small" />
-                                        </IconButton>
-                                      </Tooltip>
-                                      {row.isModified && (
-                                        <Tooltip title="Reset to Original">
-                                          <IconButton 
-                                            size="small" 
-                                            color="warning"
-                                            onClick={() => handleResetString(row.key)}
-                                          >
-                                            <RestoreIcon fontSize="small" />
-                                          </IconButton>
-                                        </Tooltip>
-                                      )}
-                                    </>
-                                  )}
-                                </div>
-                              </td>
-                            </tr>
-                            );
-                          })
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                  
-                  {/* Pagination */}
-                  <TablePagination
-                    component="div"
-                    count={filteredData.length}
-                    page={page}
-                    onPageChange={(event, newPage) => setPage(newPage)}
-                    rowsPerPage={rowsPerPage}
-                    onRowsPerPageChange={(event) => {
-                      setRowsPerPage(parseInt(event.target.value, 10));
-                      setPage(0);
-                    }}
-                    rowsPerPageOptions={[10, 25, 50, 100]}
-                    sx={{
-                      borderTop: '1px solid',
-                      borderColor: 'grey.300',
-                      '& .MuiTablePagination-toolbar': {
-                        minHeight: 52
-                      }
-                    }}
-                  />
-                </Card>
-
-                <Divider sx={{ my: 3 }} />
-
-                {/* Instructions */}
-                <Alert severity="info" sx={{ borderRadius: 2 }} icon={<InfoIcon />}>
-                  <MDTypography variant="body2" color="text">
-                    <strong>Instructions:</strong> Click the edit icon to modify any string value. 
-                    Use the search bar to filter strings by key, value, or category. Modified strings are highlighted in yellow.
-                    Click the "Export" button to download your changes as strings2_{language}.xml.
-                  </MDTypography>
-                </Alert>
+                </MDBox>
               </MDBox>
             </Card>
           </Grid>
         </Grid>
       </MDBox>
+
       <Footer />
     </DashboardLayout>
   );

@@ -11,9 +11,6 @@ class DashboardService {
    */
   static async getDashboardStats() {
     try {
-      // In production, these would be actual Parse queries
-      // For now, returning mock data with realistic structure
-      
       const stats = {
         totalClients: await this.getTotalClients(),
         activeRequests: await this.getActiveRequests(),
@@ -26,7 +23,7 @@ class DashboardService {
       return stats;
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
-      return this.getMockStats();
+      throw error;
     }
   }
 
@@ -35,18 +32,15 @@ class DashboardService {
    */
   static async getRecentActivity() {
     try {
-      const [recentRequests, upcomingAppointments] = await Promise.all([
-        this.getRecentRequests(),
-        this.getUpcomingAppointments()
-      ]);
-
-      return {
-        recentRequests,
-        upcomingAppointments
+      const activityData = {
+        recentRequests: await this.getRecentRequests(),
+        upcomingAppointments: await this.getUpcomingAppointments()
       };
+
+      return activityData;
     } catch (error) {
       console.error('Error fetching recent activity:', error);
-      return this.getMockRecentActivity();
+      throw error;
     }
   }
 
@@ -66,7 +60,7 @@ class DashboardService {
       return networkData;
     } catch (error) {
       console.error('Error fetching professional network:', error);
-      return this.getMockNetworkData();
+      throw error;
     }
   }
 
@@ -83,7 +77,7 @@ class DashboardService {
       return serviceData;
     } catch (error) {
       console.error('Error fetching service breakdown:', error);
-      return this.getMockServiceData();
+      throw error;
     }
   }
 
@@ -106,7 +100,7 @@ class DashboardService {
       return healthData;
     } catch (error) {
       console.error('Error fetching system health:', error);
-      return this.getMockHealthData();
+      throw error;
     }
   }
 
@@ -125,125 +119,383 @@ class DashboardService {
       return demographicsData;
     } catch (error) {
       console.error('Error fetching demographics:', error);
-      return this.getMockDemographicsData();
+      throw error;
     }
   }
 
-  // Individual data fetching methods (to be implemented with actual Parse queries)
+  // Individual data fetching methods with Parse Server integration
   
   static async getTotalClients() {
-    // const query = new Parse.Query('Client');
-    // return await query.count();
-    return 247;
+    try {
+      const userQuery = new Parse.Query(Parse.User);
+      userQuery.equalTo('userType', 2); // Client type
+      return await userQuery.count();
+    } catch (error) {
+      console.error('Error getting total clients:', error);
+      return 0;
+    }
   }
 
   static async getActiveRequests() {
-    // const query = new Parse.Query('AppointmentRequest');
-    // query.equalTo('status', 'active');
-    // return await query.count();
-    return 12;
+    try {
+      const appointmentQuery = new Parse.Query('Appointment');
+      appointmentQuery.equalTo('status', 'requested');
+      return await appointmentQuery.count();
+    } catch (error) {
+      console.error('Error getting active requests:', error);
+      return 0;
+    }
   }
 
   static async getWeeklyAppointments() {
-    // const query = new Parse.Query('Appointment');
-    // const startOfWeek = new Date();
-    // startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-    // query.greaterThan('scheduledTimestamp', startOfWeek);
-    // return await query.count();
-    return 8;
+    try {
+      const appointmentQuery = new Parse.Query('Appointment');
+      const startOfWeek = new Date();
+      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+      
+      appointmentQuery.greaterThanOrEqualTo('createdAt', startOfWeek);
+      return await appointmentQuery.count();
+    } catch (error) {
+      console.error('Error getting weekly appointments:', error);
+      return 0;
+    }
   }
 
   static async getResponseRate() {
-    // Calculate response rate based on responded vs total requests
-    return 85;
+    try {
+      // Calculate response rate based on matched vs total requests
+      const totalQuery = new Parse.Query('Appointment');
+      const total = await totalQuery.count();
+      
+      const matchedQuery = new Parse.Query('Appointment');
+      matchedQuery.notEqualTo('status', 'requested');
+      const matched = await matchedQuery.count();
+      
+      return total > 0 ? Math.round((matched / total) * 100) : 0;
+    } catch (error) {
+      console.error('Error calculating response rate:', error);
+      return 0;
+    }
   }
 
   static async getWeeklyGrowth() {
-    // Calculate growth compared to previous week
-    return { clients: 5, requests: 3 };
+    try {
+      const currentWeek = new Date();
+      currentWeek.setDate(currentWeek.getDate() - currentWeek.getDay());
+      currentWeek.setHours(0, 0, 0, 0);
+      
+      const lastWeek = new Date(currentWeek);
+      lastWeek.setDate(lastWeek.getDate() - 7);
+      
+      // Client growth
+      const currentWeekClientsQuery = new Parse.Query(Parse.User);
+      currentWeekClientsQuery.equalTo('userType', 2);
+      currentWeekClientsQuery.greaterThanOrEqualTo('createdAt', currentWeek);
+      const currentWeekClients = await currentWeekClientsQuery.count();
+      
+      // Request growth
+      const currentWeekRequestsQuery = new Parse.Query('Appointment');
+      currentWeekRequestsQuery.greaterThanOrEqualTo('createdAt', currentWeek);
+      const currentWeekRequests = await currentWeekRequestsQuery.count();
+      
+      return { 
+        clients: currentWeekClients, 
+        requests: currentWeekRequests 
+      };
+    } catch (error) {
+      console.error('Error calculating weekly growth:', error);
+      return { clients: 0, requests: 0 };
+    }
   }
 
   static async getUrgentRequests() {
-    // const query = new Parse.Query('AppointmentRequest');
-    // query.equalTo('priority', 'urgent');
-    // return await query.count();
-    return 3;
+    try {
+      const appointmentQuery = new Parse.Query('Appointment');
+      appointmentQuery.equalTo('status', 'requested');
+      
+      // Consider requests older than 48 hours as urgent
+      const urgentDate = new Date();
+      urgentDate.setHours(urgentDate.getHours() - 48);
+      appointmentQuery.lessThan('createdAt', urgentDate);
+      
+      return await appointmentQuery.count();
+    } catch (error) {
+      console.error('Error getting urgent requests:', error);
+      return 0;
+    }
   }
 
   static async getRecentRequests() {
-    // const query = new Parse.Query('AppointmentRequest');
-    // query.descending('createdAt');
-    // query.limit(5);
-    // return await query.find();
-    return this.getMockRecentRequests();
+    try {
+      const appointmentQuery = new Parse.Query('Appointment');
+      appointmentQuery.include(['clientPtr', 'profilePtr']);
+      appointmentQuery.descending('createdAt');
+      appointmentQuery.limit(5);
+      
+      const appointments = await appointmentQuery.find();
+      
+      return appointments.map(appointment => {
+        const profilePtr = appointment.get('profilePtr');
+        const clientName = profilePtr ? 
+          `${profilePtr.get('firstName') || ''} ${profilePtr.get('lastName') || ''}`.trim() : 
+          'Unknown Client';
+          
+        return {
+          id: appointment.id,
+          clientName: clientName,
+          serviceType: appointment.get('serviceType') || 0,
+          status: appointment.get('status') || 'requested',
+          createdAt: appointment.get('createdAt'),
+          title: appointment.get('title') || 'New Request'
+        };
+      });
+    } catch (error) {
+      console.error('Error getting recent requests:', error);
+      return [];
+    }
   }
 
   static async getUpcomingAppointments() {
-    // const query = new Parse.Query('Appointment');
-    // query.greaterThan('scheduledTimestamp', new Date());
-    // query.ascending('scheduledTimestamp');
-    // query.limit(5);
-    // return await query.find();
-    return this.getMockUpcomingAppointments();
+    try {
+      const appointmentQuery = new Parse.Query('Appointment');
+      appointmentQuery.include(['clientPtr', 'profilePtr']);
+      appointmentQuery.equalTo('status', 'confirmed');
+      appointmentQuery.greaterThan('scheduledTimestamp', Date.now());
+      appointmentQuery.ascending('scheduledTimestamp');
+      appointmentQuery.limit(5);
+      
+      const appointments = await appointmentQuery.find();
+      
+      return appointments.map(appointment => {
+        const profilePtr = appointment.get('profilePtr');
+        const clientName = profilePtr ? 
+          `${profilePtr.get('firstName') || ''} ${profilePtr.get('lastName') || ''}`.trim() : 
+          'Unknown Client';
+          
+        return {
+          id: appointment.id,
+          clientName: clientName,
+          serviceType: appointment.get('serviceType') || 0,
+          scheduledTimestamp: appointment.get('scheduledTimestamp'),
+          title: appointment.get('title') || 'Upcoming Session'
+        };
+      });
+    } catch (error) {
+      console.error('Error getting upcoming appointments:', error);
+      return [];
+    }
   }
 
   static async getTotalProfessionals() {
-    // const query = new Parse.Query('Professional');
-    // return await query.count();
-    return 45;
+    try {
+      const userQuery = new Parse.Query(Parse.User);
+      userQuery.equalTo('userType', 3); // Professional type
+      return await userQuery.count();
+    } catch (error) {
+      console.error('Error getting total professionals:', error);
+      return 0;
+    }
   }
 
   static async getActiveProfessionals() {
-    // const query = new Parse.Query('Professional');
-    // query.equalTo('status', 'active');
-    // return await query.count();
-    return 38;
+    try {
+      const userQuery = new Parse.Query(Parse.User);
+      userQuery.equalTo('userType', 3);
+      userQuery.equalTo('isBlocked', false);
+      return await userQuery.count();
+    } catch (error) {
+      console.error('Error getting active professionals:', error);
+      return 0;
+    }
   }
 
   static async getAvailableProfessionals() {
-    // const query = new Parse.Query('Professional');
-    // query.equalTo('availability', 'available');
-    // return await query.count();
-    return 12;
+    try {
+      // Count professionals who are verified and active
+      const professionalQuery = new Parse.Query('Professional');
+      professionalQuery.equalTo('isVerified', true);
+      return await professionalQuery.count();
+    } catch (error) {
+      console.error('Error getting available professionals:', error);
+      return 0;
+    }
   }
 
   static async getRecentlyJoinedProfessionals() {
-    return this.getMockRecentlyJoined();
+    try {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      
+      const userQuery = new Parse.Query(Parse.User);
+      userQuery.equalTo('userType', 3);
+      userQuery.include('professionalPtr');
+      userQuery.greaterThanOrEqualTo('createdAt', oneWeekAgo);
+      userQuery.descending('createdAt');
+      userQuery.limit(5);
+      
+      const users = await userQuery.find();
+      
+      return users.map(user => {
+        const professionalPtr = user.get('professionalPtr');
+        const firstName = professionalPtr?.get('firstName') || '';
+        const lastName = professionalPtr?.get('lastName') || '';
+        
+        return {
+          id: user.id,
+          name: `${firstName} ${lastName}`.trim() || user.get('username'),
+          profType: professionalPtr?.get('profType') || 1,
+          joinedAt: user.get('createdAt')
+        };
+      });
+    } catch (error) {
+      console.error('Error getting recently joined professionals:', error);
+      return [];
+    }
   }
 
   static async getTopPerformers() {
-    return this.getMockTopPerformers();
+    try {
+      // Get professionals with highest rating
+      const professionalQuery = new Parse.Query('Professional');
+      professionalQuery.include('userPtr');
+      professionalQuery.greaterThan('rating', 4.0);
+      professionalQuery.descending('rating');
+      professionalQuery.limit(5);
+      
+      const professionals = await professionalQuery.find();
+      
+      return professionals.map(professional => {
+        const firstName = professional.get('firstName') || '';
+        const lastName = professional.get('lastName') || '';
+        
+        return {
+          id: professional.id,
+          name: `${firstName} ${lastName}`.trim(),
+          rating: professional.get('rating') || 0,
+          reviewCount: professional.get('reviewCount') || 0,
+          profType: professional.get('profType') || 1
+        };
+      });
+    } catch (error) {
+      console.error('Error getting top performers:', error);
+      return [];
+    }
   }
 
   static async getTotalServiceRequests() {
-    return 156;
+    try {
+      const appointmentQuery = new Parse.Query('Appointment');
+      return await appointmentQuery.count();
+    } catch (error) {
+      console.error('Error getting total service requests:', error);
+      return 0;
+    }
   }
 
   static async getServiceTypeBreakdown() {
-    return this.getMockServiceTypes();
+    try {
+      const serviceTypes = [
+        { id: 0, name: 'Individual Therapy' },
+        { id: 1, name: 'Group Therapy' },
+        { id: 2, name: 'Couples Therapy' },
+        { id: 3, name: 'Family Therapy' },
+        { id: 4, name: 'Psychological Assessment' },
+        { id: 5, name: 'Neuropsychological Assessment' },
+        { id: 6, name: 'Career Counseling' },
+        { id: 7, name: 'Addiction Counseling' }
+      ];
+
+      const breakdown = [];
+      
+      for (const serviceType of serviceTypes) {
+        const appointmentQuery = new Parse.Query('Appointment');
+        appointmentQuery.equalTo('serviceType', serviceType.id);
+        const count = await appointmentQuery.count();
+        
+        breakdown.push({
+          name: serviceType.name,
+          value: count,
+          percentage: 0 // Will be calculated after getting all counts
+        });
+      }
+      
+      // Calculate percentages
+      const total = breakdown.reduce((sum, item) => sum + item.value, 0);
+      if (total > 0) {
+        breakdown.forEach(item => {
+          item.percentage = Math.round((item.value / total) * 100);
+        });
+      }
+      
+      return breakdown;
+    } catch (error) {
+      console.error('Error getting service type breakdown:', error);
+      return [];
+    }
   }
 
   static async getSystemStatus() {
-    return "healthy";
+    try {
+      // Check if we can query Parse Server
+      const testQuery = new Parse.Query(Parse.User);
+      testQuery.limit(1);
+      await testQuery.find();
+      return "healthy";
+    } catch (error) {
+      console.error('System health check failed:', error);
+      return "unhealthy";
+    }
   }
 
   static async getSystemUptime() {
+    // This would typically come from server monitoring
     return "99.8%";
   }
 
   static async getAverageResponseTime() {
+    // This would typically come from server monitoring
     return "245ms";
   }
 
   static async getActiveUsers() {
-    return 1247;
+    try {
+      // Count users who have been active in the last 24 hours
+      const oneDayAgo = new Date();
+      oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+      
+      const userQuery = new Parse.Query(Parse.User);
+      userQuery.greaterThanOrEqualTo('updatedAt', oneDayAgo);
+      return await userQuery.count();
+    } catch (error) {
+      console.error('Error getting active users:', error);
+      return 0;
+    }
   }
 
   static async getSystemAlerts() {
-    return this.getMockAlerts();
+    try {
+      const alerts = [];
+      
+      // Check for urgent requests
+      const urgentCount = await this.getUrgentRequests();
+      if (urgentCount > 0) {
+        alerts.push({
+          type: 'warning',
+          message: `${urgentCount} urgent appointment request${urgentCount > 1 ? 's' : ''} need attention`,
+          timestamp: new Date()
+        });
+      }
+      
+      return alerts;
+    } catch (error) {
+      console.error('Error getting system alerts:', error);
+      return [];
+    }
   }
 
   static async getSystemMetrics() {
+    // These would typically come from server monitoring
     return {
       cpuUsage: 45,
       memoryUsage: 62,
@@ -253,7 +505,23 @@ class DashboardService {
   }
 
   static async getDatabaseHealth() {
-    return 95;
+    try {
+      // Test database connectivity and response time
+      const start = Date.now();
+      const testQuery = new Parse.Query(Parse.User);
+      testQuery.limit(1);
+      await testQuery.find();
+      const responseTime = Date.now() - start;
+      
+      // Convert response time to health score
+      if (responseTime < 100) return 95;
+      if (responseTime < 500) return 85;
+      if (responseTime < 1000) return 75;
+      return 60;
+    } catch (error) {
+      console.error('Database health check failed:', error);
+      return 0;
+    }
   }
 
   static async getApiHealth() {
@@ -261,224 +529,100 @@ class DashboardService {
   }
 
   static async getAgeGroupDistribution() {
-    return this.getMockAgeGroups();
+    try {
+      const ageGroups = [
+        { range: '18-24', min: 18, max: 24 },
+        { range: '25-34', min: 25, max: 34 },
+        { range: '35-44', min: 35, max: 44 },
+        { range: '45-54', min: 45, max: 54 },
+        { range: '55-64', min: 55, max: 64 },
+        { range: '65+', min: 65, max: 120 }
+      ];
+
+      const distribution = [];
+      const currentYear = new Date().getFullYear();
+
+      for (const group of ageGroups) {
+        const birthYearMax = currentYear - group.min;
+        const birthYearMin = currentYear - group.max;
+        
+        const clientQuery = new Parse.Query('Client');
+        const birthYearStart = new Date(birthYearMin, 0, 1);
+        const birthYearEnd = new Date(birthYearMax, 11, 31);
+        
+        clientQuery.greaterThanOrEqualTo('dob', birthYearStart);
+        clientQuery.lessThanOrEqualTo('dob', birthYearEnd);
+        
+        const count = await clientQuery.count();
+        
+        distribution.push({
+          ageGroup: group.range,
+          count: count
+        });
+      }
+
+      return distribution;
+    } catch (error) {
+      console.error('Error getting age group distribution:', error);
+      return [];
+    }
   }
 
   static async getGenderDistribution() {
-    return this.getMockGenderDistribution();
+    try {
+      const genders = [
+        { id: 1, name: 'Woman' },
+        { id: 2, name: 'Man' },
+        { id: 3, name: 'Other' },
+        { id: 4, name: 'Not disclosed' }
+      ];
+
+      const distribution = [];
+
+      for (const gender of genders) {
+        const clientQuery = new Parse.Query('Client');
+        clientQuery.equalTo('gender', gender.id);
+        const count = await clientQuery.count();
+        
+        distribution.push({
+          gender: gender.name,
+          count: count
+        });
+      }
+
+      return distribution;
+    } catch (error) {
+      console.error('Error getting gender distribution:', error);
+      return [];
+    }
   }
 
   static async getGeographicDistribution() {
-    return this.getMockGeographicDistribution();
-  }
+    try {
+      const clientQuery = new Parse.Query('Client');
+      clientQuery.select(['addressObj']);
+      clientQuery.limit(1000); // Adjust as needed
+      
+      const clients = await clientQuery.find();
+      
+      const distribution = {};
+      
+      clients.forEach(client => {
+        const addressObj = client.get('addressObj');
+        if (addressObj && addressObj.province) {
+          const province = addressObj.province;
+          distribution[province] = (distribution[province] || 0) + 1;
+        }
+      });
 
-  // Mock data methods
-  static getMockStats() {
-    return {
-      totalClients: 247,
-      activeRequests: 12,
-      weeklyAppointments: 8,
-      responseRate: 85,
-      weeklyGrowth: { clients: 5, requests: 3 },
-      urgentRequests: 3
-    };
-  }
-
-  static getMockRecentActivity() {
-    return {
-      recentRequests: this.getMockRecentRequests(),
-      upcomingAppointments: this.getMockUpcomingAppointments()
-    };
-  }
-
-  static getMockRecentRequests() {
-    return [
-      {
-        id: "1",
-        clientName: "Sarah M.",
-        serviceType: "Individual Therapy",
-        createdAt: "2024-01-15",
-        status: "New"
-      },
-      {
-        id: "2",
-        clientName: "John D.",
-        serviceType: "Psychological Assessment",
-        createdAt: "2024-01-14",
-        status: "In Review"
-      },
-      {
-        id: "3",
-        clientName: "Maria L.",
-        serviceType: "Couples Therapy",
-        createdAt: "2024-01-14",
-        status: "Matched"
-      }
-    ];
-  }
-
-  static getMockUpcomingAppointments() {
-    return [
-      {
-        id: "1",
-        clientName: "Alex R.",
-        scheduledTimestamp: "2024-01-16T10:00:00",
-        serviceType: "Individual Therapy",
-        meetPref: "online"
-      },
-      {
-        id: "2",
-        clientName: "Emma S.",
-        scheduledTimestamp: "2024-01-16T14:30:00",
-        serviceType: "Family Therapy",
-        meetPref: "in-person"
-      }
-    ];
-  }
-
-  static getMockNetworkData() {
-    return {
-      totalProfessionals: 45,
-      activeProfessionals: 38,
-      availableNow: 12,
-      recentlyJoined: this.getMockRecentlyJoined(),
-      topPerformers: this.getMockTopPerformers()
-    };
-  }
-
-  static getMockRecentlyJoined() {
-    return [
-      {
-        id: "1",
-        name: "Dr. Sarah Johnson",
-        specialization: "Clinical Psychology",
-        joinedDate: "2024-01-10",
-        status: "active",
-        avatar: "/assets/images/users/user1.jpg"
-      },
-      {
-        id: "2",
-        name: "Dr. Michael Chen",
-        specialization: "Family Therapy",
-        joinedDate: "2024-01-08",
-        status: "pending",
-        avatar: "/assets/images/users/user2.jpg"
-      }
-    ];
-  }
-
-  static getMockTopPerformers() {
-    return [
-      {
-        id: "1",
-        name: "Dr. Emily Rodriguez",
-        specialization: "Trauma Therapy",
-        completedSessions: 156,
-        rating: 4.9,
-        avatar: "/assets/images/users/user3.jpg"
-      },
-      {
-        id: "2",
-        name: "Dr. James Wilson",
-        specialization: "Cognitive Behavioral Therapy",
-        completedSessions: 142,
-        rating: 4.8,
-        avatar: "/assets/images/users/user4.jpg"
-      }
-    ];
-  }
-
-  static getMockServiceData() {
-    return {
-      totalRequests: 156,
-      serviceTypes: this.getMockServiceTypes()
-    };
-  }
-
-  static getMockServiceTypes() {
-    return [
-      { name: "Individual Therapy", count: 68, percentage: 43.6 },
-      { name: "Couples Therapy", count: 32, percentage: 20.5 },
-      { name: "Family Therapy", count: 24, percentage: 15.4 },
-      { name: "Psychological Assessment", count: 18, percentage: 11.5 },
-      { name: "Group Therapy", count: 14, percentage: 9.0 }
-    ];
-  }
-
-  static getMockHealthData() {
-    return {
-      systemStatus: "healthy",
-      uptime: "99.8%",
-      responseTime: "245ms",
-      activeUsers: 1247,
-      alerts: this.getMockAlerts(),
-      metrics: {
-        cpuUsage: 45,
-        memoryUsage: 62,
-        diskUsage: 38,
-        networkLatency: 12
-      },
-      databaseHealth: 95,
-      apiHealth: 98
-    };
-  }
-
-  static getMockAlerts() {
-    return [
-      {
-        id: "1",
-        type: "warning",
-        message: "High server load detected",
-        timestamp: "2024-01-15T14:30:00",
-        severity: "medium"
-      },
-      {
-        id: "2",
-        type: "info",
-        message: "Scheduled maintenance in 2 hours",
-        timestamp: "2024-01-15T13:00:00",
-        severity: "low"
-      }
-    ];
-  }
-
-  static getMockDemographicsData() {
-    return {
-      totalClients: 247,
-      ageGroups: this.getMockAgeGroups(),
-      genderDistribution: this.getMockGenderDistribution(),
-      geographicDistribution: this.getMockGeographicDistribution()
-    };
-  }
-
-  static getMockAgeGroups() {
-    return [
-      { range: "18-25", count: 45, percentage: 18.2 },
-      { range: "26-35", count: 78, percentage: 31.6 },
-      { range: "36-45", count: 62, percentage: 25.1 },
-      { range: "46-55", count: 38, percentage: 15.4 },
-      { range: "56-65", count: 18, percentage: 7.3 },
-      { range: "65+", count: 6, percentage: 2.4 }
-    ];
-  }
-
-  static getMockGenderDistribution() {
-    return {
-      female: 58.3,
-      male: 35.2,
-      nonBinary: 4.9,
-      preferNotToSay: 1.6
-    };
-  }
-
-  static getMockGeographicDistribution() {
-    return [
-      { region: "Montreal", count: 89, percentage: 36.0 },
-      { region: "Quebec City", count: 52, percentage: 21.1 },
-      { region: "Gatineau", count: 34, percentage: 13.8 },
-      { region: "Sherbrooke", count: 28, percentage: 11.3 },
-      { region: "Other", count: 44, percentage: 17.8 }
-    ];
+      return Object.entries(distribution).map(([province, count]) => ({
+        province,
+        count
+      }));
+    } catch (error) {
+      console.error('Error getting geographic distribution:', error);
+      return [];
+    }
   }
 
   // New simplified dashboard methods
@@ -488,24 +632,65 @@ class DashboardService {
    */
   static async getProfessionalsStats() {
     try {
-      // In production, these would be actual Parse queries
+      const totalProfessionals = await this.getTotalProfessionals();
+      
+      // Get gender distribution for professionals
+      const genders = [
+        { id: 1, name: 'women' },
+        { id: 2, name: 'men' },
+        { id: 3, name: 'other' }
+      ];
+
+      const genderStats = {};
+      for (const gender of genders) {
+        const professionalQuery = new Parse.Query('Professional');
+        professionalQuery.equalTo('gender', gender.id);
+        const count = await professionalQuery.count();
+        genderStats[gender.name] = count;
+      }
+
+      // Get age distribution for professionals
+      const ageGroups = [
+        { range: "25-35", min: 25, max: 35 },
+        { range: "36-45", min: 36, max: 45 },
+        { range: "46-55", min: 46, max: 55 },
+        { range: "56+", min: 56, max: 120 }
+      ];
+
+      const ageGroupsData = [];
+      const currentYear = new Date().getFullYear();
+
+      for (const group of ageGroups) {
+        const birthYearMax = currentYear - group.min;
+        const birthYearMin = currentYear - group.max;
+        
+        const professionalQuery = new Parse.Query('Professional');
+        const birthYearStart = new Date(birthYearMin, 0, 1);
+        const birthYearEnd = new Date(birthYearMax, 11, 31);
+        
+        professionalQuery.greaterThanOrEqualTo('dob', birthYearStart);
+        professionalQuery.lessThanOrEqualTo('dob', birthYearEnd);
+        
+        const count = await professionalQuery.count();
+        
+        ageGroupsData.push({
+          range: group.range,
+          count: count
+        });
+      }
+
       return {
-        totalProfessionals: 45,
-        genderStats: {
-          men: 18,
-          women: 24,
-          other: 3
-        },
-        ageGroups: [
-          { range: "25-35", count: 15 },
-          { range: "36-45", count: 18 },
-          { range: "46-55", count: 8 },
-          { range: "56+", count: 4 }
-        ]
+        totalProfessionals: totalProfessionals,
+        genderStats: genderStats,
+        ageGroups: ageGroupsData
       };
     } catch (error) {
       console.error('Error fetching professionals stats:', error);
-      return {};
+      return {
+        totalProfessionals: 0,
+        genderStats: { men: 0, women: 0, other: 0 },
+        ageGroups: []
+      };
     }
   }
 
@@ -514,25 +699,66 @@ class DashboardService {
    */
   static async getClientsStats() {
     try {
-      // In production, these would be actual Parse queries
+      const totalClients = await this.getTotalClients();
+      
+      // Get gender distribution for clients
+      const genders = [
+        { id: 1, name: 'women' },
+        { id: 2, name: 'men' },
+        { id: 3, name: 'other' }
+      ];
+
+      const genderStats = {};
+      for (const gender of genders) {
+        const clientQuery = new Parse.Query('Client');
+        clientQuery.equalTo('gender', gender.id);
+        const count = await clientQuery.count();
+        genderStats[gender.name] = count;
+      }
+
+      // Get age distribution for clients
+      const ageGroups = [
+        { range: "18-25", min: 18, max: 25 },
+        { range: "26-35", min: 26, max: 35 },
+        { range: "36-45", min: 36, max: 45 },
+        { range: "46-55", min: 46, max: 55 },
+        { range: "56+", min: 56, max: 120 }
+      ];
+
+      const ageGroupsData = [];
+      const currentYear = new Date().getFullYear();
+
+      for (const group of ageGroups) {
+        const birthYearMax = currentYear - group.min;
+        const birthYearMin = currentYear - group.max;
+        
+        const clientQuery = new Parse.Query('Client');
+        const birthYearStart = new Date(birthYearMin, 0, 1);
+        const birthYearEnd = new Date(birthYearMax, 11, 31);
+        
+        clientQuery.greaterThanOrEqualTo('dob', birthYearStart);
+        clientQuery.lessThanOrEqualTo('dob', birthYearEnd);
+        
+        const count = await clientQuery.count();
+        
+        ageGroupsData.push({
+          range: group.range,
+          count: count
+        });
+      }
+
       return {
-        totalClients: 247,
-        genderStats: {
-          men: 87,
-          women: 144,
-          other: 16
-        },
-        ageGroups: [
-          { range: "18-25", count: 45 },
-          { range: "26-35", count: 78 },
-          { range: "36-45", count: 62 },
-          { range: "46-55", count: 38 },
-          { range: "56+", count: 24 }
-        ]
+        totalClients: totalClients,
+        genderStats: genderStats,
+        ageGroups: ageGroupsData
       };
     } catch (error) {
       console.error('Error fetching clients stats:', error);
-      return {};
+      return {
+        totalClients: 0,
+        genderStats: { men: 0, women: 0, other: 0 },
+        ageGroups: []
+      };
     }
   }
 
@@ -541,27 +767,71 @@ class DashboardService {
    */
   static async getAppointmentsStats() {
     try {
-      // In production, these would be actual Parse queries
-      return {
-        totalAppointments: 89,
-        timeSlotStats: {
-          withTimeSlot: 67,
-          withoutTimeSlot: 22
-        },
-        meetingPreferences: {
-          online: 34,
-          inPerson: 28,
-          both: 27
-        },
-        languagePreferences: {
-          french: 45,
-          english: 32,
-          both: 12
+      const totalAppointments = await this.getTotalServiceRequests();
+      
+      // Get time slot statistics
+      const withTimeSlotQuery = new Parse.Query('Appointment');
+      withTimeSlotQuery.exists('scheduledTimestamp');
+      const withTimeSlot = await withTimeSlotQuery.count();
+      
+      const withoutTimeSlot = totalAppointments - withTimeSlot;
+
+      // Get meeting preferences
+      const meetingPrefs = [
+        { id: 0, name: 'inPerson' },
+        { id: 1, name: 'online' },
+        { id: 2, name: 'both' }
+      ];
+
+      const meetingPreferences = {};
+      for (const pref of meetingPrefs) {
+        const appointmentQuery = new Parse.Query('Appointment');
+        appointmentQuery.equalTo('meetPref', pref.id);
+        const count = await appointmentQuery.count();
+        meetingPreferences[pref.name] = count;
+      }
+
+      // Get language preferences (simplified - would need more complex logic for actual implementation)
+      const appointmentQuery = new Parse.Query('Appointment');
+      appointmentQuery.limit(1000);
+      const appointments = await appointmentQuery.find();
+      
+      const languagePreferences = {
+        french: 0,
+        english: 0,
+        both: 0
+      };
+
+      appointments.forEach(appointment => {
+        const langPref = appointment.get('langPref') || [];
+        if (langPref.includes('French') && langPref.includes('English')) {
+          languagePreferences.both++;
+        } else if (langPref.includes('French')) {
+          languagePreferences.french++;
+        } else if (langPref.includes('English')) {
+          languagePreferences.english++;
+        } else {
+          languagePreferences.english++; // Default to English
         }
+      });
+
+      return {
+        totalAppointments: totalAppointments,
+        timeSlotStats: {
+          withTimeSlot: withTimeSlot,
+          withoutTimeSlot: withoutTimeSlot
+        },
+        meetingPreferences: meetingPreferences,
+        languagePreferences: languagePreferences
       };
     } catch (error) {
       console.error('Error fetching appointments stats:', error);
-      return {};
+      return {
+        totalAppointments: 0,
+        timeSlotStats: { withTimeSlot: 0, withoutTimeSlot: 0 },
+        meetingPreferences: { online: 0, inPerson: 0, both: 0 },
+        languagePreferences: { french: 0, english: 0, both: 0 }
+      };
     }
   }
 }

@@ -160,5 +160,133 @@
     "general": "An error occurred",
     "networkError": "Network error. Please check your connection and try again.",
     "requiredField": "This field is required"
+  },
+  "strings": {
+    "title": "String Management",
+    "subtitle": "Manage application strings for different languages",
+    "language": "Language",
+    "both": "BOTH",
+    "english": "EN",
+    "french": "FR",
+    "searchPlaceholder": "Search strings by key, value, or category...",
+    "filters": {
+      "category": "Category",
+      "status": "Status",
+      "allCategories": "All Categories",
+      "allStrings": "All Strings",
+      "modifiedOnly": "Modified Only",
+      "unmodifiedOnly": "Unmodified Only"
+    },
+    "activeFilters": "Active Filters",
+    "clearAll": "Clear All",
+    "export": "Export {{count}} Changes",
+    "generating": "Generating...",
+    "columns": {
+      "category": "Category",
+      "englishValue": "English Value",
+      "frenchValue": "French Value",
+      "currentValue": "Current Value",
+      "actions": "Actions"
+    },
+    "categories": {
+      "welcome": "Welcome & Onboarding",
+      "authentication": "Authentication",
+      "profile": "Profile & Settings",
+      "forms": "Forms & Validation",
+      "navigation": "Navigation & UI",
+      "errors": "Errors & Messages",
+      "other": "Other"
+    },
+    "badges": {
+      "modified": "MODIFIED"
+    },
+    "actions": {
+      "edit": "Edit String",
+      "save": "Save Changes",
+      "cancel": "Cancel",
+      "reset": "Reset to Original"
+    },
+    "warnings": {
+      "modified": "⚠️ Modified",
+      "original": "Original: {{value}}"
+    },
+    "messages": {
+      "noModifications": "No modifications to save",
+      "exportSuccess": "Successfully generated strings2_{{language}}.xml with {{count}} modified strings",
+      "authRequired": "Authentication Required:",
+      "authMessage": "You are not logged in. Some features may be limited. Please log in for full functionality.",
+      "loginButton": "Login"
+    },
+    "errors": {
+      "loadFailed": "Failed to load {{language}} strings: {{error}}",
+      "saveFailed": "Failed to save strings: {{error}}",
+      "networkError": "No Internet Connection",
+      "networkMessage": "Unable to load strings. Please check your internet connection and try again.",
+      "serverError": "Server Connection Failed",
+      "serverMessage": "Unable to connect to Parse Server. The service may be temporarily unavailable.",
+      "parseError": "Server Error",
+      "parseMessage": "Server returned an error ({{error}}). Please try again later."
+    }
+  },
+  "clients": {
+    "title": "Client Management",
+    "subtitle": "Manage and view client information",
+    "searchPlaceholder": "Search clients...",
+    "columns": {
+      "name": "Name & Email",
+      "age": "Age",
+      "gender": "Gender",
+      "phone": "Phone",
+      "location": "Location",
+      "languages": "Languages",
+      "lastSeen": "Last Seen",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "filters": {
+      "gender": "Gender",
+      "ageRange": "Age Range",
+      "status": "Status",
+      "lastSeen": "Last Seen",
+      "allGenders": "All Genders",
+      "allAges": "All Ages",
+      "allStatuses": "All Statuses",
+      "allActivity": "All Activity"
+    },
+    "genderOptions": {
+      "woman": "Woman",
+      "man": "Man",
+      "other": "Other",
+      "notDisclosed": "Not Disclosed"
+    },
+    "statusOptions": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "suspended": "Suspended"
+    },
+    "lastSeenOptions": {
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "older": "Older"
+    },
+    "actions": {
+      "view": "View Details",
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "professionals": {
+    "title": "Professional Management",
+    "subtitle": "Manage mental health professionals"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Welcome to PsyPsy CMS",
+    "quickActions": "Quick Actions",
+    "recentActivity": "Recent Activity",
+    "systemHealth": "System Health",
+    "keyMetrics": "Key Metrics"
   }
 } 

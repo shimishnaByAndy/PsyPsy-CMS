@@ -26,6 +26,11 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
+import MDButton from "components/MDButton";
+
+// Custom components
+import EmptyState from 'components/EmptyState';
+import LoadingState from 'components/LoadingState';
 
 function ClientsDataGrid({ 
   onViewClient, 
@@ -49,6 +54,9 @@ function ClientsDataGrid({
   const [sortModel, setSortModel] = useState([
     { field: 'createdAt', sort: 'desc' }
   ]);
+
+  // Check if there are active filters or search
+  const hasActiveFilters = searchTerm.trim() !== '' || Object.values(filters).some(value => value !== 'all' && value !== '');
 
   // Gender mapping with translations
   const genderMap = {
@@ -373,63 +381,102 @@ function ClientsDataGrid({
     setSortModel(newSortModel);
   };
 
+  const handleRefresh = () => {
+    loadClients();
+  };
+
+  const handleClearFilters = () => {
+    // This would need to be passed down from parent component
+    if (onViewClient) {
+      onViewClient(null); // Signal to clear filters
+    }
+  };
+
   return (
     <MDBox>
       {error && (
-        <Alert severity="warning" sx={{ mb: 2 }}>
+        <Alert 
+          severity="error" 
+          sx={{ mb: 2 }}
+          action={
+            <MDButton size="small" onClick={handleRefresh}>
+              Retry
+            </MDButton>
+          }
+        >
           {error}
         </Alert>
       )}
       
-      <Box sx={{ height: height, width: '100%' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          loading={loading}
-          rowCount={rowCount}
-          
-          // Pagination
-          paginationMode="server"
-          paginationModel={paginationModel}
-          onPaginationModelChange={handlePaginationModelChange}
-          pageSizeOptions={[5, 10, 25, 50]}
-          
-          // Sorting
-          sortingMode="server"
-          sortModel={sortModel}
-          onSortModelChange={handleSortModelChange}
-          
-          // Styling
-          disableRowSelectionOnClick
-          sx={{
-            '& .MuiDataGrid-cell': {
-              borderBottom: '1px solid #f0f0f0',
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: '#f8f9fa',
-              borderBottom: '2px solid #dee2e6',
-            },
-            '& .MuiDataGrid-row:hover': {
-              backgroundColor: '#f8f9fa',
-            },
-          }}
-          
-          // Loading overlay
-          slots={{
-            loadingOverlay: LinearProgress,
-          }}
-          
-          // Initial state
-          initialState={{
-            pagination: {
-              paginationModel: { pageSize: 10, page: 0 },
-            },
-            sorting: {
-              sortModel: [{ field: 'createdAt', sort: 'desc' }],
-            },
-          }}
+      {/* Loading State */}
+      {loading && (
+        <LoadingState 
+          type="clients" 
+          size="medium"
+          variant="skeleton"
+          rows={paginationModel.pageSize}
         />
-      </Box>
+      )}
+
+      {/* Empty States */}
+      {!loading && !error && rows.length === 0 && (
+        <EmptyState
+          type={hasActiveFilters ? 'search-clients' : 'clients'}
+          size="medium"
+          actionLabel={hasActiveFilters ? 'Clear Filters' : 'Refresh Data'}
+          onActionClick={hasActiveFilters ? handleClearFilters : handleRefresh}
+          showRefresh={!hasActiveFilters}
+          onRefresh={handleRefresh}
+        />
+      )}
+      
+      {/* Data Grid */}
+      {!loading && !error && rows.length > 0 && (
+        <Box sx={{ height: height, width: '100%' }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            loading={false} // We handle loading state manually
+            rowCount={rowCount}
+            
+            // Pagination
+            paginationMode="server"
+            paginationModel={paginationModel}
+            onPaginationModelChange={handlePaginationModelChange}
+            pageSizeOptions={[5, 10, 25, 50]}
+            
+            // Sorting
+            sortingMode="server"
+            sortModel={sortModel}
+            onSortModelChange={handleSortModelChange}
+            
+            // Styling
+            disableRowSelectionOnClick
+            sx={{
+              '& .MuiDataGrid-cell': {
+                borderBottom: '1px solid #f0f0f0',
+              },
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: '#f8f9fa',
+                borderBottom: '2px solid #dee2e6',
+              },
+              '& .MuiDataGrid-row:hover': {
+                backgroundColor: '#f8f9fa',
+              },
+            }}
+            
+            // Initial state
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 10, page: 0 },
+              },
+              sorting: {
+                sortModel: [{ field: 'createdAt', sort: 'desc' }],
+              },
+            }}
+          />
+        </Box>
+      )}
     </MDBox>
   );
 }

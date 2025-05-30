@@ -43,10 +43,10 @@ import Box from "@mui/material/Box";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import Footer from "examples/Footer";
 
 // Material Dashboard 2 React example components
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 function Professionals() {
   const { t } = useTranslation();
@@ -147,7 +147,6 @@ function Professionals() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar onUserTypeChange={handleUserTypeChange} />
       <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>

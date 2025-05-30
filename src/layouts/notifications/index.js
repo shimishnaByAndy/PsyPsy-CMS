@@ -28,7 +28,6 @@ import MDSnackbar from "components/MDSnackbar";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 function Notifications() {
@@ -112,8 +111,7 @@ function Notifications() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
-      <MDBox mt={6} mb={3}>
+      <MDBox pt={6} pb={3}>
         <Grid container spacing={3} justifyContent="center">
           <Grid item xs={12} lg={8}>
             <Card>
