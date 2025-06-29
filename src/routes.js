@@ -47,7 +47,6 @@ import Profile from "./layouts/profile";
 import Strings from "./layouts/strings";  // Import the new Strings component
 import Login from "./layouts/authentication/login";  // Login page with Parse integration
 import Lock from "./layouts/authentication/lock";    // Lock screen
-import ParseDataExample from "./layouts/parse-data";  // Parse data management example
 import DarkoneExample from "./darkone/DarkoneExample"; // Darkone components example
 import TestUserDetail from "./layouts/test-userdetail"; // Test page for UserDetail component
 
@@ -108,14 +107,6 @@ const protectedRoutes = [
     icon: <Icon fontSize="small">calendar_today</Icon>,
     route: "/appointments",
     component: <ProtectedRoute component={<Appointments />} />,
-  },
-  {
-    type: "collapse",
-    name: "Parse Data",
-    key: "parse-data",
-    icon: <Icon fontSize="small">cloud</Icon>,
-    route: "/parse-data",
-    component: <ProtectedRoute component={<ParseDataExample />} />,
   },
   {
     type: "collapse",

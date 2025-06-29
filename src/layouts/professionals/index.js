@@ -20,6 +20,9 @@ import UserDetail from "components/UserDetail";
 // Import MUI-X DataGrid component
 import ProfessionalsDataGrid from "components/ProfessionalsDataGrid";
 
+// Theme and styling
+import { componentStyles } from "config/theme";
+
 // Material Dashboard 2 React context
 import {
   useMaterialUIController,
@@ -162,11 +165,27 @@ function Professionals() {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
+                sx={componentStyles.pageHeader}
               >
-                <MDTypography variant="h6" color="white">
-                  Professional Management
-                </MDTypography>
-                <MDBox display="flex" alignItems="center" gap={2}>
+                <MDBox sx={{ flex: '0 0 auto', minWidth: 'max-content' }}>
+                  <MDTypography 
+                    variant="h5" 
+                    color="white" 
+                    fontWeight="bold"
+                    sx={{
+                      whiteSpace: 'nowrap',
+                      overflow: 'visible',
+                      textOverflow: 'unset',
+                      minWidth: 'max-content',
+                      flexShrink: 0,
+                      display: 'block',
+                      width: 'max-content'
+                    }}
+                  >
+                    Professional Management
+                  </MDTypography>
+                </MDBox>
+                <MDBox display="flex" alignItems="center" gap={2} sx={{ flex: '0 0 auto' }}>
                   <TextField
                     placeholder="Search professionals..."
                     value={search}

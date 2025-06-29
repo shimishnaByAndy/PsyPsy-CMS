@@ -224,30 +224,6 @@ export default function App() {
       return null;
     });
 
-  const configsButton = (
-    <MDBox
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      width="3.25rem"
-      height="3.25rem"
-      bgColor="white"
-      shadow="sm"
-      borderRadius="50%"
-      position="fixed"
-      right="2rem"
-      bottom="2rem"
-      zIndex={99}
-      color="dark"
-      sx={{ cursor: "pointer" }}
-      onClick={handleConfiguratorOpen}
-    >
-      <Icon fontSize="small" color="inherit">
-        analytics
-      </Icon>
-    </MDBox>
-  );
-
   // Create a fallback route that safely handles navigation
   const getFallbackRoute = () => {
     return (
@@ -263,27 +239,47 @@ export default function App() {
       <ParseInitializer>
         <GlobalThemeProvider>
           <PsyPsyThemeProvider>
-            {layout === "dashboard" && (
-              <>
-                <Sidenav
-                  color="success"
-                  brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-                  brandName="PsyPsy CMS"
-                  routes={routes}
-                  onMouseEnter={handleOnMouseEnter}
-                  onMouseLeave={handleOnMouseLeave}
-                />
-                <Configurator stats={stats} userType={userType} />
-                {configsButton}
-              </>
-            )}
-            {layout === "vr" && <Configurator stats={stats} userType={userType} />}
-            <Routes>
-              {/* Root path redirect based on authentication */}
-              <Route path="/" element={<AuthenticatedRedirect />} />
-              {getRoutes(routes)}
-              {getFallbackRoute()}
-            </Routes>
+            <MDBox
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '100vh',
+                backgroundColor: '#f5f5f5',
+                padding: '16px'
+              }}
+            >
+              <MDBox
+                sx={{
+                  width: '100%',
+                  maxWidth: '1400px',
+                  height: '850px',
+                  position: 'relative',
+                  backgroundColor: 'transparent'
+                }}
+              >
+                {layout === "dashboard" && (
+                  <>
+                    <Sidenav
+                      color="success"
+                      brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
+                      brandName="PsyPsy CMS"
+                      routes={routes}
+                      onMouseEnter={handleOnMouseEnter}
+                      onMouseLeave={handleOnMouseLeave}
+                    />
+                    <Configurator stats={stats} userType={userType} />
+                  </>
+                )}
+                {layout === "vr" && <Configurator stats={stats} userType={userType} />}
+                <Routes>
+                  {/* Root path redirect based on authentication */}
+                  <Route path="/" element={<AuthenticatedRedirect />} />
+                  {getRoutes(routes)}
+                  {getFallbackRoute()}
+                </Routes>
+              </MDBox>
+            </MDBox>
           </PsyPsyThemeProvider>
         </GlobalThemeProvider>
       </ParseInitializer>

@@ -249,8 +249,8 @@ export const THEME = {
 
     // Language toggle styles
     languageToggle: {
-      containerWidth: pxToRem(200),
-      containerHeight: pxToRem(40),
+      containerWidth: pxToRem(280),
+      containerHeight: pxToRem(48),
       borderRadius: pxToRem(30),
       backgroundColor: "rgba(255, 255, 255, 0.08)",
       indicatorColor: "rgba(255, 255, 255, 0.15)",
@@ -415,7 +415,14 @@ export const createComponentStyles = (isDarkMode = false) => {
       borderRadius: THEME.borderRadius.lg,
       padding: THEME.spacing.lg,
       marginBottom: THEME.spacing.xl,
-      boxShadow: isDarkMode ? darkColors.coloredShadows.primary : colors.coloredShadows.primary,
+      boxShadow: isDarkMode 
+        ? "0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2)"
+        : "0 8px 26px -4px rgba(137, 149, 129, 0.15), 0 8px 9px -5px rgba(137, 149, 129, 0.06)",
+      minHeight: '80px',
+      overflow: 'visible',
+      '& > *': {
+        flexShrink: 0
+      }
     },
 
     // Search input

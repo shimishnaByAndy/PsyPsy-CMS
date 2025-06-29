@@ -36,7 +36,7 @@ function ClientsDataGrid({
   onViewClient, 
   searchTerm = '', 
   filters = {},
-  height = 600 
+  height = '100%' 
 }) {
   const { t } = useTranslation();
   
@@ -432,7 +432,7 @@ function ClientsDataGrid({
       
       {/* Data Grid */}
       {!loading && !error && rows.length > 0 && (
-        <Box sx={{ height: height, width: '100%' }}>
+        <Box sx={{ height: '100%', width: '100%' }}>
           <DataGrid
             rows={rows}
             columns={columns}
@@ -453,6 +453,7 @@ function ClientsDataGrid({
             // Styling
             disableRowSelectionOnClick
             sx={{
+              height: '100%',
               '& .MuiDataGrid-cell': {
                 borderBottom: '1px solid #f0f0f0',
               },

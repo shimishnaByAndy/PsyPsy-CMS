@@ -9,6 +9,9 @@ import { useTranslation } from "react-i18next";
 // Import MUI-X DataGrid component
 import AppointmentsDataGrid from "components/AppointmentsDataGrid";
 
+// Theme and styling
+import { componentStyles } from "config/theme";
+
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
@@ -92,10 +95,10 @@ function Appointments() {
 
   return (
     <DashboardLayout>
-      <MDBox pt={6} pb={3}>
+      <MDBox pt={6} pb={3} sx={{ overflow: 'visible' }}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
-            <Card>
+            <Card sx={{ overflow: 'visible' }}>
               <MDBox
                 mx={2}
                 mt={-3}
@@ -107,11 +110,27 @@ function Appointments() {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
+                sx={componentStyles.pageHeader}
               >
-                <MDTypography variant="h6" color="white">
-                  Appointment Management
-                </MDTypography>
-                <MDBox display="flex" alignItems="center" gap={2}>
+                <MDBox sx={{ flex: '0 0 auto', minWidth: 'max-content' }}>
+                  <MDTypography 
+                    variant="h5" 
+                    color="white" 
+                    fontWeight="bold"
+                    sx={{
+                      whiteSpace: 'nowrap',
+                      overflow: 'visible',
+                      textOverflow: 'unset',
+                      minWidth: 'max-content',
+                      flexShrink: 0,
+                      display: 'block',
+                      width: 'max-content'
+                    }}
+                  >
+                    Appointment Management
+                  </MDTypography>
+                </MDBox>
+                <MDBox display="flex" alignItems="center" gap={2} sx={{ flex: '0 0 auto' }}>
                   <TextField
                     placeholder="Search appointments..."
                     value={search}

@@ -40,7 +40,7 @@ const ProfessionalsDataGrid = ({
   searchTerm = '', 
   filters = {}, 
   onViewProfessional,
-  height = 600 
+  height = '100%' 
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -434,7 +434,7 @@ const ProfessionalsDataGrid = ({
       
       {/* Data Grid */}
       {!loading && !error && professionals.length > 0 && (
-        <Box sx={{ height, width: '100%' }}>
+        <Box sx={{ height: '100%', width: '100%' }}>
           <DataGrid
             rows={professionals}
             columns={columns}
@@ -449,6 +449,7 @@ const ProfessionalsDataGrid = ({
             sortingMode="server"
             disableRowSelectionOnClick
             sx={{
+              height: '100%',
               '& .MuiDataGrid-cell': {
                 borderBottom: '1px solid rgba(224, 224, 224, 0.5)',
               },

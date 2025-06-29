@@ -33,6 +33,7 @@ const EmptyState = ({
   showRefresh = false,
   onRefresh,
   size = 'medium',
+  showIcon = true,
   ...props 
 }) => {
   const theme = useTheme();
@@ -46,21 +47,23 @@ const EmptyState = ({
       title: 'No clients found',
       description: 'There are no clients in the system yet. Clients will appear here once they register for services.',
       actionLabel: 'View All Users',
-      gradient: ['#6a11cb', '#2575fc']
+      gradient: ['#899581', '#a4b695'], // PsyPsy main colors
+      showIcon: false, // Hide icon for clients by default
+      showOnlyRefresh: true // Only show refresh button
     },
     'professionals': {
       icon: PsychologyIcon,
       title: 'No professionals found',
       description: 'There are no professionals in the system yet. Licensed professionals will appear here once they complete their registration.',
       actionLabel: 'View All Users',
-      gradient: ['#667eea', '#764ba2']
+      gradient: ['#5d1c33', '#7d2a47'] // PsyPsy secondary colors
     },
     'appointments': {
       icon: EventNoteIcon,
       title: 'No appointments found',
       description: 'There are no appointments scheduled yet. Appointments will appear here as clients request services.',
       actionLabel: 'Refresh Data',
-      gradient: ['#f093fb', '#f5576c']
+      gradient: ['#11BA73', '#4dd796'] // PsyPsy success colors
     },
     
     // Search Results
@@ -69,21 +72,21 @@ const EmptyState = ({
       title: 'No clients match your search',
       description: 'Try adjusting your search terms or filters to find the clients you\'re looking for.',
       actionLabel: 'Clear Filters',
-      gradient: ['#4facfe', '#00f2fe']
+      gradient: ['#899581', '#a4b695'] // PsyPsy main colors
     },
     'search-professionals': {
       icon: SearchIcon,
       title: 'No professionals match your search',
       description: 'Try adjusting your search terms or filters to find the professionals you\'re looking for.',
       actionLabel: 'Clear Filters',
-      gradient: ['#43e97b', '#38f9d7']
+      gradient: ['#5d1c33', '#7d2a47'] // PsyPsy secondary colors
     },
     'search-appointments': {
       icon: SearchIcon,
       title: 'No appointments match your search',
       description: 'Try adjusting your search terms or date range to find the appointments you\'re looking for.',
       actionLabel: 'Clear Filters',
-      gradient: ['#fa709a', '#fee140']
+      gradient: ['#11BA73', '#4dd796'] // PsyPsy success colors
     },
     
     // Dashboard States
@@ -91,19 +94,19 @@ const EmptyState = ({
       icon: DashboardIcon,
       title: 'Dashboard loading',
       description: 'Gathering system statistics and metrics from the database.',
-      gradient: ['#a8edea', '#fed6e3']
+      gradient: ['#899581', '#a4b695'] // PsyPsy main colors
     },
     'recent-activity': {
       icon: TrendingUpIcon,
       title: 'No recent activity',
       description: 'There hasn\'t been any recent activity in the system. Check back later for updates.',
-      gradient: ['#667eea', '#764ba2']
+      gradient: ['#5d1c33', '#7d2a47'] // PsyPsy secondary colors
     },
     'upcoming-appointments': {
       icon: ScheduleIcon,
       title: 'No upcoming appointments',
       description: 'There are no appointments scheduled for the near future.',
-      gradient: ['#ffecd2', '#fcb69f']
+      gradient: ['#11BA73', '#4dd796'] // PsyPsy success colors
     },
     
     // Error States
@@ -112,13 +115,13 @@ const EmptyState = ({
       title: 'Connection issue',
       description: 'Unable to connect to the server. Please check your connection and try again.',
       actionLabel: 'Retry',
-      gradient: ['#ff6b6b', '#ffa726']
+      gradient: ['#D00000', '#d93333'] // PsyPsy error colors
     },
     'loading': {
       icon: RefreshIcon,
       title: 'Loading data...',
       description: 'Please wait while we fetch the latest information from the server.',
-      gradient: ['#667eea', '#764ba2']
+      gradient: ['#899581', '#a4b695'] // PsyPsy main colors
     },
     
     // System Health
@@ -126,7 +129,7 @@ const EmptyState = ({
       icon: LocalHospitalIcon,
       title: 'System monitoring',
       description: 'Checking system health and performance metrics.',
-      gradient: ['#667eea', '#764ba2']
+      gradient: ['#11BA73', '#4dd796'] // PsyPsy success colors
     },
     
     // Filters
@@ -135,7 +138,7 @@ const EmptyState = ({
       title: 'No results with current filters',
       description: 'Try adjusting or removing some filters to see more results.',
       actionLabel: 'Clear All Filters',
-      gradient: ['#667eea', '#764ba2']
+      gradient: ['#899581', '#a4b695'] // PsyPsy main colors
     },
     
     // Default
@@ -143,12 +146,14 @@ const EmptyState = ({
       icon: AssignmentIcon,
       title: 'No data available',
       description: 'There is no data to display at the moment.',
-      gradient: ['#667eea', '#764ba2']
+      gradient: ['#899581', '#a4b695'] // PsyPsy main colors
     }
   };
 
   const config = emptyStateConfigs[type] || emptyStateConfigs['default'];
   const IconComponent = CustomIcon || config.icon;
+  const shouldShowIcon = showIcon && (config.showIcon !== false);
+  const shouldShowOnlyRefresh = config.showOnlyRefresh || false;
   
   // Size configurations
   const sizeConfigs = {
@@ -190,45 +195,48 @@ const EmptyState = ({
         minHeight: size === 'large' ? 400 : size === 'medium' ? 300 : 200,
         maxWidth: sizeConfig.maxWidth,
         mx: 'auto',
+        width: '100%',
         ...props.sx
       }}
       {...props}
     >
       {/* Icon with gradient background */}
-      <MDBox
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        sx={{
-          width: sizeConfig.iconSize + 24,
-          height: sizeConfig.iconSize + 24,
-          borderRadius: '50%',
-          background: `linear-gradient(135deg, ${config.gradient[0]}, ${config.gradient[1]})`,
-          mb: sizeConfig.spacing,
-          boxShadow: `0 8px 24px ${alpha(config.gradient[0], 0.3)}`,
-          position: 'relative',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            inset: 2,
-            borderRadius: '50%',
-            background: isDarkMode 
-              ? 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))'
-              : 'linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.4))',
-            zIndex: 1
-          }
-        }}
-      >
-        <IconComponent
+      {shouldShowIcon && (
+        <MDBox
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
           sx={{
-            fontSize: sizeConfig.iconSize,
-            color: 'white',
+            width: sizeConfig.iconSize + 24,
+            height: sizeConfig.iconSize + 24,
+            borderRadius: '50%',
+            background: `linear-gradient(135deg, ${config.gradient[0]}, ${config.gradient[1]})`,
+            mb: sizeConfig.spacing,
+            boxShadow: `0 8px 24px ${alpha(config.gradient[0], 0.3)}`,
             position: 'relative',
-            zIndex: 2,
-            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))'
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              inset: 2,
+              borderRadius: '50%',
+              background: isDarkMode 
+                ? 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))'
+                : 'linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.4))',
+              zIndex: 1
+            }
           }}
-        />
-      </MDBox>
+        >
+          <IconComponent
+            sx={{
+              fontSize: sizeConfig.iconSize,
+              color: 'white',
+              position: 'relative',
+              zIndex: 2,
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))'
+            }}
+          />
+        </MDBox>
+      )}
 
       {/* Title */}
       <MDTypography
@@ -269,7 +277,7 @@ const EmptyState = ({
 
       {/* Action Buttons */}
       <MDBox display="flex" gap={2} flexWrap="wrap" justifyContent="center">
-        {(actionLabel || config.actionLabel) && onActionClick && (
+        {!shouldShowOnlyRefresh && (actionLabel || config.actionLabel) && onActionClick && (
           <MDButton
             variant="gradient"
             color="info"
@@ -288,7 +296,7 @@ const EmptyState = ({
           </MDButton>
         )}
 
-        {showRefresh && onRefresh && (
+        {(showRefresh || shouldShowOnlyRefresh) && onRefresh && (
           <MDButton
             variant="outlined"
             color="secondary"

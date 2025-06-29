@@ -20,6 +20,9 @@ import UserDetail from "components/UserDetail";
 // Import MUI-X DataGrid component
 import ClientsDataGrid from "components/ClientsDataGrid";
 
+// Theme and styling
+import { componentStyles } from "config/theme";
+
 // Material Dashboard 2 React context
 import {
   useMaterialUIController,
@@ -140,10 +143,17 @@ function Clients() {
 
   return (
     <DashboardLayout>
-      <MDBox pt={6} pb={3}>
-        <Grid container spacing={6}>
-          <Grid item xs={12}>
-            <Card>
+      <MDBox 
+        py={3}
+        px={3}
+        sx={{ 
+          overflow: 'visible',
+          height: 'calc(100% - 48px)', // Subtract top and bottom padding (24px each = 48px total)
+        }}
+      >
+        <Grid container spacing={3} sx={{ height: '100%', maxWidth: '100%' }}>
+          <Grid item xs={12} sx={{ height: '100%' }}>
+            <Card sx={{ overflow: 'visible', height: '100%', display: 'flex', flexDirection: 'column' }}>
               <MDBox
                 mx={2}
                 mt={-3}
@@ -153,20 +163,51 @@ function Clients() {
                 borderRadius="lg"
                 coloredShadow="info"
                 display="flex"
+                flexDirection={{ xs: 'column', md: 'row' }}
                 justifyContent="space-between"
-                alignItems="center"
+                alignItems={{ xs: 'flex-start', md: 'center' }}
+                gap={{ xs: 2, md: 0 }}
+                sx={componentStyles.pageHeader}
               >
-                <MDTypography variant="h6" color="white">
-                  {t("tables.clientManagement")}
-                </MDTypography>
-                <MDBox display="flex" alignItems="center" gap={2}>
+                <MDBox sx={{ flex: '0 0 auto', minWidth: 'max-content' }}>
+                  <MDTypography 
+                    variant="h5" 
+                    color="white" 
+                    fontWeight="bold"
+                    sx={{
+                      whiteSpace: 'nowrap',
+                      overflow: 'visible',
+                      textOverflow: 'unset',
+                      minWidth: 'max-content',
+                      flexShrink: 0,
+                      display: 'block',
+                      width: 'max-content'
+                    }}
+                  >
+                    {t("tables.clientManagement")}
+                  </MDTypography>
+                </MDBox>
+                <MDBox 
+                  display="flex" 
+                  alignItems="center" 
+                  gap={2} 
+                  sx={{ 
+                    flex: '0 0 auto',
+                    width: { xs: '100%', md: 'auto' },
+                    maxWidth: { xs: 'none', md: '350px' }
+                  }}
+                >
                   <TextField
                     placeholder={t("tables.searchUsers")}
                     value={search}
                     onChange={handleSearch}
                     variant="outlined"
                     size="small"
-                    sx={{ minWidth: 250 }}
+                    fullWidth
+                    sx={{ 
+                      minWidth: { xs: '100%', sm: '250px' },
+                      maxWidth: '350px'
+                    }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -195,22 +236,24 @@ function Clients() {
               
               {/* Filters Section */}
               <MDBox px={3} pt={3} pb={2}>
-                <MDBox display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-                  <MDTypography variant="h6" fontWeight="medium">
-                    {t("tables.filters.title")}
+                <MDBox display="flex" alignItems="center" justifyContent="space-between" mb={2} flexWrap="wrap" gap={1}>
+                  <MDBox display="flex" alignItems="center" gap={1}>
+                    <MDTypography variant="h6" fontWeight="medium">
+                      {t("tables.filters.title")}
+                    </MDTypography>
                     {activeFiltersCount > 0 && (
                       <Chip 
                         label={`${activeFiltersCount} active`} 
                         size="small" 
                         color="primary" 
-                        sx={{ ml: 1 }}
+                        variant="outlined"
                       />
                     )}
-                  </MDTypography>
+                  </MDBox>
                   {activeFiltersCount > 0 && (
                     <MDButton 
                       variant="text" 
-                      color="secondary" 
+                      color="error" 
                       size="small"
                       onClick={clearFilters}
                     >
@@ -291,13 +334,12 @@ function Clients() {
                 </Grid>
               </MDBox>
               
-              {/* MUI-X DataGrid */}
-              <MDBox px={3} pb={3}>
+              {/* Data Grid Container */}
+              <MDBox px={3} pb={3} sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
                 <ClientsDataGrid
                   searchTerm={search}
                   filters={filters}
                   onViewClient={handleViewUser}
-                  height={600}
                 />
               </MDBox>
             </Card>

@@ -409,10 +409,17 @@ function Strings() {
 
   return (
     <DashboardLayout>
-      <MDBox pt={6} pb={3}>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Card sx={{ overflow: 'visible', minWidth: '1000px' }}>
+      <MDBox 
+        py={3}
+        px={3}
+        sx={{ 
+          overflow: 'visible',
+          height: 'calc(100% - 48px)', // Subtract top and bottom padding (24px each = 48px total)
+        }}
+      >
+        <Grid container spacing={3} sx={{ height: '100%', maxWidth: '100%' }}>
+          <Grid item xs={12} sx={{ height: '100%' }}>
+            <Card sx={{ overflow: 'visible', height: '100%', display: 'flex', flexDirection: 'column', minWidth: '1000px' }}>
               <MDBox
                 mx={2}
                 mt={-3}
@@ -464,7 +471,7 @@ function Strings() {
                         position: 'absolute',
                         left: language === 'both' ? '4px' : language === 'en' ? 'calc(33.33% + 2px)' : 'calc(66.66% + 2px)',
                         width: 'calc(33.33% - 4px)',
-                        height: '32px',
+                        height: '40px',
                         borderRadius: '24px',
                         backgroundColor: THEME.components.languageToggle.indicatorColor,
                         transition: THEME.components.languageToggle.transition,
@@ -568,219 +575,207 @@ function Strings() {
                 </MDBox>
               </MDBox>
               
-              <MDBox p={3}>
-                {/* Fixed Height Container to Prevent Layout Shifts */}
-                <MDBox 
-                  sx={{ 
-                    minHeight: '800px',
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}
-                >
-                  {/* Authentication Warning */}
-                  {authError && (
-                    <Alert 
-                      severity="warning" 
-                      sx={{ mb: 3, borderRadius: 2 }}
-                      action={
-                        <MDButton
-                          size="small"
-                          color="warning"
-                          onClick={handleLoginRedirect}
-                          startIcon={<LoginIcon />}
-                        >
-                          {t('strings.messages.loginButton')}
-                        </MDButton>
-                      }
-                    >
-                      <strong>{t('strings.messages.authRequired')}</strong> {t('strings.messages.authMessage')}
-                    </Alert>
-                  )}
-
-                  {/* Search and Actions */}
-                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} mb={3}>
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      placeholder={t('strings.searchPlaceholder')}
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={componentStyles.searchInput}
-                    />
-                    
-                    {/* Category Filter */}
-                    <FormControl sx={{ minWidth: 200 }}>
-                      <InputLabel>{t('strings.filters.category')}</InputLabel>
-                      <Select
-                        value={categoryFilter}
-                        label={t('strings.filters.category')}
-                        onChange={(e) => setCategoryFilter(e.target.value)}
-                        startAdornment={<FilterListIcon sx={{ mr: 1, color: 'action.active' }} />}
-                      >
-                        <MenuItem value="all">{t('strings.filters.allCategories')}</MenuItem>
-                        {getUniqueCategories().map(category => (
-                          <MenuItem key={category} value={category}>
-                            {category}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-
-                    {/* Modified Status Filter */}
-                    <FormControl sx={{ minWidth: 150 }}>
-                      <InputLabel>{t('strings.filters.status')}</InputLabel>
-                      <Select
-                        value={modifiedFilter}
-                        label={t('strings.filters.status')}
-                        onChange={(e) => setModifiedFilter(e.target.value)}
-                      >
-                        <MenuItem value="all">{t('strings.filters.allStrings')}</MenuItem>
-                        <MenuItem value="modified">{t('strings.filters.modifiedOnly')}</MenuItem>
-                        <MenuItem value="unmodified">{t('strings.filters.unmodifiedOnly')}</MenuItem>
-                      </Select>
-                    </FormControl>
-                    
-                    {/* Save Button */}
-                    {Object.keys(modifiedStrings).length > 0 && (
-                      <MDButton
-                        variant="gradient"
-                        color="success"
-                        onClick={saveModifiedStrings}
-                        disabled={loading}
-                        startIcon={<FileDownloadIcon />}
-                        sx={{ 
-                          minWidth: 200,
-                          borderRadius: THEME.components.button.borderRadius,
-                          fontSize: THEME.components.button.fontSize,
-                          fontWeight: THEME.components.button.fontWeight,
-                        }}
-                      >
-                        {loading ? t('strings.generating') : t('strings.export', { count: Object.keys(modifiedStrings).length })}
-                      </MDButton>
-                    )}
-                  </Stack>
-
-                  {/* Active Filters Indicator */}
-                  {(categoryFilter !== 'all' || modifiedFilter !== 'all' || searchTerm) && (
-                    <MDBox 
-                      display="flex" 
-                      alignItems="center" 
-                      gap={1} 
-                      flexWrap="wrap"
-                      p={2}
-                      mb={2}
-                      sx={{ 
-                        backgroundColor: THEME.colors.backgroundSubtle, 
-                        borderRadius: THEME.borderRadius.md,
-                        border: `1px solid ${THEME.colors.border}`
-                      }}
-                    >
-                      <MDTypography variant="body2" fontWeight="medium" color="text">
-                        {t('strings.activeFilters')}:
-                      </MDTypography>
-                      
-                      {searchTerm && (
-                        <Chip
-                          label={`${t('common.search')}: "${searchTerm}"`}
-                          size="small"
-                          onDelete={() => setSearchTerm('')}
-                          color="primary"
-                          variant="outlined"
-                        />
-                      )}
-                      
-                      {categoryFilter !== 'all' && (
-                        <Chip
-                          label={`${t('strings.filters.category')}: ${categoryFilter}`}
-                          size="small"
-                          onDelete={() => setCategoryFilter('all')}
-                          color="info"
-                          variant="outlined"
-                        />
-                      )}
-                      
-                      {modifiedFilter !== 'all' && (
-                        <Chip
-                          label={`${t('strings.filters.status')}: ${modifiedFilter === 'modified' ? t('strings.filters.modifiedOnly') : t('strings.filters.unmodifiedOnly')}`}
-                          size="small"
-                          onDelete={() => setModifiedFilter('all')}
-                          color="warning"
-                          variant="outlined"
-                        />
-                      )}
-                      
+              <MDBox px={3} pt={3}>
+                {/* Authentication Warning */}
+                {authError && (
+                  <Alert 
+                    severity="warning" 
+                    sx={{ mb: 3, borderRadius: 2 }}
+                    action={
                       <MDButton
                         size="small"
-                        variant="outlined"
-                        color="error"
-                        onClick={() => {
-                          setSearchTerm('');
-                          setCategoryFilter('all');
-                          setModifiedFilter('all');
-                        }}
-                        sx={{ ml: 1 }}
+                        color="warning"
+                        onClick={handleLoginRedirect}
+                        startIcon={<LoginIcon />}
                       >
-                        {t('strings.clearAll')}
+                          {t('strings.messages.loginButton')}
                       </MDButton>
-                    </MDBox>
-                  )}
+                    }
+                  >
+                      <strong>{t('strings.messages.authRequired')}</strong> {t('strings.messages.authMessage')}
+                  </Alert>
+                )}
 
-                  {/* Error/Success Messages */}
-                  {error && (
-                    <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
-                      {error}
-                    </Alert>
-                  )}
+                {/* Search and Actions */}
+                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} mb={3}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    placeholder={t('strings.searchPlaceholder')}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={componentStyles.searchInput}
+                  />
                   
-                  {success && (
-                    <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}>
-                      {success}
-                    </Alert>
-                  )}
+                  {/* Category Filter */}
+                  <FormControl sx={{ minWidth: 200 }}>
+                    <InputLabel>{t('strings.filters.category')}</InputLabel>
+                    <Select
+                      value={categoryFilter}
+                      label={t('strings.filters.category')}
+                      onChange={(e) => setCategoryFilter(e.target.value)}
+                      startAdornment={<FilterListIcon sx={{ mr: 1, color: 'action.active' }} />}
+                    >
+                      <MenuItem value="all">{t('strings.filters.allCategories')}</MenuItem>
+                      {getUniqueCategories().map(category => (
+                        <MenuItem key={category} value={category}>
+                          {category}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
 
-                  {/* Connection Error */}
-                  {connectionError && (
-                    <MDBox sx={{ mb: 3 }}>
-                      <ConnectionError
-                        title={connectionError.title}
-                        message={connectionError.message}
-                        type={connectionError.type}
-                        onRetry={handleRetry}
-                        variant="card"
+                  {/* Modified Status Filter */}
+                  <FormControl sx={{ minWidth: 150 }}>
+                    <InputLabel>{t('strings.filters.status')}</InputLabel>
+                    <Select
+                      value={modifiedFilter}
+                      label={t('strings.filters.status')}
+                      onChange={(e) => setModifiedFilter(e.target.value)}
+                    >
+                      <MenuItem value="all">{t('strings.filters.allStrings')}</MenuItem>
+                      <MenuItem value="modified">{t('strings.filters.modifiedOnly')}</MenuItem>
+                      <MenuItem value="unmodified">{t('strings.filters.unmodifiedOnly')}</MenuItem>
+                    </Select>
+                  </FormControl>
+                  
+                  {/* Save Button */}
+                  {Object.keys(modifiedStrings).length > 0 && (
+                    <MDButton
+                      variant="gradient"
+                      color="success"
+                      onClick={saveModifiedStrings}
+                      disabled={loading}
+                      startIcon={<FileDownloadIcon />}
+                      sx={{ 
+                        minWidth: 200,
+                        borderRadius: THEME.components.button.borderRadius,
+                        fontSize: THEME.components.button.fontSize,
+                        fontWeight: THEME.components.button.fontWeight,
+                      }}
+                    >
+                      {loading ? t('strings.generating') : t('strings.export', { count: Object.keys(modifiedStrings).length })}
+                    </MDButton>
+                  )}
+                </Stack>
+
+                {/* Active Filters Indicator */}
+                {(categoryFilter !== 'all' || modifiedFilter !== 'all' || searchTerm) && (
+                  <MDBox 
+                    display="flex" 
+                    alignItems="center" 
+                    gap={1} 
+                    flexWrap="wrap"
+                    p={2}
+                    mb={2}
+                    sx={{ 
+                      backgroundColor: THEME.colors.backgroundSubtle, 
+                      borderRadius: THEME.borderRadius.md,
+                      border: `1px solid ${THEME.colors.border}`
+                    }}
+                  >
+                    <MDTypography variant="body2" fontWeight="medium" color="text">
+                      {t('strings.activeFilters')}:
+                    </MDTypography>
+                    
+                    {searchTerm && (
+                      <Chip
+                        label={`${t('common.search')}: "${searchTerm}"`}
+                        size="small"
+                        onDelete={() => setSearchTerm('')}
+                        color="primary"
+                        variant="outlined"
                       />
-                    </MDBox>
-                  )}
+                    )}
+                    
+                    {categoryFilter !== 'all' && (
+                      <Chip
+                        label={`${t('strings.filters.category')}: ${categoryFilter}`}
+                        size="small"
+                        onDelete={() => setCategoryFilter('all')}
+                        color="info"
+                        variant="outlined"
+                      />
+                    )}
+                    
+                    {modifiedFilter !== 'all' && (
+                      <Chip
+                        label={`${t('strings.filters.status')}: ${modifiedFilter === 'modified' ? t('strings.filters.modifiedOnly') : t('strings.filters.unmodifiedOnly')}`}
+                        size="small"
+                        onDelete={() => setModifiedFilter('all')}
+                        color="warning"
+                        variant="outlined"
+                      />
+                    )}
+                    
+                    <MDButton
+                      size="small"
+                      variant="outlined"
+                      color="error"
+                      onClick={() => {
+                        setSearchTerm('');
+                        setCategoryFilter('all');
+                        setModifiedFilter('all');
+                      }}
+                      sx={{ ml: 1 }}
+                    >
+                      {t('strings.clearAll')}
+                    </MDButton>
+                  </MDBox>
+                )}
 
-                  {/* Strings DataGrid with Fixed Height */}
-                  <MDBox sx={{ flex: 1, minHeight: '600px' }}>
-                    <StringsDataGrid
-                      language={language}
-                      englishStrings={englishStrings}
-                      frenchStrings={frenchStrings}
-                      modifiedStrings={modifiedStrings}
-                      onStringModified={handleStringModified}
-                      onStringReset={handleStringReset}
-                      searchTerm={searchTerm}
-                      categoryFilter={categoryFilter}
-                      modifiedFilter={modifiedFilter}
-                      height={600}
+                {/* Error/Success Messages */}
+                {error && (
+                  <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+                    {error}
+                  </Alert>
+                )}
+                
+                {success && (
+                  <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}>
+                    {success}
+                  </Alert>
+                )}
+
+                {/* Connection Error */}
+                {connectionError && (
+                  <MDBox sx={{ mb: 3 }}>
+                    <ConnectionError
+                      title={connectionError.title}
+                      message={connectionError.message}
+                      type={connectionError.type}
+                      onRetry={handleRetry}
+                      variant="card"
                     />
                   </MDBox>
+                )}
+
+                {/* Strings DataGrid */}
+                <MDBox px={3} pb={3} sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                  <StringsDataGrid
+                    language={language}
+                    englishStrings={englishStrings}
+                    frenchStrings={frenchStrings}
+                    modifiedStrings={modifiedStrings}
+                    onStringModified={handleStringModified}
+                    onStringReset={handleStringReset}
+                    searchTerm={searchTerm}
+                    categoryFilter={categoryFilter}
+                    modifiedFilter={modifiedFilter}
+                  />
                 </MDBox>
               </MDBox>
             </Card>
           </Grid>
         </Grid>
       </MDBox>
-
-      <Footer />
     </DashboardLayout>
   );
 }

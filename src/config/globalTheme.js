@@ -20,27 +20,51 @@ import rgba from 'assets/theme/functions/rgba';
 
 // Color Palette - PsyPsy Brand Colors
 const brandColors = {
-  // Essential legacy colors needed for Material Dashboard components
-  white: {
-    main: '#FFFFFF',
-    focus: '#FFFFFF',
+  // Primary Brand Colors (from PsyPsy specification)
+  primary: {
+    main: '#899581',
+    light: '#a4b695',
+    dark: '#6d7766',
+    contrastText: '#ffffff'
   },
-
-  black: {
-    light: '#000000',
-    main: '#000000',
-    focus: '#000000',
+  
+  secondary: {
+    main: '#5d1c33',
+    light: '#7d2a47', 
+    dark: '#3d1021',
+    contrastText: '#ffffff'
   },
-
-  dark: {
-    main: '#000000',
-    state: '#3D314A',
+  
+  // Semantic Colors
+  success: {
+    main: '#11BA73',
+    light: '#4dd796',
+    dark: '#0c9559',
+    contrastText: '#ffffff'
   },
-
-  transparent: {
-    main: 'transparent',
+  
+  warning: {
+    main: '#FF6B00',
+    light: '#ff8533',
+    dark: '#cc5500',
+    contrastText: '#ffffff'
   },
-
+  
+  error: {
+    main: '#D00000',
+    light: '#d93333',
+    dark: '#a60000',
+    contrastText: '#ffffff'
+  },
+  
+  info: {
+    main: '#899581',
+    light: '#a4b695',
+    dark: '#6d7766',
+    contrastText: '#ffffff'
+  },
+  
+  // Neutral Colors
   grey: {
     50: '#fafafa',
     100: '#f5f5f5',
@@ -52,135 +76,49 @@ const brandColors = {
     700: '#616161',
     800: '#424242',
     900: '#212121',
-    main: '#9e9e9e',
-    light: '#f5f5f5',
-    dark: '#616161',
+    main: '#9e9e9e', // Legacy support - add main property
+    contrastText: '#ffffff'
   },
   
-  // PsyPsy Primary Colors - using exact app color scheme
-  primary: {
-    50: '#f5f7f4',
-    100: '#e8ede6',
-    200: '#d1dcce',
-    300: '#b3c4ab',
-    400: '#A9AC99', // prevMainColor
-    500: '#899581', // mainColor
-    600: '#6b7a62',
-    700: '#465041',
-    800: '#3a4237',
-    900: '#32382f',
-    main: '#899581', // mainColor
-    light: '#A9AC99', // prevMainColor
-    dark: '#5d1c33', // mainMedium
-    contrastText: '#FFFFFF'
-  },
-  
-  // PsyPsy Secondary Colors
-  secondary: {
-    50: '#f6f3f5',
-    100: '#ede5ea',
-    200: '#dbc6d0',
-    300: '#c49db1',
-    400: '#a97187',
-    500: '#5d1c33', // mainMedium
-    600: '#532032',
-    700: '#46202e',
-    800: '#3c1d2a',
-    900: '#341c27',
-    main: '#5d1c33', // mainMedium
-    light: '#a97187',
-    dark: '#341c27',
-    contrastText: '#FFFFFF'
-  },
-  
-  // PsyPsy Accent Colors
-  accent: {
-    50: '#f6f5f7',
-    100: '#efeef1',
-    200: '#dddce2',
-    300: '#c8c5ce',
-    400: '#b0abb7',
-    500: '#3D314A', // accent1
-    600: '#85819b',
-    700: '#6f6d7a',
-    800: '#5c5a65',
-    900: '#4d4c55',
-    main: '#3D314A', // accent1
-    light: '#b0abb7',
-    dark: '#4d4c55',
-    contrastText: '#FFFFFF'
-  },
-  
-  // PsyPsy Success/Green Colors
-  success: {
-    50: '#f0f9f2',
-    100: '#dcf2e0',
-    200: '#bce5c4',
-    300: '#8dd19d',
-    400: '#57b66e',
-    500: '#11BA73', // confirmGreen
-    600: '#1F650E', // filledGreen
-    700: '#1a5a0d',
-    800: '#18480f',
-    900: '#153b10',
-    main: '#11BA73', // confirmGreen
-    light: '#57b66e',
-    dark: '#1F650E', // filledGreen
-    contrastText: '#FFFFFF'
-  },
-  
-  // Warning Colors
-  warning: {
-    50: '#fffbeb',
-    100: '#fef3c7',
-    200: '#fde68a',
-    300: '#fcd34d',
-    400: '#fbbf24',
-    500: '#f59e0b',
-    600: '#d97706',
-    700: '#b45309',
-    800: '#92400e',
-    900: '#78350f',
-    main: '#FFC107',
-    light: '#fcd34d',
-    dark: '#b45309',
+  // Legacy Material Dashboard color properties - ESSENTIAL for compatibility
+  white: {
+    main: '#ffffff',
+    focus: '#ffffff',
     contrastText: '#000000'
   },
   
-  // PsyPsy Error/Red Colors
-  error: {
-    50: '#fef2f2',
-    100: '#fee2e2',
-    200: '#FFCBCB', // cancelBg
-    300: '#fca5a5',
-    400: '#f87171',
-    500: '#D00000', // errorRed
-    600: '#dc2626',
-    700: '#b91c1c',
-    800: '#991b1b',
-    900: '#7f1d1d',
-    main: '#D00000', // errorRed
-    light: '#FFCBCB', // cancelBg
-    dark: '#991b1b',
-    contrastText: '#FFFFFF'
+  black: {
+    main: '#000000',
+    focus: '#000000',
+    contrastText: '#ffffff'
   },
   
-  // Info Colors
-  info: {
-    50: '#f0f9ff',
-    100: '#e0f2fe',
-    200: '#bae6fd',
-    300: '#7dd3fc',
-    400: '#38bdf8',
-    500: '#899581', // Using mainColor for info
-    600: '#0284c7',
-    700: '#0369a1',
-    800: '#075985',
-    900: '#0c4a6e',
-    main: '#899581', // mainColor
-    light: '#A9AC99', // prevMainColor
-    dark: '#5d1c33', // mainMedium
-    contrastText: '#FFFFFF'
+  dark: {
+    main: '#344767',
+    focus: '#2d3748',
+    contrastText: '#ffffff'
+  },
+  
+  light: {
+    main: '#ffffff',
+    focus: '#f5f5f5',
+    contrastText: '#000000'
+  },
+  
+  transparent: {
+    main: 'transparent',
+    focus: 'transparent',
+    contrastText: '#000000'
+  },
+  
+  // Legacy text color - ESSENTIAL for text.main compatibility
+  text: {
+    main: '#344767',
+    focus: '#2d3748',
+    primary: '#344767',
+    secondary: '#7b809a',
+    disabled: '#a0a0a0',
+    contrastText: '#ffffff'
   }
 };
 
@@ -636,7 +574,6 @@ export const createLightTheme = () => {
       warning: brandColors.warning,
       error: brandColors.error,
       info: brandColors.info,
-      text: semanticColors.text,
       background: semanticColors.background,
       divider: semanticColors.divider,
       action: semanticColors.action,
@@ -646,6 +583,7 @@ export const createLightTheme = () => {
       transparent: brandColors.transparent,
       black: brandColors.black,
       grey: brandColors.grey,
+      text: brandColors.text, // Legacy text structure with .main property
       gradients: legacyGradients
     },
     
@@ -780,7 +718,42 @@ export const createLightTheme = () => {
       
       MuiTextField: {
         styleOverrides: {
-          root: inputStyles.default
+          root: {
+            // Remove conflicting border styles to prevent double borders
+            '& .MuiOutlinedInput-root': {
+              borderRadius: borderRadius.lg,
+              transition: 'all 0.3s ease',
+              '& fieldset': {
+                borderColor: 'rgba(0, 0, 0, 0.23)',
+                borderRadius: borderRadius.lg,
+                transition: 'border-color 0.3s ease',
+              },
+              '&:hover fieldset': {
+                borderColor: brandColors.primary.main,
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: brandColors.primary.main,
+                borderWidth: '2px'
+              }
+            },
+            // Animated floating label styling
+            '& .MuiInputLabel-root': {
+              transition: 'all 0.3s ease',
+              color: 'rgba(0, 0, 0, 0.6)',
+              '&.Mui-focused': {
+                color: brandColors.primary.main,
+              },
+              '&.MuiInputLabel-shrink': {
+                transform: 'translate(14px, -9px) scale(0.75)',
+                backgroundColor: 'white',
+                padding: '0 4px',
+              }
+            },
+            // Input text styling
+            '& .MuiOutlinedInput-input': {
+              transition: 'all 0.3s ease',
+            }
+          }
         }
       },
       
@@ -818,7 +791,6 @@ export const createDarkTheme = () => {
       warning: brandColors.warning,
       error: brandColors.error,
       info: brandColors.info,
-      text: darkModeColors.text,
       background: darkModeColors.background,
       divider: darkModeColors.divider,
       action: darkModeColors.action,
@@ -828,6 +800,7 @@ export const createDarkTheme = () => {
       transparent: brandColors.transparent,
       black: brandColors.black,
       grey: brandColors.grey,
+      text: brandColors.text, // Legacy text structure with .main property
       gradients: legacyGradients
     },
     
@@ -926,6 +899,7 @@ export const createDarkTheme = () => {
       '0 25px 50px rgba(0,0,0,0.5)',
       '0 25px 50px rgba(0,0,0,0.5)',
       '0 25px 50px rgba(0,0,0,0.5)',
+      '0 25px 50px rgba(0,0,0,0.5)',
       '0 25px 50px rgba(0,0,0,0.5)'
     ],
     
@@ -995,17 +969,39 @@ export const createDarkTheme = () => {
       MuiTextField: {
         styleOverrides: {
           root: {
-            ...inputStyles.default,
+            // Remove conflicting border styles to prevent double borders
             '& .MuiOutlinedInput-root': {
+              borderRadius: borderRadius.lg,
+              transition: 'all 0.3s ease',
               '& fieldset': {
-                borderColor: darkModeColors.divider
+                borderColor: 'rgba(0, 0, 0, 0.23)',
+                borderRadius: borderRadius.lg,
+                transition: 'border-color 0.3s ease',
               },
               '&:hover fieldset': {
-                borderColor: brandColors.primary.light
+                borderColor: brandColors.primary.main,
               },
               '&.Mui-focused fieldset': {
-                borderColor: brandColors.primary.main
+                borderColor: brandColors.primary.main,
+                borderWidth: '2px'
               }
+            },
+            // Animated floating label styling
+            '& .MuiInputLabel-root': {
+              transition: 'all 0.3s ease',
+              color: 'rgba(0, 0, 0, 0.6)',
+              '&.Mui-focused': {
+                color: brandColors.primary.main,
+              },
+              '&.MuiInputLabel-shrink': {
+                transform: 'translate(14px, -9px) scale(0.75)',
+                backgroundColor: 'white',
+                padding: '0 4px',
+              }
+            },
+            // Input text styling
+            '& .MuiOutlinedInput-input': {
+              transition: 'all 0.3s ease',
             }
           }
         }

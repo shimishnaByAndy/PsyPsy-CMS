@@ -21,7 +21,7 @@ export default styled(Drawer)(({ theme, ownerState }) => {
   const { palette, boxShadows, transitions, breakpoints, functions } = theme;
   const { sidenavColor, transparentSidenav, whiteSidenav, miniSidenav, darkMode } = ownerState;
 
-  const sidebarWidth = 250;
+  const sidebarWidth = 280;
   const { transparent, gradients, white, background } = palette;
   const { xxl } = boxShadows;
   const { pxToRem, linearGradient } = functions;
@@ -44,6 +44,12 @@ export default styled(Drawer)(({ theme, ownerState }) => {
   // styles for the sidenav when miniSidenav={false}
   const drawerOpenStyles = () => ({
     background: backgroundValue,
+    borderRadius: "12px",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "850px",
+    width: sidebarWidth,
     transform: "translateX(0)",
     transition: transitions.create("transform", {
       easing: transitions.easing.sharp,
@@ -66,6 +72,12 @@ export default styled(Drawer)(({ theme, ownerState }) => {
   // styles for the sidenav when miniSidenav={true}
   const drawerCloseStyles = () => ({
     background: backgroundValue,
+    borderRadius: "12px",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "850px",
+    width: pxToRem(96),
     transform: `translateX(${pxToRem(-320)})`,
     transition: transitions.create("transform", {
       easing: transitions.easing.sharp,
@@ -90,6 +102,8 @@ export default styled(Drawer)(({ theme, ownerState }) => {
     "& .MuiDrawer-paper": {
       boxShadow: xxl,
       border: "none",
+      borderRadius: "12px",
+      overflow: "hidden",
 
       ...(miniSidenav ? drawerCloseStyles() : drawerOpenStyles()),
     },

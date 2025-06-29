@@ -39,16 +39,16 @@ function DashboardLayout({ children }) {
   return (
     <MDBox
       sx={({ breakpoints, transitions, functions: { pxToRem } }) => ({
-        p: 3,
-        position: "relative",
-
-        [breakpoints.up("xl")]: {
-          marginLeft: miniSidenav ? pxToRem(120) : pxToRem(274),
-          transition: transitions.create(["margin-left", "margin-right"], {
-            easing: transitions.easing.easeInOut,
-            duration: transitions.duration.standard,
-          }),
-        },
+        position: "absolute",
+        top: 0,
+        right: 0,
+        height: "850px",
+        overflow: "hidden",
+        width: `calc(100% - ${miniSidenav ? pxToRem(96) : pxToRem(280)})`,
+        transition: transitions.create(["width"], {
+          easing: transitions.easing.easeInOut,
+          duration: transitions.duration.standard,
+        }),
       })}
     >
       {children}
