@@ -1,25 +1,23 @@
 /**
- * StringsDataGrid - MUI-X DataGrid component for displaying strings data
- * Uses the same structure as ClientsDataGrid but adapted for string management
+ * StringsDataGrid - TanStack Table component for displaying strings data
+ * Adapted for string management with inline editing capabilities
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import TanStackTable from 'components/TanStackTable';
+import TableToolbar from 'components/TanStackTable/TableToolbar';
+import { createCommonColumns, createFilterOptions, TABLE_PRESETS } from 'utils/tableHelpers';
 
 // @mui material components
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import LinearProgress from '@mui/material/LinearProgress';
-import Alert from '@mui/material/Alert';
-import TextField from '@mui/material/TextField';
+import { Chip, IconButton, Tooltip, TextField, Box } from '@mui/material';
 
 // @mui icons
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import RestoreIcon from '@mui/icons-material/Restore';
+import DownloadIcon from '@mui/icons-material/Download';
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -37,20 +35,23 @@ function StringsDataGrid({
   modifiedFilter = 'all',
   height = 600 
 }) {
+  const { t } = useTranslation();
   
-  // State for data grid
-  const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [rowCount, setRowCount] = useState(0);
+  // State for inline editing
   const [editingCell, setEditingCell] = useState(null);
   const [editingValue, setEditingValue] = useState('');
   
-  // State for pagination and sorting
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
+  // State for table operations (client-side)
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
     pageSize: 25,
   });
-  const [sortModel, setSortModel] = useState([]);
+  const [sorting, setSorting] = useState([]);
+  const [globalFilter, setGlobalFilter] = useState(searchTerm);
+  const [filters, setFilters] = useState({
+    category: categoryFilter,
+    modified: modifiedFilter,
+  });
 
   // Generate category for a string key
   const getCategory = (key) => {
@@ -89,12 +90,12 @@ function StringsDataGrid({
   const columns = useMemo(() => {
     const baseColumns = [
       {
-        field: 'category',
-        headerName: 'Category',
-        width: 180,
-        renderCell: (params) => {
-          const category = params.row.category;
-          const isModified = params.row.isModified;
+        accessorKey: 'category',
+        header: 'Category',
+        size: 180,
+        cell: ({ row }) => {
+          const category = row.original.category;
+          const isModified = row.original.isModified;
           
           return (
             <MDBox display="flex" alignItems="center" gap={1}>
@@ -121,7 +122,7 @@ function StringsDataGrid({
             </MDBox>
           );
         },
-        sortable: true,
+        enableSorting: true,
       }
     ];
 
@@ -129,12 +130,12 @@ function StringsDataGrid({
     if (language === 'both') {
       baseColumns.push(
         {
-          field: 'englishValue',
-          headerName: 'English Value',
-          width: 280,
-          renderCell: (params) => {
-            const value = params.row.englishValue || '';
-            const isModified = params.row.isModified;
+          accessorKey: 'englishValue',
+          header: 'English Value',
+          size: 280,
+          cell: ({ row }) => {
+            const value = row.original.englishValue || '';
+            const isModified = row.original.isModified;
             
             return (
               <MDBox 
@@ -172,15 +173,15 @@ function StringsDataGrid({
               </MDBox>
             );
           },
-          sortable: true,
+          enableSorting: true,
         },
         {
-          field: 'frenchValue',
-          headerName: 'French Value',
-          width: 280,
-          renderCell: (params) => {
-            const value = params.row.frenchValue || '';
-            const isModified = params.row.isModified;
+          accessorKey: 'frenchValue',
+          header: 'French Value',
+          size: 280,
+          cell: ({ row }) => {
+            const value = row.original.frenchValue || '';
+            const isModified = row.original.isModified;
             
             return (
               <MDBox 
@@ -218,19 +219,19 @@ function StringsDataGrid({
               </MDBox>
             );
           },
-          sortable: true,
+          enableSorting: true,
         }
       );
     } else {
       baseColumns.push({
-        field: 'currentValue',
-        headerName: 'Current Value',
-        width: 560,
-        renderCell: (params) => {
-          const isEditing = editingCell === `${params.row.id}-currentValue`;
-          const value = params.row.currentValue || '';
-          const originalValue = params.row.originalValue || '';
-          const isModified = params.row.isModified;
+        accessorKey: 'currentValue',
+        header: 'Current Value',
+        size: 560,
+        cell: ({ row }) => {
+          const isEditing = editingCell === `${row.original.id}-currentValue`;
+          const value = row.original.currentValue || '';
+          const originalValue = row.original.originalValue || '';
+          const isModified = row.original.isModified;
           
           if (isEditing) {
             return (
@@ -307,18 +308,18 @@ function StringsDataGrid({
             </MDBox>
           );
         },
-        sortable: true,
+        enableSorting: true,
       });
     }
 
     // Add actions column
     baseColumns.push({
-      field: 'actions',
-      headerName: 'Actions',
-      width: 120,
-      renderCell: (params) => {
-        const isEditing = editingCell === `${params.row.id}-currentValue`;
-        const isModified = params.row.isModified;
+      accessorKey: 'actions',
+      header: 'Actions',
+      size: 120,
+      cell: ({ row }) => {
+        const isEditing = editingCell === `${row.original.id}-currentValue`;
+        const isModified = row.original.isModified;
         
         return (
           <MDBox display="flex" gap={0.5}>
@@ -328,7 +329,7 @@ function StringsDataGrid({
                   <IconButton 
                     size="small"
                     color="success"
-                    onClick={() => handleSaveEdit(params.row)}
+                    onClick={() => handleSaveEdit(row.original)}
                   >
                     <SaveIcon fontSize="small" />
                   </IconButton>
@@ -349,7 +350,7 @@ function StringsDataGrid({
                   <IconButton 
                     size="small"
                     color="primary"
-                    onClick={() => handleStartEdit(params.row)}
+                    onClick={() => handleStartEdit(row.original)}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
@@ -359,7 +360,7 @@ function StringsDataGrid({
                     <IconButton 
                       size="small"
                       color="warning"
-                      onClick={() => handleResetString(params.row)}
+                      onClick={() => handleResetString(row.original)}
                     >
                       <RestoreIcon fontSize="small" />
                     </IconButton>
@@ -370,7 +371,7 @@ function StringsDataGrid({
           </MDBox>
         );
       },
-      sortable: false,
+      enableSorting: false,
     });
 
     return baseColumns;
@@ -405,13 +406,13 @@ function StringsDataGrid({
   };
 
   // Process and filter data
-  const processedData = useMemo(() => {
-    let data = [];
+  const data = useMemo(() => {
+    let processedData = [];
     
     if (language === "both") {
       // Combine both languages
       const allKeys = new Set([...Object.keys(englishStrings), ...Object.keys(frenchStrings)]);
-      data = Array.from(allKeys).map(key => ({
+      processedData = Array.from(allKeys).map(key => ({
         id: key,
         key,
         englishValue: englishStrings[key] || '',
@@ -422,7 +423,7 @@ function StringsDataGrid({
     } else {
       // Single language mode
       const currentStrings = language === 'en' ? englishStrings : frenchStrings;
-      data = Object.entries(currentStrings).map(([key, value]) => ({
+      processedData = Object.entries(currentStrings).map(([key, value]) => ({
         id: key,
         key,
         originalValue: value,
@@ -433,109 +434,145 @@ function StringsDataGrid({
     }
 
     // Apply filters
-    if (categoryFilter !== 'all') {
-      data = data.filter(item => item.category === categoryFilter);
+    if (filters.category !== 'all') {
+      processedData = processedData.filter(item => item.category === filters.category);
     }
 
-    if (modifiedFilter === 'modified') {
-      data = data.filter(item => item.isModified);
-    } else if (modifiedFilter === 'unmodified') {
-      data = data.filter(item => !item.isModified);
+    if (filters.modified === 'modified') {
+      processedData = processedData.filter(item => item.isModified);
+    } else if (filters.modified === 'unmodified') {
+      processedData = processedData.filter(item => !item.isModified);
     }
 
     // Apply search filter
-    if (searchTerm) {
-      data = data.filter(item => {
+    if (globalFilter) {
+      processedData = processedData.filter(item => {
         if (language === "both") {
-          return item.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                 item.englishValue.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                 item.frenchValue.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                 item.category.toLowerCase().includes(searchTerm.toLowerCase());
+          return item.key.toLowerCase().includes(globalFilter.toLowerCase()) ||
+                 item.englishValue.toLowerCase().includes(globalFilter.toLowerCase()) ||
+                 item.frenchValue.toLowerCase().includes(globalFilter.toLowerCase()) ||
+                 item.category.toLowerCase().includes(globalFilter.toLowerCase());
         } else {
-          return item.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                 item.originalValue.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                 item.currentValue.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                 item.category.toLowerCase().includes(searchTerm.toLowerCase());
+          return item.key.toLowerCase().includes(globalFilter.toLowerCase()) ||
+                 item.originalValue.toLowerCase().includes(globalFilter.toLowerCase()) ||
+                 item.currentValue.toLowerCase().includes(globalFilter.toLowerCase()) ||
+                 item.category.toLowerCase().includes(globalFilter.toLowerCase());
         }
       });
     }
 
-    return data;
-  }, [englishStrings, frenchStrings, modifiedStrings, language, categoryFilter, modifiedFilter, searchTerm]);
+    return processedData;
+  }, [englishStrings, frenchStrings, modifiedStrings, language, filters, globalFilter]);
 
-  // Update rows and count when data changes
+  // Update filters when props change
   useEffect(() => {
-    setRows(processedData);
-    setRowCount(processedData.length);
-  }, [processedData]);
+    setGlobalFilter(searchTerm);
+    setFilters({
+      category: categoryFilter,
+      modified: modifiedFilter,
+    });
+  }, [searchTerm, categoryFilter, modifiedFilter]);
 
-  // Handle pagination change
-  const handlePaginationModelChange = (newPaginationModel) => {
-    setPaginationModel(newPaginationModel);
-  };
+  // Create filter options
+  const availableFilters = useMemo(() => [
+    {
+      key: 'category',
+      label: 'Category',
+      options: [
+        { value: 'all', label: 'All Categories' },
+        { value: 'Welcome & Onboarding', label: 'Welcome & Onboarding' },
+        { value: 'Authentication', label: 'Authentication' },
+        { value: 'Profile & Settings', label: 'Profile & Settings' },
+        { value: 'Forms & Validation', label: 'Forms & Validation' },
+        { value: 'Navigation & UI', label: 'Navigation & UI' },
+        { value: 'Errors & Messages', label: 'Errors & Messages' },
+        { value: 'Other', label: 'Other' },
+      ],
+    },
+    {
+      key: 'modified',
+      label: 'Modified Status',
+      options: [
+        { value: 'all', label: 'All Strings' },
+        { value: 'modified', label: 'Modified Only' },
+        { value: 'unmodified', label: 'Unmodified Only' },
+      ],
+    },
+  ], []);
 
-  // Handle sort change
-  const handleSortModelChange = (newSortModel) => {
-    setSortModel(newSortModel);
-  };
+  // Custom actions for toolbar
+  const customActions = useMemo(() => [
+    {
+      icon: <DownloadIcon />,
+      label: 'Export',
+      tooltip: 'Export strings data',
+      onClick: () => {
+        console.log('Export strings data');
+      },
+    },
+  ], []);
 
   return (
     <MDBox>
-      <Box sx={{ height: height, width: '100%', minWidth: '900px' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          loading={loading}
-          rowCount={rowCount}
-          
-          // Pagination
-          paginationMode="client"
-          paginationModel={paginationModel}
-          onPaginationModelChange={handlePaginationModelChange}
-          pageSizeOptions={[10, 25, 50, 100]}
-          
-          // Sorting
-          sortingMode="client"
-          sortModel={sortModel}
-          onSortModelChange={handleSortModelChange}
-          
-          // Styling
-          disableRowSelectionOnClick
-          sx={{
-            '& .MuiDataGrid-cell': {
-              borderBottom: '1px solid #f0f0f0',
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: '#f8f9fa',
-              borderBottom: '2px solid #dee2e6',
-            },
-            '& .MuiDataGrid-row:hover': {
-              backgroundColor: '#f8f9fa',
-            },
-            '& .MuiDataGrid-row': {
-              '&.modified': {
-                backgroundColor: '#fff3cd',
-                borderLeft: '4px solid #ffc107',
-              }
+      <TableToolbar
+        title="String Management"
+        subtitle={`${data.length} strings total`}
+        searchValue={globalFilter}
+        onSearchChange={setGlobalFilter}
+        searchPlaceholder="Search strings..."
+        filters={filters}
+        onFilterChange={setFilters}
+        availableFilters={availableFilters}
+        customActions={customActions}
+        enableSearch={true}
+        enableFilters={true}
+      />
+      
+      <TanStackTable
+        data={data}
+        columns={columns}
+        loading={false}
+        
+        // Pagination (client-side)
+        totalRowCount={data.length}
+        pageIndex={pagination.pageIndex}
+        pageSize={pagination.pageSize}
+        onPaginationChange={setPagination}
+        pageSizeOptions={[10, 25, 50, 100]}
+        manualPagination={false}
+        
+        // Sorting (client-side)
+        sorting={sorting}
+        onSortingChange={setSorting}
+        enableSorting={true}
+        manualSorting={false}
+        
+        // Filtering (client-side)
+        globalFilter={globalFilter}
+        onGlobalFilterChange={setGlobalFilter}
+        enableGlobalFilter={true}
+        manualFiltering={false}
+        
+        // Styling
+        height={height}
+        maxHeight="600px"
+        stickyHeader={true}
+        
+        // Row styling for modified strings
+        getRowProps={(row) => ({
+          sx: row.original.isModified ? {
+            backgroundColor: '#fff3cd',
+            borderLeft: '4px solid #ffc107',
+            '&:hover': {
+              backgroundColor: '#fff3cd !important',
             }
-          }}
-          
-          // Loading overlay
-          slots={{
-            loadingOverlay: LinearProgress,
-          }}
-          
-          // Initial state
-          initialState={{
-            pagination: {
-              paginationModel: { pageSize: 25, page: 0 },
-            },
-          }}
-          
-          // Row styling
-          getRowClassName={(params) => params.row.isModified ? 'modified' : ''}
-        />
-      </Box>
+          } : undefined
+        })}
+        
+        // Empty state
+        emptyStateType="strings"
+        emptyStateSize="medium"
+      />
     </MDBox>
   );
 }

@@ -59,6 +59,10 @@
     "@mui/material": "^5.12.3",
     "@mui/system": "^5.12.3",
     "@mui/x-data-grid": "^6.19.11",
+    "@tanstack/react-query": "^5.85.5",
+    "@tanstack/react-query-devtools": "^5.85.5",
+    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.13.12",
     "apexcharts": "^4.2.0",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.3.0",
@@ -79,6 +83,7 @@
     "mcp-shrimp-task-manager": "^1.0.19",
     "moment": "^2.30.1",
     "motion": "^12.15.0",
+    "papaparse": "^5.5.3",
     "parse": "^6.1.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
@@ -98,6 +103,7 @@
     "stylis-plugin-rtl": "^2.1.1",
     "tailwind-merge": "^3.3.0",
     "wait-on": "^8.0.3",
+    "xlsx": "^0.18.5",
     "yup": "^1.1.1"
   },
   "devDependencies": {

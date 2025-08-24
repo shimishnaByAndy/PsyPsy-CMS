@@ -35,7 +35,7 @@ import MenuItem from "@mui/material/MenuItem";
 import SearchIcon from "@mui/icons-material/Search";
 import LoginIcon from "@mui/icons-material/Login";
 import TranslateIcon from "@mui/icons-material/Translate";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import DownloadIcon from "@mui/icons-material/Download";
 import InfoIcon from "@mui/icons-material/Info";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
@@ -653,7 +653,7 @@ function Strings() {
                       color="success"
                       onClick={saveModifiedStrings}
                       disabled={loading}
-                      startIcon={<FileDownloadIcon />}
+                      startIcon={<DownloadIcon />}
                       sx={{ 
                         minWidth: 200,
                         borderRadius: THEME.components.button.borderRadius,

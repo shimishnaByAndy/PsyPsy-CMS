@@ -31,13 +31,9 @@ import LanguageIcon from "@mui/icons-material/Language";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDInput from "components/MDInput";
-import MDButton from "components/MDButton";
-import SimpleErrorMessage from "components/SimpleErrorMessage";
-import SimpleSwitch from "components/SimpleSwitch";
 
-// Animate UI components
-import { IconButton as AnimateIconButton } from "components/animate-ui/buttons/icon-button";
+// Form components
+import { AuthForm } from "components/Forms";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
@@ -48,16 +44,8 @@ import bgImage from "assets/images/montreal_green.png";
 //import bgImage from "assets/images/montreal_blue.png";
 //import bgImage from "assets/images/montrel_purple.png";
 
-// Parse
-import Parse from 'parse';
-import { ParseAuth } from "services/parseService";
-
 function Basic() {
   const { t, i18n } = useTranslation();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -72,70 +60,20 @@ function Basic() {
     if (i18n.language !== defaultLanguage) {
       i18n.changeLanguage(defaultLanguage);
     }
-    
-    // Check if there's a remembered username and pre-fill it
-    const rememberedUsername = localStorage.getItem('lastLoginUsername');
-    if (rememberedUsername) {
-      setUsername(rememberedUsername);
-      setRememberMe(true);
-    }
   }, [i18n]);
 
-  const handleRememberMeChange = (checked) => {
-    setRememberMe(checked);
+  const handleLoginSuccess = async (user) => {
+    console.log('Login successful, session token saved');
+    console.log('Navigating to dashboard after successful login');
+    
+    // Use a slight delay to ensure all states are updated before navigation
+    setTimeout(() => {
+      navigate('/dashboard', { replace: true });
+    }, 100);
   };
 
-  const login = async () => {
-    setError(null);
-    console.log('Login attempted with:', { username, rememberMe });
-    
-    // Basic validation before attempting to log in
-    if (!username.trim()) {
-      setError(t("auth.login.missingCredentials"));
-      return;
-    }
-    
-    if (!password.trim()) {
-      setError(t("auth.login.missingPassword"));
-      return;
-    }
-    
-    try {
-      console.log('Calling ParseAuth.loginWithRememberMe');
-      // Use the new loginWithRememberMe function and pass the rememberMe state
-      await ParseAuth.loginWithRememberMe(username, password, rememberMe);
-      console.log('Login successful, session token saved');
-      
-      // Store the username in localStorage if rememberMe is true
-      if (rememberMe) {
-        localStorage.setItem('lastLoginUsername', username);
-      } else {
-        localStorage.removeItem('lastLoginUsername');
-      }
-      
-      console.log('Navigating to dashboard after successful login');
-      // Use a slight delay to ensure all states are updated before navigation
-      setTimeout(() => {
-        navigate('/dashboard', { replace: true });
-      }, 100);
-    } catch (error) {
-      console.error("Error while logging in user", error);
-      
-      // Handle specific error types
-      if (error.code === 101) {
-        setError(t("auth.login.invalidCredentials"));
-      } else if (error.code === 209) {
-        setError(t("auth.login.sessionExpired"));
-      } else if (error.message && error.message.includes("unauthorized")) {
-        setError(t("auth.login.unauthorized"));
-      } else if (error.code === 100) {
-        setError(t("auth.login.connectionFailed"));
-      } else if (error.message && error.message.includes("username/email is required")) {
-        setError(t("auth.login.missingCredentials"));
-      } else {
-        setError(error.message || t("auth.login.error"));
-      }
-    }
+  const handleLoginError = async (error) => {
+    console.error("Error while logging in user", error);
   };
 
   return (
@@ -234,54 +172,12 @@ function Basic() {
           </Grid>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          {error && <SimpleErrorMessage message={error} />}
-          
-          <MDBox component="form" role="form">
-            <MDBox mb={3}>
-              <MDInput
-                type="text"
-                label={t("auth.login.username")}
-                fullWidth
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </MDBox>
-            <MDBox mb={2}>
-              <MDInput
-                type="password"
-                label={t("auth.login.password")}
-                fullWidth
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </MDBox>
-            
-            <MDBox mt={4} mb={1}>
-              <MDButton 
-                variant="gradient" 
-                color="info" 
-                fullWidth 
-                onClick={login}
-                sx={{
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                  }
-                }}
-              >
-                {t("auth.login.submit")}
-              </MDButton>
-            </MDBox>
-            
-            {/* Remember me with simple switch */}
-            <MDBox mt={2} display="flex" justifyContent="center">
-              <SimpleSwitch
-                checked={rememberMe}
-                onChange={handleRememberMeChange}
-                label={t("common.rememberMe")}
-              />
-            </MDBox>
-          </MDBox>
+          <AuthForm
+            type="login"
+            onSuccess={handleLoginSuccess}
+            onError={handleLoginError}
+            title="" // No title since we have the logo header
+          />
         </MDBox>
       </Card>
     </BasicLayout>

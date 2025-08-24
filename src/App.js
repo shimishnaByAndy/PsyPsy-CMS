@@ -41,6 +41,9 @@ import GlobalThemeProvider from "./components/GlobalThemeProvider";
 // PsyPsy Theme Provider - Custom theme utilities for components
 import PsyPsyThemeProvider from "./components/ThemeProvider";
 
+// TanStack Query Provider
+import QueryProvider from "./providers/QueryProvider";
+
 // Images
 import brandWhite from "./assets/images/logo-ct.png";
 import brandDark from "./assets/images/logo-ct-dark.png";
@@ -239,6 +242,7 @@ export default function App() {
       <ParseInitializer>
         <GlobalThemeProvider>
           <PsyPsyThemeProvider>
+            <QueryProvider>
             <MDBox
               sx={{
                 display: 'flex',
@@ -280,6 +284,7 @@ export default function App() {
                 </Routes>
               </MDBox>
             </MDBox>
+            </QueryProvider>
           </PsyPsyThemeProvider>
         </GlobalThemeProvider>
       </ParseInitializer>

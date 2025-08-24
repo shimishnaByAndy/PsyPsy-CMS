@@ -1,40 +1,40 @@
 /**
  * ProfessionalsDataGrid Component
  * 
- * A comprehensive data grid for displaying and managing professional data using MUI-X DataGrid.
+ * A comprehensive data grid for displaying and managing professional data using TanStack Table.
  * Features server-side pagination, sorting, filtering, and professional-specific actions.
  * Based on ClassStructDocs Professional schema.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import TanStackTable from 'components/TanStackTable';
+import TableToolbar from 'components/TanStackTable/TableToolbar';
+import { useProfessionalsTableData } from 'hooks/useTableData';
+import { createCommonColumns, createFilterOptions, TABLE_PRESETS } from 'utils/tableHelpers';
+
+// @mui material components
 import { 
-  Box, 
   Chip, 
   Avatar, 
   IconButton, 
   Tooltip,
   Typography,
   Stack,
-  Alert
 } from '@mui/material';
 import {
-  Visibility as ViewIcon,
-  Email as EmailIcon,
-  Phone as PhoneIcon,
   Business as BusinessIcon,
-  Psychology as PsychologyIcon
+  Psychology as PsychologyIcon,
+  Download as DownloadIcon
 } from '@mui/icons-material';
 
+// Export functionality
+import { ExportButton } from 'components/Export';
+import { getTemplatesByType } from 'utils/exportTemplates';
+
 // Material Dashboard 2 React components
-import MDButton from "components/MDButton";
-
-// Custom components
-import EmptyState from 'components/EmptyState';
-import LoadingState from 'components/LoadingState';
-
-// Import the professional service
-import { ProfessionalService } from '../../services/professionalService';
+import MDBox from "components/MDBox";
+import MDTypography from "components/MDTypography";
 
 const ProfessionalsDataGrid = ({ 
   searchTerm = '', 
@@ -42,129 +42,138 @@ const ProfessionalsDataGrid = ({
   onViewProfessional,
   height = '100%' 
 }) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [professionals, setProfessionals] = useState([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
+  const { t } = useTranslation();
+
+  // Use table data hook with initial filters
+  const tableData = useProfessionalsTableData({
+    ...filters,
+    search: searchTerm,
   });
-  const [sortModel, setSortModel] = useState([
-    { field: 'createdAt', sort: 'desc' }
-  ]);
 
-  // Check if there are active filters or search
-  const hasActiveFilters = searchTerm.trim() !== '' || Object.values(filters).some(value => value !== 'all' && value !== '');
+  const {
+    rows,
+    totalRowCount,
+    isLoading,
+    isFetching,
+    error,
+    pagination,
+    sorting,
+    globalFilter,
+    setPagination,
+    setSorting,
+    setGlobalFilter,
+    setFilters,
+    refetch,
+    manualPagination,
+    manualSorting,
+    manualFiltering,
+  } = tableData;
 
-  // Define columns for the DataGrid
-  const columns = [
+  // Create custom columns for professionals
+  const commonColumns = useMemo(() => createCommonColumns(t), [t]);
+  
+  // Define columns for professionals table
+  const columns = useMemo(() => [
+    // Professional name with avatar
     {
-      field: 'name',
-      headerName: 'Professional',
-      width: 250,
-      sortable: true,
-      renderCell: (params) => {
-        const prof = params.row.professionalPtr;
-        const fullName = `Dr. ${prof.firstName} ${prof.lastName}`;
-        const initials = `${prof.firstName.charAt(0)}${prof.lastName.charAt(0)}`;
+      accessorKey: 'name',
+      header: t('tables.columns.professional'),
+      size: 250,
+      cell: ({ row }) => {
+        const prof = row.original.professionalPtr || {};
+        const fullName = `Dr. ${prof.firstName || 'N/A'} ${prof.lastName || ''}`;
+        const initials = `${(prof.firstName || '').charAt(0)}${(prof.lastName || '').charAt(0)}`;
         
         return (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <MDBox display="flex" alignItems="center" gap={1}>
             <Avatar sx={{ width: 32, height: 32, fontSize: '0.875rem' }}>
               {initials}
             </Avatar>
-            <Box>
-              <Typography variant="body2" fontWeight="medium">
+            <MDBox>
+              <MDTypography variant="button" fontWeight="medium">
                 {fullName}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {params.row.email}
-              </Typography>
-            </Box>
-          </Box>
+              </MDTypography>
+              <MDTypography variant="caption" color="text" fontWeight="regular">
+                {row.original.email}
+              </MDTypography>
+            </MDBox>
+          </MDBox>
         );
-      }
+      },
     },
+    
+    // Profession type
     {
-      field: 'profType',
-      headerName: 'Profession',
-      width: 200,
-      sortable: true,
-      renderCell: (params) => {
-        const prof = params.row.professionalPtr;
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <PsychologyIcon sx={{ fontSize: 16, color: 'primary.main' }} />
-            <Typography variant="body2">
-              {prof.profTypeName}
-            </Typography>
-          </Box>
-        );
-      }
+      accessorKey: 'professionalPtr.profTypeName',
+      header: t('tables.columns.profession'),
+      size: 200,
+      cell: ({ getValue }) => (
+        <MDBox display="flex" alignItems="center" gap={1}>
+          <PsychologyIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+          <MDTypography variant="caption" fontWeight="medium">
+            {getValue() || 'N/A'}
+          </MDTypography>
+        </MDBox>
+      ),
     },
+    
+    // Business name
     {
-      field: 'businessName',
-      headerName: 'Business',
-      width: 220,
-      sortable: true,
-      renderCell: (params) => {
-        const prof = params.row.professionalPtr;
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <BusinessIcon sx={{ fontSize: 16, color: 'secondary.main' }} />
-            <Typography variant="body2" noWrap>
-              {prof.businessName}
-            </Typography>
-          </Box>
-        );
-      }
+      accessorKey: 'professionalPtr.businessName',
+      header: t('tables.columns.business'),
+      size: 220,
+      cell: ({ getValue }) => (
+        <MDBox display="flex" alignItems="center" gap={1}>
+          <BusinessIcon sx={{ fontSize: 16, color: 'secondary.main' }} />
+          <MDTypography variant="caption" fontWeight="medium" noWrap>
+            {getValue() || 'N/A'}
+          </MDTypography>
+        </MDBox>
+      ),
     },
+    
+    // Age
+    commonColumns.age('professionalPtr.dob'),
+    
+    // Gender
     {
-      field: 'age',
-      headerName: 'Age',
-      width: 80,
-      sortable: false,
-      renderCell: (params) => {
-        const age = ProfessionalService.calculateAge(params.row.professionalPtr.dob);
-        return (
-          <Typography variant="body2">
-            {age || 'N/A'}
-          </Typography>
-        );
-      }
-    },
-    {
-      field: 'gender',
-      headerName: 'Gender',
-      width: 100,
-      sortable: false,
-      renderCell: (params) => {
-        const genderName = ProfessionalService.getGenderName(params.row.professionalPtr.gender);
+      accessorKey: 'professionalPtr.gender',
+      header: t('tables.columns.gender'),
+      size: 100,
+      cell: ({ getValue }) => {
+        const gender = getValue();
+        const genderMap = {
+          1: t("statistics.distributions.gender.woman"),
+          2: t("statistics.distributions.gender.man"),
+          3: t("statistics.distributions.gender.other"),
+          4: t("statistics.distributions.gender.notDisclosed"),
+        };
+        const genderLabel = gender && genderMap[gender] ? genderMap[gender] : "Unknown";
         const genderColors = {
-          'Woman': 'secondary',
-          'Man': 'primary',
-          'Other': 'info',
-          'Not disclosed': 'default'
+          [t("statistics.distributions.gender.woman")]: 'secondary',
+          [t("statistics.distributions.gender.man")]: 'primary',
+          [t("statistics.distributions.gender.other")]: 'info',
+          [t("statistics.distributions.gender.notDisclosed")]: 'default'
         };
         
         return (
           <Chip 
-            label={genderName} 
+            label={genderLabel} 
             size="small" 
-            color={genderColors[genderName] || 'default'}
+            color={genderColors[genderLabel] || 'default'}
             variant="outlined"
           />
         );
-      }
+      },
     },
+    
+    // Consultation type
     {
-      field: 'meetType',
-      headerName: 'Consultation',
-      width: 150,
-      sortable: false,
-      renderCell: (params) => {
-        const meetTypeName = params.row.professionalPtr.meetTypeName;
+      accessorKey: 'professionalPtr.meetTypeName',
+      header: t('tables.columns.consultationType'),
+      size: 150,
+      cell: ({ getValue }) => {
+        const meetTypeName = getValue() || 'N/A';
         const meetTypeColors = {
           'In-person only': 'success',
           'Online only': 'info',
@@ -179,15 +188,17 @@ const ProfessionalsDataGrid = ({
             variant="filled"
           />
         );
-      }
+      },
     },
+    
+    // Languages
     {
-      field: 'languages',
-      headerName: 'Languages',
-      width: 150,
-      sortable: false,
-      renderCell: (params) => {
-        const languages = params.row.professionalPtr.offeredLangArr;
+      accessorKey: 'professionalPtr.offeredLangArr',
+      header: t('tables.columns.languages'),
+      size: 150,
+      cell: ({ getValue }) => {
+        const languages = getValue() || [];
+        
         return (
           <Stack direction="row" spacing={0.5} flexWrap="wrap">
             {languages.slice(0, 2).map((lang, index) => (
@@ -209,15 +220,17 @@ const ProfessionalsDataGrid = ({
             )}
           </Stack>
         );
-      }
+      },
     },
+    
+    // Specializations
     {
-      field: 'expertises',
-      headerName: 'Specializations',
-      width: 180,
-      sortable: false,
-      renderCell: (params) => {
-        const expertises = params.row.professionalPtr.expertises;
+      accessorKey: 'professionalPtr.expertises',
+      header: t('tables.columns.specializations'),
+      size: 180,
+      cell: ({ getValue }) => {
+        const expertises = getValue() || [];
+        
         return (
           <Stack direction="row" spacing={0.5} flexWrap="wrap">
             {expertises.slice(0, 2).map((expertise, index) => (
@@ -241,233 +254,124 @@ const ProfessionalsDataGrid = ({
             )}
           </Stack>
         );
-      }
+      },
+    },
+    
+    // Location
+    commonColumns.location('professionalPtr.addressObj'),
+    
+    // Phone
+    commonColumns.phone('professionalPtr.phoneNb'),
+    
+    // Status
+    commonColumns.status('status'),
+    
+    // Actions
+    commonColumns.actions(onViewProfessional, null, null, true),
+  ], [commonColumns, onViewProfessional, t]);
+
+  // Filter options
+  const filterOptions = useMemo(() => createFilterOptions(t), [t]);
+  
+  // Available filters for toolbar
+  const availableFilters = useMemo(() => [
+    {
+      key: 'status',
+      label: t('tables.filters.status'),
+      options: filterOptions.verification,
     },
     {
-      field: 'location',
-      headerName: 'Location',
-      width: 150,
-      sortable: false,
-      renderCell: (params) => {
-        const address = params.row.professionalPtr.addressObj;
-        return (
-          <Typography variant="body2" noWrap>
-            {address.city}, {address.province}
-          </Typography>
-        );
-      }
+      key: 'profType',
+      label: t('tables.filters.profession'),
+      options: [
+        { value: 'psychologist', label: t('professions.psychologist') },
+        { value: 'psychiatrist', label: t('professions.psychiatrist') },
+        { value: 'therapist', label: t('professions.therapist') },
+        { value: 'counselor', label: t('professions.counselor') },
+      ],
     },
+  ], [filterOptions, t]);
+
+  // Export templates for professionals
+  const exportTemplates = useMemo(() => getTemplatesByType('professionals'), []);
+
+  // Handle export completion
+  const handleExportComplete = (result) => {
+    console.log('Professional export completed:', result);
+    // Could show success notification here
+  };
+
+  // Custom actions for toolbar
+  const customActions = useMemo(() => [
     {
-      field: 'phone',
-      headerName: 'Contact',
-      width: 140,
-      sortable: false,
-      renderCell: (params) => {
-        const prof = params.row.professionalPtr;
-        const phoneNumber = prof.phoneNb?.number || prof.bussPhoneNb;
-        const formattedPhone = ProfessionalService.formatPhoneNumber(phoneNumber);
-        
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <PhoneIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-            <Typography variant="body2" noWrap>
-              {formattedPhone}
-            </Typography>
-          </Box>
-        );
-      }
+      component: (
+        <ExportButton
+          data={rows}
+          templates={exportTemplates}
+          onExportComplete={handleExportComplete}
+          size="medium"
+          variant="outlined"
+          defaultPrivacyLevel="basic"
+          userRole="admin"
+        />
+      ),
     },
-    {
-      field: 'status',
-      headerName: 'Status',
-      width: 100,
-      sortable: false,
-      renderCell: (params) => {
-        const isBlocked = params.row.isBlocked;
-        const isVerified = params.row.emailVerified;
-        
-        let status = 'Active';
-        let color = 'success';
-        
-        if (isBlocked) {
-          status = 'Blocked';
-          color = 'error';
-        } else if (!isVerified) {
-          status = 'Pending';
-          color = 'warning';
-        }
-        
-        return (
-          <Chip 
-            label={status} 
-            size="small" 
-            color={color}
-            variant="filled"
-          />
-        );
-      }
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      width: 120,
-      sortable: false,
-      renderCell: (params) => {
-        return (
-          <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <Tooltip title="View Details">
-              <IconButton 
-                size="small" 
-                onClick={() => onViewProfessional && onViewProfessional(params.row.id)}
-                sx={{ color: 'primary.main' }}
-              >
-                <ViewIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Send Email">
-              <IconButton 
-                size="small"
-                onClick={() => window.open(`mailto:${params.row.email}`, '_blank')}
-                sx={{ color: 'secondary.main' }}
-              >
-                <EmailIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        );
-      }
-    }
-  ];
-
-  // Fetch professionals data
-  const fetchProfessionals = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const sortBy = sortModel.length > 0 ? sortModel[0].field : 'createdAt';
-      const sortDirection = sortModel.length > 0 ? sortModel[0].sort : 'desc';
-      
-      const response = await ProfessionalService.getProfessionals({
-        page: paginationModel.page,
-        limit: paginationModel.pageSize,
-        search: searchTerm,
-        sortBy,
-        sortDirection,
-        filters
-      });
-
-      setProfessionals(response.results || []);
-      setTotalCount(response.total || 0);
-    } catch (error) {
-      console.error('Error fetching professionals:', error);
-      setError(error.message || 'Failed to load professionals');
-      setProfessionals([]);
-      setTotalCount(0);
-    } finally {
-      setLoading(false);
-    }
-  }, [paginationModel, sortModel, searchTerm, filters]);
-
-  // Effect to fetch data when dependencies change
-  useEffect(() => {
-    fetchProfessionals();
-  }, [fetchProfessionals]);
-
-  // Handle pagination change
-  const handlePaginationModelChange = (newModel) => {
-    setPaginationModel(newModel);
-  };
-
-  // Handle sort change
-  const handleSortModelChange = (newModel) => {
-    setSortModel(newModel);
-  };
-
-  const handleRefresh = () => {
-    fetchProfessionals();
-  };
-
-  const handleClearFilters = () => {
-    // This would need to be passed down from parent component
-    if (onViewProfessional) {
-      onViewProfessional(null); // Signal to clear filters
-    }
-  };
+  ], [rows, exportTemplates, handleExportComplete]);
 
   return (
-    <Box sx={{ width: '100%' }}>
-      {error && (
-        <Alert 
-          severity="error" 
-          sx={{ mb: 2 }}
-          action={
-            <MDButton size="small" onClick={handleRefresh}>
-              Retry
-            </MDButton>
-          }
-        >
-          {error}
-        </Alert>
-      )}
+    <MDBox>
+      <TableToolbar
+        title={t('tables.titles.professionals')}
+        subtitle={`${totalRowCount} ${t('tables.subtitles.totalProfessionals')}`}
+        searchValue={globalFilter}
+        onSearchChange={setGlobalFilter}
+        searchPlaceholder={t('tables.search.professionals')}
+        filters={filters}
+        onFilterChange={setFilters}
+        availableFilters={availableFilters}
+        onRefresh={refetch}
+        customActions={customActions}
+        enableSearch={true}
+        enableFilters={true}
+      />
       
-      {/* Loading State */}
-      {loading && (
-        <LoadingState 
-          type="professionals" 
-          size="medium"
-          variant="skeleton"
-          rows={paginationModel.pageSize}
-        />
-      )}
-
-      {/* Empty States */}
-      {!loading && !error && professionals.length === 0 && (
-        <EmptyState
-          type={hasActiveFilters ? 'search-professionals' : 'professionals'}
-          size="medium"
-          actionLabel={hasActiveFilters ? 'Clear Filters' : 'Refresh Data'}
-          onActionClick={hasActiveFilters ? handleClearFilters : handleRefresh}
-          showRefresh={!hasActiveFilters}
-          onRefresh={handleRefresh}
-        />
-      )}
-      
-      {/* Data Grid */}
-      {!loading && !error && professionals.length > 0 && (
-        <Box sx={{ height: '100%', width: '100%' }}>
-          <DataGrid
-            rows={professionals}
-            columns={columns}
-            loading={false} // We handle loading state manually
-            paginationModel={paginationModel}
-            onPaginationModelChange={handlePaginationModelChange}
-            sortModel={sortModel}
-            onSortModelChange={handleSortModelChange}
-            pageSizeOptions={[5, 10, 25, 50]}
-            rowCount={totalCount}
-            paginationMode="server"
-            sortingMode="server"
-            disableRowSelectionOnClick
-            sx={{
-              height: '100%',
-              '& .MuiDataGrid-cell': {
-                borderBottom: '1px solid rgba(224, 224, 224, 0.5)',
-              },
-              '& .MuiDataGrid-columnHeaders': {
-                backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                borderBottom: '2px solid rgba(224, 224, 224, 0.8)',
-              },
-              '& .MuiDataGrid-row:hover': {
-                backgroundColor: 'rgba(25, 118, 210, 0.04)',
-              },
-              '& .MuiDataGrid-footerContainer': {
-                borderTop: '2px solid rgba(224, 224, 224, 0.8)',
-              }
-            }}
-          />
-        </Box>
-      )}
-    </Box>
+      <TanStackTable
+        data={rows}
+        columns={columns}
+        loading={isLoading}
+        error={error}
+        
+        // Pagination
+        totalRowCount={totalRowCount}
+        pageIndex={pagination.pageIndex}
+        pageSize={pagination.pageSize}
+        onPaginationChange={setPagination}
+        pageSizeOptions={TABLE_PRESETS.professionals.pageSizeOptions}
+        manualPagination={manualPagination}
+        
+        // Sorting
+        sorting={sorting}
+        onSortingChange={setSorting}
+        enableSorting={manualSorting}
+        manualSorting={manualSorting}
+        
+        // Filtering
+        globalFilter={globalFilter}
+        onGlobalFilterChange={setGlobalFilter}
+        enableGlobalFilter={manualFiltering}
+        manualFiltering={manualFiltering}
+        
+        // Styling
+        height={height}
+        maxHeight="600px"
+        stickyHeader={TABLE_PRESETS.professionals.stickyHeader}
+        
+        // Empty/error state
+        emptyStateType="professionals"
+        emptyStateSize="medium"
+        onRefresh={refetch}
+      />
+    </MDBox>
   );
 };
 

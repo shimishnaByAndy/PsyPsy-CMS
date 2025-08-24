@@ -1,36 +1,27 @@
 /**
- * AppointmentsDataGrid - MUI-X DataGrid component for displaying appointment data
- * Uses the Appointment schema from ClassStructDocs
+ * AppointmentsDataGrid - TanStack Table component for displaying appointment data
+ * Uses the Appointment schema from ClassStructDocs with modern table functionality
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DataGrid } from '@mui/x-data-grid';
+import TanStackTable from 'components/TanStackTable';
+import TableToolbar from 'components/TanStackTable/TableToolbar';
+import { useAppointmentsTableData } from 'hooks/useTableData';
+import { createCommonColumns, createFilterOptions, TABLE_PRESETS } from 'utils/tableHelpers';
 
 // @mui material components
-import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import LinearProgress from '@mui/material/LinearProgress';
-import Alert from '@mui/material/Alert';
 
 // @mui icons
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import EventIcon from '@mui/icons-material/Event';
-import PersonIcon from '@mui/icons-material/Person';
 import PsychologyIcon from '@mui/icons-material/Psychology';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import DownloadIcon from '@mui/icons-material/Download';
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDAvatar from "components/MDAvatar";
-
-// Appointment service
-import { AppointmentService } from "services/appointmentService";
 
 function AppointmentsDataGrid({ 
   onViewAppointment, 
@@ -39,110 +30,62 @@ function AppointmentsDataGrid({
   height = 600 
 }) {
   const { t } = useTranslation();
-  
-  // State for data grid
-  const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [rowCount, setRowCount] = useState(0);
-  
-  // State for pagination and sorting
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
+
+  // Use table data hook with initial filters
+  const tableData = useAppointmentsTableData({
+    ...filters,
+    search: searchTerm,
   });
-  const [sortModel, setSortModel] = useState([
-    { field: 'createdAt', sort: 'desc' }
-  ]);
 
-  // Load appointment data using AppointmentService
-  const loadAppointments = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const {
+    rows,
+    totalRowCount,
+    isLoading,
+    isFetching,
+    error,
+    pagination,
+    sorting,
+    globalFilter,
+    setPagination,
+    setSorting,
+    setGlobalFilter,
+    setFilters,
+    refetch,
+    manualPagination,
+    manualSorting,
+    manualFiltering,
+  } = tableData;
+  // Appointment-specific mappings
+  const statusMap = useMemo(() => ({
+    'requested': { label: t('appointments.status.requested'), color: 'warning' },
+    'matched': { label: t('appointments.status.matched'), color: 'info' },
+    'confirmed': { label: t('appointments.status.confirmed'), color: 'success' },
+    'completed': { label: t('appointments.status.completed'), color: 'primary' },
+    'cancelled': { label: t('appointments.status.cancelled'), color: 'error' },
+    'no_show': { label: t('appointments.status.noShow'), color: 'error' }
+  }), [t]);
 
-    try {
-      const result = await AppointmentService.getAppointments({
-        page: paginationModel.page,
-        limit: paginationModel.pageSize,
-        search: searchTerm,
-        sortBy: sortModel.length > 0 ? sortModel[0].field : 'createdAt',
-        sortDirection: sortModel.length > 0 ? sortModel[0].sort : 'desc',
-        filters: filters
-      });
+  const serviceTypeMap = useMemo(() => ({
+    0: t('appointments.services.individual'),
+    1: t('appointments.services.group'),
+    2: t('appointments.services.couples'),
+    3: t('appointments.services.family'),
+    4: t('appointments.services.psychological'),
+    5: t('appointments.services.neuropsychological'),
+    6: t('appointments.services.career'),
+    7: t('appointments.services.addiction')
+  }), [t]);
 
-      console.log('AppointmentsDataGrid: Loaded appointments:', result);
+  const meetPrefMap = useMemo(() => ({
+    0: t('appointments.meetType.inPerson'),
+    1: t('appointments.meetType.online'),
+    2: t('appointments.meetType.either')
+  }), [t]);
 
-      // Transform data for DataGrid (ensure each row has an id)
-      const transformedRows = result.results.map(appointment => ({
-        ...appointment,
-        id: appointment.objectId || appointment.id, // DataGrid requires an 'id' field
-      }));
-
-      setRows(transformedRows);
-      setRowCount(result.total);
-      
-      if (result.error) {
-        setError(result.error);
-      }
-    } catch (err) {
-      console.error('Error loading appointments:', err);
-      setError(err.message || 'Failed to load appointments');
-    } finally {
-      setLoading(false);
-    }
-  }, [paginationModel, sortModel, searchTerm, filters]);
-
-  // Load data when dependencies change
-  useEffect(() => {
-    loadAppointments();
-  }, [loadAppointments]);
-
-  // Handle pagination changes
-  const handlePaginationModelChange = (newPaginationModel) => {
-    setPaginationModel(newPaginationModel);
-  };
-
-  // Handle sorting changes
-  const handleSortModelChange = (newSortModel) => {
-    setSortModel(newSortModel);
-  };
-
-  // Helper functions moved to service, but keep local ones for table display
-  
-  // Status mapping with colors
-  const statusMap = {
-    'requested': { label: 'Requested', color: 'warning' },
-    'matched': { label: 'Matched', color: 'info' },
-    'confirmed': { label: 'Confirmed', color: 'success' },
-    'completed': { label: 'Completed', color: 'primary' },
-    'cancelled': { label: 'Cancelled', color: 'error' },
-    'no_show': { label: 'No Show', color: 'error' }
-  };
-
-  // Service type mapping
-  const serviceTypeMap = {
-    0: 'Individual Therapy',
-    1: 'Group Therapy',
-    2: 'Couples Therapy',
-    3: 'Family Therapy',
-    4: 'Psychological Assessment',
-    5: 'Neuropsychological Assessment',
-    6: 'Career Counseling',
-    7: 'Addiction Counseling'
-  };
-
-  // Meeting preference mapping
-  const meetPrefMap = {
-    0: 'In-Person',
-    1: 'Online',
-    2: 'Either'
-  };
-
-  // Helper function to format date and time
+  // Helper functions
   const formatDateTime = (timestamp) => {
-    if (!timestamp) return 'Not scheduled';
-    const date = new Date(timestamp);
-    return date.toLocaleString('en-CA', {
+    if (!timestamp) return t('appointments.notScheduled');
+    return new Date(timestamp).toLocaleString('en-CA', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -151,38 +94,26 @@ function AppointmentsDataGrid({
     });
   };
 
-  // Helper function to format currency
   const formatCurrency = (amount) => {
-    if (!amount) return 'Not specified';
+    if (!amount) return t('appointments.notSpecified');
     return new Intl.NumberFormat('en-CA', {
       style: 'currency',
       currency: 'CAD'
     }).format(amount);
   };
 
-  // Helper function to get relative time
-  const getRelativeTime = (date) => {
-    if (!date) return 'Unknown';
-    const now = new Date();
-    const diffMs = now - new Date(date);
-    const diffHours = diffMs / (1000 * 60 * 60);
-    const diffDays = diffHours / 24;
-    
-    if (diffHours < 1) return 'Just now';
-    if (diffHours < 24) return `${Math.round(diffHours)}h ago`;
-    if (diffDays < 7) return `${Math.round(diffDays)}d ago`;
-    return new Date(date).toLocaleDateString('en-CA');
-  };
-
-  // Define columns for the data grid
-  const columns = [
+  // Create columns using reusable helpers and custom appointment columns
+  const commonColumns = useMemo(() => createCommonColumns(t), [t]);
+  
+  const columns = useMemo(() => [
+    // Client info
     {
-      field: 'client',
-      headerName: 'Client',
-      width: 200,
-      renderCell: (params) => {
-        const clientName = params.row.clientName || 'Unknown Client';
-        const clientEmail = params.row.clientEmail || '';
+      accessorKey: 'clientName',
+      header: t('tables.columns.client'),
+      size: 200,
+      cell: ({ row }) => {
+        const clientName = row.original.clientName || t('appointments.unknownClient');
+        const clientEmail = row.original.clientEmail || '';
 
         return (
           <MDBox lineHeight={1} py={1}>
@@ -195,28 +126,30 @@ function AppointmentsDataGrid({
           </MDBox>
         );
       },
-      sortable: true,
     },
+    
+    // Title
     {
-      field: 'title',
-      headerName: 'Title',
-      width: 200,
-      renderCell: (params) => {
-        const title = params.row.title || `${serviceTypeMap[params.row.serviceType]} Request`;
+      accessorKey: 'title',
+      header: t('tables.columns.title'),
+      size: 200,
+      cell: ({ row }) => {
+        const title = row.original.title || `${serviceTypeMap[row.original.serviceType]} Request`;
         return (
           <MDTypography variant="caption" fontWeight="medium">
             {title}
           </MDTypography>
         );
       },
-      sortable: true,
     },
+    
+    // Service type
     {
-      field: 'serviceType',
-      headerName: 'Service',
-      width: 150,
-      renderCell: (params) => {
-        const serviceLabel = serviceTypeMap[params.row.serviceType] || 'Unknown';
+      accessorKey: 'serviceType',
+      header: t('tables.columns.service'),
+      size: 150,
+      cell: ({ getValue }) => {
+        const serviceLabel = serviceTypeMap[getValue()] || t('appointments.unknown');
         return (
           <Chip 
             label={serviceLabel} 
@@ -227,14 +160,15 @@ function AppointmentsDataGrid({
           />
         );
       },
-      sortable: true,
     },
+    
+    // Status
     {
-      field: 'status',
-      headerName: 'Status',
-      width: 120,
-      renderCell: (params) => {
-        const status = params.row.status || 'requested';
+      accessorKey: 'status',
+      header: t('tables.columns.status'),
+      size: 120,
+      cell: ({ getValue }) => {
+        const status = getValue() || 'requested';
         const statusInfo = statusMap[status] || { label: status, color: 'default' };
         
         return (
@@ -246,15 +180,17 @@ function AppointmentsDataGrid({
           />
         );
       },
-      sortable: true,
     },
+    
+    // Meeting preference
     {
-      field: 'meetPref',
-      headerName: 'Meeting Type',
-      width: 120,
-      renderCell: (params) => {
-        const meetPref = meetPrefMap[params.row.meetPref] || 'Not specified';
-        const icon = params.row.meetPref === 1 ? '💻' : params.row.meetPref === 0 ? '🏢' : '🔄';
+      accessorKey: 'meetPref',
+      header: t('tables.columns.meetingType'),
+      size: 120,
+      cell: ({ getValue }) => {
+        const meetPref = meetPrefMap[getValue()] || t('appointments.notSpecified');
+        const icons = { 0: '🏢', 1: '💻', 2: '🔄' };
+        const icon = icons[getValue()] || '❓';
         
         return (
           <MDBox display="flex" alignItems="center">
@@ -265,14 +201,15 @@ function AppointmentsDataGrid({
           </MDBox>
         );
       },
-      sortable: true,
     },
+    
+    // Scheduled time
     {
-      field: 'scheduledTimestamp',
-      headerName: 'Scheduled Time',
-      width: 160,
-      renderCell: (params) => {
-        const timestamp = params.row.scheduledTimestamp;
+      accessorKey: 'scheduledTimestamp',
+      header: t('tables.columns.scheduledTime'),
+      size: 160,
+      cell: ({ getValue }) => {
+        const timestamp = getValue();
         const dateTime = formatDateTime(timestamp);
         const isScheduled = !!timestamp;
         
@@ -292,14 +229,15 @@ function AppointmentsDataGrid({
           </MDBox>
         );
       },
-      sortable: true,
     },
+    
+    // Budget
     {
-      field: 'maxBudget',
-      headerName: 'Budget',
-      width: 100,
-      renderCell: (params) => {
-        const budget = formatCurrency(params.row.maxBudget);
+      accessorKey: 'maxBudget',
+      header: t('tables.columns.budget'),
+      size: 100,
+      cell: ({ getValue }) => {
+        const budget = formatCurrency(getValue());
         
         return (
           <MDBox display="flex" alignItems="center">
@@ -310,120 +248,135 @@ function AppointmentsDataGrid({
           </MDBox>
         );
       },
-      sortable: true,
     },
+    
+    // Application count
     {
-      field: 'applicationCount',
-      headerName: 'Applications',
-      width: 110,
-      renderCell: (params) => {
-        const count = params.row.applicationCount || 0;
+      accessorKey: 'applicationCount',
+      header: t('tables.columns.applications'),
+      size: 110,
+      cell: ({ getValue }) => {
+        const count = getValue() || 0;
         const color = count > 0 ? 'success' : 'warning';
         
         return (
           <Chip 
-            label={`${count} apps`} 
+            label={`${count} ${t('appointments.apps')}`} 
             size="small" 
             color={color}
             variant="outlined"
           />
         );
       },
-      sortable: true,
+    },
+    
+    // Created date
+    commonColumns.date('createdAt', 'tables.columns.created'),
+    
+    // Actions
+    commonColumns.actions(onViewAppointment, null, null, false),
+  ], [commonColumns, statusMap, serviceTypeMap, meetPrefMap, onViewAppointment, t]);
+
+  // Filter options
+  const filterOptions = useMemo(() => createFilterOptions(t), [t]);
+  
+  // Available filters for toolbar
+  const availableFilters = useMemo(() => [
+    {
+      key: 'status',
+      label: t('tables.filters.status'),
+      options: Object.keys(statusMap).map(key => ({
+        value: key,
+        label: statusMap[key].label,
+      })),
     },
     {
-      field: 'createdAt',
-      headerName: 'Created',
-      width: 120,
-      renderCell: (params) => {
-        const relativeTime = getRelativeTime(params.row.createdAt);
-        
-        return (
-          <MDTypography variant="caption" color="text" fontWeight="regular">
-            {relativeTime}
-          </MDTypography>
-        );
+      key: 'serviceType',
+      label: t('tables.filters.serviceType'),
+      options: Object.keys(serviceTypeMap).map(key => ({
+        value: key,
+        label: serviceTypeMap[key],
+      })),
+    },
+    {
+      key: 'meetPref',
+      label: t('tables.filters.meetingType'),
+      options: Object.keys(meetPrefMap).map(key => ({
+        value: key,
+        label: meetPrefMap[key],
+      })),
+    },
+  ], [statusMap, serviceTypeMap, meetPrefMap, t]);
+
+  // Custom actions for toolbar
+  const customActions = useMemo(() => [
+    {
+      icon: <DownloadIcon />,
+      label: 'Export',
+      tooltip: 'Export appointments data',
+      onClick: () => {
+        // Handle export functionality
+        console.log('Export appointments data');
       },
-      sortable: true,
     },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      sortable: false,
-      renderCell: (params) => (
-        <MDBox>
-          <Tooltip title="View Details">
-            <IconButton
-              size="small"
-              onClick={() => onViewAppointment && onViewAppointment(params.row)}
-              color="info"
-            >
-              <VisibilityIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </MDBox>
-      ),
-    },
-  ];
+  ], []);
 
   return (
     <MDBox>
-      {error && (
-        <Alert severity="warning" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
+      <TableToolbar
+        title={t('tables.titles.appointments')}
+        subtitle={`${totalRowCount} ${t('tables.subtitles.totalAppointments')}`}
+        searchValue={globalFilter}
+        onSearchChange={setGlobalFilter}
+        searchPlaceholder={t('tables.search.appointments')}
+        filters={filters}
+        onFilterChange={setFilters}
+        availableFilters={availableFilters}
+        onRefresh={refetch}
+        customActions={customActions}
+        enableSearch={true}
+        enableFilters={true}
+      />
       
-      <Box sx={{ height: height, width: '100%' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          loading={loading}
-          rowCount={rowCount}
-          
-          // Pagination
-          paginationMode="server"
-          paginationModel={paginationModel}
-          onPaginationModelChange={handlePaginationModelChange}
-          pageSizeOptions={[5, 10, 25, 50]}
-          
-          // Sorting
-          sortingMode="server"
-          sortModel={sortModel}
-          onSortModelChange={handleSortModelChange}
-          
-          // Styling
-          disableRowSelectionOnClick
-          sx={{
-            '& .MuiDataGrid-cell': {
-              borderBottom: '1px solid #f0f0f0',
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: '#f8f9fa',
-              borderBottom: '2px solid #dee2e6',
-            },
-            '& .MuiDataGrid-row:hover': {
-              backgroundColor: '#f8f9fa',
-            },
-          }}
-          
-          // Loading overlay
-          slots={{
-            loadingOverlay: LinearProgress,
-          }}
-          
-          // Initial state
-          initialState={{
-            pagination: {
-              paginationModel: { pageSize: 10, page: 0 },
-            },
-            sorting: {
-              sortModel: [{ field: 'createdAt', sort: 'desc' }],
-            },
-          }}
-        />
-      </Box>
+      <TanStackTable
+        data={rows}
+        columns={columns}
+        loading={isLoading}
+        error={error}
+        
+        // Pagination
+        totalRowCount={totalRowCount}
+        pageIndex={pagination.pageIndex}
+        pageSize={pagination.pageSize}
+        onPaginationChange={setPagination}
+        pageSizeOptions={TABLE_PRESETS.appointments.pageSizeOptions}
+        manualPagination={manualPagination}
+        
+        // Sorting
+        sorting={sorting}
+        onSortingChange={setSorting}
+        enableSorting={manualSorting}
+        manualSorting={manualSorting}
+        
+        // Filtering
+        globalFilter={globalFilter}
+        onGlobalFilterChange={setGlobalFilter}
+        enableGlobalFilter={manualFiltering}
+        manualFiltering={manualFiltering}
+        
+        // Selection (enabled for appointments)
+        enableRowSelection={TABLE_PRESETS.appointments.enableRowSelection}
+        
+        // Styling
+        height={height}
+        maxHeight="600px"
+        stickyHeader={TABLE_PRESETS.appointments.stickyHeader}
+        
+        // Empty/error state
+        emptyStateType="appointments"
+        emptyStateSize="medium"
+        onRefresh={refetch}
+      />
     </MDBox>
   );
 }
