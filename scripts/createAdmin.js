@@ -10,7 +10,7 @@ const Parse = require('parse/node');
 // Parse Server configuration (matching the React app config)
 const parseConfig = {
     appId: process.env.REACT_APP_PARSE_APP_ID || 'psypsy-cms-dev',
-    serverURL: process.env.REACT_APP_PARSE_SERVER_URL || 'http://10.0.0.71:1337/parse',
+    serverURL: process.env.REACT_APP_PARSE_SERVER_URL || 'http://localhost:1337/parse',
     javascriptKey: process.env.REACT_APP_PARSE_JS_KEY || 'psypsy-js-key-dev',
     masterKey: process.env.REACT_APP_MASTER_KEY || 'psypsy-master-key-dev'
 };

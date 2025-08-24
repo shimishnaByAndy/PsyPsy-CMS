@@ -156,7 +156,7 @@ export const mockParseService = {
   // Check if Parse Server is available
   isParseServerAvailable: async () => {
     try {
-      const response = await fetch('http://10.0.0.71:1337/parse/health');
+      const response = await fetch('http://localhost:1337/parse/health');
       return response.ok;
     } catch (error) {
       return false;

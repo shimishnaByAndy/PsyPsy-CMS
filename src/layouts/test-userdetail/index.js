@@ -71,7 +71,7 @@ function TestUserDetail() {
                   </MDTypography>
                   
                   <Alert severity="warning" sx={{ mb: 3 }}>
-                    <strong>Parse Server Connection Issue:</strong> Using mock data because Parse Server at http://10.0.0.71:1337/parse is not accessible.
+                    <strong>Parse Server Connection Issue:</strong> Using mock data because Parse Server at http://localhost:1337/parse is not accessible.
                   </Alert>
 
                   <MDTypography variant="body1" mb={3}>

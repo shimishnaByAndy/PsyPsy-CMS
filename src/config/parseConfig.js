@@ -6,7 +6,7 @@
 const devConfig = {
     // These should be the actual Parse Server details
     appId: process.env.REACT_APP_PARSE_APP_ID || 'psypsy-cms-dev',
-    serverURL: 'http://10.0.0.71:1337/parse',
+    serverURL: 'http://localhost:1337/parse',
     javascriptKey: process.env.REACT_APP_PARSE_JS_KEY || 'psypsy-js-key-dev',
     liveQuery: false,
     enableLocalDatastore: true,

@@ -11,7 +11,7 @@ const configs = [
     {
         name: 'Default Dev Config',
         appId: 'psypsy-cms-dev',
-        serverURL: 'http://10.0.0.71:1337/parse',
+        serverURL: 'http://localhost:1337/parse',
         javascriptKey: 'psypsy-js-key-dev',
         masterKey: 'psypsy-master-key-dev'
     },
@@ -25,7 +25,7 @@ const configs = [
     {
         name: 'Alternative Dev Config',
         appId: 'myAppId',
-        serverURL: 'http://10.0.0.71:1337/parse',
+        serverURL: 'http://localhost:1337/parse',
         javascriptKey: 'myJavaScriptKey',
         masterKey: 'myMasterKey'
     }
