@@ -22,7 +22,7 @@ import PropTypes from "prop-types";
 import MDBoxRoot from "components/MDBox/MDBoxRoot";
 
 const MDBox = forwardRef(
-  ({ variant, bgColor, color, opacity, borderRadius, shadow, coloredShadow, ...rest }, ref) => (
+  ({ variant = "contained", bgColor = "transparent", color = "dark", opacity = 1, borderRadius = "none", shadow = "none", coloredShadow = "none", ...rest }, ref) => (
     <MDBoxRoot
       {...rest}
       ref={ref}
@@ -31,16 +31,6 @@ const MDBox = forwardRef(
   )
 );
 
-// Setting default values for the props of MDBox
-MDBox.defaultProps = {
-  variant: "contained",
-  bgColor: "transparent",
-  color: "dark",
-  opacity: 1,
-  borderRadius: "none",
-  shadow: "none",
-  coloredShadow: "none",
-};
 
 // Typechecking props for the MDBox
 MDBox.propTypes = {

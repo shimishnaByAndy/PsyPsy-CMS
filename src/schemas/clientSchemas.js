@@ -61,27 +61,27 @@ export const clientProfileSchema = z.object({
   }).optional(),
 });
 
-export const clientRegistrationSchema = registrationSchema.merge(
-  z.object({
-    clientProfile: clientProfileSchema,
-    consentForms: z.object({
-      treatmentConsent: z.boolean().refine(val => val === true, {
-        message: "client.validation.consent.treatment.required"
-      }),
-      privacyConsent: z.boolean().refine(val => val === true, {
-        message: "client.validation.consent.privacy.required"
-      }),
-      communicationConsent: z.boolean().refine(val => val === true, {
-        message: "client.validation.consent.communication.required"
-      }),
-      dataRetentionConsent: z.boolean().default(false),
-      researchParticipation: z.boolean().default(false),
+// Temporary fix for schema merge issue
+export const clientRegistrationSchema = z.object({
+  ...registrationSchema.shape,
+  clientProfile: clientProfileSchema,
+  consentForms: z.object({
+    treatmentConsent: z.boolean().refine(val => val === true, {
+      message: "client.validation.consent.treatment.required"
     }),
-    termsAccepted: z.boolean().refine(val => val === true, {
-      message: "client.validation.terms.required"
+    privacyConsent: z.boolean().refine(val => val === true, {
+      message: "client.validation.consent.privacy.required"
     }),
-  })
-);
+    communicationConsent: z.boolean().refine(val => val === true, {
+      message: "client.validation.consent.communication.required"
+    }),
+    dataRetentionConsent: z.boolean().default(false),
+    researchParticipation: z.boolean().default(false),
+  }),
+  termsAccepted: z.boolean().refine(val => val === true, {
+    message: "client.validation.terms.required"
+  }),
+});
 
 export const clientIntakeSchema = z.object({
   reasonForSeeking: z.string()

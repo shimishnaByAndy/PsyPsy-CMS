@@ -11,7 +11,7 @@ import MDBox from "components/MDBox";
 // Material Dashboard 2 React base styles
 import typography from "assets/theme/base/typography";
 
-function CustomFooter({ light }) {
+function CustomFooter({ light = false }) {
   const { size } = typography;
   const { t } = useTranslation();
 
@@ -49,10 +49,6 @@ function CustomFooter({ light }) {
   );
 }
 
-// Setting default props for the CustomFooter
-CustomFooter.defaultProps = {
-  light: false,
-};
 
 // Typechecking props for the CustomFooter
 CustomFooter.propTypes = {

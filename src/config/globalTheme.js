@@ -106,8 +106,8 @@ const brandColors = {
   },
   
   transparent: {
-    main: 'transparent',
-    focus: 'transparent',
+    main: 'rgba(0, 0, 0, 0)',
+    focus: 'rgba(0, 0, 0, 0)',
     contrastText: '#000000'
   },
   
@@ -512,7 +512,7 @@ const buttonStyles = {
   
   outlined: {
     border: `2px solid ${brandColors.primary.main}`,
-    backgroundColor: 'transparent',
+    backgroundColor: 'rgba(0, 0, 0, 0)',
     color: brandColors.primary.main,
     '&:hover': {
       backgroundColor: brandColors.primary.main,

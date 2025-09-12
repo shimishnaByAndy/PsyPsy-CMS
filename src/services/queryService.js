@@ -6,6 +6,7 @@
 
 import Parse from 'parse';
 import { ParseAuth } from './parseService';
+import { getParseOptions } from '../utils/parseConfig';
 
 /**
  * Transform Parse Object to cacheable plain object
@@ -166,7 +167,7 @@ export const executeParseQuery = async ({
   }
   
   try {
-    const options = useMasterKey ? { useMasterKey: true } : {};
+    const options = getParseOptions(useMasterKey);
     const results = await query.find(options);
     const transformed = results.map(transformParseObject);
     
@@ -217,7 +218,7 @@ export const executeParseCount = async ({
   });
   
   try {
-    const options = useMasterKey ? { useMasterKey: true } : {};
+    const options = getParseOptions(useMasterKey);
     const count = await query.count(options);
     console.log(`Count successful: ${count} objects`);
     return count;
@@ -250,7 +251,7 @@ export const executeParseMutation = async ({
     validateSession();
   }
   
-  const options = useMasterKey ? { useMasterKey: true } : {};
+  const options = getParseOptions(useMasterKey);
   
   try {
     let result;
@@ -327,7 +328,7 @@ export const executeCloudFunction = async (functionName, params = {}, useMasterK
   }
   
   try {
-    const options = useMasterKey ? { useMasterKey: true } : {};
+    const options = getParseOptions(useMasterKey);
     const result = await Parse.Cloud.run(functionName, params, options);
     
     console.log(`Cloud Function ${functionName} successful`);
@@ -358,7 +359,7 @@ export const executeUserQuery = async ({
   skip = 0,
   sortBy = 'createdAt',
   ascending = false,
-  useMasterKey = true // User queries typically need master key
+  useMasterKey = false
 }) => {
   console.log('Executing User query:', { conditions, limit, skip });
   
@@ -408,7 +409,7 @@ export const executeUserQuery = async ({
   }
   
   try {
-    const options = useMasterKey ? { useMasterKey: true } : {};
+    const options = getParseOptions(useMasterKey);
     const results = await query.find(options);
     const transformed = results.map(transformParseObject);
     

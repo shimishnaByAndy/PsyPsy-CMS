@@ -19,14 +19,10 @@ import PropTypes from "prop-types";
 // Material Dashboard 2 React components
 import CustomFooter from "components/CustomFooter";
 
-function Footer({ light }) {
+function Footer({ light = false }) {
   return <CustomFooter light={light} />;
 }
 
-// Setting default props for the Footer
-Footer.defaultProps = {
-  light: false,
-};
 
 // Typechecking props for the Footer
 Footer.propTypes = {

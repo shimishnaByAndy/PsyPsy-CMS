@@ -21,7 +21,7 @@ export const VirtualizationThemeProvider = ({ children }) => {
     borderColor: theme.palette.divider,
     
     // Colors
-    evenRowBackground: 'transparent',
+    evenRowBackground: 'rgba(0, 0, 0, 0)',
     oddRowBackground: theme.palette.action.hover,
     hoverBackground: theme.palette.action.hover,
     selectedBackground: theme.palette.action.selected,

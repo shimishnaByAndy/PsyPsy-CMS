@@ -37,6 +37,7 @@ Coded by www.creative-tim.com
 
 // Material Dashboard 2 React layouts
 import Dashboard from "./layouts/dashboard";
+import FirebaseDashboard from "./layouts/firebase-dashboard";
 import Clients from "./layouts/clients";
 import Professionals from "./layouts/professionals";
 import Appointments from "./layouts/appointments";  // Import the new Appointments component
@@ -46,9 +47,12 @@ import Notifications from "./layouts/notifications";
 import Profile from "./layouts/profile";
 import Strings from "./layouts/strings";  // Import the new Strings component
 import Login from "./layouts/authentication/login";  // Login page with Parse integration
+import FirebaseLogin from "./layouts/authentication/firebase-login";  // Firebase login page
 import Lock from "./layouts/authentication/lock";    // Lock screen
 import DarkoneExample from "./darkone/DarkoneExample"; // Darkone components example
 import TestUserDetail from "./layouts/test-userdetail"; // Test page for UserDetail component
+import VirtualizationDemo from "./layouts/virtualization-demo"; // Virtualization performance demo
+import SocialMedia from "./layouts/social-media"; // Social Media Management with Postiz integration
 
 // Protected route wrapper
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -67,6 +71,14 @@ const protectedRoutes = [
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
     component: <ProtectedRoute component={<Dashboard />} />,
+  },
+  {
+    type: "collapse",
+    name: "Firebase Dashboard",
+    key: "firebase-dashboard",
+    icon: <Icon fontSize="small">analytics</Icon>,
+    route: "/firebase-dashboard",
+    component: <ProtectedRoute component={<FirebaseDashboard />} />,
   },
   {
     type: "collapse",
@@ -116,6 +128,22 @@ const protectedRoutes = [
     route: "/test-userdetail",
     component: <ProtectedRoute component={<TestUserDetail />} />,
   },
+  {
+    type: "collapse",
+    name: "Virtualization Demo",
+    key: "virtualization-demo",
+    icon: <Icon fontSize="small">speed</Icon>,
+    route: "/virtualization-demo",
+    component: <ProtectedRoute component={<VirtualizationDemo />} />,
+  },
+  {
+    type: "collapse",
+    name: "Social Media",
+    key: "social-media",
+    icon: <Icon fontSize="small">campaign</Icon>,
+    route: "/social-media",
+    component: <ProtectedRoute component={<SocialMedia />} />,
+  },
 ];
 
 // Public routes - accessible without authentication
@@ -127,6 +155,14 @@ const publicRoutes = [
     icon: <Icon fontSize="small">login</Icon>,
     route: "/authentication/login",
     component: <Login />,
+  },
+  {
+    type: "collapse",
+    name: "Firebase Login",
+    key: "firebase-login",
+    icon: <Icon fontSize="small">firebase</Icon>,
+    route: "/authentication/firebase-login",
+    component: <FirebaseLogin />,
   },
   {
     name: "Lock",

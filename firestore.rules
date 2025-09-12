@@ -1,0 +1,204 @@
+// Firestore Security Rules for PsyPsy CMS
+// These rules secure the Firestore database and define access patterns
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions for authentication and authorization
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function hasRole(role) {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+    
+    function isAdminOrOwner(userId) {
+      return isOwner(userId) || hasRole('admin');
+    }
+    
+    function isValidUserData() {
+      return request.resource.data.keys().hasAll(['role', 'email', 'createdAt']) &&
+             request.resource.data.role in ['admin', 'professional', 'client'] &&
+             request.resource.data.email is string &&
+             request.resource.data.createdAt is timestamp;
+    }
+
+    // Users collection - Core user documents
+    match /users/{userId} {
+      // Users can read their own data, admins can read all users
+      allow read: if isAdminOrOwner(userId);
+      
+      // Only authenticated users can create accounts (registration)
+      // Only the user themselves or admins can update
+      allow create: if isAuthenticated() && 
+                      request.auth.uid == userId && 
+                      isValidUserData();
+      
+      allow update: if isAdminOrOwner(userId) && isValidUserData();
+      
+      // Only admins can delete users (soft delete preferred)
+      allow delete: if hasRole('admin');
+      
+      // Client Profile subcollection
+      match /clientProfile/{document=**} {
+        // Clients can read/write their own profile
+        // Professionals can read client profiles they're working with
+        // Admins can read/write all client profiles
+        allow read: if isOwner(userId) || 
+                      hasRole('admin') ||
+                      (hasRole('professional') && 
+                       exists(/databases/$(database)/documents/appointments/{appointmentId}) &&
+                       get(/databases/$(database)/documents/appointments/{appointmentId}).data.client.uid == userId);
+        
+        allow write: if isAdminOrOwner(userId);
+      }
+      
+      // Professional Profile subcollection  
+      match /professionalProfile/{document=**} {
+        // Professionals can read/write their own profile
+        // Clients can read professional profiles
+        // Admins can read/write all professional profiles
+        allow read: if isOwner(userId) || 
+                      hasRole('admin') || 
+                      hasRole('client');
+        
+        allow write: if isAdminOrOwner(userId);
+      }
+      
+      // User sessions/activity subcollection (for audit trails)
+      match /sessions/{sessionId} {
+        allow read, write: if isAdminOrOwner(userId);
+      }
+    }
+
+    // Appointments collection
+    match /appointments/{appointmentId} {
+      // Only authenticated users can access appointments
+      // Clients can only see their own appointments
+      // Professionals can only see appointments they're involved in
+      // Admins can see all appointments
+      allow read: if isAuthenticated() && (
+        hasRole('admin') ||
+        resource.data.client.uid == request.auth.uid ||
+        resource.data.professional.uid == request.auth.uid
+      );
+      
+      // Creating appointments - clients and professionals can create, admins can create any
+      allow create: if isAuthenticated() && (
+        hasRole('admin') ||
+        (hasRole('client') && request.resource.data.client.uid == request.auth.uid) ||
+        (hasRole('professional') && request.resource.data.professional.uid == request.auth.uid)
+      );
+      
+      // Updating appointments - only involved parties and admins
+      allow update: if isAuthenticated() && (
+        hasRole('admin') ||
+        resource.data.client.uid == request.auth.uid ||
+        resource.data.professional.uid == request.auth.uid
+      );
+      
+      // Only admins can delete appointments (prefer status updates)
+      allow delete: if hasRole('admin');
+      
+      // Appointment sessions subcollection
+      match /sessions/{sessionId} {
+        allow read, write: if isAuthenticated() && (
+          hasRole('admin') ||
+          get(/databases/$(database)/documents/appointments/$(appointmentId)).data.client.uid == request.auth.uid ||
+          get(/databases/$(database)/documents/appointments/$(appointmentId)).data.professional.uid == request.auth.uid
+        );
+      }
+    }
+
+    // Time slots / availability collection
+    match /timeSlots/{slotId} {
+      // Professionals can read/write their own time slots
+      // Clients can read available time slots
+      // Admins can read/write all time slots
+      allow read: if isAuthenticated() && (
+        hasRole('admin') ||
+        hasRole('client') ||
+        (hasRole('professional') && resource.data.professionalId == request.auth.uid)
+      );
+      
+      allow create, update: if isAuthenticated() && (
+        hasRole('admin') ||
+        (hasRole('professional') && request.resource.data.professionalId == request.auth.uid)
+      );
+      
+      allow delete: if isAuthenticated() && (
+        hasRole('admin') ||
+        (hasRole('professional') && resource.data.professionalId == request.auth.uid)
+      );
+    }
+
+    // Reviews and ratings collection
+    match /reviews/{reviewId} {
+      // Anyone can read public reviews
+      // Only the reviewer can write their own review
+      // Admins can moderate reviews
+      allow read: if true; // Public reviews
+      
+      allow create: if isAuthenticated() && 
+                      request.resource.data.reviewerId == request.auth.uid;
+      
+      allow update: if isAuthenticated() && (
+        hasRole('admin') ||
+        resource.data.reviewerId == request.auth.uid
+      );
+      
+      allow delete: if hasRole('admin');
+    }
+
+    // Notifications collection
+    match /notifications/{notificationId} {
+      // Users can only read their own notifications
+      allow read, update: if isAuthenticated() && 
+                            resource.data.userId == request.auth.uid;
+      
+      // System can create notifications, users can't create their own
+      // Admins can create notifications for any user
+      allow create: if hasRole('admin');
+      
+      allow delete: if isAuthenticated() && (
+        hasRole('admin') ||
+        resource.data.userId == request.auth.uid
+      );
+    }
+
+    // System configuration and settings (admin only)
+    match /systemConfig/{configId} {
+      allow read, write: if hasRole('admin');
+    }
+
+    // Audit logs (admin only, append-only for system)
+    match /auditLogs/{logId} {
+      allow read: if hasRole('admin');
+      allow create: if hasRole('admin'); // System creates audit logs
+    }
+
+    // Analytics and statistics (admin only)
+    match /analytics/{document=**} {
+      allow read, write: if hasRole('admin');
+    }
+
+    // Application strings/translations (admin can edit, others can read)
+    match /appStrings/{stringId} {
+      allow read: if isAuthenticated();
+      allow write: if hasRole('admin');
+    }
+
+    // Default deny rule for any other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

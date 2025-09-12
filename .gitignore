@@ -33,3 +33,18 @@ yarn-error.log*
 
 # Template directory
 /template 
+
+# Firebase and debug logs
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Large development directories
+crystal-main*/
+.serena/
+context-engineering/worktrees/
+
+# Cache and temp files
+*.cache
+*.tmp
+.cursor/

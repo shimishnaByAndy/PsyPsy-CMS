@@ -60,7 +60,7 @@ import { ParseAuth } from "services/parseService";
 // Additional Parse context import
 import { useParseInitialization } from "components/ParseInitializer";
 
-function Sidenav({ color, brand, brandName, routes, ...rest }) {
+function Sidenav({ color = "info", brand = "", brandName, routes, ...rest }) {
   const navigate = useNavigate();
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode } = controller;
@@ -566,11 +566,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   );
 }
 
-// Setting default values for the props of Sidenav
-Sidenav.defaultProps = {
-  color: "info",
-  brand: "",
-};
 
 // Typechecking props for the Sidenav
 Sidenav.propTypes = {

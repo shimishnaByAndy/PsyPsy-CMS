@@ -25,25 +25,79 @@
     "apply": "Appliquer",
     "clear": "Effacer",
     "noRecords": "Aucun enregistrement trouvé",
-    "loading": "Chargement des données..."
+    "loading": "Chargement des données...",
+    "validation": {
+      "required": "Requis",
+      "expectedBoolean": "Booléen attendu, chaîne reçue"
+    },
+    "errors": {
+      "unexpected": "Une erreur inattendue s'est produite"
+    }
   },
   "footer": {
     "madeWith": "Créé avec",
     "in": "à Montréal"
   },
   "auth": {
+    "fields": {
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "rememberMe": "Se souvenir de moi",
+      "email": "Email",
+      "confirmPassword": "Confirmer le mot de passe",
+      "userType": "Type d'utilisateur",
+      "acceptTerms": "Accepter les conditions"
+    },
+    "validation": {
+      "username": {
+        "required": "Le nom d'utilisateur est requis",
+        "minLength": "Le nom d'utilisateur doit comporter au moins 3 caractères",
+        "maxLength": "Le nom d'utilisateur ne peut pas dépasser 50 caractères",
+        "format": "Le nom d'utilisateur ne peut contenir que des lettres, des chiffres et des underscores"
+      },
+      "password": {
+        "required": "Le mot de passe est requis",
+        "minLength": "Le mot de passe doit comporter au moins 6 caractères",
+        "maxLength": "Le mot de passe ne peut pas dépasser 50 caractères",
+        "strength": "Le mot de passe doit contenir une majuscule, une minuscule et un chiffre",
+        "mismatch": "Les mots de passe ne correspondent pas"
+      },
+      "email": {
+        "format": "Veuillez saisir une adresse email valide",
+        "maxLength": "L'email ne peut pas dépasser 100 caractères"
+      },
+      "userType": {
+        "required": "Veuillez sélectionner un type d'utilisateur"
+      },
+      "currentPassword": {
+        "required": "Le mot de passe actuel est requis"
+      }
+    },
+    "userTypes": {
+      "professional": "Professionnel",
+      "client": "Client"
+    },
     "login": {
       "title": "Connexion",
       "username": "Nom d'utilisateur",
       "password": "Mot de passe",
       "submit": "Se connecter",
+      "loading": "Connexion en cours...",
       "error": "Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.",
       "invalidCredentials": "Nom d'utilisateur ou mot de passe invalide.",
       "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
       "connectionFailed": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion internet.",
       "unauthorized": "Nom d'utilisateur ou mot de passe incorrect. Veuillez réessayer.",
       "missingCredentials": "Le nom d'utilisateur/email est requis.",
-      "missingPassword": "Le mot de passe est requis."
+      "missingPassword": "Le mot de passe est requis.",
+      "backToLogin": "Retour à la connexion"
+    },
+    "forgotPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "submit": "Envoyer l'email de réinitialisation",
+      "loading": "Envoi en cours...",
+      "success": "Email de réinitialisation envoyé ! Vérifiez votre boîte de réception.",
+      "description": "Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe."
     },
     "lock": {
       "locked": "Écran Verrouillé",
@@ -58,7 +112,13 @@
       "password": "Mot de passe",
       "confirmPassword": "Confirmer le mot de passe",
       "submit": "S'inscrire",
+      "loading": "Création du compte...",
       "error": "Échec de l'inscription. Veuillez réessayer."
+    },
+    "errors": {
+      "loginFailed": "Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.",
+      "registrationFailed": "Échec de l'inscription. Veuillez réessayer.",
+      "forgotPasswordFailed": "Échec de l'envoi de l'email de réinitialisation. Veuillez réessayer."
     }
   },
   "statistics": {
@@ -160,6 +220,10 @@
     "general": "Une erreur est survenue",
     "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
     "requiredField": "Ce champ est obligatoire"
+  },
+  "validation": {
+    "required": "Requis",
+    "expectedBoolean": "Booléen attendu, chaîne reçue"
   },
   "strings": {
     "title": "Gestion des Chaînes",

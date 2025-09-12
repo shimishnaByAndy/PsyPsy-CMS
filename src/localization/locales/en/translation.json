@@ -25,25 +25,79 @@
     "apply": "Apply",
     "clear": "Clear",
     "noRecords": "No records found",
-    "loading": "Loading data..."
+    "loading": "Loading data...",
+    "validation": {
+      "required": "Required",
+      "expectedBoolean": "Expected boolean, received string"
+    },
+    "errors": {
+      "unexpected": "An unexpected error occurred"
+    }
   },
   "footer": {
     "madeWith": "Made with",
     "in": "in Montreal"
   },
   "auth": {
+    "fields": {
+      "username": "Username",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "email": "Email",
+      "confirmPassword": "Confirm Password",
+      "userType": "User Type",
+      "acceptTerms": "Accept Terms"
+    },
+    "validation": {
+      "username": {
+        "required": "Username is required",
+        "minLength": "Username must be at least 3 characters",
+        "maxLength": "Username cannot exceed 50 characters",
+        "format": "Username can only contain letters, numbers, and underscores"
+      },
+      "password": {
+        "required": "Password is required",
+        "minLength": "Password must be at least 6 characters",
+        "maxLength": "Password cannot exceed 50 characters",
+        "strength": "Password must contain uppercase, lowercase, and number",
+        "mismatch": "Passwords do not match"
+      },
+      "email": {
+        "format": "Please enter a valid email address",
+        "maxLength": "Email cannot exceed 100 characters"
+      },
+      "userType": {
+        "required": "Please select a user type"
+      },
+      "currentPassword": {
+        "required": "Current password is required"
+      }
+    },
+    "userTypes": {
+      "professional": "Professional",
+      "client": "Client"
+    },
     "login": {
       "title": "Sign in",
       "username": "Username",
       "password": "Password",
       "submit": "Sign in",
+      "loading": "Signing in...",
       "error": "Login failed. Please check your credentials and try again.",
       "invalidCredentials": "Invalid username or password.",
       "sessionExpired": "Your session has expired. Please login again.",
       "connectionFailed": "Could not connect to the server. Please check your internet connection.",
       "unauthorized": "Incorrect username or password. Please try again.",
       "missingCredentials": "Username/email is required.",
-      "missingPassword": "Password is required."
+      "missingPassword": "Password is required.",
+      "backToLogin": "Back to Login"
+    },
+    "forgotPassword": {
+      "title": "Reset Password",
+      "submit": "Send Reset Email",
+      "loading": "Sending email...",
+      "success": "Password reset email sent! Check your inbox.",
+      "description": "Enter your email address and we'll send you a link to reset your password."
     },
     "lock": {
       "locked": "Screen Locked",
@@ -58,7 +112,13 @@
       "password": "Password",
       "confirmPassword": "Confirm Password",
       "submit": "Sign up",
+      "loading": "Creating account...",
       "error": "Registration failed. Please try again."
+    },
+    "errors": {
+      "loginFailed": "Login failed. Please check your credentials and try again.",
+      "registrationFailed": "Registration failed. Please try again.",
+      "forgotPasswordFailed": "Failed to send reset email. Please try again."
     }
   },
   "statistics": {
@@ -160,6 +220,10 @@
     "general": "An error occurred",
     "networkError": "Network error. Please check your connection and try again.",
     "requiredField": "This field is required"
+  },
+  "validation": {
+    "required": "Required",
+    "expectedBoolean": "Expected boolean, received string"
   },
   "strings": {
     "title": "String Management",

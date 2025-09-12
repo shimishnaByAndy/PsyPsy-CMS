@@ -1,0 +1,88 @@
+// Firebase Storage Security Rules for PsyPsy CMS
+// These rules secure file uploads and access patterns
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function hasRole(role) {
+      return isAuthenticated() && 
+             request.auth.token.role == role;
+    }
+    
+    function isValidImageFile() {
+      return resource.contentType.matches('image/.*') &&
+             resource.size < 10 * 1024 * 1024; // 10MB limit
+    }
+    
+    function isValidDocumentFile() {
+      return resource.contentType in ['application/pdf', 'application/msword', 
+                                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'] &&
+             resource.size < 50 * 1024 * 1024; // 50MB limit
+    }
+
+    // User profile images
+    match /profile-images/{userId}/{fileName} {
+      // Users can upload their own profile images
+      // Anyone can read profile images (for public profiles)
+      allow read: if true;
+      
+      allow create, update: if isOwner(userId) && 
+                              isValidImageFile();
+      
+      allow delete: if isOwner(userId) || hasRole('admin');
+    }
+
+    // Professional credentials and documents
+    match /professional-documents/{userId}/{fileName} {
+      // Only the professional and admins can access their documents
+      allow read, write: if isOwner(userId) || hasRole('admin');
+      
+      allow create, update: if isOwner(userId) && 
+                              isValidDocumentFile();
+    }
+
+    // Appointment-related files (session notes, etc.)
+    match /appointment-files/{appointmentId}/{fileName} {
+      // Only involved parties (client, professional) and admins can access
+      allow read, write: if hasRole('admin') ||
+                           (isAuthenticated() && 
+                            (request.auth.uid in resource.metadata.authorizedUsers));
+    }
+
+    // System assets (logos, etc.) - read-only for users
+    match /system-assets/{fileName} {
+      allow read: if true;
+      allow write: if hasRole('admin');
+    }
+
+    // Temporary uploads (cleanup after processing)
+    match /temp-uploads/{userId}/{fileName} {
+      allow read, write: if isOwner(userId);
+      
+      // Auto-cleanup: files older than 24 hours
+      allow delete: if isOwner(userId) || 
+                      (hasRole('admin') && 
+                       resource.timeCreated < timestamp.value - duration.value('24h'));
+    }
+
+    // Application backups (admin only)
+    match /backups/{fileName} {
+      allow read, write: if hasRole('admin');
+    }
+
+    // Default deny rule
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

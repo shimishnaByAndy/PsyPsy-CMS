@@ -63,17 +63,17 @@ export const professionalProfileSchema = z.object({
   }).optional(),
 });
 
-export const professionalRegistrationSchema = registrationSchema.merge(
-  z.object({
-    professionalProfile: professionalProfileSchema,
-    termsAccepted: z.boolean().refine(val => val === true, {
-      message: "professional.validation.terms.required"
-    }),
-    privacyAccepted: z.boolean().refine(val => val === true, {
-      message: "professional.validation.privacy.required"
-    }),
-  })
-);
+// Temporary fix for schema merge issue
+export const professionalRegistrationSchema = z.object({
+  ...registrationSchema.shape,
+  professionalProfile: professionalProfileSchema,
+  termsAccepted: z.boolean().refine(val => val === true, {
+    message: "professional.validation.terms.required"
+  }),
+  privacyAccepted: z.boolean().refine(val => val === true, {
+    message: "professional.validation.privacy.required"
+  }),
+});
 
 export const professionalVerificationSchema = z.object({
   credentials: z.array(z.object({

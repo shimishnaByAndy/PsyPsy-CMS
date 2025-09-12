@@ -259,7 +259,7 @@ export default function App() {
                   maxWidth: '1400px',
                   height: '850px',
                   position: 'relative',
-                  backgroundColor: 'transparent'
+                  backgroundColor: 'rgba(0, 0, 0, 0)'
                 }}
               >
                 {layout === "dashboard" && (

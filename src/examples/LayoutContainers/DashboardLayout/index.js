@@ -42,8 +42,8 @@ function DashboardLayout({ children }) {
         position: "absolute",
         top: 0,
         right: 0,
-        height: "850px",
-        overflow: "hidden",
+        minHeight: "100vh",
+        overflow: "auto",
         width: `calc(100% - ${miniSidenav ? pxToRem(96) : pxToRem(280)})`,
         transition: transitions.create(["width"], {
           easing: transitions.easing.easeInOut,
