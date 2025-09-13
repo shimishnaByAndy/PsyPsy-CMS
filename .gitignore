@@ -42,8 +42,13 @@ crystal-frontend-debug.log
 
 # Large development directories
 crystal-main*/
+"crystal-main 3"/
 .serena/
 context-engineering/worktrees/
+
+# Debug and log files
+*.log
+jinni_debug.log
 
 # Cache and temp files
 *.cache
