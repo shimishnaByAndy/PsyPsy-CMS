@@ -1,0 +1,175 @@
+{
+  "$schema": "https://schema.tauri.app/config/2.0.0",
+  "productName": "PsyPsy CMS",
+  "version": "2.0.0",
+  "identifier": "com.psypsy.cms.hipaa",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:5173"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "PsyPsy CMS - HIPAA Compliant Healthcare Management",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 800,
+        "minHeight": 600,
+        "resizable": true,
+        "maximizable": true,
+        "minimizable": true,
+        "closable": true,
+        "center": true,
+        "decorations": true,
+        "alwaysOnTop": false,
+        "fullscreen": false,
+        "focus": true,
+        "transparent": false,
+        "maximized": false,
+        "visible": true,
+        "skipTaskbar": false,
+        "fileDropEnabled": false,
+        "shadow": true,
+        "theme": "auto",
+        "titleBarStyle": "visible",
+        "hiddenTitle": false,
+        "acceptFirstMouse": false,
+        "tabbingIdentifier": "psypsy-cms",
+        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection"
+      }
+    ],
+    "trayIcon": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true,
+      "menuOnLeftClick": false,
+      "tooltip": "PsyPsy CMS"
+    },
+    "macOSPrivateApi": false,
+    "withGlobalTauri": false
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["msi", "deb", "dmg", "appimage"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "identifier": "com.psypsy.cms.hipaa",
+    "publisher": "PsyPsy Inc.",
+    "category": "Healthcare",
+    "shortDescription": "HIPAA Compliant Healthcare Management System",
+    "longDescription": "Professional healthcare management system with HIPAA compliance, secure client management, and comprehensive audit trails.",
+    "resources": [],
+    "copyright": "Copyright © 2025 PsyPsy Inc. All rights reserved.",
+    "licenseFile": "../LICENSE",
+    "externalBin": [],
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": "http://timestamp.sectigo.com",
+      "tsp": false,
+      "wix": {
+        "language": "en-US",
+        "template": null,
+        "fragmentPaths": [],
+        "componentGroupRefs": [],
+        "componentRefs": [],
+        "featureGroupRefs": [],
+        "featureRefs": [],
+        "mergeRefs": [],
+        "skipWebviewInstall": false,
+        "bannerPath": null,
+        "dialogImagePath": null
+      },
+      "nsis": {
+        "template": null,
+        "headerImage": null,
+        "sidebarImage": null,
+        "installerIcon": null,
+        "installMode": "both",
+        "languages": ["English"],
+        "displayLanguageSelector": true,
+        "compressionLevel": "high",
+        "packName": "psypsy-cms-installer"
+      }
+    },
+    "macOS": {
+      "frameworks": [],
+      "minimumSystemVersion": "10.15",
+      "exceptionDomain": "localhost",
+      "signingIdentity": null,
+      "providerShortName": null,
+      "entitlements": null,
+      "hardenedRuntime": true,
+      "dmg": {
+        "background": null,
+        "windowSize": {
+          "width": 660,
+          "height": 400
+        },
+        "appPosition": {
+          "x": 180,
+          "y": 170
+        },
+        "applicationFolderPosition": {
+          "x": 480,
+          "y": 170
+        }
+      }
+    },
+    "linux": {
+      "deb": {
+        "depends": ["libwebkit2gtk-4.1-0", "libssl3"]
+      },
+      "appimage": {
+        "bundleMediaFramework": false,
+        "libs": []
+      }
+    }
+  },
+  "permissions": [
+    "core:default",
+    "shell:allow-open",
+    "notification:default",
+    "clipboard-manager:allow-read-text",
+    "clipboard-manager:allow-write-text",
+    "fs:allow-read-file",
+    "fs:allow-write-file",
+    "fs:allow-read-dir",
+    "fs:allow-create-dir",
+    "os:allow-platform",
+    "os:allow-version",
+    "process:allow-restart",
+    {
+      "identifier": "fs:scope-config",
+      "allow": [
+        {
+          "path": "$APPCONFIG",
+          "recursive": true
+        },
+        {
+          "path": "$APPDATA", 
+          "recursive": true
+        },
+        {
+          "path": "$APPLOCALDATA",
+          "recursive": true
+        }
+      ]
+    }
+  ],
+  "security": {
+    "csp": "default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com https://*.firebaseapp.com https://*.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.googleapis.com https://*.googleusercontent.com https://firebasestorage.googleapis.com; connect-src 'self' https://*.firebaseapp.com https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com wss://*.firebaseio.com; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; media-src 'self'; worker-src 'self'; manifest-src 'self'; child-src 'none';",
+    "devCsp": "default-src 'self' localhost:* ws://localhost:*; script-src 'self' 'unsafe-inline' 'unsafe-eval' localhost:* ws://localhost:* https://apis.google.com https://*.firebaseapp.com https://*.googleapis.com; style-src 'self' 'unsafe-inline' localhost:* https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com localhost:*; img-src 'self' data: localhost:* https://*.googleapis.com https://*.googleusercontent.com https://firebasestorage.googleapis.com; connect-src 'self' localhost:* ws://localhost:* https://*.firebaseapp.com https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com wss://*.firebaseio.com;",
+    "freezePrototype": true,
+    "pattern": {
+      "use": "brownfield"
+    }
+  },
+  "plugins": {}
+}

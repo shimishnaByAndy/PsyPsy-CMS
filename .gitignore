@@ -46,6 +46,25 @@ crystal-main*/
 .serena/
 context-engineering/worktrees/
 
+# Tauri build artifacts
+context-engineering/tauri-app/src-tauri/target/
+context-engineering/tauri-app/src-tauri/Cargo.lock
+
+# Node.js dependencies in context-engineering
+context-engineering/node_modules/
+context-engineering/tauri-app/node_modules/
+
+# React Native and mobile build artifacts
+target/
+android/build/
+ios/build/
+
+# Python virtual environments
+venv/
+.venv/
+env/
+.env/
+
 # Debug and log files
 *.log
 jinni_debug.log

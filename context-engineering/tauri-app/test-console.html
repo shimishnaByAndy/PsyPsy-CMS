@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Console Debug</title>
+</head>
+<body>
+    <h1>Debug Console</h1>
+    <div id="errors" style="background: #fee; padding: 20px; margin: 20px; border-radius: 5px;">
+        <h2>Errors:</h2>
+        <pre id="error-log"></pre>
+    </div>
+    <iframe src="http://localhost:3000" style="width: 100%; height: 500px; border: 1px solid #ccc;"></iframe>
+
+    <script>
+        const errorLog = document.getElementById('error-log');
+
+        // Capture errors from the iframe
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'error') {
+                errorLog.textContent += event.data.message + '\n';
+            }
+        });
+
+        // Try to fetch and run the app directly
+        fetch('http://localhost:3000/src/main.tsx')
+            .then(r => r.text())
+            .then(text => {
+                console.log('Main.tsx loaded, checking for errors...');
+                // Check for any obvious issues
+                if (text.includes('Failed to resolve import')) {
+                    errorLog.textContent += 'Import resolution errors found\n';
+                }
+            })
+            .catch(err => {
+                errorLog.textContent += 'Failed to load main.tsx: ' + err + '\n';
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 94 11% 53%; /* PsyPsy primary color #899581 */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 94 11% 53%; /* PsyPsy primary for focus rings */
+    --radius: 0.5rem;
+
+    /* PsyPsy Custom Variables */
+    --psypsy-primary: 94 11% 53%;
+    --psypsy-primary-dark: 94 16% 41%;
+    --psypsy-primary-light: 94 15% 64%;
+    --psypsy-secondary: 210 40% 98%;
+    --psypsy-accent: 200 6% 10%;
+    --psypsy-success: 142 76% 36%;
+    --psypsy-warning: 45 93% 47%;
+    --psypsy-error: 0 84% 60%;
+    --psypsy-info: 188 78% 41%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 94 11% 53%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 94 11% 53%;
+
+    /* PsyPsy Dark Mode Variables */
+    --psypsy-primary: 94 11% 53%;
+    --psypsy-primary-dark: 94 16% 35%;
+    --psypsy-primary-light: 94 15% 70%;
+    --psypsy-secondary: 217.2 32.6% 17.5%;
+    --psypsy-accent: 210 40% 98%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Custom Healthcare-specific utilities */
+@layer utilities {
+  .healthcare-card {
+    @apply bg-card border border-border rounded-lg shadow-sm p-6;
+  }
+  
+  .healthcare-header {
+    @apply text-xl font-semibold text-foreground mb-4;
+  }
+  
+  .healthcare-subheader {
+    @apply text-lg font-medium text-muted-foreground mb-3;
+  }
+  
+  .healthcare-label {
+    @apply text-sm font-medium text-foreground mb-1;
+  }
+  
+  .healthcare-text {
+    @apply text-sm text-muted-foreground;
+  }
+  
+  .healthcare-error {
+    @apply text-destructive text-sm font-medium;
+  }
+  
+  .healthcare-success {
+    @apply text-green-600 dark:text-green-400 text-sm font-medium;
+  }
+  
+  .healthcare-warning {
+    @apply text-yellow-600 dark:text-yellow-400 text-sm font-medium;
+  }
+  
+  .healthcare-info {
+    @apply text-blue-600 dark:text-blue-400 text-sm font-medium;
+  }
+}
+
+/* Custom animations for healthcare workflow */
+@keyframes pulse-gentle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-pulse-gentle {
+  animation: pulse-gentle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* Focus styles for accessibility */
+.focus-psypsy {
+  @apply focus:outline-none focus:ring-2 focus:ring-psypsy-primary focus:ring-offset-2;
+}
+
+/* Loading states */
+.loading-skeleton {
+  @apply animate-pulse bg-muted rounded;
+}
+
+/* Print styles for healthcare documents */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .healthcare-card {
+    @apply shadow-none border border-gray-300;
+  }
+  
+  body {
+    @apply text-black bg-white;
+  }
+}
