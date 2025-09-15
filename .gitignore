@@ -40,19 +40,29 @@ firestore-debug.log
 ui-debug.log
 crystal-frontend-debug.log
 
-# Large development directories
-crystal-main*/
-"crystal-main 3"/
-.serena/
-context-engineering/worktrees/
+# Project-specific directories
 
-# Tauri build artifacts
-context-engineering/tauri-app/src-tauri/target/
-context-engineering/tauri-app/src-tauri/Cargo.lock
+# Electron CMS build artifacts
+electron-cms/build/
+electron-cms/node_modules/
 
-# Node.js dependencies in context-engineering
-context-engineering/node_modules/
-context-engineering/tauri-app/node_modules/
+# Crystal (Claude Code Manager)
+crystal/node_modules/
+crystal/dist-electron/
+crystal/main/dist/
+crystal/frontend/dist/
+
+# PsyPsyCMS (Tauri Application)
+PsyPsyCMS/src-tauri/target/
+PsyPsyCMS/src-tauri/Cargo.lock
+PsyPsyCMS/node_modules/
+PsyPsyCMS/dist/
+
+# Context Engineering - entire directory excluded
+context-engineering/
+
+# MCP servers
+mcps/*/node_modules/
 
 # React Native and mobile build artifacts
 target/
@@ -73,3 +83,39 @@ jinni_debug.log
 *.cache
 *.tmp
 .cursor/
+
+# Serena MCP files
+.serena/
+
+# macOS specific
+.Spotlight-V100
+.Trashes
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# ESLint cache
+.eslintcache
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Build artifacts for sub-projects
+*.dmg
+*.exe
+*.deb
+*.AppImage
+*.snap
+
+# Package manager locks (may want to commit these in sub-projects)
+yarn.lock
+pnpm-lock.yaml
+
+# IDE workspace files
+*.code-workspace
