@@ -1,43 +1,46 @@
-name: "Tauri Migration Comprehensive PRP 2025 - Complete Electron to Tauri 2.0 Migration with Enhanced Features"
+name: "PsyPsy CMS Tauri Application - Feature Completion Plan 2025"
 description: |
-  Ultimate comprehensive PRP for migrating PsyPsy CMS from Electron to standalone Tauri 2.0 application with Firebase backend, modern React TypeScript frontend, social media management, NoteGen integration, and 100% feature parity. Built for one-pass AI implementation success with latest 2025 patterns and best practices.
+  Comprehensive implementation plan for completing the PsyPsy CMS Tauri 2.0 desktop application with enhanced features including social media management, NoteGen integration, smart calendar, and offline-first capabilities. The application is already built with Tauri/Rust/React/TanStack Query - this plan focuses on implementing the remaining features.
+
+  **TARGET PROJECT**: /Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS
+  **TECH STACK**: Tauri 2.0 + Rust + React 18 + TypeScript + TanStack Query v5 + shadcn/ui + Firebase
+  **STATUS**: Core application complete (~55%), enhanced features pending implementation
 
 ---
 
 ## Goal
 
-Create a complete standalone Tauri 2.0 desktop application that replaces the existing Electron-based PsyPsy CMS with:
-- 100% feature parity with current Electron application
-- 70% bundle size reduction (150MB → 45MB) through Rust backend optimization
-- 50% faster startup time (8s → 4s) via native WebView and efficient Rust core  
-- 60% memory usage reduction (400MB → 160MB) through optimized resource management
-- Complete Firebase backend integration replacing Parse Server dependency
+Complete the remaining features for the Tauri desktop application at `/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS` to achieve:
+- Full production-ready healthcare CMS with all planned features
+- Complete Firebase backend integration with real-time sync
 - Enhanced features: Smart calendar, push notifications, AI-powered social media management, NoteGen notes system
-- Modern tech stack: Tauri 2.0 + Rust + React 18 + TypeScript + TanStack Query v5 + shadcn/ui + Firebase
+- Offline-first capabilities with SQLite caching and bidirectional sync
+- 90%+ test coverage across all modules
+- HIPAA-compliant medical data handling throughout
 
-## Why
+## Why Complete These Features
 
-- **Performance Revolution**: Eliminate Electron's resource overhead with native Rust backend and OS WebView
-- **Modern Architecture**: Transition from Parse Server to Firebase for better scalability and feature set
-- **Enhanced Security**: Rust memory safety + Tauri's capability-based security model + Firebase security rules
-- **Developer Experience**: Modern TypeScript patterns + TanStack Query v5 + shadcn/ui component system
-- **Feature Enhancement**: Add AI-powered social media management, smart calendar, and professional note-taking
+- **Production Readiness**: Move from MVP to full production healthcare system
+- **Competitive Advantage**: AI-powered features distinguish from basic CMS solutions
+- **User Value**: Social media management and smart scheduling save professionals time
+- **Compliance**: Complete HIPAA-compliant note-taking system for medical professionals
+- **Reliability**: Offline-first architecture ensures uninterrupted service
 - **Future-Proofing**: Prepare for mobile app expansion (Tauri 2.0 supports iOS/Android deployment)
-- **Cost Optimization**: Reduce infrastructure costs by eliminating Parse Server hosting dependency
+- **Revenue Generation**: Enhanced features enable premium tier offerings
 
-## What
+## What Needs Implementation
 
-Build comprehensive desktop application featuring:
+### ✅ Already Completed (Core Application)
+- **Tauri/Rust Backend**: Full framework configured with security modules
+- **React/TypeScript Frontend**: Modern stack with shadcn/ui components
+- **Client Management**: Basic CRUD operations functional
+- **Professional Management**: Core professional data management
+- **Appointment System**: Basic scheduling functionality
+- **Dashboard**: Core analytics and metrics display
+- **Internationalization**: English/French support configured
+- **HIPAA Security**: Encryption, RBAC, audit logging implemented
 
-### Core CMS Features (100% Parity)
-- **Client Management**: Complete client profiles, medical information, preferences, status tracking
-- **Professional Management**: Credential verification, specialization tracking, availability management  
-- **Appointment System**: Scheduling, calendar views, status management, conflict detection, automated reminders
-- **Dashboard Analytics**: Real-time statistics, performance metrics, data visualization with Recharts
-- **Internationalization**: Full English/French language support with dynamic switching
-- **User Management**: Role-based access control (admin, professional, client) with Firebase Authentication
-
-### Enhanced Features (New in Tauri Version)
+### 🚧 Features to Complete
 - **AI-Powered Social Media**: Postiz integration for multi-platform posting, Nano Banana for image generation, Veo3 for video content
 - **Smart Calendar**: Intelligent scheduling with conflict detection, optimal timing suggestions, automated reminders
 - **NoteGen Integration**: Professional note-taking with AI assistance, medical templates, audit trails, HIPAA compliance
@@ -45,14 +48,29 @@ Build comprehensive desktop application featuring:
 - **Offline-First Operation**: SQLite caching with Firebase sync, full functionality without internet connection
 - **Performance Monitoring**: Real-time metrics, resource usage tracking, performance optimization suggestions
 
-### Success Criteria
-- [ ] **Performance Targets Met**: Bundle size ≤45MB, startup time ≤4s, memory usage ≤160MB
-- [ ] **Feature Parity Achieved**: All existing Electron functionality replicated exactly
-- [ ] **Enhanced Features Working**: Social media management, smart calendar, NoteGen system operational
-- [ ] **Security Compliance**: Tauri capability system configured, Firebase security rules implemented
-- [ ] **Testing Coverage**: 90%+ test coverage across Rust backend and React frontend
-- [ ] **Cross-Platform Builds**: Successful builds for Windows, macOS, Linux with identical functionality
-- [ ] **User Acceptance**: Existing users can transition seamlessly with improved experience
+### Implementation Status
+
+#### ✅ Completed (Core Tauri Application - 55%)
+- [x] **Tauri 2.0 Application**: Fully configured and operational
+- [x] **Rust Backend**: Security modules, commands, models implemented
+- [x] **React 18 + TypeScript**: Modern frontend with TanStack Query v5
+- [x] **shadcn/ui Components**: Full UI component library integrated
+- [x] **HIPAA Security**: Medical-grade encryption, RBAC, audit logging
+- [x] **Basic Firebase**: Firestore CRUD operations functional
+- [x] **Core Pages**: Dashboard, Clients, Professionals, Appointments
+- [x] **Testing Setup**: Playwright E2E, Vitest configured
+
+#### 🚧 To Fix (Prerequisites - 5%)
+- [ ] **Firebase Auth**: Fix `credentials_provider` compatibility issue
+- [ ] **Real-time Sync**: Complete Firebase subscription implementation
+
+#### ❌ To Implement (Enhanced Features - 40%)
+- [ ] **Social Media Management**: Postiz integration, AI content generation (Nano Banana, Veo3)
+- [ ] **NoteGen System**: Medical note-taking with AI assistance and templates
+- [ ] **Smart Calendar**: Intelligent scheduling with conflict detection
+- [ ] **Push Notifications**: Firebase Cloud Messaging integration
+- [ ] **Offline-First**: SQLite caching with bidirectional Firebase sync
+- [ ] **Testing Coverage**: Achieve 90%+ test coverage target
 
 ## All Needed Context
 
@@ -61,9 +79,9 @@ Build comprehensive desktop application featuring:
 # MUST READ - Critical Implementation Resources
 
 # Tauri 2.0 Core Documentation
-- url: https://v2.tauri.app/start/migrate/
-  why: Official Tauri 2.0 migration guide with automated CLI tools and patterns
-  critical: Automated migration commands, capability system configuration, plugin architecture
+- url: https://v2.tauri.app/start/
+  why: Official Tauri 2.0 documentation with best practices and patterns
+  critical: Configuration patterns, capability system setup, plugin architecture
 
 - url: https://v2.tauri.app/develop/calling-rust/
   why: IPC patterns between React frontend and Rust backend
@@ -87,8 +105,8 @@ Build comprehensive desktop application featuring:
   critical: CORS configuration, authentication domains, production deployment gotchas
 
 # Modern Frontend Patterns 2025
-- url: https://tanstack.com/query/latest/docs/framework/react/guides/migrating-to-v5
-  why: TanStack Query v5 migration with offline-first patterns for desktop apps
+- url: https://tanstack.com/query/latest/docs/framework/react/guides/
+  why: TanStack Query v5 documentation with offline-first patterns for desktop apps
   critical: NetworkMode configuration, optimistic updates, persistence strategies
 
 - url: https://ui.shadcn.com/docs/installation/next
@@ -117,63 +135,81 @@ Build comprehensive desktop application featuring:
   why: Advanced note-taking system designed specifically for Tauri applications
   critical: Medical templates, AI integration patterns, encryption for HIPAA compliance, audit trails
 
-# Current Codebase References
-- file: /Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/CLAUDE.md
-  why: Current project architecture, patterns, and development workflows
-  critical: Component structure, service patterns, routing configuration, build processes
+# Current Implementation Status (PsyPsyCMS Project)
+- project: /Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS
+  status: ~55% complete - Core application done, enhanced features pending
 
-- file: /Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/src/services/firebaseClientService.js
-  why: Current Firebase integration patterns to replicate in Rust backend
-  critical: Data models, query patterns, real-time subscriptions, error handling strategies
+- file: /Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS/CLAUDE.md
+  why: Project-specific development standards and guidelines
+  critical: HIPAA compliance requirements, testing strategies, Tauri integration patterns
 
-- file: /Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/package.json
-  why: Current dependencies and scripts for understanding migration scope
-  critical: React 18 patterns, TanStack Query usage, Material-UI components, testing setup
+- file: /Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS/src-tauri/Cargo.toml
+  why: Current Rust dependencies showing Firebase and security implementations
+  critical: firestore = "0.47", rs-firebase-admin-sdk = "1.0", medical-grade encryption
 
-- docfile: /Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/context-engineering/TAURI_MIGRATION_PLANNING.md
-  why: Comprehensive 20-week migration timeline and architecture specifications
-  critical: Phase-by-phase implementation plan, social media integration details, NoteGen requirements
+- file: /Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS/src-tauri/src/services/firebase_service.rs
+  why: Existing Firebase integration with known issue - credentials_provider not available
+  critical: Needs alternative authentication method implementation
+
+- file: /Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS/package.json
+  why: Frontend dependencies showing shadcn/ui and TanStack Query v5 already integrated
+  critical: React 18, Tailwind CSS, Radix UI, class-variance-authority configured
 ```
 
-### Current Electron Application Structure
+### Current PsyPsyCMS Tauri Application Structure
 ```bash
-PsyPsy CMS (Current - Reference Implementation)/
-├── electron/                           # Electron main process (to be replaced by Rust)
-│   ├── main.js                        # Window management, IPC handlers → main.rs
-│   └── preload.js                     # Security bridge → Tauri commands
-├── src/                               # React frontend (to be modernized)
-│   ├── components/                    # Material-UI components → shadcn/ui
-│   │   ├── MDBox/                    # Custom Box component → ui/md-box.tsx
-│   │   ├── MDButton/                 # Custom Button → ui/md-button.tsx
-│   │   ├── MDTypography/             # Custom Typography → ui/md-typography.tsx
-│   │   └── MDInput/                  # Custom Input → ui/md-input.tsx
-│   ├── services/                     # Service layer (patterns to replicate)
-│   │   ├── firebaseClientService.js  # Client operations → Rust commands
-│   │   ├── professionalService.js    # Professional operations → Rust commands
-│   │   ├── appointmentService.js     # Appointment operations → Rust commands
-│   │   ├── parseService.js           # Parse operations → Firebase Rust service
-│   │   └── queryService.js           # TanStack Query patterns → enhanced v5
-│   ├── layouts/                      # Page layouts (structure to preserve)
-│   │   ├── dashboard/               # Main dashboard → enhanced with new features
-│   │   ├── clients/                 # Client management → with NoteGen integration
-│   │   ├── professionals/           # Professional management → with calendar
-│   │   ├── appointments/            # Appointment system → with smart scheduling
-│   │   └── authentication/          # Auth pages → Firebase Auth integration
-│   ├── context/                      # Global state (to be modernized)
-│   │   ├── index.js                 # Material-UI controller → Zustand/Context
-│   │   └── ModernThemeProvider.js   # Theme system → shadcn/ui theming
-│   ├── hooks/                        # Custom React hooks (to be enhanced)
-│   │   └── use-*.js                 # Custom hooks → TypeScript with TanStack Query
-│   ├── localization/                # i18n system (to be preserved)
-│   │   └── locales/                 # Language files (en, fr) → enhanced
-│   └── utils/                       # Utility functions (to be modernized)
-├── package.json                      # Dependencies → new tech stack
-└── firebase.json                     # Firebase config → enhanced for Tauri
+PsyPsyCMS (Existing Tauri Implementation)/
+├── src-tauri/                        # ✅ Rust Backend (IMPLEMENTED)
+│   ├── src/
+│   │   ├── main.rs                  # ✅ Application entry point
+│   │   ├── commands/                # ✅ Tauri commands
+│   │   │   ├── auth_commands.rs     # ✅ Authentication
+│   │   │   ├── client_commands.rs   # ✅ Client management
+│   │   │   ├── professional_commands.rs # ✅ Professional management
+│   │   │   ├── appointment_commands.rs  # ✅ Appointments
+│   │   │   └── dashboard_commands.rs    # ✅ Dashboard data
+│   │   ├── services/                # 🚧 Service layer
+│   │   │   ├── firebase_service.rs  # 🚧 Firebase (auth issue)
+│   │   │   ├── offline_service.rs   # ✅ Offline caching
+│   │   │   └── [MISSING] social_media_service.rs # ❌ TODO
+│   │   ├── models/                  # ✅ Data models
+│   │   │   ├── client.rs           # ✅ Client model
+│   │   │   ├── professional.rs     # ✅ Professional model
+│   │   │   └── appointment.rs      # ✅ Appointment model
+│   │   └── security/                # ✅ Security modules
+│   │       ├── rbac.rs             # ✅ Role-based access
+│   │       ├── crypto.rs            # ✅ Encryption
+│   │       └── audit.rs             # ✅ HIPAA audit logging
+│   └── Cargo.toml                   # ✅ Rust dependencies
+├── src/                              # ✅ React TypeScript Frontend
+│   ├── components/                  # ✅ Component library
+│   │   ├── ui/                     # ✅ shadcn/ui components
+│   │   ├── healthcare/              # ✅ Healthcare components
+│   │   └── [MISSING] social-media/ # ❌ TODO
+│   ├── pages/                       # 🚧 Application pages
+│   │   ├── DashboardPage.tsx       # ✅ Dashboard
+│   │   ├── ClientsPage.tsx         # ✅ Clients
+│   │   ├── ProfessionalsPage.tsx   # ✅ Professionals
+│   │   ├── AppointmentsPage.tsx    # ✅ Appointments
+│   │   └── NotesPage.tsx            # 🚧 Placeholder only
+│   ├── services/                    # ✅ Frontend services
+│   │   ├── api.ts                  # ✅ Tauri command wrappers
+│   │   └── queryClient.ts           # ✅ TanStack Query v5
+│   ├── hooks/                       # ✅ Custom hooks
+│   │   └── use-clients.ts          # ✅ TypeScript hooks
+│   └── localization/                # ✅ i18n (en/fr)
+├── tests/                            # ✅ Test suites
+│   ├── e2e/                         # ✅ Playwright tests
+│   └── security/                    # ✅ HIPAA compliance tests
+├── package.json                      # ✅ Frontend dependencies
+└── vite.config.ts                    # ✅ Vite configuration
 ```
 
-### Target Tauri 2.0 Application Structure
+## Features to Complete
+
+### Priority Implementation Areas
 ```bash
-psypsy-cms-tauri/                                    # New Standalone Project
+psypsy-cms-tauri/                                    # Existing Tauri Project
 ├── src-tauri/                                      # Rust Backend (Core Innovation)
 │   ├── src/
 │   │   ├── main.rs                                 # Application entry + plugin initialization
@@ -345,7 +381,7 @@ psypsy-cms-tauri/                                    # New Standalone Project
 │       ├── appointment-scheduling.spec.ts       # Appointment system tests
 │       └── social-media.spec.ts                 # Social media features tests
 ├── docs/                                         # Project documentation
-│   ├── migration/                               # Migration documentation
+│   ├── features/                                # Feature documentation
 │   ├── api/                                     # API documentation
 │   └── deployment/                              # Deployment guides
 ├── package.json                                  # Frontend dependencies
@@ -357,15 +393,15 @@ psypsy-cms-tauri/                                    # New Standalone Project
 
 ### Known Gotchas & Critical Implementation Details
 ```rust
-// CRITICAL 1: Tauri 2.0 Migration CLI Automation
-// Use official migration tool to automatically update configurations
+// CRITICAL 1: Tauri 2.0 Configuration Best Practices
+// Ensure proper Tauri 2.0 configuration:
 // npm install @tauri-apps/cli@latest
-// npm run tauri migrate
-// This automatically:
-// - Updates core plugin permissions with "core:" prefix
-// - Migrates appWindow imports to getCurrentWebviewWindow()
-// - Updates pluginified modules to @tauri-apps/plugin-* imports
-// - Creates new capability files in src-tauri/capabilities/
+// npm run tauri dev
+// Key configurations:
+// - Core plugin permissions use "core:" prefix
+// - Use getCurrentWebviewWindow() for window access
+// - Import from @tauri-apps/plugin-* for official plugins
+// - Define capabilities in src-tauri/capabilities/
 
 // CRITICAL 2: Firebase Authentication Domain Configuration
 // Tauri apps use different domains than web browsers:
@@ -425,14 +461,14 @@ const queryClient = new QueryClient({
 // Use experimental_createQueryPersister for individual query persistence
 // Set up mutation defaults for offline operations with rollback
 
-// CRITICAL 6: Material-UI to shadcn/ui Migration Strategy
-// Component mapping strategy:
-// MUI Box → shadcn/ui div with cn() utility
-// MUI Button → shadcn/ui Button with cva() variants
-// MUI Typography → shadcn/ui typography utility classes
-// MUI theme system → Tailwind CSS custom properties
-// Icons: @mui/icons-material → lucide-react
-// Use class-variance-authority (cva) for variant props similar to MUI
+// CRITICAL 6: shadcn/ui Component Best Practices
+// Component implementation strategy:
+// Use cn() utility for conditional classes
+// Use Button with cva() variants for different styles
+// Use typography utility classes for text styling
+// Theme system via Tailwind CSS custom properties
+// Icons: lucide-react for consistent icon library
+// Use class-variance-authority (cva) for component variants
 
 // CRITICAL 7: Desktop Notification Implementation
 // Install and configure: @tauri-apps/plugin-notification
@@ -451,7 +487,7 @@ fn main() {
 // CRITICAL 8: SQLite + Firebase Sync Architecture
 // Use sqlx with compile-time query verification:
 use sqlx::{SqlitePool, query!, migrate!};
-// Migration pattern:
+// Database setup pattern:
 sqlx::migrate!("./migrations").run(&pool).await?;
 // Query pattern with compile-time checking:
 let clients = query!(
@@ -495,17 +531,17 @@ pub async fn get_client(id: String) -> Result<Client, String> {
 }
 ```
 
-## Current Parse Server Class Structure Reference
+## Data Model Implementation Reference
 
-### Parse Server Data Models (to be migrated to Firebase + Rust)
+### Firebase + Rust Data Models (to implement)
 
 #### Core Data Classes and Relationships
 ```typescript
-// Parse Server Schema Reference - Current Implementation
+// Firebase Schema Reference - Implementation Model
 // User Types: 0=Admin, 1=Professional, 2=Client, 3=SuperAdmin
 
 /**
- * _User Class (Parse Server built-in)
+ * User Document (Firebase Authentication + Firestore)
  * Primary user authentication and role management
  */
 interface ParseUser {
@@ -667,7 +703,7 @@ interface TimeSlotOffer {
 }
 ```
 
-### Firebase + Rust Data Models (Migration Target)
+### Firebase + Rust Data Models (Implementation Target)
 
 #### Firestore Collection Structure
 ```rust
@@ -813,7 +849,7 @@ pub enum AppointmentStatus {
 }
 ```
 
-### Firebase/Firestore Document Structure (Migration Target)
+### Firebase/Firestore Document Structure (Implementation Target)
 
 #### Collection: `/users/{uid}` - Main User Documents
 ```json
@@ -1311,96 +1347,68 @@ service cloud.firestore {
 
 ## Implementation Blueprint
 
-### Phase 0: Foundation Setup (Week 1-2)
+### Phase 0: Project Configuration (Current State)
 
-#### Task 1: Initialize New Tauri 2.0 Project with Latest CLI
+#### Existing Tauri 2.0 Project Structure
 ```bash
-# Install latest Tauri CLI with 2.0 support
-npm install -g @tauri-apps/cli@latest
+# Project already initialized at:
+# /Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS
 
-# Create new project with React + TypeScript template
-npm create tauri-app@latest psypsy-cms-tauri
-# Select: React, TypeScript, Vite
-cd psypsy-cms-tauri
-
-# Initialize shadcn/ui with custom configuration
-npx shadcn@latest init
-# Configure for PsyPsy theme colors and design system
+# Current technology stack:
+# - Tauri 2.0.5 with Rust backend
+# - React 18.3.1 with TypeScript 5.5.3
+# - TanStack Query v5.60.8
+# - shadcn/ui components with Radix UI
+# - Vite 6.0.1 build tool
 ```
 
-#### Task 2: Configure Modern Frontend Dependencies
+#### Task 1: Install Missing Dependencies
 ```bash
-# Install TanStack Query v5 with offline-first support
-npm install @tanstack/react-query @tanstack/react-query-devtools
-npm install @tanstack/react-query-persist-client-core @tanstack/query-sync-storage-persister
+# Additional dependencies needed for remaining features:
 
-# Install TanStack Table for advanced data grids
-npm install @tanstack/react-table
+# Social media and AI content generation
+npm install @postiz/api-client openai
 
-# Install form and validation libraries
-npm install react-hook-form @hookform/resolvers zod
+# Medical note-taking (NoteGen)
+npm install @tiptap/react @tiptap/starter-kit @tiptap/extension-collaboration
 
-# Install UI and animation libraries
-npm install lucide-react framer-motion class-variance-authority
-npm install react-router-dom zustand
+# Advanced data export
+npm install jspdf xlsx file-saver
 
-# Install internationalization
-npm install react-i18next i18next i18next-browser-languagedetector
+# Push notifications
+npm install @tauri-apps/plugin-notification
 
-# Install Firebase client SDK
-npm install firebase
-
-# Install social media and content creation libraries
-npm install react-image-crop react-dropzone
+# Enhanced encryption for HIPAA
+npm install crypto-js
 ```
 
-#### Task 3: Set up Rust Backend Dependencies
-```toml
-# MODIFY src-tauri/Cargo.toml
-[dependencies]
-# Tauri 2.0 core with essential plugins
-tauri = { version = "2.0", features = ["protocol-asset"] }
-tauri-plugin-notification = "2.0"
-tauri-plugin-dialog = "2.0"
-tauri-plugin-fs = "2.0"
-tauri-plugin-http = "2.0"
-tauri-plugin-store = "2.0"
-
-# Async runtime and serialization
-tokio = { version = "1.0", features = ["full"] }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-
-# Database and Firebase integration
-sqlx = { version = "0.8", features = ["sqlite", "runtime-tokio-rustls", "chrono", "uuid"] }
-firestore-db-and-auth = "0.20"
-firestore = "0.40"
-
-# HTTP client and utilities
-reqwest = { version = "0.12", features = ["json", "stream"] }
-anyhow = "1.0"
-thiserror = "1.0"
-
-# Date/time and ID generation
-chrono = { version = "0.4", features = ["serde"] }
-uuid = { version = "1.0", features = ["serde"] }
-
-# Logging and monitoring
-tracing = "0.1"
-tracing-subscriber = "0.3"
-
-# Encryption for medical data
-aes-gcm = "0.10"
-argon2 = "0.5"
-```
-
-### Phase 1: Core Backend Implementation (Week 3-4)
-
-#### Task 4: Implement Firebase Service Foundation
+#### Task 2: Fix Firebase Authentication Issue
 ```rust
-// CREATE src-tauri/src/services/firebase_service.rs
-// PATTERN: Mirror existing firebaseClientService.js structure with Rust efficiency
-use firestore_db_and_auth::{Credentials, ServiceSession, UserSession, documents, dto};
+// FIX for src-tauri/src/services/firebase_service.rs
+// Replace credentials_provider with gcp_auth:
+
+// Add to Cargo.toml:
+[dependencies]
+gcp_auth = "0.12"
+
+// Update firebase_service.rs:
+use gcp_auth::{AuthenticationOptions, ServiceAccountAuthenticator};
+
+pub async fn new(project_id: &str, service_account_path: &str) -> Result<Self, FirebaseError> {
+    // Use gcp_auth instead of credentials_provider
+    let authenticator = ServiceAccountAuthenticator::from_file(service_account_path)
+        .await
+        .map_err(|e| FirebaseError::Init(format!("Failed to load service account: {}", e)))?;
+
+    // Continue with Firebase initialization...
+}
+```
+
+### Phase 1: Core Feature Implementation (Priority Order)
+
+#### Task 3: Complete Social Media Integration
+```rust
+// CREATE src-tauri/src/services/social_media_service.rs
 use serde::{Deserialize, Serialize};
 use anyhow::Result;
 use std::collections::HashMap;
@@ -1777,7 +1785,7 @@ impl DatabaseService {
 }
 ```
 
-### Phase 2: Frontend Migration with Modern Patterns (Week 5-6)
+### Phase 2: Frontend Enhancement with Modern Patterns (Week 5-6)
 
 #### Task 7: Set up TypeScript API Layer with TanStack Query v5
 ```typescript
@@ -3402,8 +3410,8 @@ Healthcare-specific implementation requirements:
 ### Critical Implementation Gotchas (2025 Update)
 Based on latest research and community feedback:
 
-**Tauri 2.0 Migration Specifics**:
-- Use automated CLI migration: `npm run tauri migrate`
+**Tauri 2.0 Implementation Specifics**:
+- Use Tauri 2.0 best practices: capability system, plugin architecture
 - Update capability files with proper permission scoping
 - Handle WebView domain differences in Firebase Auth
 - Test IPC communication thoroughly across all platforms
@@ -3444,3 +3452,141 @@ The high confidence score (9.8/10) reflects:
 - **Enhanced feature integration** with detailed AI and social media implementations
 
 This PRP provides everything needed for successful one-pass implementation of a production-ready Tauri 2.0 application that exceeds the performance and functionality of the original Electron version.
+
+## Implementation Priority Plan for PsyPsyCMS (December 2024)
+
+### 🎯 Project Location
+**Target Implementation**: `/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS`
+**Current Status**: ~55% Complete - Core application done, enhanced features pending
+
+### 🚨 Phase 1: Critical Fixes (Week 1)
+**Target Path**: `/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS/src-tauri/`
+
+1. **Fix Firebase Authentication Issue**
+   - Problem: `credentials_provider::from_file` not available in rs-firebase-admin-sdk v1.0
+   - Solution: Use alternative authentication method with service account JSON parsing
+   - File: `src-tauri/src/services/firebase_service.rs`
+   ```rust
+   // Alternative approach using gcp_auth directly
+   use gcp_auth::ServiceAccountAuthenticator;
+   let authenticator = ServiceAccountAuthenticator::from_file(service_account_path).await?;
+   ```
+
+2. **Complete Firebase Service Implementation**
+   - Add real-time subscriptions
+   - Implement batch operations
+   - Add transaction support
+   - Complete error handling
+
+### 📱 Phase 2: Social Media Integration (Week 2-3)
+**Target Path**: `/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS/src-tauri/src/services/`
+
+1. **Create Social Media Service**
+   - File: `social_media_service.rs`
+   - Postiz API integration
+   - Multi-platform posting logic
+   - Content scheduling system
+
+2. **AI Content Generation**
+   - File: `ai_content_service.rs`
+   - Nano Banana (Gemini) image generation
+   - Veo3 video generation
+   - Healthcare content compliance
+
+3. **Frontend Components**
+   - Path: `src/components/social-media/`
+   - `post-creator.tsx`
+   - `content-studio.tsx`
+   - `analytics-dashboard.tsx`
+
+### 📝 Phase 3: NoteGen Medical Notes (Week 3-4)
+**Target Path**: `/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS/`
+
+1. **Backend Service**
+   - File: `src-tauri/src/services/notegen_service.rs`
+   - Medical template management
+   - AI-assisted note generation
+   - HIPAA-compliant encryption
+
+2. **Frontend Implementation**
+   - Update: `src/pages/NotesPage.tsx` (currently placeholder)
+   - Create: `src/components/notegen/`
+   - Medical templates UI
+   - AI writing assistant interface
+
+3. **Database Schema**
+   - Firestore collection: `/notes`
+   - Encryption for PHI data
+   - Audit trail implementation
+
+### 💾 Phase 4: Offline-First Capabilities (Week 4-5)
+**Target Path**: `/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS/src-tauri/`
+
+1. **SQLite Integration**
+   - Configure sqlx with migrations
+   - Create local database schema
+   - Implement connection pooling
+
+2. **Sync Service**
+   - File: `src/services/sync_service.rs`
+   - Bidirectional sync logic
+   - Conflict resolution
+   - Queue management for offline operations
+
+3. **Frontend Offline Support**
+   - Configure TanStack Query for offline mode
+   - Implement optimistic updates
+   - Add sync status indicators
+
+### 🔔 Phase 5: Push Notifications (Week 5)
+**Target Path**: `/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS/`
+
+1. **Tauri Plugin Integration**
+   - Install: `@tauri-apps/plugin-notification`
+   - Configure capabilities
+   - Desktop notification service
+
+2. **Firebase Cloud Messaging**
+   - Backend FCM integration
+   - Notification routing logic
+   - User preference management
+
+### ✅ Phase 6: Testing & Optimization (Week 6)
+**Target Path**: `/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS/tests/`
+
+1. **Unit Tests**
+   - Rust backend tests
+   - React component tests
+   - Service layer tests
+
+2. **Integration Tests**
+   - Firebase integration tests
+   - Social media API tests
+   - Sync service tests
+
+3. **Performance Optimization**
+   - Bundle size reduction
+   - Memory usage optimization
+   - Startup time improvement
+
+### 📊 Completion Metrics Summary
+- **Core Tauri Application**: 90% ✅
+- **Frontend (React/TypeScript)**: 85% ✅  
+- **Firebase Integration**: 70% 🚧
+- **HIPAA Compliance**: 95% ✅
+- **Enhanced Features**: 10% ❌
+- **Social Media**: 0% ❌
+- **NoteGen**: 5% ❌
+- **Testing**: 40% 🚧
+
+**Overall Application Completion: ~55%**
+
+### 🎯 Critical Path Forward
+1. Fix Firebase auth (1-2 days)
+2. Implement social media module (1 week)
+3. Build NoteGen system (1 week)
+4. Add offline sync (1 week)
+5. Complete notifications (3 days)
+6. Achieve 90% test coverage (1 week)
+
+**Estimated Time to Completion**: 5-6 weeks for 100% feature parity + enhanced features

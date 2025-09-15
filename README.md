@@ -1,62 +1,53 @@
-# PsyPsy CMS
+# PsyPsy CMS Workspace
 
-A desktop CMS application built with Electron and React, based on Material Dashboard 2 React template.
+This workspace contains multiple projects for the PsyPsy psychology platform, including desktop applications, server components, and development tools.
 
-## Features
+## Projects
 
-- Beautiful Material Design UI
-- Desktop application for Windows, macOS, and Linux
-- Complete dashboard and admin interface
-- Authentication and user management
-- Responsive design
+### 📱 electron-cms/
+Electron-based desktop CMS application built with React and Material-UI.
+- **Tech Stack**: Electron 36.0.0, React 18, Material-UI v5, Parse Server
+- **Purpose**: Administrative dashboard for psychology platform
+- **Port**: 3022 (development)
 
-## Technologies Used
+### 🔧 PsyPsyCMS/
+Modern Tauri application representing the next-generation desktop client.
+- **Tech Stack**: Tauri 2.0, React, TypeScript, Vite, Radix UI, TanStack Query
+- **Purpose**: Modern desktop application with enhanced UI/UX
+- **Status**: Active development
 
-- Electron
-- React
-- Material UI
-- Chart.js
-- React Router
+### 💎 crystal/
+Claude Code multi-session management tool for development workflow optimization.
+- **Tech Stack**: Electron, pnpm workspaces
+- **Purpose**: Development productivity and Claude Code session management
+- **Version**: 0.2.3
 
-## Getting Started
+### 🔌 mcps/
+Model Context Protocol (MCP) servers and tools collection.
+- **Purpose**: AI-powered development assistance and automation
+- **Components**: React analyzer, task management, and development tools
 
-### Prerequisites
+## Quick Start
 
-- Node.js (v14 or higher)
-- npm or yarn
-
-### Installation
-
-1. Clone the repository
-```
-git clone https://github.com/yourusername/psypsy-cms.git
-cd psypsy-cms
-```
-
-2. Install dependencies
-```
+### Electron CMS
+```bash
+cd electron-cms
 npm install
-```
-
-### Development
-
-Run the application in development mode:
-```
 npm run electron:dev
 ```
 
-This will start both the React development server and Electron app.
-
-### Building for Production
-
-Build for all platforms:
-```
-npm run package
+### Tauri Application (PsyPsyCMS)
+```bash
+cd PsyPsyCMS
+npm install
+npm run tauri:dev
 ```
 
-Or build for specific platforms:
-```
-npm run electron:build
+### Crystal (Claude Code Manager)
+```bash
+cd crystal
+pnpm install
+pnpm dev
 ```
 
 ## Credits
