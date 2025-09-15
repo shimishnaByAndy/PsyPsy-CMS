@@ -8,6 +8,8 @@ pub mod services;
 pub mod models;
 pub mod commands;
 pub mod security;
+pub mod storage;
+pub mod compliance;
 
 use services::{FirebaseService, OfflineService};
 use security::auth::AuthState;

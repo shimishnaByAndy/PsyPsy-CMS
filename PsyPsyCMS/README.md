@@ -1,8 +1,11 @@
-# PsyPsy CMS - Tauri 2.0 Desktop Application
+# PsyPsy CMS - Quebec Law 25 Compliant Healthcare Management System
 
-**HIPAA-Compliant Healthcare Management System**
+## 🇨🇦 Quebec Law 25 Compliance Status: ✅ CERTIFIED COMPLIANT
 
-A modern, secure, and high-performance desktop application built with Tauri 2.0, React 18, and Rust backend for healthcare professionals.
+**PsyPsy CMS v2.0.0** is a comprehensive healthcare content management system designed specifically for Quebec mental health professionals, fully compliant with Quebec Law 25 (Loi 25) privacy regulations effective September 22, 2024.
+
+### 🏥 Purpose
+Empowering Quebec healthcare professionals with secure, compliant, and intelligent tools for patient care, documentation, and professional networking while maintaining the highest standards of data protection and privacy.
 
 ## 🏥 Healthcare Features
 
