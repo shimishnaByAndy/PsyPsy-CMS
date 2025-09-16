@@ -1,9 +1,10 @@
-import React, { Suspense, useEffect, useState } from 'react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import React, { Suspense, useEffect, useState, useRef } from 'react'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { useTranslation } from 'react-i18next'
+import { Home, Users, Calendar, UserCog, FileText, Settings, Globe } from 'lucide-react'
 
 // Import global styles and i18n
 import './globals.css'
@@ -21,12 +22,15 @@ import ClientsPage from '@/pages/ClientsPage'
 import ProfessionalsPage from '@/pages/ProfessionalsPage'
 import AppointmentsPage from '@/pages/AppointmentsPage'
 import NotesPage from '@/pages/NotesPage'
+import SocialMediaPage from '@/pages/SocialMediaPage'
 import SettingsPage from '@/pages/SettingsPage'
 import LoginPage from '@/pages/LoginPage'
 import LoadingPage from '@/pages/LoadingPage'
 
-// Import error boundary
+// Import error boundary and dev console
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import DevConsole, { DevConsoleRef } from '@/components/DevConsole'
+import { useDevKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 
 /**
  * Protected Route component
@@ -54,7 +58,7 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
  */
 function AppRoutes() {
   const { user, logout } = useAuth()
-  const { i18n } = useTranslation()
+  useTranslation()
   const [isDarkMode, setIsDarkMode] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -107,14 +111,14 @@ function AppRoutes() {
     {
       id: 'dashboard',
       label: 'Dashboard',
-      icon: 'Home',
+      icon: Home,
       href: '/dashboard',
       active: location.pathname === '/dashboard',
     },
     {
       id: 'clients',
       label: 'Clients',
-      icon: 'Users',
+      icon: Users,
       href: '/clients',
       active: location.pathname === '/clients',
       badge: 12,
@@ -122,7 +126,7 @@ function AppRoutes() {
     {
       id: 'appointments',
       label: 'Appointments',
-      icon: 'Calendar',
+      icon: Calendar,
       href: '/appointments',
       active: location.pathname === '/appointments',
       badge: 3,
@@ -130,21 +134,28 @@ function AppRoutes() {
     {
       id: 'professionals',
       label: 'Professionals',
-      icon: 'UserCog',
+      icon: UserCog,
       href: '/professionals',
       active: location.pathname === '/professionals',
     },
     {
       id: 'notes',
       label: 'Notes & Files',
-      icon: 'FileText',
+      icon: FileText,
       href: '/notes',
       active: location.pathname === '/notes',
     },
     {
+      id: 'social-media',
+      label: 'Social Media',
+      icon: Globe,
+      href: '/social-media',
+      active: location.pathname === '/social-media',
+    },
+    {
       id: 'settings',
       label: 'Settings',
-      icon: 'Settings',
+      icon: Settings,
       href: '/settings',
       active: location.pathname === '/settings',
     },
@@ -255,7 +266,27 @@ function AppRoutes() {
           </DashboardLayout>
         </ProtectedRoute>
       } />
-      
+
+      <Route path="/social-media" element={
+        <ProtectedRoute>
+          <DashboardLayout
+            currentUser={{
+              name: user?.profile?.fullName || 'Unknown User',
+              email: user?.email || '',
+              avatar: user?.profile?.avatar,
+              role: user?.role || 'user'
+            }}
+            navigationItems={navigationItems}
+            onNavigate={handleNavigation}
+            onLogout={handleLogout}
+            onToggleTheme={handleToggleTheme}
+            isDarkMode={isDarkMode}
+          >
+            <SocialMediaPage />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+
       <Route path="/settings" element={
         <ProtectedRoute>
           <DashboardLayout
@@ -301,16 +332,31 @@ function LoadingFallback() {
  * Main App component
  */
 function App() {
+  const devConsoleRef = useRef<DevConsoleRef>(null)
+
   useEffect(() => {
     // Initialize offline persistence for TanStack Query
     initializePersistence()
-    
+
     // Initialize Tauri-specific features if needed
     if (window.__TAURI__) {
       // Tauri-specific initialization
       console.log('Running in Tauri environment')
     }
   }, [])
+
+  // Development keyboard shortcuts (only in development)
+  useDevKeyboardShortcuts({
+    toggleDevConsole: () => {
+      devConsoleRef.current?.toggle()
+    },
+    clearConsole: () => {
+      devConsoleRef.current?.clear()
+    },
+    reloadPage: () => {
+      window.location.reload()
+    }
+  })
 
   return (
     <ErrorBoundary>
@@ -341,9 +387,18 @@ function App() {
               
               {/* React Query DevTools (only in development) */}
               {process.env.NODE_ENV === 'development' && (
-                <ReactQueryDevtools 
+                <ReactQueryDevtools
                   initialIsOpen={false}
-                  position="bottom-right"
+                  position="bottom"
+                />
+              )}
+
+              {/* Development Console for MCP debugging (only in development) */}
+              {process.env.NODE_ENV === 'development' && (
+                <DevConsole
+                  ref={devConsoleRef}
+                  defaultOpen={false}
+                  position="bottom-left"
                 />
               )}
             </Router>

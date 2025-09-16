@@ -4,12 +4,13 @@
 //! (An Act to modernize legislative provisions as regards the protection of personal information).
 //! This includes consent management, audit trails, data subject rights, and breach reporting.
 
-pub mod quebec_law25;
+// Temporarily disabled due to sqlx dependency
+// pub mod quebec_law25;
 
-pub use quebec_law25::{
-    QuebecComplianceTracker,
-    QuebecComplianceEvent,
-    QuebecAuditLog,
-    ComplianceValidationResult,
-    QuebecComplianceError,
-};
+// pub use quebec_law25::{
+//     QuebecComplianceTracker,
+//     QuebecComplianceEvent,
+//     QuebecAuditLog,
+//     ComplianceValidationResult,
+//     QuebecComplianceError,
+// };

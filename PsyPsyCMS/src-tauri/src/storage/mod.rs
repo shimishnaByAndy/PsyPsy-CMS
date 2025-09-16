@@ -4,13 +4,14 @@
 //! All data is encrypted at rest using medical-grade encryption and stored with comprehensive
 //! audit logging for regulatory compliance.
 
-pub mod medical_notes_store;
+// Temporarily disabled due to sqlx dependency
+// pub mod medical_notes_store;
 
-pub use medical_notes_store::{
-    MedicalNotesStore,
-    MedicalNotesError,
-    EncryptedMedicalNote,
-    MedicalNoteContent,
-    QuebecSpecificData,
-    SyncConflict,
-};
+// pub use medical_notes_store::{
+//     MedicalNotesStore,
+//     MedicalNotesError,
+//     EncryptedMedicalNote,
+//     MedicalNoteContent,
+//     QuebecSpecificData,
+//     SyncConflict,
+// };

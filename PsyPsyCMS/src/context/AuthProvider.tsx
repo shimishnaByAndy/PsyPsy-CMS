@@ -1,10 +1,5 @@
 import React, { createContext, useContext, useState } from 'react'
-
-interface User {
-  id: string
-  email: string
-  name: string
-}
+import { User } from '@/types/index'
 
 interface AuthContextType {
   user: User | null
@@ -38,7 +33,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser({
           id: '1',
           email: 'demo@psypsy.com',
-          name: 'Dr. Demo User'
+          username: 'demo',
+          role: 'professional',
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          profile: {
+            firstName: 'Dr. Demo',
+            lastName: 'User',
+            fullName: 'Dr. Demo User',
+            language: 'en',
+          },
+          preferences: {
+            theme: 'light',
+            language: 'en',
+            notifications: {
+              email: true,
+              push: true,
+              sms: false,
+              appointmentReminders: true,
+              systemUpdates: true
+            },
+            accessibility: {
+              highContrast: false,
+              fontSize: 'medium',
+              reduceMotion: false,
+              screenReader: false
+            }
+          }
         })
       } else {
         throw new Error('Invalid credentials')

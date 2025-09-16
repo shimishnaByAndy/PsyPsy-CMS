@@ -58,6 +58,8 @@ pub struct SyncConflict {
 pub enum MedicalNotesError {
     #[error("Database error: {0}")]
     Database(#[from] sqlx::Error),
+    #[error("Migration error: {0}")]
+    Migration(#[from] sqlx::migrate::MigrateError),
     #[error("Encryption error: {0}")]
     Encryption(String),
     #[error("Serialization error: {0}")]

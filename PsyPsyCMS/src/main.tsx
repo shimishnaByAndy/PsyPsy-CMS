@@ -3,8 +3,39 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './globals.css'
 
+// Import WebSocket service and console interceptor for MCP debugging
+import { consoleInterceptor, webSocketService } from '@/services/websocket'
+
 // Ensure we're running in a browser environment
 if (typeof window !== 'undefined') {
+  // Initialize console interception for MCP debugging (development only)
+  if (process.env.NODE_ENV === 'development') {
+    consoleInterceptor.install()
+
+    // Global error handlers for MCP debugging
+    window.addEventListener('error', (event) => {
+      webSocketService.sendError(
+        'javascript',
+        event.message,
+        event.error?.stack,
+        undefined,
+        'high'
+      )
+    })
+
+    window.addEventListener('unhandledrejection', (event) => {
+      webSocketService.sendError(
+        'javascript',
+        event.reason?.message || 'Unhandled promise rejection',
+        event.reason?.stack,
+        undefined,
+        'high'
+      )
+    })
+
+    console.log('[DevConsole] MCP debugger console interception initialized')
+  }
+
   // Initialize the React application
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

@@ -4,8 +4,8 @@
   "version": "2.0.0",
   "identifier": "com.psypsy.cms.hipaa",
   "build": {
-    "beforeDevCommand": "bun run dev",
-    "beforeBuildCommand": "bun run build",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5177"
   },

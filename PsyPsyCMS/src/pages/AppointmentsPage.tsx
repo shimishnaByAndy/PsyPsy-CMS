@@ -14,12 +14,8 @@ import {
   Video,
   MapPin,
   Edit3,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
   CalendarDays,
   Timer,
-  Users,
   TrendingUp
 } from 'lucide-react'
 
@@ -48,7 +44,6 @@ interface Appointment {
 }
 
 const AppointmentsPage: React.FC = () => {
-  const [currentDate, setCurrentDate] = useState(new Date())
   const [viewMode, setViewMode] = useState<'day' | 'week' | 'month'>('week')
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')

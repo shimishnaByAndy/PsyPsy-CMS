@@ -49,6 +49,8 @@ pub struct ComplianceValidationResult {
 pub enum QuebecComplianceError {
     #[error("Database error: {0}")]
     Database(#[from] sqlx::Error),
+    #[error("Migration error: {0}")]
+    Migration(#[from] sqlx::migrate::MigrateError),
     #[error("Serialization error: {0}")]
     Serialization(#[from] serde_json::Error),
     #[error("Compliance violation: {0}")]

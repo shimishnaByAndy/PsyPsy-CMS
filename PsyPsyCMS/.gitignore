@@ -46,3 +46,35 @@ Cargo.lock
 *.db
 *.db-shm
 *.db-wal
+
+# External projects and social media tools
+postiz-socialMedia/
+
+# MCP and tooling cache files
+.serena/
+.claude/
+
+# Next.js build artifacts
+.next/
+out/
+
+# Build and cache directories
+build/
+cache/
+tmp/
+temp/
+
+# Package manager lock files (keep main project lock files)
+**/node_modules/
+**/.next/
+**/build/
+**/dist/
+
+# Large binary and cache files
+*.pkl
+*.cache
+*.tsbuildinfo
+
+# Development tools and IDEs
+.vscode/settings.json
+.vscode/launch.json

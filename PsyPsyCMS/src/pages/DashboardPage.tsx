@@ -7,8 +7,6 @@ import {
   TrendingUp,
   TrendingDown,
   Clock,
-  CheckCircle2,
-  AlertCircle,
   Plus,
   ArrowRight
 } from 'lucide-react'

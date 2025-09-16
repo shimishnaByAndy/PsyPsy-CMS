@@ -272,8 +272,8 @@ export const queryErrorUtils = {
    * Check if error is an authentication error
    */
   isAuthError: (error: unknown): boolean => {
-    return error && typeof error === 'object' && 'status' in error &&
-           ((error as any).status === 401 || (error as any).status === 403)
+    return !!(error && typeof error === 'object' && 'status' in error &&
+           ((error as any).status === 401 || (error as any).status === 403))
   },
   
   /**

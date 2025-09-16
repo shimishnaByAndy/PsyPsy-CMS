@@ -1,168 +1,205 @@
-# PsyPsy CMS - Tauri Desktop Application
+---
+description: "HIPAA-compliant healthcare management system built with Tauri 2.1+, React 19, and Rust"
+allowed-tools: ["Read", "Edit", "MultiEdit", "Write", "Bash(npm:*)", "Bash(yarn:*)", "Bash(pnpm:*)", "Bash(cargo:*)", "Bash(tauri:*)", "Bash(git:*)", "Bash(tsc:*)", "WebSearch", "Glob", "Grep"]
+model: claude-3-5-sonnet-20241022
+---
 
-## Project Overview
-HIPAA-compliant healthcare management system built with Tauri 2.0, React 18, and Rust for medical professionals to manage clients, appointments, and professional credentials.
+# PsyPsy CMS - Healthcare Management System
 
-## Technology Stack
-- Language: TypeScript 5.3
-- Framework: React 18 + Tauri 2.0
-- Styling: Tailwind CSS 3.4 + Radix UI
-- State: Zustand + TanStack Query
-- Package Manager: npm/bun
-- Runtime: Node.js 18+, Rust 1.70+
-- Build Tool: Vite 5
+## Project Context & Overview
 
-## Project Structure
+This is a **HIPAA-compliant healthcare management system** built for medical professionals to manage clients, appointments, and professional credentials with enterprise-grade security and compliance.
+
+### Technology Stack (September 2025)
+- **Frontend**: React 19 + TypeScript 5.3+ + Vite 5+
+- **Desktop Framework**: Tauri 2.1+ (Rust backend)
+- **Styling**: Tailwind CSS 3.4+ + shadcn/ui + Radix UI
+- **State Management**: TanStack Query v5 + Zustand
+- **Build**: Vite 5+ with advanced chunking strategy
+- **Testing**: Vitest + Playwright E2E
+- **Package Manager**: npm (primary) / bun (alternative)
+
+### Critical Domain Context
+- **Compliance**: HIPAA + Quebec Law 25
+- **Data Classification**: PHI (Protected Health Information) handling
+- **Security**: AES-256-GCM encryption, comprehensive audit trails
+- **Healthcare Workflows**: 50-minute sessions, professional licensing, insurance management
+
+## 🚨 MANDATORY DEVELOPMENT RULES
+
+**BEFORE WRITING ANY CODE, YOU MUST FOLLOW:**
+
+@DEVELOPMENT_RULES_2025.md
+
+**Key Enforcement Points:**
+1. ✅ **React 19**: Never use manual `memo`/`useMemo`/`useCallback` (React Compiler handles this)
+2. ✅ **TanStack Query v5**: Use `isPending` (not `isLoading`), `throwOnError` (not `useErrorBoundary`)
+3. ✅ **Tauri 2.1+**: Universal entry point pattern for mobile/desktop compatibility
+4. ✅ **Feature-Based Architecture**: Self-contained feature modules (AR-001)
+5. ✅ **HIPAA Compliance**: Enhanced error boundaries with audit logging
+6. ✅ **Type Safety**: Branded types for medical IDs (TS-001)
+7. ✅ **Security**: All PHI data must be explicitly marked and audited
+
+## Project Architecture
+
+### Feature-Based Structure (MANDATORY - Rule AR-001)
 ```
-PsyPsyCMS/
-├── src/                 # React frontend source
-│   ├── components/      # UI components (Radix UI + shadcn)
-│   ├── pages/           # Route pages
-│   ├── services/        # API services (Tauri IPC)
-│   ├── hooks/           # Custom React hooks
-│   ├── context/         # React context providers
-│   ├── types/           # TypeScript definitions
-│   ├── localization/    # i18n translations (en/fr)
-│   └── lib/             # Utility functions
-├── src-tauri/           # Rust backend (Tauri)
-│   ├── src/             # Rust source code
-│   └── tauri.conf.json  # Tauri configuration
-├── tests/               # Test suites
-│   ├── e2e/             # Playwright E2E tests
-│   ├── security/        # HIPAA compliance tests
-│   └── performance/     # Load testing
-└── public/              # Static assets
+src/
+├── features/                    # Business domain features
+│   ├── authentication/         # Self-contained feature modules
+│   ├── patients/              # Patient management
+│   ├── appointments/          # Appointment scheduling
+│   ├── medical-notes/         # Medical notes with Quebec templates
+│   ├── professionals/         # Professional credential management
+│   └── compliance/            # HIPAA/Quebec Law 25 compliance
+├── shared/                      # Cross-feature shared code ONLY
+│   ├── components/ui/         # shadcn/ui base components (DO NOT MODIFY)
+│   ├── hooks/                 # Generic custom hooks
+│   ├── services/              # Common API services
+│   ├── utils/                 # Utility functions
+│   └── types/                 # Global type definitions
+├── app/                        # Application-level code
+│   ├── providers/             # Context providers
+│   ├── router/                # Routing configuration
+│   └── store/                 # Global state management
+└── assets/                     # Static assets
 ```
 
-## Development Standards
+### Tauri Backend Structure
+```
+src-tauri/src/
+├── commands/                   # Tauri command handlers (by domain)
+├── services/                   # Business logic services
+├── models/                     # Data models
+├── security/                   # HIPAA compliance & encryption
+├── plugins/                    # Custom Tauri plugins
+├── lib.rs                     # Universal entry point
+└── main.rs                    # Application entry point
+```
 
-### Code Style
-- IMPORTANT: Use ES modules syntax (type: "module")
-- Prefer async/await over callbacks
-- Use TypeScript strict mode for all new code
-- Maximum file size: 300 lines
-- YOU MUST use path aliases (@/components, @/hooks, etc.)
+## Development Workflows
 
-### Naming Conventions
-- Files: kebab-case (user-profile.tsx)
-- Components: PascalCase (UserProfile.tsx)
-- Variables: camelCase (userProfile)
-- Constants: UPPER_SNAKE_CASE (MAX_RETRIES)
-- Types/Interfaces: PascalCase with prefix (IUser, TStatus)
+### Code Style & Standards
+- **ES Modules**: Use `type: "module"` syntax
+- **Async/Await**: Prefer over callbacks
+- **TypeScript Strict**: All new code must use strict mode
+- **File Size**: Maximum 300 lines per file
+- **Path Aliases**: MUST use `@/components`, `@/hooks`, etc.
 
-### Import Order
-1. External libraries (react, tauri-apps)
-2. Internal modules (@/components, @/hooks)
-3. Local files (./utils)
-4. Styles/assets (@/assets)
+### Import Order (MANDATORY)
+1. External libraries (`react`, `@tauri-apps/*`)
+2. Internal modules (`@/components`, `@/hooks`)
+3. Local files (`./utils`)
+4. Styles/assets (`@/assets`)
 
-## Key Commands
-- `npm run dev`: Start Vite dev server
-- `npm run tauri:dev`: Start Tauri development
-- `npm run tauri:build`: Build production app
-- `npm run test`: Run Vitest test suite
-- `npm run e2e`: Run Playwright E2E tests
-- `npm run lint`: Check ESLint rules
-- `npm run type-check`: TypeScript validation
-- `npm run test:coverage`: Test coverage report
+### Key Commands
+```bash
+npm run dev                    # Start Vite dev server
+npm run tauri:dev             # Start Tauri development
+npm run tauri:build           # Build production app
+npm run test                  # Run Vitest test suite
+npm run e2e                   # Run Playwright E2E tests
+npm run lint                  # Check ESLint rules
+npm run type-check            # TypeScript validation (MANDATORY before commits)
+npm run test:coverage         # Test coverage report
+```
 
-## Testing Requirements
-- Framework: Vitest + Playwright
-- Coverage: Minimum 80% for new code
-- YOU MUST run type-check before committing
-- YOU MUST test Tauri IPC communications
-- Prefer unit tests over integration tests
-- Test HIPAA compliance features thoroughly
+## HIPAA Compliance Requirements
 
-## Workflow Guidelines
-- ALWAYS run type-check after code changes
-- Read relevant files before writing code
-- Create a plan before implementing features
-- Commit messages: type(scope): description
-- Test both frontend and Tauri backend
-- Validate i18n translations (en/fr)
+### Security Standards
+- **Encryption**: AES-256-GCM for all PHI data
+- **Audit Logging**: 7-year retention requirement
+- **Access Control**: Role-based permissions (RBAC)
+- **Data Classification**: All PHI must be explicitly marked
+- **Error Handling**: Compliance-aware error boundaries
 
-## Error Handling
-- Never silently catch errors
-- Log errors with full context to Tauri logs
-- Provide user-friendly error messages via toast
-- YOU MUST handle all async Tauri operations
-- Implement retry logic for network failures
-- Use zod for runtime validation
+### PHI Data Handling Pattern (MANDATORY - Rule SEC-002)
+```typescript
+// ✅ CORRECT: PHI-aware data handling
+const handlePatientData = (data: PatientData) => {
+  const sanitizedData = {
+    ...data,
+    ssn: markAsPHI(data.ssn),
+    medicalHistory: markAsPHI(data.medicalHistory),
+    // Non-PHI fields remain unmarked
+    name: data.name,
+    id: data.id
+  }
 
-## Performance Considerations
-- Lazy load heavy components (React.lazy)
-- Optimize bundle size (<500KB initial)
-- Cache Tauri IPC responses with TanStack Query
-- Use React.memo for expensive renders
-- Profile Rust backend performance
-- Virtualize large lists (appointments, clients)
+  // MANDATORY: Audit all PHI access
+  auditPHIAccess('view', sanitizedData.id, getCurrentUser().id)
 
-## Security Guidelines
-- Never commit secrets or API keys
-- Validate all user inputs with zod schemas
-- Use Tauri's secure IPC for sensitive operations
-- YOU MUST encrypt sensitive data (AES-256-GCM)
-- Implement RBAC with proper permissions
-- Maintain HIPAA compliance audit logs (7 years)
-- Sanitize all database queries
+  return sanitizedData
+}
+```
 
-## Documentation Standards
-- Document complex business logic inline
-- Update README for API changes
-- Use JSDoc for public APIs
-- Include examples in documentation
-- Document Tauri commands thoroughly
+## Healthcare Domain Requirements
 
-## Component Patterns
-- Use shadcn/ui components as base
-- Implement compound components pattern
-- Use React Hook Form for forms
-- Leverage Radix UI for accessibility
-- YOU MUST maintain WCAG 2.1 AA compliance
+### Business Rules
+- **Sessions**: Must be 50-minute blocks
+- **Professional Credentials**: Annual validation required
+- **Appointments**: Conflict prevention mandatory
+- **Insurance**: All information requires encryption
+- **Emergency Contacts**: Mandatory field
+- **Medical Notes**: Professional signature required
 
-## State Management
-- Zustand for global state (auth, theme)
-- TanStack Query for server state
-- React Hook Form for form state
-- Local state for UI-only concerns
-- YOU MUST invalidate queries after mutations
+### Quebec Law 25 Compliance
+- **Consent Management**: Explicit consent tracking
+- **Data Residency**: Data must remain in Quebec/Canada
+- **Breach Notification**: 72-hour reporting requirement
+- **Right to Erasure**: Complete data deletion capability
 
-## Tauri Integration
-- Commands in src-tauri/src/commands/
-- Use #[tauri::command] for IPC
-- Implement proper error handling in Rust
-- YOU MUST validate inputs in both frontend and backend
-- Use Tauri events for real-time updates
+## Performance & Quality Standards
 
-## HIPAA Compliance
-- Encrypt all PHI data at rest and in transit
-- Implement access controls and user authentication
-- Maintain comprehensive audit logs
-- Ensure data backup and recovery procedures
-- YOU MUST test security features regularly
-- Regular vulnerability assessments required
+### Bundle Optimization (Rule P-001)
+- **Medical Core**: Separate chunk for critical features
+- **Compliance**: Lazy-loaded compliance features
+- **UI Components**: Cached UI component chunks
+- **Charts**: Separate chunk for data visualization
 
-## Known Issues & Gotchas
-- Tauri 2.0 migration may have breaking changes
-- React Query devtools only in development
-- Bun compatibility issues with some deps
-- HIPAA audit logs require 7-year retention
-- French translations need validation
+### Testing Requirements
+- **Coverage**: Minimum 80% for new code
+- **E2E Tests**: All critical healthcare workflows
+- **HIPAA Tests**: Compliance validation in test suite
+- **Security Tests**: PHI handling and audit logging
 
-## Domain-Specific Requirements
-- Client sessions must be 50-minute blocks
-- Professional credentials require annual validation
-- Appointment conflicts must be prevented
-- Insurance information requires encryption
-- Emergency contacts are mandatory
-- Session notes require professional signature
+### Error Handling Standards
+- **Never Silent**: All errors must be logged with context
+- **User-Friendly**: Provide clear error messages via toast
+- **Retry Logic**: Implement for network failures
+- **Validation**: Use Zod for runtime validation
+- **Audit Trail**: All errors involving PHI must be audited
 
 ## Quick Reference
-- Main entry: src/main.tsx
-- App root: src/App.tsx
-- Tauri config: src-tauri/tauri.conf.json
-- API commands: src-tauri/src/commands/
-- Types: src/types/index.ts
-- Auth context: src/context/AuthProvider.tsx
-- Theme: tailwind.config.js
+
+### Key Files & Directories
+- **Main Entry**: `src/main.tsx`
+- **App Root**: `src/App.tsx`
+- **Tauri Config**: `src-tauri/tauri.conf.json`
+- **Commands**: `src-tauri/src/commands/`
+- **Types**: `src/types/index.ts`
+- **Rules**: `DEVELOPMENT_RULES_2025.md`
+
+### Migration Priorities (September 2025)
+1. ✅ Update to React 19 + remove manual memoization
+2. ✅ Update TanStack Query to v5 syntax (`isPending`, `throwOnError`)
+3. ⏳ Implement feature-based architecture
+4. ⏳ Add type-safe Tauri command wrappers
+5. ⏳ Enhance HIPAA compliance error boundaries
+6. ⏳ Add proper bundle splitting configuration
+
+## Forbidden Patterns (DO NOT USE)
+
+❌ **Manual memoization** with React Compiler enabled
+❌ **TanStack Query v4 syntax** (`isLoading`, `useErrorBoundary`)
+❌ **Direct PHI logging** (`console.log(patient.ssn)`)
+❌ **Deep feature imports** (`.../components/internal/helper`)
+❌ **Untyped Tauri commands** (raw `invoke()` without types)
+❌ **Modifying shadcn/ui** components directly
+❌ **Unaudited PHI access** (database queries without audit)
+
+---
+
+**Compliance Level**: HIPAA + Quebec Law 25
+**Last Updated**: September 2025
+**Tech Stack Version**: React 19 + Tauri 2.1+ + TanStack Query v5

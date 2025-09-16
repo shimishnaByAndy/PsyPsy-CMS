@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthProvider'
 import { Eye, EyeOff, Lock, Mail, AlertCircle, CheckCircle2 } from 'lucide-react'
 
 const LoginPage: React.FC = () => {
-  const { login, isAuthenticated, isLoading } = useAuth()
+  const { login, isAuthenticated } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
     password: ''
