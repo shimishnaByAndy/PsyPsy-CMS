@@ -34,9 +34,9 @@ impl<T> SyncCommandResult<T> {
 /// Initialize offline sync service
 #[tauri::command]
 pub async fn initialize_sync_service(
-    sync_state: State<'_, SyncServiceState>,
+    _sync_state: State<'_, SyncServiceState>,
     user_id: String,
-    enable_firebase_sync: bool,
+    _enable_firebase_sync: bool,
 ) -> Result<SyncCommandResult<String>, String> {
     // In a real implementation, this would:
     // 1. Get the encrypted storage from storage state
@@ -155,11 +155,11 @@ pub async fn get_conflict_notes(
 #[tauri::command]
 pub async fn resolve_conflict_manually(
     sync_state: State<'_, SyncServiceState>,
-    note_id: String,
+    _note_id: String,
     resolution_strategy: String,
-    resolved_note: MedicalNote,
+    _resolved_note: MedicalNote,
 ) -> Result<SyncCommandResult<String>, String> {
-    let strategy = match resolution_strategy.as_str() {
+    let _strategy = match resolution_strategy.as_str() {
         "use_local" => ResolutionStrategy::UseLocal,
         "use_remote" => ResolutionStrategy::UseRemote,
         "merge" => ResolutionStrategy::Merge,
@@ -179,7 +179,7 @@ pub async fn resolve_conflict_manually(
     // Get service and perform async operation in separate scope
     let result = {
         let mut sync_guard = sync_state.lock().await;
-        if let Some(sync_service) = sync_guard.as_mut() {
+        if let Some(_sync_service) = sync_guard.as_mut() {
             // Clone the service or use a different approach
             // For now, we'll return an error since we can't hold the lock across await
             drop(sync_guard);
@@ -225,7 +225,7 @@ pub async fn get_pending_sync_count(
 /// Start background sync (non-blocking)
 #[tauri::command]
 pub async fn start_background_sync(
-    sync_state: State<'_, SyncServiceState>,
+    _sync_state: State<'_, SyncServiceState>,
 ) -> Result<SyncCommandResult<String>, String> {
     // In a real implementation, this would start the background sync task
     // For now, just return success
@@ -236,7 +236,7 @@ pub async fn start_background_sync(
 /// Stop background sync
 #[tauri::command]
 pub async fn stop_background_sync(
-    sync_state: State<'_, SyncServiceState>,
+    _sync_state: State<'_, SyncServiceState>,
 ) -> Result<SyncCommandResult<String>, String> {
     // In a real implementation, this would stop the background sync task
     tracing::info!("Background sync stop requested");

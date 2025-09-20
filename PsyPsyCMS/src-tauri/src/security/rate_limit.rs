@@ -11,7 +11,6 @@ use uuid::Uuid;
 use chrono::{DateTime, Utc};
 use governor::{Quota, RateLimiter, state::{InMemoryState, NotKeyed}, clock::{DefaultClock, Clock}};
 use std::net::IpAddr;
-use tokio::sync::Mutex;
 
 /// Rate limiting configuration for different user roles and endpoints
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -806,7 +805,7 @@ impl RateLimitService {
     }
     
     /// Check HIPAA-sensitive operation limits
-    async fn check_hipaa_sensitive_limit(&self, context: &RateLimitContext) -> RateLimitResult {
+    async fn check_hipaa_sensitive_limit(&self, _context: &RateLimitContext) -> RateLimitResult {
         // Implementation would check specific HIPAA-sensitive operation limits
         // For now, return allowed
         RateLimitResult {

@@ -1,4 +1,4 @@
-use tauri::{State, Manager};
+use tauri::State;
 use serde::{Deserialize, Serialize};
 use tokio::sync::Mutex;
 use std::collections::HashMap;

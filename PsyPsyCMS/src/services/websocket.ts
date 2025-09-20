@@ -75,8 +75,8 @@ export class WebSocketService {
       pingInterval: config.pingInterval || 30000,
     }
 
-    // Auto-connect in development mode only
-    if (process.env.NODE_ENV === 'development') {
+    // Auto-connect only if MCP debugger is explicitly enabled
+    if (import.meta.env.DEV && import.meta.env.VITE_ENABLE_MCP_DEBUGGER === 'true') {
       this.connect()
     }
   }
@@ -292,7 +292,7 @@ export class WebSocketService {
     typeListeners.forEach(callback => callback(message))
 
     // Log received message in development
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.log('[WebSocket] Received:', message)
     }
   }

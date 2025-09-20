@@ -6,9 +6,11 @@ pub mod dashboard_commands;
 pub mod medical_notes_commands;
 pub mod offline_sync_commands;
 pub mod social_media_commands;
+pub mod debug_commands;
 
 pub use auth_commands::*;
 pub use client_commands::*;
 pub use professional_commands::*;
 pub use appointment_commands::*;
 pub use dashboard_commands::*;
+pub use debug_commands::*;

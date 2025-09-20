@@ -4,14 +4,13 @@ use aes_gcm::{
 };
 use base64::{Engine as _, engine::general_purpose};
 use ring::digest::{Context, SHA256};
-use rusqlite::{Connection, Result as SqliteResult, params};
+use rusqlite::{Connection, params};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use tauri::{AppHandle, Manager};
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
 
-use crate::security::audit::hipaa_audit_log;
 
 #[derive(Debug, thiserror::Error)]
 pub enum EncryptionError {
@@ -278,7 +277,7 @@ impl EncryptedNoteStorage {
     }
 
     /// Retrieve and decrypt medical note
-    pub async fn get_note(&self, note_id: &str, user_id: &str) -> Result<Option<MedicalNote>, EncryptionError> {
+    pub async fn get_note(&self, note_id: &str, _user_id: &str) -> Result<Option<MedicalNote>, EncryptionError> {
         let conn = Connection::open(&self.db_path)?;
 
         let mut stmt = conn.prepare(
@@ -290,7 +289,7 @@ impl EncryptedNoteStorage {
         let result = stmt.query_row(params![note_id], |row| {
             let encrypted_blob: Vec<u8> = row.get(2)?;
             let encrypted_data: EncryptedData = serde_json::from_slice(&encrypted_blob)
-                .map_err(|e| rusqlite::Error::InvalidColumnType(2, "encrypted_data".to_string(), rusqlite::types::Type::Blob))?;
+                .map_err(|_e| rusqlite::Error::InvalidColumnType(2, "encrypted_data".to_string(), rusqlite::types::Type::Blob))?;
 
             Ok((
                 row.get::<_, String>(0)?,  // id

@@ -4,7 +4,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { useTranslation } from 'react-i18next'
-import { Home, Users, Calendar, UserCog, FileText, Settings, Globe } from 'lucide-react'
+import { Home, Users, Calendar, UserCog, FileText, Settings, Globe, Mic, Bell } from 'lucide-react'
 
 // Import global styles and i18n
 import './globals.css'
@@ -18,14 +18,18 @@ import { queryClient, initializePersistence } from '@/services/queryClient'
 
 // Import pages (these would be created next)
 import DashboardPage from '@/pages/DashboardPage'
+import { AdminDashboard } from '@/components/AdminDashboard'
 import ClientsPage from '@/pages/ClientsPage'
 import ProfessionalsPage from '@/pages/ProfessionalsPage'
 import AppointmentsPage from '@/pages/AppointmentsPage'
 import NotesPage from '@/pages/NotesPage'
+import MeetingNotesPage from '@/pages/MeetingNotesPage'
+import NotificationsPage from '@/pages/NotificationsPage'
 import SocialMediaPage from '@/pages/SocialMediaPage'
 import SettingsPage from '@/pages/SettingsPage'
 import LoginPage from '@/pages/LoginPage'
 import LoadingPage from '@/pages/LoadingPage'
+import TestEmulatorConnection from '@/components/TestEmulatorConnection'
 
 // Import error boundary and dev console
 import { ErrorBoundary } from '@/components/ErrorBoundary'
@@ -116,6 +120,14 @@ function AppRoutes() {
       active: location.pathname === '/dashboard',
     },
     {
+      id: 'admin',
+      label: 'Admin CMS',
+      icon: Settings,
+      href: '/admin',
+      active: location.pathname === '/admin',
+      badge: 'NEW',
+    },
+    {
       id: 'clients',
       label: 'Clients',
       icon: Users,
@@ -146,6 +158,20 @@ function AppRoutes() {
       active: location.pathname === '/notes',
     },
     {
+      id: 'meeting-notes',
+      label: 'Meeting Notes',
+      icon: Mic,
+      href: '/meeting-notes',
+      active: location.pathname === '/meeting-notes',
+    },
+    {
+      id: 'notifications',
+      label: 'Notifications',
+      icon: Bell,
+      href: '/notifications',
+      active: location.pathname === '/notifications',
+    },
+    {
       id: 'social-media',
       label: 'Social Media',
       icon: Globe,
@@ -165,7 +191,12 @@ function AppRoutes() {
     <Routes>
       {/* Public routes */}
       <Route path="/login" element={<LoginPage />} />
-      
+
+      {/* Development routes */}
+      {process.env.NODE_ENV === 'development' && (
+        <Route path="/test-emulators" element={<TestEmulatorConnection />} />
+      )}
+
       {/* Protected routes */}
       <Route path="/dashboard" element={
         <ProtectedRoute>
@@ -184,6 +215,12 @@ function AppRoutes() {
           >
             <DashboardPage />
           </DashboardLayout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/admin" element={
+        <ProtectedRoute>
+          <AdminDashboard />
         </ProtectedRoute>
       } />
       
@@ -263,6 +300,46 @@ function AppRoutes() {
             isDarkMode={isDarkMode}
           >
             <NotesPage />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/meeting-notes" element={
+        <ProtectedRoute>
+          <DashboardLayout
+            currentUser={{
+              name: user?.profile?.fullName || 'Unknown User',
+              email: user?.email || '',
+              avatar: user?.profile?.avatar,
+              role: user?.role || 'user'
+            }}
+            navigationItems={navigationItems}
+            onNavigate={handleNavigation}
+            onLogout={handleLogout}
+            onToggleTheme={handleToggleTheme}
+            isDarkMode={isDarkMode}
+          >
+            <MeetingNotesPage />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/notifications" element={
+        <ProtectedRoute>
+          <DashboardLayout
+            currentUser={{
+              name: user?.profile?.fullName || 'Unknown User',
+              email: user?.email || '',
+              avatar: user?.profile?.avatar,
+              role: user?.role || 'user'
+            }}
+            navigationItems={navigationItems}
+            onNavigate={handleNavigation}
+            onLogout={handleLogout}
+            onToggleTheme={handleToggleTheme}
+            isDarkMode={isDarkMode}
+          >
+            <NotificationsPage />
           </DashboardLayout>
         </ProtectedRoute>
       } />

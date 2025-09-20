@@ -1,7 +1,7 @@
 // HIPAA Compliance Monitoring and Reporting System
 // Implements comprehensive compliance monitoring, reporting, and violation detection
 
-use crate::security::{SecurityError, AuditEventType, HealthcareRole, DataClassification};
+use crate::security::{SecurityError, DataClassification};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
@@ -892,7 +892,7 @@ impl ComplianceMonitoringService {
         
         // Assess each requirement in scope
         let requirements = self.requirements.read().unwrap();
-        for (req_id, requirement) in requirements.iter() {
+        for (_req_id, requirement) in requirements.iter() {
             if scope.standards.contains(&requirement.standard) {
                 let finding = self.assess_requirement(requirement).await?;
                 if let Some(f) = finding {

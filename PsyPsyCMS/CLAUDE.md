@@ -95,7 +95,8 @@ src-tauri/src/
 ### Key Commands
 ```bash
 npm run dev                    # Start Vite dev server
-npm run tauri:dev             # Start Tauri development
+bun run tauri dev             # Start Tauri development (PREFERRED)
+npm run tauri:dev             # Alternative Tauri development
 npm run tauri:build           # Build production app
 npm run test                  # Run Vitest test suite
 npm run e2e                   # Run Playwright E2E tests
@@ -203,3 +204,7 @@ const handlePatientData = (data: PatientData) => {
 **Compliance Level**: HIPAA + Quebec Law 25
 **Last Updated**: September 2025
 **Tech Stack Version**: React 19 + Tauri 2.1+ + TanStack Query v5
+
+## Task Master AI Instructions
+**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
+@./.taskmaster/CLAUDE.md

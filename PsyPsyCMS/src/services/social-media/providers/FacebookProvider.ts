@@ -518,4 +518,151 @@ export class FacebookProvider extends BaseProvider {
     }
     return response.blob();
   }
+
+  // Abstract method implementations
+  async validateMedia(media: MediaAttachment): Promise<ValidationResult> {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    // Check file size (Facebook limit: 32MB for videos, 4MB for photos)
+    const maxSize = media.type === 'video' ? 32 * 1024 * 1024 : 4 * 1024 * 1024;
+    if (media.size && media.size > maxSize) {
+      errors.push(`File too large. Maximum size: ${media.type === 'video' ? '32MB' : '4MB'}`);
+    }
+
+    // Check supported formats
+    const supportedImageFormats = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+    const supportedVideoFormats = ['mp4', 'mov', 'avi', 'mkv'];
+    const supportedFormats = media.type === 'video' ? supportedVideoFormats : supportedImageFormats;
+
+    const extension = media.url.split('.').pop()?.toLowerCase();
+    if (!extension || !supportedFormats.includes(extension)) {
+      errors.push(`Unsupported format. Supported: ${supportedFormats.join(', ')}`);
+    }
+
+    // Check for PHI in alt text and description
+    if (media.altText) {
+      const phiResult = await this.checkContentForPHI(media.altText);
+      if (phiResult.hasPersonalInfo) {
+        warnings.push('Alternative text may contain personal health information');
+      }
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings
+    };
+  }
+
+  async getProfile(): Promise<ProfileInfo> {
+    if (!this.pageAccessToken || !this.pageId) {
+      throw new Error('Not authenticated. Please authenticate first.');
+    }
+
+    try {
+      const response = await fetch(
+        `${this.API_BASE}/${this.pageId}?fields=name,username,followers_count,about,website&access_token=${this.pageAccessToken}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Facebook API error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      return {
+        id: data.id,
+        username: data.username || '',
+        displayName: data.name,
+        bio: data.about || '',
+        followerCount: data.followers_count || 0,
+        website: data.website || '',
+        avatarUrl: `https://graph.facebook.com/${data.id}/picture?type=large`,
+        isVerified: false, // Facebook doesn't provide this in basic API
+        platform: this.platform
+      };
+    } catch (error) {
+      throw new Error(`Failed to get Facebook profile: ${error}`);
+    }
+  }
+
+  async getAccountInfo(): Promise<AccountInfo> {
+    const profile = await this.getProfile();
+
+    return {
+      platform: this.platform,
+      accountId: profile.id,
+      username: profile.username,
+      displayName: profile.displayName,
+      isConnected: !!this.accessToken,
+      permissions: ['publish_pages', 'manage_pages'],
+      lastSync: new Date().toISOString(),
+      limits: {
+        postsPerDay: 25, // Facebook's typical limit
+        charactersPerPost: 63206, // Facebook's character limit
+        mediaPerPost: 10
+      }
+    };
+  }
+
+  async checkContentForPHI(content: string): Promise<PHIDetectionResult> {
+    // Canadian healthcare PHI patterns for Quebec/PIPEDA compliance
+    const phiPatterns = [
+      // Medical terms
+      /\b(?:patient|diagnosis|treatment|medication|prescription|therapy|medical|health|illness|disease|symptom|condition|disorder)\b/gi,
+
+      // Quebec health card numbers (RAMQ)
+      /\b[A-Z]{4}\s?\d{8}\s?\d{2}\b/gi,
+
+      // SIN/NAS numbers (Social Insurance Number)
+      /\b\d{3}[\s-]?\d{3}[\s-]?\d{3}\b/gi,
+
+      // Medical record numbers
+      /\b(?:MRN|medical\s+record|patient\s+id|chart\s+number)[\s:]*[\w\d-]+\b/gi,
+
+      // Health-related personal identifiers
+      /\b(?:birth\s+date|DOB|age|address|postal\s+code|phone|email)\s*[\s:]\s*[\w\d@.-]+\b/gi,
+
+      // Specific medical information
+      /\b(?:blood\s+pressure|temperature|weight|height|allergies?|medications?)\s*[\s:]\s*[\w\d\s,.-]+\b/gi
+    ];
+
+    let hasPersonalInfo = false;
+    let hasHealthInfo = false;
+    const detectedItems: string[] = [];
+    let confidence = 0;
+
+    for (const pattern of phiPatterns) {
+      const matches = content.match(pattern);
+      if (matches) {
+        hasPersonalInfo = true;
+        if (pattern.source.includes('patient|diagnosis|medical|health')) {
+          hasHealthInfo = true;
+          confidence += 0.3;
+        } else if (pattern.source.includes('RAMQ|SIN|medical')) {
+          confidence += 0.5;
+        } else {
+          confidence += 0.2;
+        }
+        detectedItems.push(...matches);
+      }
+    }
+
+    // Cap confidence at 1.0
+    confidence = Math.min(confidence, 1.0);
+
+    return {
+      hasPersonalInfo,
+      hasHealthInfo,
+      confidence,
+      detectedItems: [...new Set(detectedItems)], // Remove duplicates
+      suggestions: hasPersonalInfo ? [
+        'Remove or anonymize personal identifiers',
+        'Use general terms instead of specific medical conditions',
+        'Obtain explicit consent before sharing health-related content',
+        'Consider Quebec Law 25 compliance requirements'
+      ] : []
+    };
+  }
 }

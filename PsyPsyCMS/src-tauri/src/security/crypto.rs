@@ -7,7 +7,6 @@ use aes_gcm::{
     Aes256Gcm, Key, Nonce,
 };
 use chacha20poly1305::{
-    aead::{},
     ChaCha20Poly1305, Key as ChachaKey, Nonce as ChachaNonce,
 };
 use argon2::{Argon2, PasswordHasher};

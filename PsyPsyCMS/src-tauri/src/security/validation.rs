@@ -760,7 +760,7 @@ pub fn validate_client_data(request: &crate::models::CreateClientRequest) -> Res
 
     // Validate emergency contact phone numbers (if emergency contacts exist)
     if let Some(ref emergency_contacts) = request.emergency_contacts {
-        for contact in emergency_contacts {
+        for _contact in emergency_contacts {
             // Emergency contacts typically have a phone field
             // We'll just validate the phone if it exists as a string
             // This is a simplified validation since we don't know the exact EmergencyContact structure

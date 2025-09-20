@@ -483,3 +483,34 @@ export interface Theme {
   spacing: Record<string, string>
   borderRadius: Record<string, string>
 }
+
+// Re-export specific user types to avoid conflicts
+export type {
+  UserType,
+  UserRole as CmsUserRole,
+  UserStatus,
+  User as CmsUser,
+  UserProfile as CmsUserProfile,
+  CreateUserData,
+  UpdateUserData,
+  UserTableFilters,
+  UserTableSorting,
+  UserTablePagination,
+  UsersResponse,
+  UserResponse,
+  ConsentType,
+  ConsentRecord,
+  DataSubjectRequest,
+  DataSubjectRequestType,
+  DataSubjectRequestStatus
+} from './user'
+
+export type {
+  Appointment as CmsAppointment,
+  AppointmentStatus as CmsAppointmentStatus,
+  AppointmentType as CmsAppointmentType
+} from './appointment'
+
+export type {
+  Professional as CmsProfessional
+} from './professional'

@@ -36,33 +36,56 @@ pub enum FirebaseError {
     Audit(String),
 }
 
+#[derive(Debug)]
 pub struct FirebaseService {
     pub db: Option<FirestoreDb>, // Optional for now
     project_id: String,
 }
 
 impl FirebaseService {
-    /// Initialize Firebase service with service account (simplified)
+    /// Initialize Firebase service with emulator support
     pub async fn new(project_id: &str, _service_account_path: &str) -> Result<Self, FirebaseError> {
-        tracing::info!("Initializing simplified Firebase service for project: {}", project_id);
+        tracing::info!("Initializing Firebase service for project: {}", project_id);
 
-        // For now, just create a simple service without actual Firebase connection
-        // This allows the project to compile while Firebase integration is being worked on
+        // Check if we should use emulators
+        let use_emulator = std::env::var("FIREBASE_USE_EMULATOR").unwrap_or_else(|_| "false".to_string()) == "true";
+
+        if use_emulator {
+            tracing::info!("🔧 Using Firebase emulators for development");
+            tracing::info!("📍 Firestore emulator: http://127.0.0.1:9881");
+            tracing::info!("🔐 Auth emulator: http://127.0.0.1:9880");
+            tracing::info!("⚡ Functions emulator: http://127.0.0.1:8780");
+            tracing::info!("🎛️ Emulator UI: http://127.0.0.1:8782");
+        } else {
+            tracing::info!("🏭 Using production Firebase services");
+        }
+
+        // TODO: Initialize actual Firestore connection
+        // For now, create service without DB connection but with proper logging
 
         Ok(Self {
-            db: None, // Will be initialized later
+            db: None, // Will be initialized when Firestore crate is properly integrated
             project_id: project_id.to_string(),
         })
     }
 
-    /// Create a document in Firestore collection (simplified)
+    /// Create a document in Firestore collection (emulator-aware)
     pub async fn create_document<T>(&self, collection: &str, document_id: &str, _data: &T) -> Result<String, FirebaseError>
     where
         T: serde::Serialize,
     {
-        tracing::info!("Would create document {} in collection {}", document_id, collection);
+        let use_emulator = std::env::var("FIREBASE_USE_EMULATOR").unwrap_or_else(|_| "false".to_string()) == "true";
 
-        // Return the document ID for now
+        if use_emulator {
+            tracing::info!("🔧 [EMULATOR] Would create document {} in collection {} via Firestore emulator", document_id, collection);
+            tracing::info!("📍 Emulator endpoint: http://127.0.0.1:9881/v1/projects/{}/databases/(default)/documents/{}",
+                self.project_id, collection);
+        } else {
+            tracing::info!("🏭 [PRODUCTION] Would create document {} in collection {}", document_id, collection);
+        }
+
+        // TODO: Implement actual Firestore operations
+        // For now, simulate success
         Ok(document_id.to_string())
     }
 
@@ -205,6 +228,25 @@ impl FirebaseService {
     /// Get project ID
     pub fn project_id(&self) -> &str {
         &self.project_id
+    }
+}
+
+// State management types for Tauri
+#[derive(Debug, Clone)]
+pub struct FirebaseServiceState(pub Arc<Mutex<Option<FirebaseService>>>);
+
+#[derive(Debug, Clone)]
+pub struct AuthServiceState(pub Arc<Mutex<Option<crate::security::auth::FirebaseAuthService>>>);
+
+impl Default for FirebaseServiceState {
+    fn default() -> Self {
+        Self(Arc::new(Mutex::new(None)))
+    }
+}
+
+impl Default for AuthServiceState {
+    fn default() -> Self {
+        Self(Arc::new(Mutex::new(None)))
     }
 }
 

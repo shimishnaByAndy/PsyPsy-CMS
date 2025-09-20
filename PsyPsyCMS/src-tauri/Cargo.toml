@@ -77,6 +77,10 @@ tower = "0.4"
 tokio = { version = "1.35", features = ["full"] }
 async-trait = "0.1"
 
+# WebSocket for DevTools Integration (cms-debugger)
+tokio-tungstenite = "0.20"
+futures-util = "0.3"
+
 # Data Validation & Sanitization
 validator = { version = "0.18", features = ["derive"] }
 # sanitize_html = "0.4"  # Commented out due to threading issues
@@ -101,6 +105,21 @@ time = { version = "0.3", features = ["serde", "formatting", "parsing"] }
 
 # HTTP Client for API Integration
 ureq = { version = "2.9", features = ["json", "tls"] }
+
+# Audio Recording & Processing (for meeting functionality)
+cpal = "0.15"
+hound = "3.5"
+bytemuck = "1.16"
+crossbeam = "0.8"
+dashmap = "6.1"
+dirs = "5.0"
+lazy_static = "1.4"
+realfft = "3.4"
+rubato = "0.15"
+once_cell = "1.17"
+posthog-rs = "0.3"
+which = "6.0"
+ffmpeg-sidecar = { git = "https://github.com/nathanbabcock/ffmpeg-sidecar", branch = "main" }
 
 [target.'cfg(target_os = "windows")'.dependencies]
 windows = { version = "0.52", features = [

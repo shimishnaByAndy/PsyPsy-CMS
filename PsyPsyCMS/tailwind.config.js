@@ -21,9 +21,9 @@ module.exports = {
       colors: {
         // PsyPsy Brand Colors
         psypsy: {
-          primary: '#899581',
-          'primary-dark': '#6b7663',
-          'primary-light': '#a7b499',
+          primary: '#75826D',
+          'primary-dark': '#5d6955',
+          'primary-light': '#93A088',
           secondary: '#f8f9fa',
           accent: '#e9ecef',
           success: '#28a745',

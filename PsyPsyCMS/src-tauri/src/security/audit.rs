@@ -145,9 +145,10 @@ impl AuditEvent {
     
     /// Calculate integrity hash for tamper detection
     pub fn calculate_hash(&self) -> String {
+        use base64::{Engine as _, engine::general_purpose};
         let event_json = serde_json::to_string(self).unwrap_or_default();
         let hash = digest::digest(&digest::SHA256, event_json.as_bytes());
-        base64::encode(hash.as_ref())
+        general_purpose::STANDARD.encode(hash.as_ref())
     }
     
     /// Check if event is HIPAA-critical
@@ -1021,7 +1022,7 @@ pub async fn hipaa_audit_log(
     resource: &str,
     user_id: &str,
     phi_accessed: bool,
-    details: Option<serde_json::Value>,
+    _details: Option<serde_json::Value>,
 ) -> Result<(), SecurityError> {
     // Create audit event
     let event = AuditEvent {

@@ -266,7 +266,7 @@ impl Professional {
         self.updated_at = firestore_now();
     }
 
-    pub fn update_verification_status(&mut self, verified: bool, verification_notes: Option<String>) {
+    pub fn update_verification_status(&mut self, verified: bool, _verification_notes: Option<String>) {
         self.verification.is_verified = verified;
         if verified {
             self.verification.verification_date = Some(firestore_now());

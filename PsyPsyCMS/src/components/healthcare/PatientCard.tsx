@@ -107,11 +107,21 @@ export function PatientCard({
             <Mail className="h-4 w-4 text-muted-foreground" />
             <span className="truncate">{patient.user.email}</span>
           </div>
-          
+
           {patient.user.profile?.phone && (
             <div className="flex items-center space-x-2 healthcare-text">
               <Phone className="h-4 w-4 text-muted-foreground" />
               <span>{patient.user.profile.phone}</span>
+            </div>
+          )}
+
+          {/* Location Information */}
+          {patient.user.profile?.address && (
+            <div className="flex items-center space-x-2 healthcare-text md:col-span-2">
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+              <span className="truncate">
+                {`${patient.user.profile.address.street || ''} ${patient.user.profile.address.city || ''} ${patient.user.profile.address.province || ''}`.trim() || 'Address not available'}
+              </span>
             </div>
           )}
         </div>
@@ -158,8 +168,9 @@ export function PatientCard({
               </span>
             </div>
             <div className="healthcare-text text-red-800 dark:text-red-200">
-              {patient.medicalInfo.allergies.slice(0, 3).join(', ')}
-              {patient.medicalInfo.allergies.length > 3 && ` +${patient.medicalInfo.allergies.length - 3} more`}
+              {patient.medicalInfo?.allergies?.slice(0, 3).join(', ') || 'No specific allergies noted'}
+              {(patient.medicalInfo?.allergies?.length ?? 0) > 3 &&
+                ` +${(patient.medicalInfo?.allergies?.length ?? 0) - 3} more`}
             </div>
           </div>
         )}

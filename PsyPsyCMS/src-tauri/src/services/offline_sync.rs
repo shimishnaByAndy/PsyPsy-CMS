@@ -2,7 +2,6 @@ use crate::services::encrypted_storage::{EncryptedNoteStorage, MedicalNote, Sync
 use crate::services::firebase_service_simple::FirebaseService;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use tokio::time::{interval, Duration};
 use uuid::Uuid;
 
@@ -126,7 +125,7 @@ impl OfflineSyncService {
 
     /// Upload pending local notes to Firebase
     async fn upload_pending_notes(&mut self) -> Result<(), SyncError> {
-        let firebase = self.firebase_service.as_ref()
+        let _firebase = self.firebase_service.as_ref()
             .ok_or_else(|| SyncError::Firebase("Firebase service not available".to_string()))?;
 
         let pending_notes = self.get_pending_notes().await?;
@@ -164,7 +163,7 @@ impl OfflineSyncService {
 
     /// Download remote changes from Firebase
     async fn download_remote_changes(&mut self) -> Result<(), SyncError> {
-        let firebase = self.firebase_service.as_ref()
+        let _firebase = self.firebase_service.as_ref()
             .ok_or_else(|| SyncError::Firebase("Firebase service not available".to_string()))?;
 
         // Query Firebase for notes modified since last sync
@@ -336,8 +335,8 @@ impl OfflineSyncService {
     }
 
     /// Get remote notes modified since timestamp
-    async fn get_remote_notes_since(&self, since: DateTime<Utc>) -> Result<Vec<MedicalNote>, SyncError> {
-        let firebase = self.firebase_service.as_ref()
+    async fn get_remote_notes_since(&self, _since: DateTime<Utc>) -> Result<Vec<MedicalNote>, SyncError> {
+        let _firebase = self.firebase_service.as_ref()
             .ok_or_else(|| SyncError::Firebase("Firebase service not available".to_string()))?;
 
         // In a real implementation, this would query Firebase with timestamp filter

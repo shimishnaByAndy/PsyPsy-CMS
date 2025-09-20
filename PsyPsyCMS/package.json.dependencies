@@ -1,0 +1,19 @@
+# Add these dependencies to your package.json:
+
+npm install @tanstack/react-table @tanstack/react-query file-saver xlsx date-fns
+
+# Development dependencies:
+npm install -D @types/file-saver
+
+# These should already be in your project based on your setup:
+# - lucide-react (icons)
+# - @radix-ui/react-* (UI components)
+# - tailwindcss (styling)
+
+# If you need any additional UI components from shadcn/ui:
+npx shadcn-ui@latest add avatar
+npx shadcn-ui@latest add card
+npx shadcn-ui@latest add select
+npx shadcn-ui@latest add skeleton
+npx shadcn-ui@latest add dropdown-menu
+npx shadcn-ui@latest add badge

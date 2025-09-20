@@ -7,7 +7,8 @@ const LoginPage: React.FC = () => {
   const { login, isAuthenticated } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    rememberMe: false
   })
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -20,23 +21,75 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('🔐 [LoginPage] Form submitted with:', {
+      email: formData.email,
+      hasPassword: !!formData.password,
+      rememberMe: formData.rememberMe,
+      isSubmitting
+    })
+
+    // Check if button should be disabled
+    const shouldBeDisabled = isSubmitting || !formData.email || !formData.password
+    console.log('🔐 [LoginPage] Button state check:', {
+      isSubmitting,
+      hasEmail: !!formData.email,
+      hasPassword: !!formData.password,
+      shouldBeDisabled
+    })
+
+    if (shouldBeDisabled) {
+      console.warn('🔐 [LoginPage] Form submission blocked - button should be disabled')
+      return
+    }
+
     setError('')
     setIsSubmitting(true)
 
     try {
-      await login(formData.email, formData.password)
-    } catch (err) {
-      setError('Invalid email or password. Please try again.')
+      console.log('🔐 [LoginPage] Calling login function...')
+      await login(formData.email, formData.password, formData.rememberMe)
+      console.log('🔐 [LoginPage] Login completed successfully')
+    } catch (err: any) {
+      console.error('🔐 [LoginPage] Login failed:', err)
+      setError(err.message || 'Invalid email or password. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
   }
 
+  const handleButtonClick = (e: React.MouseEvent) => {
+    console.log('🔐 [LoginPage] Button clicked!', {
+      buttonType: e.currentTarget.getAttribute('type'),
+      disabled: e.currentTarget.hasAttribute('disabled'),
+      formValid: !!formData.email && !!formData.password
+    })
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }))
+    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value
+    const fieldName = e.target.name
+
+    console.log('🔐 [LoginPage] Input changed:', {
+      field: fieldName,
+      value: fieldName === 'password' ? '***' : value,
+      type: e.target.type
+    })
+
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        [fieldName]: value
+      }
+
+      console.log('🔐 [LoginPage] Form data updated:', {
+        email: newData.email,
+        hasPassword: !!newData.password,
+        rememberMe: newData.rememberMe
+      })
+
+      return newData
+    })
+
     // Clear error when user starts typing
     if (error) setError('')
   }
@@ -104,6 +157,7 @@ const LoginPage: React.FC = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                   disabled={isSubmitting}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
@@ -112,6 +166,22 @@ const LoginPage: React.FC = () => {
                   )}
                 </button>
               </div>
+            </div>
+
+            {/* Remember Me Checkbox */}
+            <div className="flex items-center space-x-2">
+              <input
+                id="rememberMe"
+                name="rememberMe"
+                type="checkbox"
+                checked={formData.rememberMe}
+                onChange={handleInputChange}
+                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                disabled={isSubmitting}
+              />
+              <label htmlFor="rememberMe" className="text-sm text-gray-700">
+                Remember me on this device
+              </label>
             </div>
 
             {/* Error Message */}
@@ -125,6 +195,7 @@ const LoginPage: React.FC = () => {
             {/* Submit Button */}
             <button
               type="submit"
+              onClick={handleButtonClick}
               disabled={isSubmitting || !formData.email || !formData.password}
               className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-400 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl disabled:shadow-none disabled:cursor-not-allowed"
             >
@@ -142,12 +213,13 @@ const LoginPage: React.FC = () => {
             </button>
           </form>
 
-          {/* Demo Credentials */}
+          {/* Firebase Auth Info */}
           <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h3 className="text-sm font-medium text-blue-900 mb-2">Demo Access</h3>
+            <h3 className="text-sm font-medium text-blue-900 mb-2">Firebase Auth Emulator</h3>
             <div className="text-xs text-blue-700 space-y-1">
-              <p>Email: <code className="bg-blue-100 px-1 rounded">demo@psypsy.com</code></p>
-              <p>Password: <code className="bg-blue-100 px-1 rounded">demo123</code></p>
+              <p>Connected to local Firebase Auth emulator</p>
+              <p>Create test users in Firebase Auth UI: <code className="bg-blue-100 px-1 rounded">http://127.0.0.1:8782</code></p>
+              <p>Or use existing Firebase Auth accounts</p>
             </div>
           </div>
         </div>

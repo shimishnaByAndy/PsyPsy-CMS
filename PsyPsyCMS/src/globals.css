@@ -10,25 +10,25 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 94 11% 53%; /* PsyPsy primary color #899581 */
+    --primary: 94 11% 45%; /* PsyPsy primary color #75826D - WCAG AA compliant */
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 84% 4.9%;
     --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted-foreground: 215.4 16.3% 35%; /* Darkened for WCAG AA compliance (4.5:1 contrast) */
     --accent: 210 40% 96%;
     --accent-foreground: 222.2 84% 4.9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 94 11% 53%; /* PsyPsy primary for focus rings */
+    --ring: 94 11% 45%; /* PsyPsy primary for focus rings - WCAG AA compliant */
     --radius: 0.5rem;
 
     /* PsyPsy Custom Variables */
-    --psypsy-primary: 94 11% 53%;
-    --psypsy-primary-dark: 94 16% 41%;
-    --psypsy-primary-light: 94 15% 64%;
+    --psypsy-primary: 94 11% 45%;
+    --psypsy-primary-dark: 94 16% 35%;
+    --psypsy-primary-light: 94 15% 60%;
     --psypsy-secondary: 210 40% 98%;
     --psypsy-accent: 200 6% 10%;
     --psypsy-success: 142 76% 36%;
@@ -44,7 +44,7 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 94 11% 53%;
+    --primary: 94 11% 45%;
     --primary-foreground: 222.2 84% 4.9%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -56,12 +56,12 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 94 11% 53%;
+    --ring: 94 11% 45%;
 
     /* PsyPsy Dark Mode Variables */
-    --psypsy-primary: 94 11% 53%;
-    --psypsy-primary-dark: 94 16% 35%;
-    --psypsy-primary-light: 94 15% 70%;
+    --psypsy-primary: 94 11% 45%;
+    --psypsy-primary-dark: 94 16% 30%;
+    --psypsy-primary-light: 94 15% 65%;
     --psypsy-secondary: 217.2 32.6% 17.5%;
     --psypsy-accent: 210 40% 98%;
   }

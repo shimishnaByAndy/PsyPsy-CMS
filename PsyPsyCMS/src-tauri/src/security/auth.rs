@@ -8,13 +8,10 @@ use chrono::{DateTime, Utc, Duration};
 use uuid::Uuid;
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
-use tokio::sync::Mutex;
 use reqwest::Client;
 use oauth2::{
-    AuthorizationCode, ClientId, ClientSecret, CsrfToken, RedirectUrl, Scope,
-    AccessToken, RefreshToken, StandardTokenResponse,
+    ClientId, ClientSecret, RedirectUrl,
     basic::BasicClient,
-    reqwest::async_http_client,
 };
 
 /// Firebase user information
@@ -201,6 +198,22 @@ pub struct FirebaseAuthService {
     config: SecurityConfig,
     /// OAuth2 client for provider authentication
     oauth_client: Option<BasicClient>,
+}
+
+impl std::fmt::Debug for FirebaseAuthService {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("FirebaseAuthService")
+            .field("project_id", &self.project_id)
+            .field("api_key", &"[REDACTED]")
+            .field("client", &self.client)
+            .field("jwt_encoding_key", &"[REDACTED]")
+            .field("jwt_decoding_key", &"[REDACTED]")
+            .field("sessions", &self.sessions)
+            .field("mfa_challenges", &self.mfa_challenges)
+            .field("config", &self.config)
+            .field("oauth_client", &self.oauth_client)
+            .finish()
+    }
 }
 
 impl FirebaseAuthService {
@@ -404,7 +417,7 @@ impl FirebaseAuthService {
         let claims = self.validate_token(refresh_token)?;
         
         // Get session
-        let session = self.sessions.read().unwrap()
+        let _session = self.sessions.read().unwrap()
             .get(&claims.session_id)
             .cloned()
             .ok_or_else(|| SecurityError::SessionExpired { expired_at: Utc::now() })?;
@@ -497,7 +510,7 @@ impl FirebaseAuthService {
                 // In practice, would verify SMS code
                 code.len() == 6 && code.chars().all(|c| c.is_numeric())
             },
-            MfaChallengeType::Totp { secret_key } => {
+            MfaChallengeType::Totp { secret_key: _secret_key } => {
                 // In practice, would verify TOTP code using secret_key
                 code.len() == 6 && code.chars().all(|c| c.is_numeric())
             },

@@ -2,7 +2,6 @@
 // Enhanced with encrypted medical notes and compliance features
 
 use tauri::Manager;
-use tokio::sync::Mutex;
 
 // Import medical notes functionality
 mod services;
@@ -11,6 +10,7 @@ mod security;
 mod models;
 mod storage;
 mod compliance;
+mod meeting;
 
 use commands::medical_notes_commands::{
     StorageState,
@@ -55,6 +55,82 @@ use commands::social_media_commands::{
     get_scheduled_posts,
     get_published_posts,
 };
+use meeting::{
+    start_recording,
+    stop_recording,
+    is_recording,
+    get_transcription_status,
+    save_transcript,
+};
+use commands::auth_commands::{
+    store_session,
+    get_stored_session,
+    clear_stored_session,
+    auth_login,
+    auth_logout,
+    auth_refresh_token,
+    auth_get_current_user,
+    auth_update_profile,
+    auth_change_password,
+    auth_request_password_reset,
+    auth_verify_token,
+    auth_check_status,
+};
+use commands::client_commands::{
+    get_clients,
+    get_client,
+    create_client,
+    update_client,
+    delete_client,
+    search_clients,
+    get_client_appointments,
+    assign_professional_to_client,
+    get_client_stats,
+};
+use commands::professional_commands::{
+    get_professionals,
+    get_professional,
+    create_professional,
+    update_professional,
+    delete_professional,
+    search_professionals,
+    get_professional_clients,
+    get_professional_appointments,
+    get_professional_stats,
+    update_professional_verification,
+};
+use commands::appointment_commands::{
+    get_appointments,
+    get_appointment,
+    create_appointment,
+    update_appointment,
+    cancel_appointment,
+    complete_appointment,
+    delete_appointment,
+    search_appointments,
+    get_appointments_by_date_range,
+    get_todays_appointments,
+    get_appointment_stats,
+    reschedule_appointment,
+};
+use commands::dashboard_commands::{
+    get_dashboard_stats,
+    get_client_dashboard_stats,
+    get_professional_dashboard_stats,
+    get_appointment_dashboard_stats,
+    get_system_health_stats,
+};
+use commands::debug_commands::{
+    log_to_devtools,
+    initialize_devtools,
+    get_devtools_status,
+    DevToolsState,
+};
+
+// Import Firebase service state types
+use services::firebase_service_simple::{FirebaseServiceState, AuthServiceState};
+use crate::security::auth::AuthState;
+use std::sync::Arc;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -85,6 +161,51 @@ fn get_compliance_status() -> serde_json::Value {
     })
 }
 
+/// Initialize application services on startup
+async fn initialize_application_services(app_handle: tauri::AppHandle) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    log::info!("Initializing application services...");
+
+    // Initialize Firebase service
+    let firebase_service_state: tauri::State<FirebaseServiceState> = app_handle.state();
+    let project_id = std::env::var("FIREBASE_PROJECT_ID")
+        .unwrap_or_else(|_| "psypsy-cms-dev".to_string());
+    let service_account_path = std::env::var("FIREBASE_SERVICE_ACCOUNT_PATH")
+        .unwrap_or_else(|_| "firebase-service-account.json".to_string());
+
+    match services::firebase_service_simple::FirebaseService::new(&project_id, &service_account_path).await {
+        Ok(firebase_service) => {
+            log::info!("Firebase service initialized successfully");
+            let mut guard = firebase_service_state.0.lock().await;
+            *guard = Some(firebase_service);
+        }
+        Err(e) => {
+            log::warn!("Firebase service initialization failed: {} (continuing with local operation)", e);
+        }
+    }
+
+    // Initialize Auth service
+    let auth_service_state: tauri::State<AuthServiceState> = app_handle.state();
+    let api_key = std::env::var("FIREBASE_API_KEY")
+        .unwrap_or_else(|_| "demo-api-key".to_string());
+    let jwt_secret = std::env::var("JWT_SECRET")
+        .unwrap_or_else(|_| "default-dev-secret-change-in-production".to_string());
+
+    let auth_service = security::auth::FirebaseAuthService::new(
+        project_id.clone(),
+        api_key,
+        jwt_secret.as_bytes(),
+    );
+    log::info!("Auth service initialized successfully");
+    let mut guard = auth_service_state.0.lock().await;
+    *guard = Some(auth_service);
+
+    // Note: Storage and sync services are initialized via Tauri commands when needed
+    // This is because they require user-specific data (passphrase, user ID, etc.)
+
+    log::info!("Core application services initialization completed");
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     // Initialize basic logging
@@ -95,10 +216,75 @@ pub fn run() {
         .manage(StorageState::default())
         .manage(SyncServiceState::default())
         .manage(SocialMediaState::default())
+        .manage(FirebaseServiceState::default())
+        .manage(AuthServiceState::default())
+        .manage(Arc::new(tokio::sync::RwLock::new(AuthState::default())))
+        .manage(Arc::new(std::sync::RwLock::new(DevToolsState::default())))
         .invoke_handler(tauri::generate_handler![
+            // Core system commands
             greet,
             get_system_info,
             get_compliance_status,
+
+            // Authentication commands
+            auth_login,
+            auth_logout,
+            auth_refresh_token,
+            auth_get_current_user,
+            auth_update_profile,
+            auth_change_password,
+            auth_request_password_reset,
+            auth_verify_token,
+            auth_check_status,
+            store_session,
+            get_stored_session,
+            clear_stored_session,
+
+            // Client/Patient management commands
+            get_clients,
+            get_client,
+            create_client,
+            update_client,
+            delete_client,
+            search_clients,
+            get_client_appointments,
+            assign_professional_to_client,
+            get_client_stats,
+
+            // Professional management commands
+            get_professionals,
+            get_professional,
+            create_professional,
+            update_professional,
+            delete_professional,
+            search_professionals,
+            get_professional_clients,
+            get_professional_appointments,
+            get_professional_stats,
+            update_professional_verification,
+
+            // Appointment management commands
+            get_appointments,
+            get_appointment,
+            create_appointment,
+            update_appointment,
+            cancel_appointment,
+            complete_appointment,
+            delete_appointment,
+            search_appointments,
+            get_appointments_by_date_range,
+            get_todays_appointments,
+            get_appointment_stats,
+            reschedule_appointment,
+
+            // Dashboard and analytics commands
+            get_dashboard_stats,
+            get_client_dashboard_stats,
+            get_professional_dashboard_stats,
+            get_appointment_dashboard_stats,
+            get_system_health_stats,
+
+            // Medical notes commands
             initialize_encrypted_storage,
             save_medical_note,
             get_medical_note,
@@ -108,6 +294,8 @@ pub fn run() {
             create_medical_note,
             validate_note_compliance,
             storage_status,
+
+            // Offline sync commands
             initialize_sync_service,
             perform_manual_sync,
             get_sync_status,
@@ -119,6 +307,8 @@ pub fn run() {
             get_pending_sync_count,
             start_background_sync,
             stop_background_sync,
+
+            // Social media integration commands
             get_social_media_connections,
             get_oauth_configs,
             save_oauth_config,
@@ -132,7 +322,19 @@ pub fn run() {
             publish_social_media_post,
             schedule_social_media_post,
             get_scheduled_posts,
-            get_published_posts
+            get_published_posts,
+
+            // Meeting and recording commands
+            start_recording,
+            stop_recording,
+            is_recording,
+            get_transcription_status,
+            save_transcript,
+
+            // Debug and DevTools commands
+            log_to_devtools,
+            initialize_devtools,
+            get_devtools_status
         ])
         .setup(|app| {
             // Open developer tools in debug builds
@@ -140,8 +342,21 @@ pub fn run() {
             {
                 if let Some(window) = app.get_webview_window("main") {
                     window.open_devtools();
+                    log::info!("Developer tools opened");
+                } else {
+                    log::warn!("Could not find main window to open devtools");
                 }
             }
+
+            // Initialize services on startup
+            let app_handle = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                if let Err(e) = initialize_application_services(app_handle).await {
+                    log::error!("Failed to initialize application services: {}", e);
+                } else {
+                    log::info!("All application services initialized successfully");
+                }
+            });
 
             log::info!("PsyPsy CMS - Quebec Law 25 Compliant Healthcare System with encrypted medical notes initialized");
             Ok(())

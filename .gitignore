@@ -58,6 +58,11 @@ PsyPsyCMS/src-tauri/Cargo.lock
 PsyPsyCMS/node_modules/
 PsyPsyCMS/dist/
 
+# Meeting minutes build artifacts
+PsyPsyCMS/meeting-minutes/frontend/node_modules/
+PsyPsyCMS/meeting-minutes/frontend/.next/
+PsyPsyCMS/meeting-minutes/frontend/src-tauri/target/
+
 # Context Engineering - entire directory excluded
 context-engineering/
 

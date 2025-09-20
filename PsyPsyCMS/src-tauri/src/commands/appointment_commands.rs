@@ -16,8 +16,8 @@ use crate::security::auth::AuthState;
 pub async fn get_appointments(
     page: Option<u32>,
     limit: Option<u32>,
-    filters: Option<SearchFilters>,
-    sort: Option<SortOptions>,
+    _filters: Option<SearchFilters>,
+    _sort: Option<SortOptions>,
     firebase: State<'_, Arc<tokio::sync::Mutex<FirebaseService>>>,
     auth_state: State<'_, Arc<RwLock<AuthState>>>,
 ) -> Result<ApiResponse<PaginatedResponse<Appointment>>, String> {

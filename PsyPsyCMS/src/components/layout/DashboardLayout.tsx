@@ -285,7 +285,7 @@ export function DashboardLayout({
       <div className="flex-1 flex flex-col min-w-0">
         <TopBar />
         
-        <main className="flex-1 overflow-auto bg-muted/10">
+        <main id="main-content" className="flex-1 overflow-auto bg-muted/10">
           <div className="container mx-auto p-6">
             {children}
           </div>

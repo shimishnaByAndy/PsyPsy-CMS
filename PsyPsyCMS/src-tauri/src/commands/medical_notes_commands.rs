@@ -153,7 +153,7 @@ pub async fn get_audit_trail(
 pub async fn create_medical_note(
     patient_id: String,
     template_type: String,
-    user_id: String,
+    _user_id: String,
 ) -> Result<CommandResult<MedicalNote>, String> {
     let note = MedicalNote {
         id: String::new(), // Will be generated on save

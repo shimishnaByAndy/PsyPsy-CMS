@@ -1,0 +1,35 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Document Comprehensive Firebase MCP Usage Rules and Patterns in CLAUDE.md",
+        "description": "Update the CLAUDE.md documentation to provide detailed, authoritative guidance on configuring, using, and troubleshooting Firebase MCP for PsyPsy CMS development, including best practices and usage patterns.",
+        "details": "1. **Overview Section**: Begin with a clear explanation of what Firebase MCP is, its purpose, and its role in PsyPsy CMS development. Reference its ability to enable AI assistants to interact with Firebase services such as Firestore, Storage, and Authentication[1][3].\n\n2. **Installation and Configuration**: Provide step-by-step instructions for installing and configuring the Firebase MCP server for all supported environments (Claude Desktop, Cursor, VS Code, etc.), including both npx and local installation methods. Include example configuration blocks for each client, specifying required environment variables (e.g., SERVICE_ACCOUNT_KEY_PATH, FIREBASE_STORAGE_BUCKET)[1][2].\n\n3. **Usage Patterns**: Document common usage scenarios relevant to PsyPsy CMS, such as:\n   - Initializing a project directory and downloading configuration[3].\n   - Managing users (adding custom claims, looking up users, listing users)[3].\n   - Firestore operations (reading/writing documents, listing collections, querying)[1][3].\n   - Storage operations (file uploads, generating download URLs)[1][3].\n   - Security rules validation for Firestore and Storage[3].\n   - Deploying Remote Config templates and sending Cloud Messaging notifications[3].\n\n4. **Advanced Configuration**: Explain optional parameters such as `--dir` for project context and `--only` for limiting feature groups, with concrete examples[2].\n\n5. **Known Issues and Troubleshooting**: Document known issues (e.g., Zod validation error in `firestore_list_collections`), clarify their impact, and provide recommended workarounds or notes[1].\n\n6. **Best Practices**: Summarize recommended patterns for secure credential management, project directory structure, and limiting tool exposure for least-privilege operation.\n\n7. **References and Further Reading**: Link to official Firebase MCP documentation and relevant blog posts for deeper dives[1][2][3].\n\nEnsure all code snippets are accurate and tested. Use clear headings, bullet points, and tables where appropriate for readability.",
+        "testStrategy": "1. Review the updated CLAUDE.md to ensure all sections (overview, installation, usage, advanced config, troubleshooting, best practices) are present and comprehensive.\n2. Validate that all configuration examples work as described by following them in a test environment for each supported client (Claude Desktop, Cursor, VS Code, etc.).\n3. Confirm that usage patterns align with PsyPsy CMS workflows by running sample operations (user management, Firestore queries, Storage uploads) via the documented MCP tools.\n4. Check that known issues are accurately described and that troubleshooting steps are actionable.\n5. Solicit peer review from at least one developer familiar with Firebase MCP to verify clarity and completeness.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Document Comprehensive Task Master AI MCP Usage Rules and Patterns in CLAUDE.md",
+        "description": "Update CLAUDE.md to provide detailed, authoritative guidance on configuring, using, and troubleshooting Task Master AI MCP integration, including best practices and usage patterns.",
+        "details": "1. **Overview Section**: Begin with a clear explanation of what Task Master AI MCP is, its purpose, and its role in PsyPsy CMS development. Describe how it enables AI assistants to interact programmatically with Task Master resources, automating workflows and supporting intelligent application features.\n\n2. **Installation and Configuration**: Provide step-by-step instructions for installing and configuring the Task Master AI MCP server for all supported environments (Claude Desktop, Cursor, VS Code, etc.), including both npx and local installation methods. Include example configuration files and environment variable setups, referencing the correct paths and settings for each client.\n\n3. **Usage Patterns**: Document common usage scenarios, such as querying tasks, updating statuses, managing user assignments, and integrating with other MCP-enabled services. Include code snippets and example AI prompts for each pattern.\n\n4. **Advanced Configuration**: Explain how to customize Task Master AI MCP behavior, including security best practices (API key management, access controls), performance tuning, and error handling. Address known issues and provide troubleshooting steps for common problems.\n\n5. **Best Practices**: Summarize recommended approaches for robust, secure, and maintainable integration, including versioning strategies, monitoring, and logging.\n\n6. **Contribution Guidelines**: If applicable, outline how developers can contribute improvements or report issues related to Task Master AI MCP integration.",
+        "testStrategy": "1. Review CLAUDE.md to ensure all required sections (overview, installation, usage, advanced config, troubleshooting, best practices, contribution) are present and comprehensive.\n2. Validate configuration examples by following them in a test environment for each supported client.\n3. Execute documented usage patterns with a test Task Master AI MCP server to confirm expected behavior and error handling.\n4. Verify that troubleshooting steps resolve simulated issues and that security recommendations are correctly implemented.",
+        "status": "pending",
+        "dependencies": [
+          1
+        ],
+        "priority": "medium",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-09-20T07:41:51.815Z",
+      "updated": "2025-09-20T07:58:42.314Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

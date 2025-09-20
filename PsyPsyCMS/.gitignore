@@ -78,3 +78,15 @@ temp/
 # Development tools and IDEs
 .vscode/settings.json
 .vscode/launch.json
+
+dev-debug.log
+# Dependency directories
+node_modules/
+# Environment variables
+.env
+.vscode
+# OS specific
+
+# Task files
+# tasks.json
+# tasks/ 

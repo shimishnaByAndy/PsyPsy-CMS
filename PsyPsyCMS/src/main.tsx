@@ -3,37 +3,17 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './globals.css'
 
-// Import WebSocket service and console interceptor for MCP debugging
-import { consoleInterceptor, webSocketService } from '@/services/websocket'
+// Import DevTools console capture for cms-debugger integration
+import devToolsCapture from '@/utils/devtools-console-capture'
 
-// Ensure we're running in a browser environment
+// Ensure we're running in a browser environment and initialize DevTools BEFORE React loads
 if (typeof window !== 'undefined') {
-  // Initialize console interception for MCP debugging (development only)
-  if (process.env.NODE_ENV === 'development') {
-    consoleInterceptor.install()
-
-    // Global error handlers for MCP debugging
-    window.addEventListener('error', (event) => {
-      webSocketService.sendError(
-        'javascript',
-        event.message,
-        event.error?.stack,
-        undefined,
-        'high'
-      )
-    })
-
-    window.addEventListener('unhandledrejection', (event) => {
-      webSocketService.sendError(
-        'javascript',
-        event.reason?.message || 'Unhandled promise rejection',
-        event.reason?.stack,
-        undefined,
-        'high'
-      )
-    })
-
-    console.log('[DevConsole] MCP debugger console interception initialized')
+  // DevTools console capture - runs in development mode automatically
+  // This MUST be initialized before React to catch early errors
+  if (import.meta.env.DEV) {
+    // Initialize immediately to catch all errors including React initialization
+    devToolsCapture.initialize()
+    console.log('[DevTools] PsyPsy CMS console capture initialized for cms-debugger')
   }
 
   // Initialize the React application
@@ -44,7 +24,7 @@ if (typeof window !== 'undefined') {
   )
 
   // Add accessibility improvements
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     // Accessibility violations warnings in development
     import('@axe-core/react').then(axe => {
       axe.default(React, ReactDOM, 1000)
@@ -52,7 +32,7 @@ if (typeof window !== 'undefined') {
   }
 
   // Performance monitoring (development only)
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     // Log performance metrics
     window.addEventListener('load', () => {
       if ('performance' in window) {
@@ -72,7 +52,7 @@ if (typeof window !== 'undefined') {
   if (window.__TAURI__) {
     // Disable context menu in Tauri (optional)
     document.addEventListener('contextmenu', event => {
-      if (process.env.NODE_ENV === 'production') {
+      if (import.meta.env.PROD) {
         event.preventDefault()
       }
     })
@@ -81,7 +61,7 @@ if (typeof window !== 'undefined') {
     document.addEventListener('selectstart', event => {
       const target = event.target as HTMLElement
       if (!target.matches('input, textarea, [contenteditable="true"]')) {
-        if (process.env.NODE_ENV === 'production') {
+        if (import.meta.env.PROD) {
           event.preventDefault()
         }
       }

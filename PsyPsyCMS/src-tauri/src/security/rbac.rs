@@ -1,7 +1,7 @@
 // Role-Based Access Control (RBAC) System for HIPAA Compliance
 // Implements healthcare-specific permissions and access controls
 
-use crate::security::{SecurityError, HealthcareRole, AuditEventType};
+use crate::security::{SecurityError, HealthcareRole};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, RwLock};
@@ -637,7 +637,7 @@ impl RbacService {
     }
     
     /// Check data access restrictions
-    fn check_data_restrictions(&self, restrictions: &DataRestrictions, context: &PermissionContext) -> (bool, String, Vec<String>) {
+    fn check_data_restrictions(&self, restrictions: &DataRestrictions, _context: &PermissionContext) -> (bool, String, Vec<String>) {
         let mut risk_factors = Vec::new();
         
         // Check max patient records (simplified - would check against session data)
