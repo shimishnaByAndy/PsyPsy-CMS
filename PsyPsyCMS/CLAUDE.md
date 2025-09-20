@@ -208,3 +208,651 @@ const handlePatientData = (data: PatientData) => {
 ## Task Master AI Instructions
 **Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
 @./.taskmaster/CLAUDE.md
+
+## Firebase MCP Integration Rules
+
+### Firebase Emulator Development Environment
+
+**Current PsyPsy Emulator Configuration:**
+```
+┌────────────────┬────────────────┬──────────────────────────────────┐
+│ Emulator       │ Host:Port      │ View in Emulator UI              │
+├────────────────┼────────────────┼──────────────────────────────────┤
+│ Authentication │ 127.0.0.1:9880 │ http://127.0.0.1:8782/auth       │
+├────────────────┼────────────────┼──────────────────────────────────┤
+│ Functions      │ 127.0.0.1:8780 │ http://127.0.0.1:8782/functions  │
+├────────────────┼────────────────┼──────────────────────────────────┤
+│ Firestore      │ 127.0.0.1:9881 │ http://127.0.0.1:8782/firestore  │
+├────────────────┼────────────────┼──────────────────────────────────┤
+│ Database       │ 127.0.0.1:9882 │ http://127.0.0.1:8782/database   │
+├────────────────┼────────────────┼──────────────────────────────────┤
+│ Hosting        │ 127.0.0.1:8781 │ n/a                              │
+└────────────────┴────────────────┴──────────────────────────────────┘
+```
+
+**Emulator UI:** http://127.0.0.1:8782/
+
+### Firebase MCP Usage Patterns (MANDATORY)
+
+#### **FMCP-001: Always Use Emulator Flag in Development**
+```javascript
+// ✅ CORRECT: Always use use_emulator: true in development
+await firestore_get_documents({
+  paths: ["patients/patient-123", "appointments/appt-456"],
+  use_emulator: true,
+  database: "(default)"
+});
+
+// ❌ FORBIDDEN: Never omit emulator flag in development
+await firestore_get_documents({
+  paths: ["patients/patient-123"],
+  // Missing use_emulator: true - will hit production!
+});
+```
+
+#### **FMCP-002: PHI Data Testing Patterns**
+```javascript
+// ✅ CORRECT: Healthcare data queries with emulator
+await firestore_query_collection({
+  collection_path: "patients",
+  filters: [{
+    field: "emergencyContact.phone",
+    op: "NOT_EQUAL",
+    compare_value: { string_value: "" }
+  }],
+  use_emulator: true,
+  limit: 10
+});
+
+// Test appointment scheduling (50-minute blocks)
+await firestore_query_collection({
+  collection_path: "appointments",
+  filters: [{
+    field: "duration",
+    op: "EQUAL",
+    compare_value: { integer_value: 50 }
+  }, {
+    field: "status",
+    op: "IN",
+    compare_value: {
+      string_array_value: ["scheduled", "confirmed", "in-progress"]
+    }
+  }],
+  use_emulator: true,
+  order: {
+    orderBy: "dateTime",
+    orderByDirection: "ASCENDING"
+  }
+});
+```
+
+#### **FMCP-003: RBAC and Authentication Testing**
+```javascript
+// ✅ CORRECT: Test user roles for Quebec healthcare compliance
+await auth_set_claim({
+  uid: "prof-123",
+  claim: "userType",
+  value: 1  // PROFESSIONAL type
+});
+
+await auth_set_claim({
+  uid: "client-456",
+  claim: "userType",
+  value: 2  // CLIENT type
+});
+
+// Test Quebec Law 25 consent tracking
+await auth_set_claim({
+  uid: "client-456",
+  claim: "consentStatus",
+  value: "explicit_consent_given"
+});
+
+await auth_set_claim({
+  uid: "client-456",
+  claim: "dataResidency",
+  value: "quebec_canada"
+});
+```
+
+#### **FMCP-004: Compliance Audit Testing**
+```javascript
+// ✅ CORRECT: Test audit trails for PIPEDA compliance
+await firestore_query_collection({
+  collection_path: "audit_logs",
+  filters: [{
+    field: "dataType",
+    op: "EQUAL",
+    compare_value: { string_value: "PHI" }
+  }, {
+    field: "action",
+    op: "IN",
+    compare_value: {
+      string_array_value: ["read", "write", "delete", "export"]
+    }
+  }, {
+    field: "timestamp",
+    op: "GREATER_THAN",
+    compare_value: { string_value: "2025-01-01T00:00:00Z" }
+  }],
+  use_emulator: true,
+  order: {
+    orderBy: "timestamp",
+    orderByDirection: "DESCENDING"
+  },
+  limit: 100
+});
+
+// Test Law 25 breach notification requirements (72-hour rule)
+await firestore_query_collection({
+  collection_path: "security_incidents",
+  filters: [{
+    field: "severity",
+    op: "GREATER_THAN_OR_EQUAL",
+    compare_value: { string_value: "high" }
+  }, {
+    field: "notificationStatus",
+    op: "EQUAL",
+    compare_value: { string_value: "pending" }
+  }],
+  use_emulator: true
+});
+```
+
+#### **FMCP-005: Real-time Database for Live Updates**
+```javascript
+// ✅ CORRECT: Test appointment availability in real-time
+await database_get_data({
+  path: "/availability/prof-123/2025-01-20",
+  databaseUrl: "http://localhost:9882/psypsy-dev-local-default-rtdb"
+});
+
+// Test conflict prevention for double-booking
+await database_set_data({
+  path: "/appointments/live-updates/appt-456",
+  data: JSON.stringify({
+    status: "booking_in_progress",
+    timestamp: new Date().toISOString(),
+    professionalId: "prof-123",
+    clientId: "client-456",
+    lockExpiry: new Date(Date.now() + 300000).toISOString() // 5-minute lock
+  }),
+  databaseUrl: "http://localhost:9882/psypsy-dev-local-default-rtdb"
+});
+```
+
+#### **FMCP-006: Professional Credential Validation**
+```javascript
+// ✅ CORRECT: Test professional licensing and specialization
+await firestore_query_collection({
+  collection_path: "professionals",
+  filters: [{
+    field: "licenseStatus",
+    op: "EQUAL",
+    compare_value: { string_value: "active" }
+  }, {
+    field: "specialization",
+    op: "IN",
+    compare_value: {
+      string_array_value: [
+        "Clinical Psychology",
+        "Counseling Psychology",
+        "Psychiatry",
+        "Social Work"
+      ]
+    }
+  }, {
+    field: "jurisdiction",
+    op: "EQUAL",
+    compare_value: { string_value: "Quebec" }
+  }],
+  use_emulator: true
+});
+
+// Test credential expiry tracking
+await firestore_query_collection({
+  collection_path: "professional_credentials",
+  filters: [{
+    field: "expiryDate",
+    op: "LESS_THAN",
+    compare_value: {
+      string_value: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString() // 90 days
+    }
+  }],
+  use_emulator: true,
+  order: {
+    orderBy: "expiryDate",
+    orderByDirection: "ASCENDING"
+  }
+});
+```
+
+### Firebase MCP Environment Setup
+
+#### **Required Environment Variables**
+```bash
+# Automatically set when emulators are running
+FIRESTORE_EMULATOR_HOST=localhost:9881
+FIREBASE_DATABASE_EMULATOR_HOST=localhost:9882
+FIREBASE_AUTH_EMULATOR_HOST=localhost:9880
+FIREBASE_FUNCTIONS_EMULATOR_HOST=localhost:8780
+FIREBASE_EMULATOR_HUB=localhost:4400
+```
+
+#### **Pre-Development Checklist**
+1. ✅ Start emulators: `firebase emulators:start --import=./seed-data`
+2. ✅ Verify connectivity: Test each emulator endpoint
+3. ✅ Load seed data: Import typical PsyPsy scenarios
+4. ✅ Set project directory: Use `firebase_update_environment`
+
+### Development Workflow Integration
+
+#### **Daily Development Loop**
+```bash
+# 1. Start emulators with data persistence
+firebase emulators:start --import=./seed-data --export-on-exit=./seed-data
+
+# 2. Use Firebase MCP tools for testing
+# Always include use_emulator: true for development
+
+# 3. Export data for reproducible testing
+firebase emulators:export ./test-scenarios/$(date +%Y%m%d)
+```
+
+#### **Testing Healthcare Scenarios**
+```javascript
+// Test complete patient registration flow
+async function testPatientRegistrationFlow() {
+  // 1. Create patient with mandatory emergency contact
+  await firestore_get_documents({
+    paths: ["patients/new-patient-123"],
+    use_emulator: true
+  });
+
+  // 2. Verify PHI encryption and audit logging
+  await firestore_query_collection({
+    collection_path: "audit_logs",
+    filters: [{
+      field: "resourceId",
+      op: "EQUAL",
+      compare_value: { string_value: "patients/new-patient-123" }
+    }, {
+      field: "action",
+      op: "EQUAL",
+      compare_value: { string_value: "create" }
+    }],
+    use_emulator: true,
+    limit: 1
+  });
+
+  // 3. Test appointment scheduling (50-minute blocks)
+  await firestore_query_collection({
+    collection_path: "appointments",
+    filters: [{
+      field: "clientId",
+      op: "EQUAL",
+      compare_value: { string_value: "new-patient-123" }
+    }],
+    use_emulator: true
+  });
+}
+```
+
+### Security and Compliance Testing
+
+#### **PIPEDA/Law 25 Validation Patterns**
+```javascript
+// Test data residency compliance
+await firestore_query_collection({
+  collection_path: "data_residency_logs",
+  filters: [{
+    field: "region",
+    op: "EQUAL",
+    compare_value: { string_value: "quebec-canada" }
+  }, {
+    field: "dataType",
+    op: "EQUAL",
+    compare_value: { string_value: "PHI" }
+  }],
+  use_emulator: true
+});
+
+// Test consent management and renewal
+await firestore_query_collection({
+  collection_path: "consent_records",
+  filters: [{
+    field: "consentType",
+    op: "EQUAL",
+    compare_value: { string_value: "explicit_consent" }
+  }, {
+    field: "expiryDate",
+    op: "GREATER_THAN",
+    compare_value: { string_value: new Date().toISOString() }
+  }],
+  use_emulator: true
+});
+```
+
+### Forbidden Patterns (NEVER DO THESE)
+
+❌ **Omitting emulator flag in development**
+❌ **Testing with production Firebase project during development**
+❌ **Hardcoding emulator ports (use environment variables)**
+❌ **Bypassing audit logging in test scenarios**
+❌ **Testing without proper RBAC role assignment**
+❌ **Creating test data without PHI encryption simulation**
+
+---
+
+**Firebase MCP Compliance Level**: PIPEDA + Quebec Law 25
+**Last Updated**: September 2025
+**Emulator Environment**: PsyPsy Development Suite
+
+## Task Master AI MCP Integration Rules
+
+### Task Master AI Development Workflow (MANDATORY)
+
+**Task Master AI** provides comprehensive task management for PsyPsy CMS development with AI-powered task generation, expansion, and progress tracking.
+
+#### **TMCP-001: Essential Task Master AI Commands**
+
+```bash
+# Core Project Management
+task-master init                                    # Initialize Task Master in project
+task-master parse-prd .taskmaster/docs/prd.txt      # Generate tasks from PRD
+task-master models --setup                        # Configure AI models
+
+# Daily Development Workflow
+task-master list                                   # Show all tasks with status
+task-master next                                   # Get next available task
+task-master show <id>                             # View task details (e.g., task-master show 1.2)
+task-master set-status --id=<id> --status=done    # Mark task complete
+
+# Task Management
+task-master add-task --prompt="description" --research        # Add new task with AI
+task-master expand --id=<id> --research --force              # Break into subtasks
+task-master update-task --id=<id> --prompt="changes"         # Update specific task
+task-master update-subtask --id=<id> --prompt="notes"        # Add implementation notes
+```
+
+#### **TMCP-002: MCP Tool Usage Patterns**
+
+```javascript
+// ✅ CORRECT: Use MCP tools for task management
+await mcp__task_master_ai__get_tasks({
+  projectRoot: "/absolute/path/to/project",
+  status: "pending",
+  withSubtasks: true
+});
+
+// Get next task for development
+await mcp__task_master_ai__next_task({
+  projectRoot: "/absolute/path/to/project"
+});
+
+// Update task with progress notes
+await mcp__task_master_ai__update_subtask({
+  projectRoot: "/absolute/path/to/project",
+  id: "1.2",
+  prompt: "Implemented authentication middleware with JWT validation. Added unit tests for login/logout flows."
+});
+
+// Mark task complete
+await mcp__task_master_ai__set_task_status({
+  projectRoot: "/absolute/path/to/project",
+  id: "1.2",
+  status: "done"
+});
+```
+
+#### **TMCP-003: Healthcare Development Integration**
+
+```javascript
+// ✅ CORRECT: Healthcare-specific task management
+await mcp__task_master_ai__add_task({
+  projectRoot: "/absolute/path/to/project",
+  prompt: "Implement PIPEDA consent tracking for patient data access with 72-hour breach notification system",
+  research: true
+});
+
+// Expand healthcare compliance tasks
+await mcp__task_master_ai__expand_task({
+  projectRoot: "/absolute/path/to/project",
+  id: "5",
+  research: true,
+  prompt: "Focus on Quebec Law 25 specific requirements for healthcare data processing"
+});
+
+// Track PHI implementation progress
+await mcp__task_master_ai__update_task({
+  projectRoot: "/absolute/path/to/project",
+  id: "3",
+  prompt: "Added AES-256-GCM encryption for all PHI fields. Implemented audit logging for data access. Need to add automatic consent renewal workflows."
+});
+```
+
+#### **TMCP-004: Research-Backed Task Generation**
+
+```javascript
+// ✅ CORRECT: Use research for complex healthcare tasks
+await mcp__task_master_ai__research({
+  projectRoot: "/absolute/path/to/project",
+  query: "Quebec Law 25 specific requirements for healthcare management systems and PIPEDA compliance integration",
+  saveTo: "5.2", // Save research to specific subtask
+  detailLevel: "high"
+});
+
+// Analyze task complexity for healthcare features
+await mcp__task_master_ai__analyze_project_complexity({
+  projectRoot: "/absolute/path/to/project",
+  research: true,
+  threshold: 7 // High complexity threshold for medical features
+});
+```
+
+#### **TMCP-005: Task Hierarchy and Dependencies**
+
+```javascript
+// ✅ CORRECT: Manage healthcare development dependencies
+await mcp__task_master_ai__add_dependency({
+  projectRoot: "/absolute/path/to/project",
+  id: "5", // Patient management
+  dependsOn: "2" // Database encryption must be completed first
+});
+
+// Move tasks between development phases
+await mcp__task_master_ai__move_task({
+  projectRoot: "/absolute/path/to/project",
+  from: "8",
+  to: "3", // Move compliance task earlier in priority
+  withDependencies: true
+});
+```
+
+### Task Master AI Environment Configuration
+
+#### **Required API Keys for PsyPsy Development**
+```bash
+# .env configuration (configure with your own keys)
+PERPLEXITY_API_KEY=your_perplexity_key_here
+# Optional: Add additional providers for redundancy
+ANTHROPIC_API_KEY=your_anthropic_key_here
+OPENAI_API_KEY=your_openai_key_here
+```
+
+#### **Model Configuration for Healthcare Development**
+```bash
+# Configure AI models for healthcare-specific tasks
+task-master models --set-main claude-3-5-sonnet-20241022
+task-master models --set-research sonar-pro  # Perplexity for research
+task-master models --set-fallback gpt-4o-mini
+```
+
+### PsyPsy-Specific Task Management Patterns
+
+#### **Healthcare Task Categories**
+```javascript
+// Security and Compliance Tasks
+await mcp__task_master_ai__add_task({
+  prompt: "Implement Quebec healthcare data residency requirements with Canadian cloud infrastructure",
+  priority: "high",
+  dependencies: "1,2" // Database and auth dependencies
+});
+
+// Professional Credential Management
+await mcp__task_master_ai__add_task({
+  prompt: "Build professional license tracking with annual renewal reminders for Quebec medical professionals",
+  research: true
+});
+
+// Patient Privacy and Consent
+await mcp__task_master_ai__add_task({
+  prompt: "Create Law 25 compliant consent management with explicit consent tracking and renewal workflows"
+});
+```
+
+#### **Development Workflow Integration**
+
+```bash
+# Start development session
+task-master next                           # Get next task
+task-master show 3.1                      # Review subtask details
+
+# During implementation
+task-master update-subtask --id=3.1 --prompt="Added Firebase Auth integration. Testing RBAC permissions."
+
+# Complete and move to next
+task-master set-status --id=3.1 --status=done
+task-master next                           # Get next available task
+```
+
+#### **Task Master AI File Structure**
+
+```
+.taskmaster/
+├── tasks/
+│   ├── tasks.json              # Main task database
+│   ├── task-1.md              # Individual task files
+│   ├── task-2.md
+│   └── ...
+├── docs/
+│   ├── prd.txt                # Product requirements document
+│   └── research/              # Research outputs
+├── reports/
+│   └── task-complexity-report.json
+├── config.json                # AI model configuration
+└── CLAUDE.md                  # Task Master integration guide
+```
+
+### Development Best Practices
+
+#### **TMCP-006: Healthcare Task Documentation**
+
+```javascript
+// ✅ CORRECT: Document healthcare implementation details
+await mcp__task_master_ai__update_subtask({
+  projectRoot: "/absolute/path/to/project",
+  id: "4.3",
+  prompt: `
+  Implemented patient appointment scheduling with 50-minute blocks:
+  - Added conflict detection to prevent double-booking
+  - Integrated Quebec timezone handling (America/Montreal)
+  - Created audit logs for all appointment modifications
+  - Added emergency contact validation (mandatory field)
+  - Next: Implement appointment reminder system with SMS/push notifications
+  `
+});
+```
+
+#### **TMCP-007: Compliance Progress Tracking**
+
+```javascript
+// Track PIPEDA compliance implementation
+await mcp__task_master_ai__plan({
+  projectRoot: "/absolute/path/to/project",
+  id: "6",
+  research: true // Use research for up-to-date compliance requirements
+});
+
+// Generate compliance-focused expansion
+await mcp__task_master_ai__expand_task({
+  projectRoot: "/absolute/path/to/project",
+  id: "6",
+  num: "8", // More detailed subtasks for compliance
+  research: true,
+  prompt: "Focus on Montreal healthcare regulations and Quebec Law 25 requirements"
+});
+```
+
+### Integration with Firebase MCP Tools
+
+#### **TMCP-008: Combined Workflow Pattern**
+
+```javascript
+// 1. Use Task Master AI to plan
+const nextTask = await mcp__task_master_ai__next_task({
+  projectRoot: "/absolute/path/to/project"
+});
+
+// 2. Implement using Firebase MCP tools
+await firestore_query_collection({
+  collection_path: "patients",
+  filters: [{ field: "status", op: "EQUAL", compare_value: { string_value: "active" }}],
+  use_emulator: true
+});
+
+// 3. Update task progress
+await mcp__task_master_ai__update_subtask({
+  projectRoot: "/absolute/path/to/project",
+  id: nextTask.id,
+  prompt: "Tested patient query functionality with Firebase emulator. All active patients retrieved successfully."
+});
+
+// 4. Mark complete and get next
+await mcp__task_master_ai__set_task_status({
+  projectRoot: "/absolute/path/to/project",
+  id: nextTask.id,
+  status: "done"
+});
+```
+
+### Task Master AI Compliance Tracking
+
+#### **PIPEDA/Law 25 Task Templates**
+
+```javascript
+// Quebec-specific compliance tasks
+const complianceTasks = [
+  "Implement explicit consent collection and tracking",
+  "Add 72-hour breach notification automation",
+  "Create data portability export functionality",
+  "Build right-to-deletion workflows",
+  "Add Quebec data residency validation",
+  "Implement privacy impact assessment automation"
+];
+
+// Generate tasks for each compliance requirement
+for (const taskPrompt of complianceTasks) {
+  await mcp__task_master_ai__add_task({
+    projectRoot: "/absolute/path/to/project",
+    prompt: taskPrompt,
+    research: true,
+    priority: "high"
+  });
+}
+```
+
+### Forbidden Task Master AI Patterns
+
+❌ **Using relative paths** (always use absolute projectRoot paths)
+❌ **Skipping research flag** for complex healthcare tasks
+❌ **Not updating subtask progress** during implementation
+❌ **Creating tasks without proper dependencies**
+❌ **Marking tasks complete** without proper validation
+❌ **Ignoring task complexity analysis** for medical features
+
+---
+
+**Task Master AI Integration Level**: Healthcare Development Optimized
+**Research Capability**: Perplexity-powered for up-to-date compliance
+**Last Updated**: September 2025
