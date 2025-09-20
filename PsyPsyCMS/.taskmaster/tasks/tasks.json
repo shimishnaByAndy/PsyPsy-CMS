@@ -31,7 +31,7 @@
         "description": "Develop comprehensive seed data sets representing typical PsyPsy scenarios, including mental health professionals, clients, and appointments, to support emulator testing and development workflows.",
         "details": "1. **Define Data Models**: Review and align with existing schema for professionals (e.g., therapists, psychiatrists), clients (demographics, contact info, insurance), and appointments (date, time, participants, status, notes).\n\n2. **Scenario Coverage**: Create representative scenarios such as:\n   - Multiple professionals with varying specialties and credentials.\n   - Clients with diverse demographics, insurance types, and treatment plans.\n   - Appointments reflecting common workflows: new client intake, recurring therapy, cancellations, no-shows, and telehealth sessions.\n   - Include edge cases (e.g., overlapping appointments, expired insurance, incomplete client profiles).\n\n3. **Data Volume and Realism**: Generate a sufficient volume of records (e.g., 10+ professionals, 50+ clients, 100+ appointments) with realistic, anonymized data. Ensure data reflects real-world distributions (e.g., appointment frequency, client age ranges).\n\n4. **Format and Integration**: Provide seed data in formats compatible with the emulator (e.g., JSON, CSV, or direct database scripts). Include clear documentation for loading and resetting the data set.\n\n5. **Maintainability**: Structure data and scripts for easy extension and modification as new features or scenarios are added.\n\n6. **Compliance and Privacy**: Ensure all data is fully synthetic and does not contain any real or sensitive information.",
         "testStrategy": "1. Load the seed data into the emulator and verify that all entities (professionals, clients, appointments) are correctly created and linked.\n2. Execute core emulator workflows (e.g., scheduling, client lookup, appointment management) using the seed data to confirm coverage of typical and edge-case scenarios.\n3. Validate that the data can be reset and reloaded without errors.\n4. Review data for realism, completeness, and adherence to privacy requirements.\n5. Solicit feedback from developers and QA on scenario adequacy and make adjustments as needed.",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -42,7 +42,7 @@
         "description": "Develop and execute automated tests to validate that PsyPsy's compliance workflows, as implemented via Firebase MCP tools, meet the requirements of PIPEDA and Quebec Law 25.",
         "details": "1. **Review Compliance Requirements**: Analyze PIPEDA and Quebec Law 25 to extract actionable technical requirements, focusing on data residency, consent management, access logging, data subject rights (access, correction, deletion), and breach notification.\n\n2. **Map Requirements to Firebase MCP Capabilities**: Identify which Firebase MCP tools (Firestore, Storage, Authentication) and workflows are relevant for each compliance requirement. Document how each legal requirement is addressed by the current implementation or where gaps exist.\n\n3. **Design Test Scenarios**: For each mapped requirement, design test cases that simulate real-world compliance scenarios, such as:\n   - User requests for data access or deletion\n   - Consent withdrawal and audit trail verification\n   - Data export and residency checks\n   - Logging and notification of access or modification events\n\n4. **Implement Automated Tests**: Use the Firebase MCP tools to script and automate these scenarios. Where possible, leverage the emulator and seed data from Task 3 to ensure tests are realistic and repeatable. Ensure tests cover both typical and edge cases, including error handling and unauthorized access attempts.\n\n5. **Document Test Coverage and Results**: Maintain clear documentation of test cases, expected outcomes, and actual results. Highlight any compliance gaps or areas requiring remediation.\n\n6. **Iterate with Legal/Compliance Stakeholders**: Review test coverage and results with legal or compliance experts to confirm adequacy and adjust scenarios as needed.",
         "testStrategy": "1. Run the full suite of automated compliance tests against the Firebase MCP-enabled emulator environment seeded with representative data.\n2. For each test, verify that the workflow produces the expected outcome (e.g., correct data returned, access denied, audit log entry created) and that all actions are logged as required by PIPEDA and Quebec Law 25.\n3. Manually review logs and exported data to confirm data residency and retention policies are enforced.\n4. Validate that all user-facing compliance features (e.g., data access, deletion, consent withdrawal) are functional and auditable.\n5. Document any failures or gaps and retest after remediation.",
-        "status": "pending",
+        "status": "in-progress",
         "dependencies": [
           1,
           3
@@ -82,7 +82,7 @@
     ],
     "metadata": {
       "created": "2025-09-20T07:41:51.815Z",
-      "updated": "2025-09-20T08:02:05.696Z",
+      "updated": "2025-09-20T08:06:22.454Z",
       "description": "Tasks for master context"
     }
   }

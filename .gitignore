@@ -57,6 +57,7 @@ PsyPsyCMS/src-tauri/target/
 PsyPsyCMS/src-tauri/Cargo.lock
 PsyPsyCMS/node_modules/
 PsyPsyCMS/dist/
+PsyPsyCMS/seed-data/
 
 # Meeting minutes build artifacts
 PsyPsyCMS/meeting-minutes/frontend/node_modules/
