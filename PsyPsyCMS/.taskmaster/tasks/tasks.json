@@ -31,7 +31,7 @@
         "description": "Develop comprehensive seed data sets representing typical PsyPsy scenarios, including mental health professionals, clients, and appointments, to support emulator testing and development workflows.",
         "details": "1. **Define Data Models**: Review and align with existing schema for professionals (e.g., therapists, psychiatrists), clients (demographics, contact info, insurance), and appointments (date, time, participants, status, notes).\n\n2. **Scenario Coverage**: Create representative scenarios such as:\n   - Multiple professionals with varying specialties and credentials.\n   - Clients with diverse demographics, insurance types, and treatment plans.\n   - Appointments reflecting common workflows: new client intake, recurring therapy, cancellations, no-shows, and telehealth sessions.\n   - Include edge cases (e.g., overlapping appointments, expired insurance, incomplete client profiles).\n\n3. **Data Volume and Realism**: Generate a sufficient volume of records (e.g., 10+ professionals, 50+ clients, 100+ appointments) with realistic, anonymized data. Ensure data reflects real-world distributions (e.g., appointment frequency, client age ranges).\n\n4. **Format and Integration**: Provide seed data in formats compatible with the emulator (e.g., JSON, CSV, or direct database scripts). Include clear documentation for loading and resetting the data set.\n\n5. **Maintainability**: Structure data and scripts for easy extension and modification as new features or scenarios are added.\n\n6. **Compliance and Privacy**: Ensure all data is fully synthetic and does not contain any real or sensitive information.",
         "testStrategy": "1. Load the seed data into the emulator and verify that all entities (professionals, clients, appointments) are correctly created and linked.\n2. Execute core emulator workflows (e.g., scheduling, client lookup, appointment management) using the seed data to confirm coverage of typical and edge-case scenarios.\n3. Validate that the data can be reset and reloaded without errors.\n4. Review data for realism, completeness, and adherence to privacy requirements.\n5. Solicit feedback from developers and QA on scenario adequacy and make adjustments as needed.",
-        "status": "pending",
+        "status": "in-progress",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -82,7 +82,7 @@
     ],
     "metadata": {
       "created": "2025-09-20T07:41:51.815Z",
-      "updated": "2025-09-20T08:02:01.637Z",
+      "updated": "2025-09-20T08:02:05.696Z",
       "description": "Tasks for master context"
     }
   }
