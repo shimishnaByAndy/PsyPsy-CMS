@@ -1,3 +1,6 @@
+# Sub-repositories (separate git repos)
+context-engineering/
+
 # dependencies
 /node_modules
 /.pnp
