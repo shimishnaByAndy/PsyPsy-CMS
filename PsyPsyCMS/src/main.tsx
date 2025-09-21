@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './globals.css'
+import { NextUIProvider } from '@/context/NextUIProvider'
 
 // Import DevTools console capture for cms-debugger integration
 import devToolsCapture from '@/utils/devtools-console-capture'
@@ -19,7 +20,9 @@ if (typeof window !== 'undefined') {
   // Initialize the React application
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-      <App />
+      <NextUIProvider theme="light">
+        <App />
+      </NextUIProvider>
     </React.StrictMode>,
   )
 

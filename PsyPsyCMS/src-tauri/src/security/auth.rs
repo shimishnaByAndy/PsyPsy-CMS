@@ -368,6 +368,7 @@ impl FirebaseAuthService {
             is_elevated: false,
             mfa_verified: false,
             permissions,
+            data_access_level: crate::security::DataClassification::Confidential, // Default to Confidential for healthcare
             security_metadata: serde_json::json!({
                 "firebase_uid": user.uid,
                 "email_verified": user.email_verified,
@@ -404,8 +405,9 @@ impl FirebaseAuthService {
         
         // Verify session still exists
         if !self.sessions.read().unwrap().contains_key(&claims.session_id) {
-            return Err(SecurityError::SessionExpired { 
-                expired_at: Utc::now() 
+            return Err(SecurityError::SessionExpired {
+                expired_at: Utc::now(),
+                reason: "Session not found in active sessions".to_string()
             });
         }
         
@@ -420,7 +422,10 @@ impl FirebaseAuthService {
         let _session = self.sessions.read().unwrap()
             .get(&claims.session_id)
             .cloned()
-            .ok_or_else(|| SecurityError::SessionExpired { expired_at: Utc::now() })?;
+            .ok_or_else(|| SecurityError::SessionExpired {
+                expired_at: Utc::now(),
+                reason: "Session not found or expired".to_string()
+            })?;
         
         // Store session_id before move
         let session_id = claims.session_id.clone();
@@ -612,6 +617,26 @@ impl FirebaseAuthService {
             ],
             HealthcareRole::Guest => vec![
                 "view_public_info".to_string(),
+            ],
+            HealthcareRole::AdminStaff => vec![
+                "view_basic_info".to_string(),
+                "schedule_appointment".to_string(),
+                "manage_records".to_string(),
+                "patient_communication".to_string(),
+            ],
+            HealthcareRole::Guardian => vec![
+                "view_dependent_data".to_string(),
+                "update_dependent_info".to_string(),
+                "schedule_dependent_appointments".to_string(),
+                "view_dependent_history".to_string(),
+            ],
+            HealthcareRole::EmergencyContact => vec![
+                "view_emergency_info".to_string(),
+                "receive_notifications".to_string(),
+            ],
+            HealthcareRole::ReadOnlyAccess => vec![
+                "view_basic_info".to_string(),
+                "view_public_records".to_string(),
             ],
         }
     }

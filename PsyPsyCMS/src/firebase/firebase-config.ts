@@ -130,6 +130,13 @@ export function initializeFirebaseForQuebec(): {
   // IMMEDIATELY connect to emulators if enabled (before any other Firestore operations)
   if (import.meta.env.DEV && import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
     console.log('🎯 Emulator mode enabled - connecting to local emulators');
+
+    // Check for custom WebSocket port configuration
+    const websocketPort = import.meta.env.VITE_FIREBASE_WEBSOCKET_PORT;
+    if (websocketPort && websocketPort !== '8782') {
+      console.log(`🔌 Firebase WebSocket port updated: ${websocketPort} (was 8782)`);
+    }
+
     try {
       connectToEmulators(db, auth, storage, functions);
       console.log('🔧 Emulator connection completed');
@@ -251,6 +258,10 @@ function connectToEmulators(
     emulatorsConnected = true;
 
     console.log('🔧 All Firebase emulators connected successfully!');
+
+    // Check for WebSocket port configuration
+    const websocketPort = import.meta.env.VITE_FIREBASE_WEBSOCKET_PORT || '8782';
+
     console.log('[AUDIT - Quebec Law 25]', {
       action: 'firebase_emulator_connection',
       timestamp: new Date().toISOString(),
@@ -263,7 +274,9 @@ function connectToEmulators(
         functions: '127.0.0.1:8780',
         database: '127.0.0.1:9882',
         hosting: '127.0.0.1:8781',
-        emulatorUI: 'http://127.0.0.1:8782'
+        emulatorUI: 'http://127.0.0.1:8782',
+        websocketPort: websocketPort,
+        websocketEndpoint: `ws://127.0.0.1:${websocketPort}`
       }
     });
   } catch (error: any) {

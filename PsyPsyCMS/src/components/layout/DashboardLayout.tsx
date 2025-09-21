@@ -1,18 +1,30 @@
 import React, { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { 
-  Menu, 
-  X, 
-  Home, 
-  Users, 
-  Calendar, 
-  UserCog, 
-  FileText, 
-  Settings, 
-  Bell, 
+import {
+  Button,
+  Avatar,
+  Badge,
+  Input,
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  NavbarMenuToggle,
+  NavbarMenu,
+  NavbarMenuItem,
+  Chip,
+  HealthcareButton
+} from '@/components/ui/nextui'
+import {
+  Menu,
+  X,
+  Home,
+  Users,
+  Calendar,
+  UserCog,
+  FileText,
+  Settings,
+  Bell,
   Search,
   Moon,
   Sun,
@@ -141,9 +153,14 @@ export function DashboardLayout({
             <item.icon className="w-5 h-5 flex-shrink-0" />
             <span className="flex-1 text-left">{item.label}</span>
             {item.badge && (
-              <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full">
+              <Chip
+                size="sm"
+                color="primary"
+                variant="flat"
+                className="bg-white/20 text-white"
+              >
                 {item.badge}
-              </span>
+              </Chip>
             )}
           </button>
         ))}
@@ -189,8 +206,9 @@ export function DashboardLayout({
       <div className="flex items-center space-x-4">
         {/* Mobile menu button */}
         <Button
-          variant="ghost"
-          size="icon"
+          variant="light"
+          size="sm"
+          isIconOnly
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="lg:hidden"
         >
@@ -198,14 +216,16 @@ export function DashboardLayout({
         </Button>
 
         {/* Search */}
-        <div className="relative hidden sm:block">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
+        <div className="hidden sm:block">
+          <Input
             type="text"
             placeholder="Search patients, appointments..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-4 py-2 w-80 text-sm bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-psypsy-primary focus:border-transparent"
+            startContent={<Search className="w-4 h-4 text-default-400" />}
+            className="w-80"
+            size="sm"
+            variant="bordered"
           />
         </div>
       </div>
@@ -213,8 +233,9 @@ export function DashboardLayout({
       <div className="flex items-center space-x-2">
         {/* Theme toggle */}
         <Button
-          variant="ghost"
-          size="icon"
+          variant="light"
+          size="sm"
+          isIconOnly
           onClick={onToggleTheme}
         >
           {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -222,44 +243,50 @@ export function DashboardLayout({
 
         {/* Notifications */}
         <Button
-          variant="ghost"
-          size="icon"
+          variant="light"
+          size="sm"
+          isIconOnly
           className="relative"
         >
           <Bell className="w-5 h-5" />
           {notifications > 0 && (
             <Badge
-              variant="destructive"
-              className="absolute -top-1 -right-1 w-5 h-5 text-xs flex items-center justify-center p-0"
+              color="danger"
+              content={notifications > 9 ? '9+' : notifications.toString()}
+              size="sm"
+              className="absolute -top-1 -right-1"
             >
-              {notifications > 9 ? '9+' : notifications}
+              <div className="w-2 h-2" />
             </Badge>
           )}
         </Button>
 
         {/* User menu - simplified for mobile */}
         <div className="hidden sm:flex items-center space-x-2">
-          <Avatar className="w-8 h-8">
-            <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-            <AvatarFallback className="text-xs">
-              {currentUser.name.split(' ').map(n => n[0]).join('')}
-            </AvatarFallback>
-          </Avatar>
+          <Avatar
+            src={currentUser.avatar}
+            name={currentUser.name}
+            size="sm"
+            color="primary"
+          />
           <div className="hidden md:block">
             <p className="text-sm font-medium">{currentUser.name}</p>
-            <p className="text-xs text-muted-foreground">{currentUser.role}</p>
+            <Chip size="sm" color="secondary" variant="flat">
+              {currentUser.role}
+            </Chip>
           </div>
         </div>
 
         {/* Logout */}
-        <Button
-          variant="ghost"
-          size="icon"
+        <HealthcareButton
+          variant="secondary"
+          size="compact"
           onClick={onLogout}
-          title="Logout"
+          auditAction="user_logout"
+          complianceLevel="HIPAA"
         >
           <LogOut className="w-4 h-4" />
-        </Button>
+        </HealthcareButton>
       </div>
     </header>
   )

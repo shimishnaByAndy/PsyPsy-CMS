@@ -511,8 +511,7 @@ impl RbacService {
             .get(&context.role)
             .cloned()
             .ok_or_else(|| SecurityError::AuthorizationDenied {
-                action: format!("{:?}", context.permission),
-                role: format!("{:?}", context.role),
+                reason: format!("Role {:?} not found for permission {:?}", context.role, context.permission),
             })?;
         
         // Check if role has the permission
@@ -755,8 +754,7 @@ impl RbacService {
             Ok(())
         } else {
             Err(SecurityError::AuthorizationDenied {
-                action: "modify_role".to_string(),
-                role: format!("{:?}", role),
+                reason: format!("Cannot modify role {:?}", role),
             })
         }
     }
@@ -795,14 +793,12 @@ pub async fn initialize_rbac_system() -> Result<(), SecurityError> {
     ] {
         let role_def = rbac_service.get_role_definition(&role)
             .ok_or_else(|| SecurityError::AuthorizationDenied {
-                action: "verify_role".to_string(),
-                role: format!("{:?}", role),
+                reason: format!("Cannot verify role {:?}", role),
             })?;
         
         if role_def.permissions.is_empty() {
             return Err(SecurityError::AuthorizationDenied {
-                action: "verify_permissions".to_string(),
-                role: format!("{:?}", role),
+                reason: format!("Cannot verify permissions for role {:?}", role),
             });
         }
     }

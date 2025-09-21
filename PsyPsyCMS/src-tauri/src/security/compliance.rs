@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use uuid::Uuid;
 use chrono::{DateTime, Utc, Duration, NaiveDate};
-use tokio::sync::Mutex;
+// use tokio::sync::Mutex; // Removed - not used in current implementation
 
 /// HIPAA compliance standards and requirements
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1188,7 +1188,7 @@ pub async fn initialize_hipaa_monitoring() -> Result<(), SecurityError> {
         ],
         systems: vec!["PsyPsy CMS".to_string()],
         departments: vec!["IT".to_string(), "Clinical".to_string()],
-        data_types: vec![DataClassification::PHI, DataClassification::HighlySensitivePHI],
+        data_types: vec![DataClassification::Phi, DataClassification::MedicalSensitive],
         time_period: None,
     };
     
@@ -1232,7 +1232,7 @@ mod tests {
             description: "Unauthorized access to patient records".to_string(),
             user_id: Some(Uuid::new_v4()),
             patient_id: Some(Uuid::new_v4()),
-            data_classification: Some(DataClassification::PHI),
+            data_classification: Some(DataClassification::Phi),
             detection_method: DetectionMethod::AutomatedMonitoring,
             remediation_actions: vec![],
             status: ViolationStatus::Identified,
@@ -1259,7 +1259,7 @@ mod tests {
             standards: vec![HipaaStandard::TechnicalSafeguards],
             systems: vec!["Test System".to_string()],
             departments: vec!["IT".to_string()],
-            data_types: vec![DataClassification::PHI],
+            data_types: vec![DataClassification::Phi],
             time_period: None,
         };
         

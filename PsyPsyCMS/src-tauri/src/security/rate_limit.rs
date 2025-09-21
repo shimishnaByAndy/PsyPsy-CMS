@@ -956,9 +956,8 @@ pub async fn initialize_rate_limiter() -> Result<(), SecurityError> {
     
     let result = rate_limiter.check_rate_limit(test_context).await;
     if !result.allowed {
-        return Err(SecurityError::RateLimitExceeded { 
-            limit: 60, 
-            window: "minute".to_string() 
+        return Err(SecurityError::RateLimitExceeded {
+            reason: "Rate limit of 60 requests per minute exceeded".to_string()
         });
     }
     

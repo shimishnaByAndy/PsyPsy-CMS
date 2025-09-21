@@ -219,7 +219,7 @@ const AppointmentsPage: React.FC = () => {
             {getStatusIcon(appointment.status)}
             <span className="ml-1 capitalize">{appointment.status.replace('-', ' ')}</span>
           </span>
-          <button className="text-gray-400 hover:text-gray-600">
+          <button className="text-gray-600 hover:text-gray-700">
             <MoreVertical className="w-5 h-5" />
           </button>
         </div>
@@ -401,7 +401,7 @@ const AppointmentsPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
           <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-600" />
               <input
                 type="text"
                 placeholder="Search appointments..."
@@ -471,7 +471,7 @@ const AppointmentsPage: React.FC = () => {
 
       {filteredAppointments.length === 0 && (
         <div className="text-center py-12">
-          <Calendar className="mx-auto h-12 w-12 text-gray-400" />
+          <Calendar className="mx-auto h-12 w-12 text-gray-600" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">No appointments found</h3>
           <p className="mt-1 text-sm text-gray-500">
             {searchQuery || filterStatus !== 'all' || filterType !== 'all'

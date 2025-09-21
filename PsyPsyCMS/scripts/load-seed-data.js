@@ -13,9 +13,13 @@
  * - npm install firebase-admin
  */
 
-const admin = require('firebase-admin');
-const fs = require('fs');
-const path = require('path');
+import admin from 'firebase-admin';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Initialize Firebase Admin SDK for emulator
 process.env.FIRESTORE_EMULATOR_HOST = 'localhost:9881';
@@ -39,6 +43,13 @@ async function loadSeedData() {
 
     console.log('📊 Loading Firestore collections...');
 
+    // Load users first
+    console.log('👤 Loading users...');
+    for (const [id, user] of Object.entries(seedData.users)) {
+      await db.collection('users').doc(id).set(user);
+      console.log(`   ✅ Created user: ${user.email} (${user.role})`);
+    }
+
     // Load professionals
     console.log('👩‍⚕️ Loading professionals...');
     for (const [id, professional] of Object.entries(seedData.professionals)) {
@@ -57,43 +68,76 @@ async function loadSeedData() {
     console.log('📅 Loading appointments...');
     for (const [id, appointment] of Object.entries(seedData.appointments)) {
       await db.collection('appointments').doc(id).set(appointment);
-      console.log(`   ✅ Created appointment: ${appointment.id} (${appointment.status})`);
+      console.log(`   ✅ Created appointment: ${appointment.id || id} (${appointment.status})`);
     }
 
-    // Load audit logs
-    console.log('📋 Loading audit logs...');
-    for (const [id, auditLog] of Object.entries(seedData.audit_logs)) {
-      await db.collection('audit_logs').doc(id).set(auditLog);
-      console.log(`   ✅ Created audit log: ${auditLog.id}`);
+    // Load notifications
+    if (seedData.notifications) {
+      console.log('📬 Loading notifications...');
+      for (const [id, notification] of Object.entries(seedData.notifications)) {
+        await db.collection('notifications').doc(id).set(notification);
+        console.log(`   ✅ Created notification: ${notification.type || id}`);
+      }
     }
 
-    // Load consent records
-    console.log('📝 Loading consent records...');
-    for (const [id, consent] of Object.entries(seedData.consent_records)) {
-      await db.collection('consent_records').doc(id).set(consent);
-      console.log(`   ✅ Created consent record: ${consent.id}`);
+    // Load system configuration
+    if (seedData.system) {
+      console.log('⚙️ Loading system configuration...');
+      for (const [id, systemConfig] of Object.entries(seedData.system)) {
+        try {
+          await db.collection('system').doc(id).set(systemConfig);
+          console.log(`   ✅ Created system config: ${id}`);
+        } catch (error) {
+          console.error(`   ❌ Failed to create system config ${id}:`, error.message);
+          console.error('   Data:', JSON.stringify(systemConfig, null, 2));
+        }
+      }
     }
 
-    // Load data residency logs
-    console.log('🇨🇦 Loading data residency logs...');
-    for (const [id, residencyLog] of Object.entries(seedData.data_residency_logs)) {
-      await db.collection('data_residency_logs').doc(id).set(residencyLog);
-      console.log(`   ✅ Created data residency log: ${residencyLog.id}`);
+    // Load audit logs (PIPEDA/Law 25 compliance)
+    if (seedData.audit_logs) {
+      console.log('📋 Loading audit logs...');
+      for (const [id, auditLog] of Object.entries(seedData.audit_logs)) {
+        await db.collection('audit_logs').doc(id).set(auditLog);
+        console.log(`   ✅ Created audit log: ${auditLog.action} (${auditLog.userId})`);
+      }
+    }
+
+    // Load consent records (Quebec Law 25 compliance)
+    if (seedData.consent_records) {
+      console.log('📝 Loading consent records...');
+      for (const [id, consent] of Object.entries(seedData.consent_records)) {
+        await db.collection('consent_records').doc(id).set(consent);
+        console.log(`   ✅ Created consent record: ${consent.consentType} (${consent.clientId})`);
+      }
+    }
+
+    // Load data residency logs (Quebec Law 25 compliance)
+    if (seedData.data_residency_logs) {
+      console.log('🇨🇦 Loading data residency logs...');
+      for (const [id, residencyLog] of Object.entries(seedData.data_residency_logs)) {
+        await db.collection('data_residency_logs').doc(id).set(residencyLog);
+        console.log(`   ✅ Created data residency log: ${residencyLog.verificationType} (${residencyLog.region})`);
+      }
     }
 
     console.log('✅ Firestore seed data loaded successfully!');
 
     // Create additional test scenarios
-    await createAdditionalTestScenarios();
+    // await createAdditionalTestScenarios();
 
     console.log('🎉 PsyPsy CMS seed data loading completed!');
     console.log('');
     console.log('📊 Summary:');
+    console.log(`   • ${Object.keys(seedData.users).length} users`);
     console.log(`   • ${Object.keys(seedData.professionals).length} healthcare professionals`);
     console.log(`   • ${Object.keys(seedData.clients).length} clients`);
     console.log(`   • ${Object.keys(seedData.appointments).length} appointments`);
-    console.log(`   • ${Object.keys(seedData.audit_logs).length} audit logs`);
-    console.log(`   • ${Object.keys(seedData.consent_records).length} consent records`);
+    if (seedData.notifications) console.log(`   • ${Object.keys(seedData.notifications).length} notifications`);
+    if (seedData.system) console.log(`   • ${Object.keys(seedData.system).length} system configurations`);
+    if (seedData.audit_logs) console.log(`   • ${Object.keys(seedData.audit_logs).length} audit logs (PIPEDA/Law 25)`);
+    if (seedData.consent_records) console.log(`   • ${Object.keys(seedData.consent_records).length} consent records (Quebec Law 25)`);
+    if (seedData.data_residency_logs) console.log(`   • ${Object.keys(seedData.data_residency_logs).length} data residency logs (Quebec Law 25)`);
     console.log('');
     console.log('🔗 Access your data:');
     console.log('   • Firestore UI: http://127.0.0.1:8782/firestore');
@@ -219,7 +263,7 @@ async function createAdditionalTestScenarios() {
 }
 
 // Run the seed data loading
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   loadSeedData()
     .then(() => {
       console.log('🏁 Seed data loading process completed successfully!');
@@ -231,4 +275,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { loadSeedData };
+export { loadSeedData };

@@ -30,6 +30,7 @@ import SettingsPage from '@/pages/SettingsPage'
 import LoginPage from '@/pages/LoginPage'
 import LoadingPage from '@/pages/LoadingPage'
 import TestEmulatorConnection from '@/components/TestEmulatorConnection'
+import { TestHealthcareDesignSystem } from '@/components/TestHealthcareDesignSystem'
 
 // Import error boundary and dev console
 import { ErrorBoundary } from '@/components/ErrorBoundary'
@@ -194,7 +195,10 @@ function AppRoutes() {
 
       {/* Development routes */}
       {process.env.NODE_ENV === 'development' && (
-        <Route path="/test-emulators" element={<TestEmulatorConnection />} />
+        <>
+          <Route path="/test-emulators" element={<TestEmulatorConnection />} />
+          <Route path="/test-healthcare-design" element={<TestHealthcareDesignSystem />} />
+        </>
       )}
 
       {/* Protected routes */}

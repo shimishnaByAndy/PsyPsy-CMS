@@ -6,7 +6,7 @@ use serde::{Serialize, Deserialize};
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
-use crate::services::firebase_service_simple::{FirebaseService, FirebaseServiceState};
+use crate::services::firebase_service_simple::FirebaseServiceState;
 use crate::models::{
     User, LoginRequest, LoginResponse, RefreshTokenRequest, RefreshTokenResponse,
     PasswordResetRequest, PasswordChangeRequest, ProfileUpdateRequest, ApiResponse,

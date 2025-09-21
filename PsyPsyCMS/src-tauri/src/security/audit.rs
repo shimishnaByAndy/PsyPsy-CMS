@@ -113,7 +113,7 @@ impl AuditEvent {
     pub fn with_phi_access(mut self, patient_id: Uuid, data_type: &str) -> Self {
         self.patient_id = Some(patient_id);
         self.resource_type = Some(data_type.to_string());
-        self.data_classification = Some(DataClassification::PHI);
+        self.data_classification = Some(DataClassification::Phi);
         self.compliance_tags.push("PHI_ACCESS".to_string());
         self.risk_level = std::cmp::max(self.risk_level, 3);
         self
@@ -157,8 +157,8 @@ impl AuditEvent {
             AuditEventType::PatientDataViewed | AuditEventType::PatientDataModified |
             AuditEventType::PatientDataDeleted | AuditEventType::PatientDataExported |
             AuditEventType::PatientDataCreated
-        ) || self.data_classification == Some(DataClassification::PHI) ||
-        self.data_classification == Some(DataClassification::HighlySensitivePHI)
+        ) || self.data_classification == Some(DataClassification::Phi) ||
+        self.data_classification == Some(DataClassification::MedicalSensitive)
     }
 }
 
@@ -421,7 +421,7 @@ impl FileAuditWriter {
     pub fn new(file_path: PathBuf, max_size: u64) -> Result<Self, SecurityError> {
         std::fs::create_dir_all(file_path.parent().unwrap_or(&PathBuf::from(".")))
             .map_err(|e| SecurityError::AuditLogFailed { 
-                message: format!("Failed to create log directory: {}", e) 
+                reason: format!("Failed to create log directory: {}", e) 
             })?;
         
         Ok(Self {
@@ -439,12 +439,12 @@ impl FileAuditWriter {
                 .append(true)
                 .open(&self.file_path)
                 .map_err(|e| SecurityError::AuditLogFailed { 
-                    message: format!("Failed to open log file: {}", e) 
+                    reason: format!("Failed to open log file: {}", e) 
                 })?;
             
             self.current_size = file.metadata()
                 .map_err(|e| SecurityError::AuditLogFailed { 
-                    message: format!("Failed to get file metadata: {}", e) 
+                    reason: format!("Failed to get file metadata: {}", e) 
                 })?
                 .len();
             
@@ -460,7 +460,7 @@ impl AuditWriter for FileAuditWriter {
         
         let event_json = serde_json::to_string(event)
             .map_err(|e| SecurityError::AuditLogFailed { 
-                message: format!("Failed to serialize event: {}", e) 
+                reason: format!("Failed to serialize event: {}", e) 
             })?;
         
         let log_line = format!("{}\n", event_json);
@@ -468,7 +468,7 @@ impl AuditWriter for FileAuditWriter {
         if let Some(writer) = &mut self.writer {
             writer.write_all(log_line.as_bytes())
                 .map_err(|e| SecurityError::AuditLogFailed { 
-                    message: format!("Failed to write to log file: {}", e) 
+                    reason: format!("Failed to write to log file: {}", e) 
                 })?;
             
             self.current_size += log_line.len() as u64;
@@ -486,7 +486,7 @@ impl AuditWriter for FileAuditWriter {
         if let Some(writer) = &mut self.writer {
             writer.flush()
                 .map_err(|e| SecurityError::AuditLogFailed { 
-                    message: format!("Failed to flush log file: {}", e) 
+                    reason: format!("Failed to flush log file: {}", e) 
                 })?;
         }
         Ok(())
@@ -505,7 +505,7 @@ impl AuditWriter for FileAuditWriter {
         if self.file_path.exists() {
             std::fs::rename(&self.file_path, &rotated_path)
                 .map_err(|e| SecurityError::AuditLogFailed { 
-                    message: format!("Failed to rotate log file: {}", e) 
+                    reason: format!("Failed to rotate log file: {}", e) 
                 })?;
         }
         
@@ -791,7 +791,7 @@ impl AuditService {
             Ok(())
         } else {
             Err(SecurityError::AuditLogFailed { 
-                message: format!("Alert {} not found", alert_id) 
+                reason: format!("Alert {} not found", alert_id) 
             })
         }
     }
@@ -807,7 +807,7 @@ impl AuditService {
             // Create backup directory
             std::fs::create_dir_all(&backup_config.backup_path)
                 .map_err(|e| SecurityError::AuditLogFailed { 
-                    message: format!("Failed to create backup directory: {}", e) 
+                    reason: format!("Failed to create backup directory: {}", e) 
                 })?;
             
             // Generate backup filename with timestamp
@@ -958,7 +958,7 @@ mod tests {
         ).with_phi_access(patient_id, "medical_record");
         
         assert_eq!(event.patient_id, Some(patient_id));
-        assert_eq!(event.data_classification, Some(DataClassification::PHI));
+        assert_eq!(event.data_classification, Some(DataClassification::Phi));
         assert!(event.is_hipaa_critical());
         assert!(event.risk_level >= 3);
     }
@@ -1044,7 +1044,7 @@ pub async fn hipaa_audit_log(
         patient_id: None,
         outcome: AuditOutcome::Success,
         data_classification: if phi_accessed {
-            Some(DataClassification::PHI)
+            Some(DataClassification::Phi)
         } else {
             Some(DataClassification::Internal)
         },

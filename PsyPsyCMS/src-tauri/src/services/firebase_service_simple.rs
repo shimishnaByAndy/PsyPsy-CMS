@@ -29,8 +29,10 @@ pub enum FirebaseError {
     #[error("Firebase Auth error: {0}")]
     Auth(String),
     #[error("Initialization error: {0}")]
+    #[allow(dead_code)] // Used in full Firebase implementation
     Init(String),
     #[error("Encryption error: {0}")]
+    #[allow(dead_code)] // Used in full Firebase implementation
     Encryption(String),
     #[error("Audit error: {0}")]
     Audit(String),
@@ -220,12 +222,14 @@ impl FirebaseService {
     }
 
     /// Health check for Firebase services (simplified)
+    #[allow(dead_code)] // Intended for monitoring/diagnostics in full implementation
     pub async fn health_check(&self) -> Result<(), FirebaseError> {
         tracing::info!("Firebase health check (simplified) - OK");
         Ok(())
     }
 
     /// Get project ID
+    #[allow(dead_code)] // Intended for configuration access in full implementation
     pub fn project_id(&self) -> &str {
         &self.project_id
     }

@@ -113,7 +113,7 @@ const NotesPage: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center p-6">
-              <Database className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+              <Database className="h-16 w-16 mx-auto mb-4 text-gray-600" />
               <h2 className="text-xl font-semibold mb-2">Initialize Encrypted Storage</h2>
               <p className="text-gray-600 mb-6">
                 Set up your encrypted local storage for Quebec Law 25 compliant medical notes.
@@ -216,7 +216,7 @@ const NotesPage: React.FC = () => {
           <CardContent>
             {recentNotes.length === 0 ? (
               <div className="text-center py-8">
-                <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                <FileText className="h-12 w-12 mx-auto mb-4 text-gray-600" />
                 <p className="text-gray-600">No medical notes yet</p>
                 <Button onClick={() => setShowEditor(true)} className="mt-4">
                   Create Your First Note

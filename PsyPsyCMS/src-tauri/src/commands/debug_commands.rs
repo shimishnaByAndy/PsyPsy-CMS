@@ -6,7 +6,7 @@ use std::sync::Arc;
 use tauri::State;
 use tokio::net::TcpStream;
 use tokio_tungstenite::{connect_async, tungstenite::Message};
-use futures_util::{SinkExt, StreamExt};
+use futures_util::SinkExt;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DevToolsLogData {
@@ -61,12 +61,18 @@ pub async fn log_to_devtools(
         column,
     };
 
-    // Send to WebSocket DevTools server (cms-debugger on port 9223)
-    tokio::spawn(async move {
-        if let Err(e) = send_to_devtools_websocket(log_data).await {
-            eprintln!("[DevTools] Failed to send log to cms-debugger: {}", e);
-        }
-    });
+    // Send to WebSocket DevTools server (cms-debugger on port 9223) - only if enabled
+    let enable_cms_debugger = std::env::var("ENABLE_CMS_DEBUGGER")
+        .unwrap_or_else(|_| "false".to_string())
+        .to_lowercase() == "true";
+
+    if enable_cms_debugger {
+        tokio::spawn(async move {
+            if let Err(e) = send_to_devtools_websocket(log_data).await {
+                eprintln!("[DevTools] Failed to send log to cms-debugger: {}", e);
+            }
+        });
+    }
 
     // Also log locally for debugging
     match level.as_str() {

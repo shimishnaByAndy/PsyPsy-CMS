@@ -78,11 +78,321 @@
         ],
         "priority": "medium",
         "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement Foundation & Architecture Phase: NextUI Integration and Healthcare Design System for PsyPsy CMS",
+        "description": "Establish the foundational UI/UX architecture for PsyPsy CMS by integrating NextUI, developing a healthcare-specific design system, and ensuring compliance with WCAG AAA, PHI handling, and Quebec healthcare workflows.",
+        "details": "1. **NextUI Integration**: Set up NextUI as the primary UI component library within the PsyPsy CMS codebase, ensuring compatibility with existing React architecture and enabling tree-shaking for optimal performance.\n\n2. **Healthcare Design System Development**:\n   - Research and synthesize best practices from leading healthcare design systems (e.g., CMS Design System, Gravity, Better Design System) to define a comprehensive set of design tokens (color, typography, spacing), component guidelines, and accessibility standards tailored for healthcare[2][4].\n   - Document and implement reusable components (e.g., buttons, forms, alerts) with healthcare-specific variants, ensuring consistency and extensibility across the application.\n   - Leverage Figma or a similar tool for collaborative design and rapid prototyping, establishing a single source of truth for designers and developers[4].\n\n3. **Accessibility & Compliance**:\n   - Ensure all foundational components and layouts meet or exceed WCAG AAA accessibility standards, including color contrast, keyboard navigation, ARIA roles, and screen reader support.\n   - Integrate automated accessibility testing (e.g., axe-core, Lighthouse CI) into the CI/CD pipeline.\n\n4. **PHI Data Handling & Quebec Workflows**:\n   - Collaborate with compliance and backend teams to define UI patterns for handling PHI (Protected Health Information), including masking, audit logging, and secure display of sensitive data.\n   - Incorporate Quebec healthcare workflow requirements (e.g., language toggling, consent banners, data residency notices) into the design system foundation.\n\n5. **Documentation & Developer Enablement**:\n   - Create comprehensive documentation for the design system, including usage guidelines, code examples, and healthcare-specific considerations.\n   - Provide onboarding materials and migration guides for existing teams to adopt the new system.\n\n6. **Governance & Versioning**:\n   - Establish a governance model for ongoing design system maintenance, contribution, and versioning to support future phases and cross-team collaboration.",
+        "testStrategy": "1. Review the integrated NextUI setup to confirm all core components render correctly and are tree-shakable in production builds.\n2. Audit the design system using automated accessibility tools (axe-core, Lighthouse) and manual testing to verify WCAG AAA compliance for all foundational components.\n3. Validate that PHI-related UI elements follow masking and secure display requirements, and that audit logging hooks are present where needed.\n4. Test language toggling, consent banners, and other Quebec-specific workflows for correct behavior and compliance.\n5. Confirm that design system documentation is complete, accurate, and accessible to both designers and developers.\n6. Conduct usability testing sessions with clinicians and patients to ensure the foundational UI/UX meets healthcare-specific needs and minimizes cognitive load[1][3].",
+        "status": "pending",
+        "dependencies": [
+          1,
+          3,
+          5
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Initialize NextUI in PsyPsy CMS Codebase",
+            "description": "Install NextUI and configure it as the primary UI component library in the React 19 + Tauri 2.1+ + TypeScript codebase.",
+            "dependencies": [],
+            "details": "Add NextUI to package.json, import core components in src/ui/nextui/index.ts, and ensure compatibility with React 19.\n<info added on 2025-09-20T12:49:59.534Z>\nUpgrading React from 18.2.0 to 19.0.0 to ensure compatibility with NextUI v2.6.0. Installing NextUI v2.6.0 and framer-motion as dependencies to support new components and animation features.\n</info added on 2025-09-20T12:49:59.534Z>\n<info added on 2025-09-20T12:51:34.381Z>\nReact successfully upgraded to 19.1.1 and NextUI updated to 2.6.11. Conflicting dependencies resolved: cmdk upgraded to 1.1.1, lucide-react to 0.544.0. NextUI is now deprecated in favor of HeroUI, but installation is complete and functional. Ready to proceed with NextUI provider configuration and healthcare theme creation.\n</info added on 2025-09-20T12:51:34.381Z>",
+            "status": "done",
+            "testStrategy": "Verify NextUI components render in a sample page and tree-shaking works in production builds."
+          },
+          {
+            "id": 2,
+            "title": "Enable Tree-Shaking for NextUI Components",
+            "description": "Configure build tools to ensure unused NextUI components are excluded from production bundles.",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Update vite.config.ts or webpack.config.js to support ES module imports and tree-shaking for NextUI.\n<info added on 2025-09-20T12:55:23.682Z>\nSuccessfully implemented tree-shaking for NextUI components by creating a barrel export file at src/components/ui/nextui/index.ts, organizing optimized imports and healthcare-specific component groupings. Updated Vite configuration to define manual chunks for NextUI components and configured optimizeDeps for improved development startup performance. Verified integration by creating a test component and confirming the development server starts successfully.\n</info added on 2025-09-20T12:55:23.682Z>",
+            "status": "done",
+            "testStrategy": "Analyze bundle size before and after tree-shaking; confirm only used components are included."
+          },
+          {
+            "id": 3,
+            "title": "Integrate NextUI with Existing React Architecture",
+            "description": "Refactor src/app/layout.tsx and src/ui/components to use NextUI primitives and theming.",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Replace legacy UI imports with NextUI equivalents in all foundational layout and navigation files.",
+            "status": "in-progress",
+            "testStrategy": "Run regression tests to ensure UI/UX consistency and no breaking changes."
+          },
+          {
+            "id": 4,
+            "title": "Research Healthcare Design System Best Practices",
+            "description": "Analyze CMS Design System, Gravity, and Better Design System for healthcare-specific design tokens and accessibility standards.",
+            "dependencies": [],
+            "details": "Document findings in docs/design-system/research.md, focusing on color, typography, spacing, and accessibility.",
+            "status": "pending",
+            "testStrategy": "Peer review documentation for completeness and relevance."
+          },
+          {
+            "id": 5,
+            "title": "Define Healthcare Design Tokens",
+            "description": "Create a comprehensive set of design tokens for color, typography, and spacing tailored to healthcare.",
+            "dependencies": [
+              "7.4"
+            ],
+            "details": "Implement tokens in src/ui/design-tokens/index.ts and sync with Figma library.",
+            "status": "pending",
+            "testStrategy": "Validate tokens against WCAG AAA and healthcare branding requirements."
+          },
+          {
+            "id": 6,
+            "title": "Develop Core Healthcare UI Components",
+            "description": "Implement reusable components (Button, Form, Alert) with healthcare-specific variants in src/ui/components/healthcare/.",
+            "dependencies": [
+              "7.5"
+            ],
+            "details": "Ensure each component supports design tokens and accessibility props.",
+            "status": "pending",
+            "testStrategy": "Unit test each component for prop coverage and visual consistency."
+          },
+          {
+            "id": 7,
+            "title": "Document Component Guidelines and Usage",
+            "description": "Create detailed documentation for each healthcare UI component in docs/design-system/components.md.",
+            "dependencies": [
+              "7.6"
+            ],
+            "details": "Include code examples, usage patterns, and healthcare-specific considerations.",
+            "status": "pending",
+            "testStrategy": "Review documentation for clarity and completeness."
+          },
+          {
+            "id": 8,
+            "title": "Establish Figma Design System Source of Truth",
+            "description": "Set up a Figma library for all design tokens and components, enabling designer-developer collaboration.",
+            "dependencies": [
+              "7.5",
+              "7.6"
+            ],
+            "details": "Sync Figma assets with src/ui/design-tokens and src/ui/components.",
+            "status": "pending",
+            "testStrategy": "Verify Figma reflects all implemented tokens and components."
+          },
+          {
+            "id": 9,
+            "title": "Implement WCAG AAA Accessibility in Core Components",
+            "description": "Ensure all foundational components meet WCAG AAA standards for color contrast, keyboard navigation, ARIA roles, and screen reader support.",
+            "dependencies": [
+              "7.6"
+            ],
+            "details": "Add accessibility props and ARIA attributes in src/ui/components/healthcare/.",
+            "status": "pending",
+            "testStrategy": "Run axe-core and Lighthouse CI audits on all components."
+          },
+          {
+            "id": 10,
+            "title": "Integrate Automated Accessibility Testing in CI/CD",
+            "description": "Add axe-core and Lighthouse CI to the CI/CD pipeline for continuous accessibility validation.",
+            "dependencies": [
+              "7.9"
+            ],
+            "details": "Update .github/workflows/test.yml to include accessibility checks on every pull request.",
+            "status": "pending",
+            "testStrategy": "Confirm accessibility tests run and fail on violations."
+          },
+          {
+            "id": 11,
+            "title": "Define PHI Handling UI Patterns",
+            "description": "Collaborate with compliance and backend teams to design UI patterns for PHI masking, audit logging, and secure display.",
+            "dependencies": [],
+            "details": "Document patterns in docs/compliance/phi-ui.md and implement prototypes in src/ui/components/phi/",
+            "status": "pending",
+            "testStrategy": "Review with compliance team and test masking/audit features."
+          },
+          {
+            "id": 12,
+            "title": "Implement Quebec Healthcare Workflow Requirements",
+            "description": "Add language toggling, consent banners, and data residency notices to the design system foundation.",
+            "dependencies": [
+              "7.5",
+              "7.6"
+            ],
+            "details": "Create src/ui/components/quebec/LanguageToggle.tsx, ConsentBanner.tsx, DataResidencyNotice.tsx.",
+            "status": "pending",
+            "testStrategy": "Manual test workflow components for correct behavior and localization."
+          },
+          {
+            "id": 13,
+            "title": "Document Healthcare Workflow Integration",
+            "description": "Provide documentation for Quebec workflow components and PHI handling in docs/workflows/quebec.md.",
+            "dependencies": [
+              "7.11",
+              "7.12"
+            ],
+            "details": "Include usage guidelines, compliance notes, and code examples.",
+            "status": "pending",
+            "testStrategy": "Review documentation with legal and compliance teams."
+          },
+          {
+            "id": 14,
+            "title": "Create Comprehensive Design System Documentation",
+            "description": "Compile all design system documentation into docs/design-system/index.md, covering tokens, components, accessibility, and workflows.",
+            "dependencies": [
+              "7.7",
+              "7.13"
+            ],
+            "details": "Ensure documentation is accessible to both designers and developers.",
+            "status": "pending",
+            "testStrategy": "Conduct documentation walkthrough with onboarding team."
+          },
+          {
+            "id": 15,
+            "title": "Develop Onboarding Materials for Design System Adoption",
+            "description": "Create onboarding guides and migration checklists for teams transitioning to the new design system.",
+            "dependencies": [
+              "7.14"
+            ],
+            "details": "Publish guides in docs/onboarding/design-system.md and provide sample migration scripts.",
+            "status": "pending",
+            "testStrategy": "Pilot onboarding with a sample team and gather feedback."
+          },
+          {
+            "id": 16,
+            "title": "Establish Design System Governance Model",
+            "description": "Define contribution, review, and versioning processes for ongoing design system maintenance.",
+            "dependencies": [],
+            "details": "Document governance in docs/design-system/governance.md and set up versioning in src/ui/design-system/package.json.",
+            "status": "pending",
+            "testStrategy": "Review governance model with cross-functional stakeholders."
+          },
+          {
+            "id": 17,
+            "title": "Implement PatientCard Component",
+            "description": "Develop src/ui/components/healthcare/PatientCard.tsx for displaying patient information with PHI masking and accessibility.",
+            "dependencies": [
+              "7.6",
+              "7.11"
+            ],
+            "details": "Support design tokens, localization, and secure data display.",
+            "status": "pending",
+            "testStrategy": "Unit and integration test PatientCard with sample data."
+          },
+          {
+            "id": 18,
+            "title": "Implement AppointmentScheduler Component",
+            "description": "Create src/ui/components/healthcare/AppointmentScheduler.tsx for managing appointments, supporting Quebec workflows.",
+            "dependencies": [
+              "7.12"
+            ],
+            "details": "Integrate with backend APIs and support consent banners and language toggling.",
+            "status": "pending",
+            "testStrategy": "End-to-end test appointment scheduling and workflow compliance."
+          },
+          {
+            "id": 19,
+            "title": "Develop Medical Data Visualization Components",
+            "description": "Implement src/ui/components/healthcare/MedicalChart.tsx and related files for visualizing patient data.",
+            "dependencies": [
+              "7.5",
+              "7.6"
+            ],
+            "details": "Ensure charts are accessible and support healthcare color palette.",
+            "status": "pending",
+            "testStrategy": "Visual regression and accessibility test on chart components."
+          },
+          {
+            "id": 20,
+            "title": "Implement Smart Navigation and Progressive Loading",
+            "description": "Refactor src/app/navigation.tsx and src/ui/components/ProgressiveLoader.tsx for workflow-driven navigation and loading states.",
+            "dependencies": [
+              "7.3"
+            ],
+            "details": "Support deep linking, workflow context, and skeleton loading for large datasets.",
+            "status": "pending",
+            "testStrategy": "Test navigation and loading performance under simulated heavy load."
+          },
+          {
+            "id": 21,
+            "title": "Develop Workflow Components for Healthcare Scenarios",
+            "description": "Create src/ui/components/workflows/ for reusable workflow components (e.g., IntakeForm, DischargeChecklist).",
+            "dependencies": [
+              "7.5",
+              "7.6"
+            ],
+            "details": "Ensure each workflow component supports healthcare requirements and extensibility.",
+            "status": "pending",
+            "testStrategy": "Scenario-based testing with sample workflows."
+          },
+          {
+            "id": 22,
+            "title": "Enhance Accessibility with Smart Search and Real-Time Collaboration",
+            "description": "Implement src/ui/components/SmartSearch.tsx and src/ui/components/CollaborationPanel.tsx with accessibility-first design.",
+            "dependencies": [
+              "7.9"
+            ],
+            "details": "Support keyboard navigation, ARIA roles, and screen reader compatibility.",
+            "status": "pending",
+            "testStrategy": "Accessibility audit and user testing with assistive technologies."
+          },
+          {
+            "id": 23,
+            "title": "Optimize Mobile Experience and Responsive Navigation",
+            "description": "Refactor src/ui/components/Navigation.tsx and layout files for mobile optimization and responsive design.",
+            "dependencies": [
+              "7.3"
+            ],
+            "details": "Test on multiple device sizes and ensure touch accessibility.",
+            "status": "pending",
+            "testStrategy": "Manual and automated responsive testing across device emulators."
+          },
+          {
+            "id": 24,
+            "title": "Implement Performance Optimization and Animation System",
+            "description": "Add src/ui/animations/ for reusable animation hooks and optimize rendering performance in core components.",
+            "dependencies": [
+              "7.6",
+              "7.20"
+            ],
+            "details": "Use React 19 concurrent features and Tauri 2.1+ APIs for smooth UI transitions.",
+            "status": "pending",
+            "testStrategy": "Profile animation and rendering performance; verify no jank or dropped frames."
+          },
+          {
+            "id": 25,
+            "title": "Finalize Foundation Phase and Conduct End-to-End Testing",
+            "description": "Review all implemented features, run full test suite, and prepare release notes for the Foundation & Architecture phase.",
+            "dependencies": [
+              "7.1",
+              "7.2",
+              "7.3",
+              "7.5",
+              "7.6",
+              "7.9",
+              "7.10",
+              "7.11",
+              "7.12",
+              "7.14",
+              "7.15",
+              "7.16",
+              "7.17",
+              "7.18",
+              "7.19",
+              "7.20",
+              "7.21",
+              "7.22",
+              "7.23",
+              "7.24"
+            ],
+            "details": "Ensure all requirements are met and documentation is complete.",
+            "status": "pending",
+            "testStrategy": "Run end-to-end tests, accessibility audits, and stakeholder review sessions."
+          }
+        ]
       }
     ],
     "metadata": {
       "created": "2025-09-20T07:41:51.815Z",
-      "updated": "2025-09-20T08:06:22.454Z",
+      "updated": "2025-09-20T12:55:39.964Z",
       "description": "Tasks for master context"
     }
   }

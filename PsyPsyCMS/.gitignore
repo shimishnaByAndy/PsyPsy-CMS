@@ -89,4 +89,24 @@ node_modules/
 
 # Task files
 # tasks.json
-# tasks/ 
+# tasks/
+
+# Large binary files and build artifacts
+*.node
+*.a
+*.rlib
+*.gz
+
+# Rust incremental compilation
+**/incremental/
+**/deps/
+
+# MacOS specific files
+.DS_Store
+
+# Firebase and MCP seed data
+seed-data/
+
+# Meeting minutes and note generation builds
+meeting-minutes/
+note-gen/

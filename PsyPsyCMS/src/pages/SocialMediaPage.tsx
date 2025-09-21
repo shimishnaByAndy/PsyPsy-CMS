@@ -520,7 +520,7 @@ const SocialMediaPage: React.FC = () => {
             <CardContent>
               {scheduledPosts.length === 0 ? (
                 <div className="text-center py-8">
-                  <Clock className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <Clock className="h-12 w-12 mx-auto mb-4 text-gray-600" />
                   <p className="text-gray-600">No scheduled posts</p>
                 </div>
               ) : (
@@ -562,7 +562,7 @@ const SocialMediaPage: React.FC = () => {
             <CardContent>
               {publishedPosts.length === 0 ? (
                 <div className="text-center py-8">
-                  <CheckCircle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <CheckCircle className="h-12 w-12 mx-auto mb-4 text-gray-600" />
                   <p className="text-gray-600">No published posts yet</p>
                 </div>
               ) : (

@@ -8,9 +8,5 @@ pub mod offline_sync_commands;
 pub mod social_media_commands;
 pub mod debug_commands;
 
-pub use auth_commands::*;
-pub use client_commands::*;
-pub use professional_commands::*;
-pub use appointment_commands::*;
-pub use dashboard_commands::*;
-pub use debug_commands::*;
+// Note: Individual commands are imported directly in lib.rs for better granular control
+// Blanket re-exports removed to eliminate unused import warnings

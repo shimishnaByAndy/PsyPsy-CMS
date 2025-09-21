@@ -120,14 +120,14 @@ impl KeyDerivationParams {
                 salt_length: 32,
                 key_length: 32,
             },
-            DataClassification::PHI => Self {
+            DataClassification::Phi => Self {
                 memory_cost: 32768,   // 32 MB (HIPAA recommendation)
                 time_cost: 5,
                 parallelism: 4,
                 salt_length: 64,
                 key_length: 32,
             },
-            DataClassification::HighlySensitivePHI => Self {
+            DataClassification::MedicalSensitive => Self {
                 memory_cost: 65536,   // 64 MB (maximum security)
                 time_cost: 6,
                 parallelism: 8,
@@ -157,8 +157,8 @@ impl CryptoService {
         kdf_params.insert(DataClassification::Public, KeyDerivationParams::for_classification(&DataClassification::Public));
         kdf_params.insert(DataClassification::Internal, KeyDerivationParams::for_classification(&DataClassification::Internal));
         kdf_params.insert(DataClassification::Confidential, KeyDerivationParams::for_classification(&DataClassification::Confidential));
-        kdf_params.insert(DataClassification::PHI, KeyDerivationParams::for_classification(&DataClassification::PHI));
-        kdf_params.insert(DataClassification::HighlySensitivePHI, KeyDerivationParams::for_classification(&DataClassification::HighlySensitivePHI));
+        kdf_params.insert(DataClassification::Phi, KeyDerivationParams::for_classification(&DataClassification::Phi));
+        kdf_params.insert(DataClassification::MedicalSensitive, KeyDerivationParams::for_classification(&DataClassification::MedicalSensitive));
         
         Self {
             keys: Arc::new(RwLock::new(HashMap::new())),
@@ -170,7 +170,7 @@ impl CryptoService {
     
     /// Initialize master key from password with HIPAA-compliant key derivation
     pub async fn initialize_master_key(&self, password: &str, salt: Option<&[u8]>) -> Result<(), SecurityError> {
-        let params = &self.kdf_params[&DataClassification::HighlySensitivePHI];
+        let params = &self.kdf_params[&DataClassification::MedicalSensitive];
         
         let salt = match salt {
             Some(s) => s.to_vec(),
@@ -185,12 +185,12 @@ impl CryptoService {
         let salt_b64 = BASE64.encode(&salt);
         let salt_obj = Salt::from_b64(&salt_b64)
             .map_err(|e| SecurityError::CryptoOperationFailed {
-                operation: format!("Salt creation: {}", e)
+                reason: format!("Salt creation: {}", e)
             })?;
         
         let password_hash = argon2.hash_password(password.as_bytes(), salt_obj)
             .map_err(|e| SecurityError::CryptoOperationFailed { 
-                operation: format!("Password hashing: {}", e) 
+                reason: format!("Password hashing: {}", e) 
             })?;
         
         let key = password_hash.hash.unwrap().as_bytes().to_vec();
@@ -231,11 +231,11 @@ impl CryptoService {
         match encryption_level {
             EncryptionLevel::None => {
                 return Err(SecurityError::CryptoOperationFailed { 
-                    operation: "Cannot encrypt public data".to_string() 
+                    reason: "Cannot encrypt public data".to_string() 
                 });
             },
             EncryptionLevel::Standard => self.encrypt_aes_128_gcm(data, classification, key_id).await,
-            EncryptionLevel::Enhanced => self.encrypt_aes_256_gcm(data, classification, key_id).await,
+            EncryptionLevel::Strong => self.encrypt_aes_256_gcm(data, classification, key_id).await,
             EncryptionLevel::Medical => self.encrypt_medical_grade(data, classification, key_id).await,
             EncryptionLevel::Maximum => self.encrypt_maximum_security(data, classification, key_id).await,
         }
@@ -247,12 +247,12 @@ impl CryptoService {
             .get(&encrypted_data.key_id)
             .cloned()
             .ok_or_else(|| SecurityError::DecryptionFailed { 
-                message: format!("Key {} not found", encrypted_data.key_id) 
+                reason: format!("Key {} not found", encrypted_data.key_id) 
             })?;
         
         if !key.is_valid() {
             return Err(SecurityError::DecryptionFailed { 
-                message: "Encryption key has expired".to_string() 
+                reason: "Encryption key has expired".to_string() 
             });
         }
         
@@ -262,7 +262,7 @@ impl CryptoService {
             algo if algo.starts_with("ChaCha20-Poly1305") => self.decrypt_chacha20_poly1305(encrypted_data, &key).await,
             algo if algo.starts_with("Layered") => self.decrypt_layered_encryption(encrypted_data, &key).await,
             _ => Err(SecurityError::DecryptionFailed { 
-                message: format!("Unsupported algorithm: {}", encrypted_data.algorithm) 
+                reason: format!("Unsupported algorithm: {}", encrypted_data.algorithm) 
             }),
         }
     }
@@ -278,7 +278,7 @@ impl CryptoService {
             .get(&key_id)
             .cloned()
             .ok_or_else(|| SecurityError::EncryptionFailed { 
-                message: format!("Key {} not found", key_id) 
+                reason: format!("Key {} not found", key_id) 
             })?;
         
         let key = Key::<Aes256Gcm>::from_slice(&encryption_key.key[..32]);
@@ -295,7 +295,7 @@ impl CryptoService {
             msg: data,
             aad: aad.as_bytes(),
         }).map_err(|e| SecurityError::EncryptionFailed { 
-            message: format!("AES-256-GCM encryption failed: {}", e) 
+            reason: format!("AES-256-GCM encryption failed: {}", e) 
         })?;
         
         // Calculate HMAC for additional integrity
@@ -342,7 +342,7 @@ impl CryptoService {
         let chacha_result = self.encrypt_chacha20_poly1305(data, classification.clone(), None).await?;
         let chacha_data = BASE64.decode(&chacha_result.data)
             .map_err(|e| SecurityError::EncryptionFailed { 
-                message: format!("Base64 decode error: {}", e) 
+                reason: format!("Base64 decode error: {}", e) 
             })?;
         
         // Second layer: AES-256-GCM
@@ -373,7 +373,7 @@ impl CryptoService {
             .get(&key_id)
             .cloned()
             .ok_or_else(|| SecurityError::EncryptionFailed { 
-                message: format!("Key {} not found", key_id) 
+                reason: format!("Key {} not found", key_id) 
             })?;
         
         let key = ChachaKey::from_slice(&encryption_key.key[..32]);
@@ -385,7 +385,7 @@ impl CryptoService {
         
         let ciphertext = cipher.encrypt(nonce, data)
             .map_err(|e| SecurityError::EncryptionFailed { 
-                message: format!("ChaCha20-Poly1305 encryption failed: {}", e) 
+                reason: format!("ChaCha20-Poly1305 encryption failed: {}", e) 
             })?;
         
         Ok(EncryptedData {
@@ -409,12 +409,12 @@ impl CryptoService {
         
         let ciphertext = BASE64.decode(&encrypted_data.data)
             .map_err(|e| SecurityError::DecryptionFailed { 
-                message: format!("Base64 decode error: {}", e) 
+                reason: format!("Base64 decode error: {}", e) 
             })?;
         
         let nonce_bytes = BASE64.decode(&encrypted_data.iv)
             .map_err(|e| SecurityError::DecryptionFailed {
-                message: format!("Nonce decode error: {}", e)
+                reason: format!("Nonce decode error: {}", e)
             })?;
         let nonce = Nonce::from_slice(&nonce_bytes);
         
@@ -422,13 +422,13 @@ impl CryptoService {
         if let Some(hmac_b64) = &encrypted_data.hmac {
             let expected_hmac = BASE64.decode(hmac_b64)
                 .map_err(|e| SecurityError::DecryptionFailed { 
-                    message: format!("HMAC decode error: {}", e) 
+                    reason: format!("HMAC decode error: {}", e) 
                 })?;
             
             let hmac_key = ring::hmac::Key::new(ring::hmac::HMAC_SHA256, &key.key);
             ring::hmac::verify(&hmac_key, &ciphertext, &expected_hmac)
                 .map_err(|_| SecurityError::DecryptionFailed { 
-                    message: "HMAC verification failed".to_string() 
+                    reason: "HMAC verification failed".to_string() 
                 })?;
         }
         
@@ -440,7 +440,7 @@ impl CryptoService {
             msg: &ciphertext,
             aad: &aad,
         }).map_err(|e| SecurityError::DecryptionFailed { 
-            message: format!("AES-256-GCM decryption failed: {}", e) 
+            reason: format!("AES-256-GCM decryption failed: {}", e) 
         })?;
         
         Ok(plaintext)
@@ -459,18 +459,18 @@ impl CryptoService {
         
         let ciphertext = BASE64.decode(&encrypted_data.data)
             .map_err(|e| SecurityError::DecryptionFailed { 
-                message: format!("Base64 decode error: {}", e) 
+                reason: format!("Base64 decode error: {}", e) 
             })?;
         
         let nonce_bytes = BASE64.decode(&encrypted_data.iv)
             .map_err(|e| SecurityError::DecryptionFailed {
-                message: format!("Nonce decode error: {}", e)
+                reason: format!("Nonce decode error: {}", e)
             })?;
         let nonce = ChachaNonce::from_slice(&nonce_bytes);
         
         let plaintext = cipher.decrypt(nonce, ciphertext.as_ref())
             .map_err(|e| SecurityError::DecryptionFailed { 
-                message: format!("ChaCha20-Poly1305 decryption failed: {}", e) 
+                reason: format!("ChaCha20-Poly1305 decryption failed: {}", e) 
             })?;
         
         Ok(plaintext)
@@ -525,15 +525,15 @@ pub async fn initialize_crypto_system() -> Result<(), SecurityError> {
     for classification in [
         DataClassification::Internal,
         DataClassification::Confidential, 
-        DataClassification::PHI,
-        DataClassification::HighlySensitivePHI
+        DataClassification::Phi,
+        DataClassification::MedicalSensitive
     ] {
         let encrypted = crypto_service.encrypt(test_data, classification.clone(), None).await?;
         let decrypted = crypto_service.decrypt(&encrypted).await?;
         
         if decrypted != test_data {
             return Err(SecurityError::CryptoOperationFailed { 
-                operation: format!("Encryption test failed for {:?}", classification) 
+                reason: format!("Encryption test failed for {:?}", classification) 
             });
         }
     }
@@ -557,7 +557,7 @@ mod tests {
         let crypto_service = CryptoService::new();
         crypto_service.initialize_master_key("test_password", None).await.unwrap();
         
-        let key_id = crypto_service.generate_key(DataClassification::PHI).await.unwrap();
+        let key_id = crypto_service.generate_key(DataClassification::Phi).await.unwrap();
         assert!(!key_id.is_nil());
     }
     
@@ -567,11 +567,11 @@ mod tests {
         crypto_service.initialize_master_key("test_password", None).await.unwrap();
         
         let phi_data = b"Patient John Doe, SSN: 123-45-6789, Diagnosis: Confidential";
-        let encrypted = crypto_service.encrypt(phi_data, DataClassification::PHI, None).await.unwrap();
+        let encrypted = crypto_service.encrypt(phi_data, DataClassification::Phi, None).await.unwrap();
         let decrypted = crypto_service.decrypt(&encrypted).await.unwrap();
         
         assert_eq!(phi_data, decrypted.as_slice());
-        assert_eq!(encrypted.classification, DataClassification::PHI);
+        assert_eq!(encrypted.classification, DataClassification::Phi);
     }
     
     #[tokio::test]
@@ -580,7 +580,7 @@ mod tests {
         crypto_service.initialize_master_key("test_password", None).await.unwrap();
         
         let sensitive_data = b"Highly sensitive medical research data";
-        let encrypted = crypto_service.encrypt(sensitive_data, DataClassification::HighlySensitivePHI, None).await.unwrap();
+        let encrypted = crypto_service.encrypt(sensitive_data, DataClassification::MedicalSensitive, None).await.unwrap();
         let decrypted = crypto_service.decrypt(&encrypted).await.unwrap();
         
         assert_eq!(sensitive_data, decrypted.as_slice());

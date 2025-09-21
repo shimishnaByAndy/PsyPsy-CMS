@@ -4,12 +4,14 @@ pub mod audio_processing;
 pub mod encode;
 pub mod ffmpeg;
 
+// Only export actually used components to reduce warnings
 pub use core::{
-    default_input_device, default_output_device, get_device_and_config, list_audio_devices,
-    parse_audio_device, trigger_audio_permission,
-    AudioDevice, AudioStream, AudioTranscriptionEngine, DeviceControl, DeviceType,
-    LAST_AUDIO_CAPTURE,
+    default_input_device,
+    AudioDevice, AudioStream,
 };
-pub use encode::{
-    encode_single_audio, AudioInput
-};
+
+// Unused exports commented out to reduce warnings:
+// default_output_device, get_device_and_config, list_audio_devices,
+// parse_audio_device, trigger_audio_permission,
+// AudioTranscriptionEngine, DeviceControl, DeviceType,
+// LAST_AUDIO_CAPTURE, encode_single_audio, AudioInput

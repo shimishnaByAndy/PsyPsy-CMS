@@ -1,8 +1,5 @@
 import React from 'react'
-import { HealthcareCard, CardHeader, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { HealthcareCard, HealthcareButton, HealthcareCardPresets, Chip, Badge } from '@/components/ui/nextui'
 import { Client, AppointmentStatus } from '@/types'
 import { formatDate, calculateAge, getInitials } from '@/lib/utils'
 import { Calendar, Phone, Mail, MapPin, Clock, AlertCircle } from 'lucide-react'
@@ -34,202 +31,170 @@ export function PatientCard({
 
   const hasUrgentAlerts = patient.medicalInfo?.allergies && patient.medicalInfo.allergies.length > 0
 
-  const getStatusColor = (status: string) => {
+  const getStatusChipColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+        return 'success'
       case 'inactive':
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
+        return 'default'
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
+        return 'warning'
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
+        return 'default'
     }
   }
 
   return (
-    <HealthcareCard 
-      variant="patient" 
+    <HealthcareCard
+      {...HealthcareCardPresets.patientActive}
+      title={patient.user.profile?.fullName || 'Unknown Patient'}
+      subtitle={`ID: ${patient.clientId}`}
+      avatar={{
+        src: patient.user.profile?.avatar,
+        name: patient.user.profile?.fullName || 'Unknown Patient',
+        color: 'primary'
+      }}
+      status={{
+        type: getStatusChipColor(patient.status) as any,
+        label: patient.status,
+        icon: hasUrgentAlerts ? <AlertCircle className="h-3 w-3" /> : undefined
+      }}
       priority={hasUrgentAlerts ? 'high' : 'medium'}
+      auditInfo={{
+        lastAccessed: formatDate(patient.updatedAt || patient.createdAt),
+        accessedBy: 'Current User'
+      }}
       className={className}
-    >
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-4">
-            <Avatar className="h-12 w-12">
-              <AvatarImage 
-                src={patient.user.profile?.avatar} 
-                alt={patient.user.profile?.fullName}
-              />
-              <AvatarFallback>
-                {getInitials(patient.user.profile?.fullName || patient.user.email)}
-              </AvatarFallback>
-            </Avatar>
-            
-            <div className="space-y-1">
-              <div className="flex items-center space-x-2">
-                <h3 className="healthcare-header text-lg">
-                  {patient.user.profile?.fullName || 'Unknown Patient'}
-                </h3>
-                {hasUrgentAlerts && (
-                  <AlertCircle className="h-4 w-4 text-red-500" aria-label="Medical alerts" />
-                )}
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Badge className={getStatusColor(patient.status)}>
-                  {patient.status}
-                </Badge>
-                <span className="healthcare-text">
-                  ID: {patient.clientId}
-                </span>
-                {age && (
-                  <span className="healthcare-text">
-                    Age: {age}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-          
-          <div className="text-right">
-            <p className="healthcare-text text-xs">
-              Patient since {formatDate(patient.createdAt)}
-            </p>
-          </div>
-        </div>
-      </CardHeader>
+      onCardClick={(auditData) => {
+        console.log('Patient card accessed:', auditData)
+        onViewDetails?.(patient)
+      }}
+      actions={
+        showActions && (
+          <div className="flex gap-2 w-full">
+            <HealthcareButton
+              size="compact"
+              variant="secondary"
+              onClick={() => onViewDetails?.(patient)}
+              auditAction="view_patient_details"
+              complianceLevel="HIPAA"
+              className="flex-1"
+            >
+              View Details
+            </HealthcareButton>
 
-      <CardContent className="space-y-4">
+            <HealthcareButton
+              size="compact"
+              variant="primary"
+              onClick={() => onScheduleAppointment?.(patient)}
+              auditAction="schedule_appointment"
+              complianceLevel="HIPAA"
+              className="flex-1"
+            >
+              Schedule
+            </HealthcareButton>
+
+            {onSendMessage && (
+              <HealthcareButton
+                size="compact"
+                variant="secondary"
+                onClick={() => onSendMessage(patient)}
+                auditAction="send_message"
+                complianceLevel="HIPAA"
+              >
+                <Mail className="h-4 w-4" />
+              </HealthcareButton>
+            )}
+          </div>
+        )
+      }
+    >
+
+      <div className="space-y-4">
         {/* Contact Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-center space-x-2 healthcare-text">
-            <Mail className="h-4 w-4 text-muted-foreground" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="flex items-center space-x-2 text-sm">
+            <Mail className="h-4 w-4 text-default-500" />
             <span className="truncate">{patient.user.email}</span>
           </div>
 
           {patient.user.profile?.phone && (
-            <div className="flex items-center space-x-2 healthcare-text">
-              <Phone className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center space-x-2 text-sm">
+              <Phone className="h-4 w-4 text-default-500" />
               <span>{patient.user.profile.phone}</span>
             </div>
           )}
 
-          {/* Location Information */}
-          {patient.user.profile?.address && (
-            <div className="flex items-center space-x-2 healthcare-text md:col-span-2">
-              <MapPin className="h-4 w-4 text-muted-foreground" />
-              <span className="truncate">
-                {`${patient.user.profile.address.street || ''} ${patient.user.profile.address.city || ''} ${patient.user.profile.address.province || ''}`.trim() || 'Address not available'}
-              </span>
+          {age && (
+            <div className="flex items-center space-x-2 text-sm">
+              <Clock className="h-4 w-4 text-default-500" />
+              <span>Age: {age}</span>
             </div>
           )}
+
+          <div className="flex items-center space-x-2 text-sm">
+            <Calendar className="h-4 w-4 text-default-500" />
+            <span>Since: {formatDate(patient.createdAt)}</span>
+          </div>
         </div>
 
         {/* Next Appointment */}
         {nextAppointment && (
-          <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-md">
-            <div className="flex items-center space-x-2 mb-1">
-              <Calendar className="h-4 w-4 text-blue-600" />
-              <span className="healthcare-label text-blue-900 dark:text-blue-100">
-                Next Appointment
-              </span>
-            </div>
+          <div className="bg-primary-50 p-3 rounded-lg">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2 healthcare-text">
-                <Clock className="h-3 w-3" />
-                <span>
-                  {formatDate(nextAppointment.scheduledDate, { 
-                    weekday: 'short', 
-                    month: 'short', 
-                    day: 'numeric' 
-                  })}
-                  {' at '}
-                  {formatDate(nextAppointment.scheduledDate, { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
+              <div className="flex items-center space-x-2">
+                <Calendar className="h-4 w-4 text-primary-600" />
+                <span className="text-sm font-medium text-primary-900">
+                  Next: {formatDate(nextAppointment.scheduledDate, {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
                   })}
                 </span>
               </div>
-              <Badge variant="outline" className="text-xs">
+              <Chip size="sm" color="primary" variant="flat">
                 {nextAppointment.type.replace('_', ' ')}
-              </Badge>
+              </Chip>
             </div>
           </div>
         )}
 
         {/* Medical Alerts */}
         {hasUrgentAlerts && (
-          <div className="bg-red-50 dark:bg-red-950/20 p-3 rounded-md">
-            <div className="flex items-center space-x-2 mb-1">
-              <AlertCircle className="h-4 w-4 text-red-600" />
-              <span className="healthcare-label text-red-900 dark:text-red-100">
-                Medical Alerts
-              </span>
-            </div>
-            <div className="healthcare-text text-red-800 dark:text-red-200">
-              {patient.medicalInfo?.allergies?.slice(0, 3).join(', ') || 'No specific allergies noted'}
-              {(patient.medicalInfo?.allergies?.length ?? 0) > 3 &&
-                ` +${(patient.medicalInfo?.allergies?.length ?? 0) - 3} more`}
+          <div className="bg-danger-50 p-3 rounded-lg">
+            <div className="flex items-start space-x-2">
+              <AlertCircle className="h-4 w-4 text-danger-600 mt-0.5" />
+              <div>
+                <span className="text-sm font-medium text-danger-900">
+                  Medical Alerts
+                </span>
+                <p className="text-sm text-danger-700 mt-1">
+                  {patient.medicalInfo?.allergies?.slice(0, 2).join(', ') || 'Requires attention'}
+                  {(patient.medicalInfo?.allergies?.length ?? 0) > 2 &&
+                    ` +${(patient.medicalInfo?.allergies?.length ?? 0) - 2} more`}
+                </p>
+              </div>
             </div>
           </div>
         )}
 
-        {/* Assigned Professionals */}
+        {/* Care Team */}
         {patient.assignedProfessionals && patient.assignedProfessionals.length > 0 && (
-          <div>
-            <span className="healthcare-label">
-              Care Team ({patient.assignedProfessionals.length})
-            </span>
-            <div className="flex flex-wrap gap-1 mt-1">
-              {patient.assignedProfessionals.slice(0, 3).map((professional) => (
-                <Badge key={professional.id} variant="secondary" className="text-xs">
-                  Dr. {professional.user.profile?.lastName || 'Unknown'}
-                </Badge>
-              ))}
-              {patient.assignedProfessionals.length > 3 && (
-                <Badge variant="outline" className="text-xs">
-                  +{patient.assignedProfessionals.length - 3} more
-                </Badge>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Actions */}
-        {showActions && (
-          <div className="flex flex-wrap gap-2 pt-2 border-t">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onViewDetails?.(patient)}
-              className="flex-1 min-w-fit"
-            >
-              View Details
-            </Button>
-            
-            <Button
-              variant="psypsy"
-              size="sm"
-              onClick={() => onScheduleAppointment?.(patient)}
-              className="flex-1 min-w-fit"
-            >
-              Schedule
-            </Button>
-            
-            {onSendMessage && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onSendMessage(patient)}
-              >
-                <Mail className="h-4 w-4" />
-                <span className="sr-only">Send message</span>
-              </Button>
+          <div className="flex flex-wrap gap-1">
+            {patient.assignedProfessionals.slice(0, 3).map((professional) => (
+              <Chip key={professional.id} size="sm" color="secondary" variant="flat">
+                Dr. {professional.user.profile?.lastName || 'Unknown'}
+              </Chip>
+            ))}
+            {patient.assignedProfessionals.length > 3 && (
+              <Chip size="sm" color="default" variant="bordered">
+                +{patient.assignedProfessionals.length - 3} more
+              </Chip>
             )}
           </div>
         )}
-      </CardContent>
+      </div>
     </HealthcareCard>
   )
 }

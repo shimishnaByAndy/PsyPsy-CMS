@@ -4,7 +4,7 @@
 use crate::security::{SecurityError, DataClassification};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use validator::{Validate, ValidationError, ValidationErrors};
+use validator::{Validate, ValidationError};
 use regex::Regex;
 // use sanitize_html::{sanitize_str, rules::predefined::DEFAULT};  // Commented out due to threading issues
 use std::str::FromStr;
@@ -79,107 +79,90 @@ impl ValidationRules {
         Ok(Self {
             // Medical patterns
             medical_record_number: Regex::new(r"^[A-Z0-9]{6,20}$")
-                .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "medical_record_number".to_string(), 
-                    reason: format!("Regex error: {}", e) 
+                .map_err(|e| SecurityError::ValidationFailed {
+                    reason: format!("medical_record_number regex error: {}", e)
                 })?,
             
             social_security_number: Regex::new(r"^\d{3}-?\d{2}-?\d{4}$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "ssn".to_string(), 
-                    reason: format!("Regex error: {}", e) 
+                    reason: format!("ssn regex error: {}", e) 
                 })?,
             
             phone_number: Regex::new(r"^(\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "phone".to_string(), 
-                    reason: format!("Regex error: {}", e) 
+                    reason: format!("phone regex error: {}", e) 
                 })?,
             
             email_address: Regex::new(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "email".to_string(), 
-                    reason: format!("Regex error: {}", e) 
+                    reason: format!("email regex error: {}", e) 
                 })?,
             
             zip_code: Regex::new(r"^\d{5}(-\d{4})?$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "zip".to_string(), 
-                    reason: format!("Regex error: {}", e) 
+                    reason: format!("zip regex error: {}", e) 
                 })?,
             
             date_of_birth: Regex::new(r"^\d{4}-\d{2}-\d{2}$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "dob".to_string(), 
-                    reason: format!("Regex error: {}", e) 
+                    reason: format!("dob regex error: {}", e) 
                 })?,
             
             // Healthcare identifiers
             npi_number: Regex::new(r"^\d{10}$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "npi".to_string(), 
                     reason: format!("Regex error: {}", e) 
                 })?,
             
             icd_10_code: Regex::new(r"^[A-Z]\d{2}(\.[A-Z0-9]{1,4})?$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "icd10".to_string(), 
                     reason: format!("Regex error: {}", e) 
                 })?,
             
             cpt_code: Regex::new(r"^\d{5}$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "cpt".to_string(), 
                     reason: format!("Regex error: {}", e) 
                 })?,
             
             drg_code: Regex::new(r"^\d{3}$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "drg".to_string(), 
                     reason: format!("Regex error: {}", e) 
                 })?,
             
             hcpcs_code: Regex::new(r"^[A-Z]\d{4}$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "hcpcs".to_string(), 
                     reason: format!("Regex error: {}", e) 
                 })?,
             
             // Insurance patterns
             insurance_policy_number: Regex::new(r"^[A-Z0-9]{6,20}$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "policy".to_string(), 
                     reason: format!("Regex error: {}", e) 
                 })?,
             
             insurance_group_number: Regex::new(r"^[A-Z0-9]{3,15}$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "group".to_string(), 
                     reason: format!("Regex error: {}", e) 
                 })?,
             
             billing_code: Regex::new(r"^[A-Z0-9]{4,12}$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "billing".to_string(), 
                     reason: format!("Regex error: {}", e) 
                 })?,
             
             // Security patterns
             password_strength: Regex::new(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "password".to_string(), 
                     reason: format!("Regex error: {}", e) 
                 })?,
             
             username_pattern: Regex::new(r"^[a-zA-Z0-9._-]{3,50}$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "username".to_string(), 
                     reason: format!("Regex error: {}", e) 
                 })?,
             
             safe_filename: Regex::new(r"^[a-zA-Z0-9._-]{1,255}$")
                 .map_err(|e| SecurityError::ValidationFailed { 
-                    field: "filename".to_string(), 
                     reason: format!("Regex error: {}", e) 
                 })?,
             
@@ -187,12 +170,10 @@ impl ValidationRules {
             sql_injection_patterns: vec![
                 Regex::new(r"(?i)(union|select|insert|update|delete|drop|create|alter|exec|execute)")
                     .map_err(|e| SecurityError::ValidationFailed { 
-                        field: "sql_injection".to_string(), 
                         reason: format!("Regex error: {}", e) 
                     })?,
                 Regex::new(r"(?i)(script|javascript|vbscript|onload|onerror|onclick)")
                     .map_err(|e| SecurityError::ValidationFailed { 
-                        field: "script_injection".to_string(), 
                         reason: format!("Regex error: {}", e) 
                     })?,
             ],
@@ -200,17 +181,14 @@ impl ValidationRules {
             xss_patterns: vec![
                 Regex::new(r"<script[^>]*>.*?</script>")
                     .map_err(|e| SecurityError::ValidationFailed { 
-                        field: "xss".to_string(), 
                         reason: format!("Regex error: {}", e) 
                     })?,
                 Regex::new(r"javascript:")
                     .map_err(|e| SecurityError::ValidationFailed { 
-                        field: "xss".to_string(), 
                         reason: format!("Regex error: {}", e) 
                     })?,
                 Regex::new(r"on\w+\s*=")
                     .map_err(|e| SecurityError::ValidationFailed { 
-                        field: "xss".to_string(), 
                         reason: format!("Regex error: {}", e) 
                     })?,
             ],
@@ -218,7 +196,6 @@ impl ValidationRules {
             script_injection_patterns: vec![
                 Regex::new(r"(?i)(eval|function|settimeout|setinterval)")
                     .map_err(|e| SecurityError::ValidationFailed { 
-                        field: "script".to_string(), 
                         reason: format!("Regex error: {}", e) 
                     })?,
             ],
@@ -227,17 +204,14 @@ impl ValidationRules {
             phi_identifiers: vec![
                 Regex::new(r"\b\d{3}-?\d{2}-?\d{4}\b") // SSN
                     .map_err(|e| SecurityError::ValidationFailed { 
-                        field: "phi".to_string(), 
                         reason: format!("Regex error: {}", e) 
                     })?,
                 Regex::new(r"\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b") // Credit card
                     .map_err(|e| SecurityError::ValidationFailed { 
-                        field: "phi".to_string(), 
                         reason: format!("Regex error: {}", e) 
                     })?,
                 Regex::new(r"\b[A-Z]{2}\d{7}[A-Z]?\b") // Driver's license pattern
                     .map_err(|e| SecurityError::ValidationFailed { 
-                        field: "phi".to_string(), 
                         reason: format!("Regex error: {}", e) 
                     })?,
             ],
@@ -245,7 +219,6 @@ impl ValidationRules {
             sensitive_data_patterns: vec![
                 Regex::new(r"(?i)(password|passwd|secret|key|token|auth)")
                     .map_err(|e| SecurityError::ValidationFailed { 
-                        field: "sensitive".to_string(), 
                         reason: format!("Regex error: {}", e) 
                     })?,
             ],
@@ -387,7 +360,6 @@ impl SanitizationService {
         for pattern in &self.validation_rules.sql_injection_patterns {
             if pattern.is_match(input) {
                 return Err(SecurityError::ValidationFailed {
-                    field: "sql_input".to_string(),
                     reason: "Potential SQL injection detected".to_string(),
                 });
             }
@@ -410,7 +382,6 @@ impl SanitizationService {
     pub fn sanitize_filename(&self, filename: &str) -> Result<String, SecurityError> {
         if !self.validation_rules.safe_filename.is_match(filename) {
             return Err(SecurityError::ValidationFailed {
-                field: "filename".to_string(),
                 reason: "Invalid filename format".to_string(),
             });
         }
@@ -430,7 +401,6 @@ impl SanitizationService {
         
         if sanitized.is_empty() {
             return Err(SecurityError::ValidationFailed {
-                field: "filename".to_string(),
                 reason: "Filename cannot be empty after sanitization".to_string(),
             });
         }
@@ -467,8 +437,7 @@ impl SanitizationService {
         // First, validate using the struct validation
         patient.validate()
             .map_err(|e| SecurityError::ValidationFailed {
-                field: "patient_info".to_string(),
-                reason: format!("Validation failed: {:?}", e),
+                reason: format!("Patient info validation failed: {:?}", e),
             })?;
         
         // Additional HIPAA-specific validation
@@ -476,7 +445,6 @@ impl SanitizationService {
             // Ensure required PHI fields are present and valid
             if patient.ssn.is_none() && patient.medical_record_number.is_empty() {
                 return Err(SecurityError::ValidationFailed {
-                    field: "patient_identifier".to_string(),
                     reason: "Either SSN or Medical Record Number must be provided for PHI".to_string(),
                 });
             }
@@ -499,7 +467,6 @@ impl SanitizationService {
         if let Some(ssn) = &patient.ssn {
             if !self.validation_rules.social_security_number.is_match(ssn) {
                 return Err(SecurityError::ValidationFailed {
-                    field: "ssn".to_string(),
                     reason: "Invalid SSN format".to_string(),
                 });
             }
@@ -512,14 +479,12 @@ impl SanitizationService {
     pub fn validate_medical_codes(&self, diagnosis: &DiagnosisInfo) -> Result<(), SecurityError> {
         diagnosis.validate()
             .map_err(|e| SecurityError::ValidationFailed {
-                field: "diagnosis".to_string(),
-                reason: format!("Validation failed: {:?}", e),
+                reason: format!("Diagnosis validation failed: {:?}", e),
             })?;
         
         // Additional medical code validation
         if !self.validation_rules.icd_10_code.is_match(&diagnosis.icd_10_code) {
             return Err(SecurityError::ValidationFailed {
-                field: "icd_10_code".to_string(),
                 reason: "Invalid ICD-10 code format".to_string(),
             });
         }
@@ -533,7 +498,6 @@ impl SanitizationService {
         for pattern in &self.validation_rules.xss_patterns {
             if pattern.is_match(text) {
                 return Err(SecurityError::ValidationFailed {
-                    field: field_name.to_string(),
                     reason: "Potential XSS attack detected".to_string(),
                 });
             }
@@ -542,7 +506,6 @@ impl SanitizationService {
         for pattern in &self.validation_rules.script_injection_patterns {
             if pattern.is_match(text) {
                 return Err(SecurityError::ValidationFailed {
-                    field: field_name.to_string(),
                     reason: "Potential script injection detected".to_string(),
                 });
             }
@@ -550,7 +513,7 @@ impl SanitizationService {
         
         // Sanitize based on data classification
         let sanitized = match context.data_classification {
-            DataClassification::PHI | DataClassification::HighlySensitivePHI => {
+            DataClassification::Phi | DataClassification::MedicalSensitive => {
                 // Extra strict sanitization for PHI
                 self.sanitize_html(text)
             },
@@ -565,7 +528,7 @@ impl SanitizationService {
             let phi_detections = self.detect_phi(&sanitized);
             if !phi_detections.is_empty() {
                 return Err(SecurityError::HipaaViolation {
-                    violation: format!("PHI detected in non-PHI field: {}", field_name),
+                    reason: format!("PHI detected in non-PHI field '{}': {:?}", field_name, phi_detections[0].pattern_type)
                 });
             }
         }
@@ -841,7 +804,7 @@ mod tests {
         let service = SanitizationService::new().unwrap();
         let context = ValidationContext {
             is_phi_data: true,
-            data_classification: DataClassification::PHI,
+            data_classification: DataClassification::Phi,
             ..Default::default()
         };
         
