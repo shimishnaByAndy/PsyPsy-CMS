@@ -11,6 +11,8 @@ mod models;
 mod storage;
 mod compliance;
 mod meeting;
+mod devtools_server;
+mod console_capture;
 
 use commands::medical_notes_commands::{
     StorageState,
@@ -121,11 +123,16 @@ use commands::dashboard_commands::{
     get_system_health_stats,
 };
 use commands::debug_commands::{
-    log_to_devtools,
     initialize_devtools,
-    get_devtools_status,
     DevToolsState,
 };
+use console_capture::{
+    log_to_devtools,
+    get_devtools_status,
+    get_console_injection_script,
+    DevToolsBroadcaster,
+};
+use devtools_server::DevToolsServer;
 
 // Import Firebase service state types
 use services::firebase_service_simple::{FirebaseServiceState, AuthServiceState};
@@ -208,8 +215,43 @@ async fn initialize_application_services(app_handle: tauri::AppHandle) -> Result
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    eprintln!("🚀 Starting PsyPsy CMS with DevTools...");
+
     // Initialize basic logging
     env_logger::init();
+
+    // Initialize DevTools server for WebSocket debugging
+    let devtools_server = DevToolsServer::new(9223); // Use port 9223 for cms-debugger
+    let broadcast_tx = devtools_server.get_broadcast_sender();
+
+    // Start DevTools WebSocket server in a separate thread with proper error handling
+    std::thread::spawn(move || {
+        eprintln!("🔧 CMS DevTools thread spawned, starting WebSocket server on port 9223...");
+
+        // Create a new Tokio runtime for this thread
+        let rt = match tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+        {
+            Ok(rt) => rt,
+            Err(e) => {
+                eprintln!("❌ Failed to create Tokio runtime for CMS DevTools: {}", e);
+                return;
+            }
+        };
+
+        // Start the server in the async runtime with proper error handling
+        rt.block_on(async {
+            match devtools_server.start().await {
+                Ok(()) => eprintln!(
+                    "✅ CMS DevTools WebSocket server started successfully on ws://127.0.0.1:9223"
+                ),
+                Err(e) => eprintln!("❌ CMS DevTools server failed to start: {}", e),
+            }
+        });
+
+        eprintln!("🔧 CMS DevTools thread completed");
+    });
 
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
@@ -220,6 +262,7 @@ pub fn run() {
         .manage(AuthServiceState::default())
         .manage(Arc::new(tokio::sync::RwLock::new(AuthState::default())))
         .manage(Arc::new(std::sync::RwLock::new(DevToolsState::default())))
+        .manage(DevToolsBroadcaster { tx: broadcast_tx.clone() })
         .invoke_handler(tauri::generate_handler![
             // Core system commands
             greet,
@@ -337,15 +380,28 @@ pub fn run() {
             get_devtools_status
         ])
         .setup(|app| {
-            // Open developer tools in debug builds
-            #[cfg(debug_assertions)]
-            {
-                if let Some(window) = app.get_webview_window("main") {
+            // Inject enhanced console capture script with healthcare React error patterns
+            let console_script = get_console_injection_script();
+
+            if let Some(window) = app.get_webview_window("main") {
+                // Inject the enhanced script before any page content loads
+                if let Err(e) = window.eval(&console_script) {
+                    log::error!("Failed to inject CMS DevTools console capture script: {}", e);
+                    eprintln!("⚠️ Failed to inject CMS DevTools console capture script: {}", e);
+                } else {
+                    log::info!("CMS DevTools console capture script injected successfully");
+                    eprintln!("✅ CMS DevTools console capture script injected successfully");
+                }
+
+                // Open developer tools in debug builds
+                #[cfg(debug_assertions)]
+                {
                     window.open_devtools();
                     log::info!("Developer tools opened");
-                } else {
-                    log::warn!("Could not find main window to open devtools");
                 }
+            } else {
+                log::warn!("Could not find main window");
+                eprintln!("⚠️ Could not find main window for script injection");
             }
 
             // Initialize services on startup

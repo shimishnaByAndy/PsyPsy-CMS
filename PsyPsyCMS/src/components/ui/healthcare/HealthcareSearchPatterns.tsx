@@ -352,7 +352,7 @@ export function AdvancedSearch({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              startContent={<Search className="h-4 w-4 text-default-400" />}
+              startContent={<Search className="h-4 w-4 text-gray-600" />}
               className="flex-1"
               size="lg"
             />
@@ -489,7 +489,7 @@ export function AdvancedSearch({
               </span>
               {totalResults > 0 && (
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-default-500">
+                  <span className="text-xs text-gray-600">
                     Sorted by relevance
                   </span>
                 </div>
@@ -508,7 +508,7 @@ export function AdvancedSearch({
             ) : results.length === 0 ? (
               <div className="p-8 text-center">
                 <Search className="h-12 w-12 text-default-300 mx-auto mb-4" />
-                <p className="text-default-500">
+                <p className="text-gray-600">
                   {searchQuery || activeFilterCount > 0
                     ? 'No results found. Try adjusting your search criteria.'
                     : 'Enter a search query to find healthcare records.'}
@@ -525,7 +525,7 @@ export function AdvancedSearch({
                     <div className="flex items-start space-x-3">
                       {result.avatar && (
                         <div className="w-10 h-10 rounded-full bg-default-200 flex items-center justify-center">
-                          <User className="h-5 w-5 text-default-500" />
+                          <User className="h-5 w-5 text-gray-600" />
                         </div>
                       )}
 
@@ -558,20 +558,20 @@ export function AdvancedSearch({
                         )}
 
                         {result.description && (
-                          <p className="text-xs text-default-500 line-clamp-2">
+                          <p className="text-xs text-gray-600 line-clamp-2">
                             {result.description}
                           </p>
                         )}
 
                         {result.lastAccessed && (
-                          <p className="text-xs text-default-400 mt-1">
+                          <p className="text-xs text-gray-600 mt-1">
                             Last accessed: {result.lastAccessed}
                           </p>
                         )}
                       </div>
 
                       {result.relevanceScore && (
-                        <div className="text-xs text-default-400">
+                        <div className="text-xs text-gray-600">
                           {Math.round(result.relevanceScore * 100)}%
                         </div>
                       )}
@@ -735,7 +735,7 @@ export function SmartSuggestions({
               <div className="text-left">
                 <div className="text-sm font-medium">{suggestion.label}</div>
                 {suggestion.sublabel && (
-                  <div className="text-xs text-default-500">
+                  <div className="text-xs text-gray-600">
                     {suggestion.sublabel}
                   </div>
                 )}

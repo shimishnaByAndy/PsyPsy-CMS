@@ -14,14 +14,21 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
+    "test:accessibility": "vitest --run tests/accessibility/",
+    "test:a11y": "npm run test:accessibility",
     "e2e": "playwright test",
+    "e2e:accessibility": "playwright test tests/e2e/accessibility/",
+    "accessibility:validate": "npm run test:accessibility && npm run e2e:accessibility",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint src --ext ts,tsx --fix",
     "type-check": "tsc --noEmit",
     "switch:dev": "node scripts/switch-environment.js dev",
     "switch:prod": "node scripts/switch-environment.js prod",
     "switch:status": "node scripts/switch-environment.js status",
-    "test:firebase": "node scripts/test-firebase-connection.js"
+    "test:firebase": "node scripts/test-firebase-connection.js",
+    "debug:tauri": "tauri dev --debug",
+    "debug:webview": "tauri dev --debug --port 1420",
+    "debug:cms": "node path/to/cms-debugger/build/unified-server.js"
   },
   "dependencies": {
     "@axe-core/react": "^4.10.2",
@@ -82,8 +89,10 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
     "@playwright/test": "^1.41.0",
     "@tauri-apps/cli": "^2.0.0",
+    "@testing-library/jest-dom": "^6.8.0",
     "@types/node": "^20.11.0",
     "@types/react": "^19.1.13",
     "@types/react-big-calendar": "^1.8.0",
@@ -97,6 +106,7 @@
     "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "jest-axe": "^10.0.0",
     "jsdom": "^24.0.0",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.0",

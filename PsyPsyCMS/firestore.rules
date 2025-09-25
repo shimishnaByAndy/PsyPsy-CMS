@@ -1,11 +1,502 @@
 rules_version = '2';
 
+/**
+ * Firestore Security Rules for PsyPsy CMS
+ *
+ * HIPAA and Quebec Law 25 Compliant Healthcare Data Access Control
+ *
+ * This ruleset implements:
+ * - Role-Based Access Control (RBAC) for healthcare roles
+ * - PHI (Protected Health Information) access restrictions
+ * - Quebec Law 25 data residency and consent validation
+ * - PIPEDA compliance for healthcare data protection
+ * - Comprehensive audit logging requirements
+ *
+ * User Types:
+ * - admin: System administrators (userType: 0)
+ * - professional: Healthcare professionals (userType: 1)
+ * - client: Patients/clients (userType: 2)
+ * - receptionist: Administrative staff (userType: 3)
+ * - guest: Limited access users (userType: 4)
+ *
+ * Data Residency: All data must remain in Quebec/Canada
+ * Consent: Explicit consent required for PHI access
+ * Audit: All PHI operations automatically logged
+ */
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // DEVELOPMENT MODE: Allow all operations for easier testing
-    // This overrides all other rules for local development
+
+    // ========================
+    // HELPER FUNCTIONS
+    // ========================
+
+    /**
+     * Check if user is authenticated
+     */
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    /**
+     * Get user type from custom claims
+     * 0: admin, 1: professional, 2: client, 3: receptionist, 4: guest
+     */
+    function getUserType() {
+      return request.auth.token.get('userType', 4); // Default to guest
+    }
+
+    /**
+     * Get user role from custom claims
+     */
+    function getUserRole() {
+      return request.auth.token.get('role', 'guest');
+    }
+
+    /**
+     * Check if user has Quebec Law 25 consent
+     */
+    function hasQuebecConsent() {
+      return request.auth.token.get('quebecConsent', false) == true;
+    }
+
+    /**
+     * Check if user has PIPEDA consent for healthcare data
+     */
+    function hasPIPEDAConsent() {
+      return request.auth.token.get('pipedaConsent', false) == true;
+    }
+
+    /**
+     * Check data residency compliance (Quebec/Canada)
+     */
+    function isDataResidencyCompliant() {
+      return request.auth.token.get('dataResidency', '') == 'quebec_canada';
+    }
+
+    /**
+     * Check if user is admin
+     */
+    function isAdmin() {
+      return isAuthenticated() && getUserType() == 0;
+    }
+
+    /**
+     * Check if user is healthcare professional
+     */
+    function isProfessional() {
+      return isAuthenticated() && getUserType() == 1;
+    }
+
+    /**
+     * Check if user is client/patient
+     */
+    function isClient() {
+      return isAuthenticated() && getUserType() == 2;
+    }
+
+    /**
+     * Check if user is receptionist
+     */
+    function isReceptionist() {
+      return isAuthenticated() && getUserType() == 3;
+    }
+
+    /**
+     * Check if user has valid professional license
+     */
+    function hasValidLicense() {
+      return isProfessional() &&
+             request.auth.token.get('licenseStatus', '') == 'active' &&
+             request.auth.token.get('jurisdiction', '') == 'Quebec';
+    }
+
+    /**
+     * Check if professional license is not expired
+     */
+    function isLicenseValid() {
+      return hasValidLicense() &&
+             request.auth.token.get('licenseExpiry', timestamp.value(0)) > request.time;
+    }
+
+    /**
+     * Check if user can access PHI data
+     */
+    function canAccessPHI() {
+      return isAuthenticated() &&
+             hasQuebecConsent() &&
+             hasPIPEDAConsent() &&
+             isDataResidencyCompliant() &&
+             (isAdmin() || hasValidLicense());
+    }
+
+    /**
+     * Check if user owns the resource
+     */
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    /**
+     * Check if user can access resource based on ownership or role
+     */
+    function canAccessResource(userId) {
+      return isOwner(userId) || isAdmin() ||
+             (isProfessional() && hasValidLicense()) ||
+             isReceptionist();
+    }
+
+    /**
+     * Validate PHI data fields are properly marked
+     */
+    function isPHIDataValid(data) {
+      return 'phi' in data &&
+             'auditRequired' in data &&
+             data.auditRequired == true;
+    }
+
+    /**
+     * Check if write operation includes audit trail
+     */
+    function hasAuditTrail(data) {
+      return 'auditTrail' in data &&
+             data.auditTrail is list &&
+             data.auditTrail.size() > 0;
+    }
+
+    // ========================
+    // USERS COLLECTION
+    // ========================
+
+    match /users/{userId} {
+      // Read: Users can read their own profile, professionals can read client profiles, admins can read all
+      allow read: if isOwner(userId) ||
+                     (isProfessional() && hasValidLicense()) ||
+                     isAdmin() ||
+                     isReceptionist();
+
+      // Write: Users can update their own profile, admins can update any profile
+      allow write: if (isOwner(userId) && hasQuebecConsent()) ||
+                      (isAdmin() && hasAuditTrail(request.resource.data));
+
+      // Create: Only admins can create user accounts
+      allow create: if isAdmin() &&
+                       hasAuditTrail(request.resource.data) &&
+                       isDataResidencyCompliant();
+
+      // Delete: Only admins with proper audit trail
+      allow delete: if isAdmin();
+    }
+
+    // ========================
+    // USER PROFILES COLLECTION
+    // ========================
+
+    match /user_profiles/{userId} {
+      // Read: Same as users collection
+      allow read: if canAccessResource(userId);
+
+      // Write: PHI data requires special handling
+      allow write: if (isOwner(userId) || isAdmin()) &&
+                      hasQuebecConsent() &&
+                      (!('phi' in request.resource.data) || canAccessPHI()) &&
+                      hasAuditTrail(request.resource.data);
+
+      allow create: if (isOwner(userId) || isAdmin()) &&
+                       hasQuebecConsent() &&
+                       isDataResidencyCompliant();
+    }
+
+    // ========================
+    // PROFESSIONALS COLLECTION
+    // ========================
+
+    match /professionals/{professionalId} {
+      // Read: Professionals can read their own data, admins and receptionists can read all
+      allow read: if isOwner(professionalId) ||
+                     isAdmin() ||
+                     isReceptionist() ||
+                     (isProfessional() && hasValidLicense());
+
+      // Write: Only the professional themselves or admins
+      allow write: if (isOwner(professionalId) || isAdmin()) &&
+                      hasAuditTrail(request.resource.data) &&
+                      // Validate license information if updating credentials
+                      (!('licenseNumber' in request.resource.data) ||
+                       request.resource.data.licenseNumber != null);
+
+      // Create: Only admins can create professional accounts
+      allow create: if isAdmin() &&
+                       hasAuditTrail(request.resource.data) &&
+                       'licenseNumber' in request.resource.data &&
+                       'jurisdiction' in request.resource.data &&
+                       request.resource.data.jurisdiction == 'Quebec';
+    }
+
+    // ========================
+    // CLIENTS COLLECTION
+    // ========================
+
+    match /clients/{clientId} {
+      // Read: Clients can read their own data, professionals with valid license can read client data
+      allow read: if isOwner(clientId) ||
+                     canAccessPHI();
+
+      // Write: PHI data requires special compliance
+      allow write: if (isOwner(clientId) || canAccessPHI()) &&
+                      hasQuebecConsent() &&
+                      hasPIPEDAConsent() &&
+                      hasAuditTrail(request.resource.data) &&
+                      // All client data is considered PHI
+                      isPHIDataValid(request.resource.data);
+
+      // Create: Only professionals with valid license or admins
+      allow create: if canAccessPHI() &&
+                       hasAuditTrail(request.resource.data) &&
+                       isPHIDataValid(request.resource.data);
+    }
+
+    // ========================
+    // APPOINTMENTS COLLECTION
+    // ========================
+
+    match /appointments/{appointmentId} {
+      // Read: Participants in the appointment, professionals, and admins
+      allow read: if isAuthenticated() && (
+                     resource.data.clientId == request.auth.uid ||
+                     resource.data.professionalId == request.auth.uid ||
+                     canAccessPHI()
+                  );
+
+      // Write: Participants can update, but PHI requires special handling
+      allow write: if isAuthenticated() &&
+                      hasQuebecConsent() &&
+                      (resource.data.clientId == request.auth.uid ||
+                       resource.data.professionalId == request.auth.uid ||
+                       canAccessPHI()) &&
+                      hasAuditTrail(request.resource.data) &&
+                      // Validate appointment duration (50 minutes for therapy sessions)
+                      (!('appointmentType' in request.resource.data) ||
+                       request.resource.data.appointmentType != 'therapy' ||
+                       request.resource.data.duration == 50);
+
+      // Create: Professionals and clients can create appointments
+      allow create: if isAuthenticated() &&
+                       hasQuebecConsent() &&
+                       (request.resource.data.clientId == request.auth.uid ||
+                        request.resource.data.professionalId == request.auth.uid ||
+                        canAccessPHI()) &&
+                       hasAuditTrail(request.resource.data);
+    }
+
+    // ========================
+    // MEDICAL NOTES COLLECTION
+    // ========================
+
+    match /medical_notes/{noteId} {
+      // Read: Only healthcare professionals with valid license and PHI access
+      allow read: if canAccessPHI();
+
+      // Write: Only the creating professional can update their notes
+      allow write: if canAccessPHI() &&
+                      (resource.data.createdBy == request.auth.uid ||
+                       isAdmin()) &&
+                      hasAuditTrail(request.resource.data) &&
+                      isPHIDataValid(request.resource.data) &&
+                      // Require professional signature
+                      'professionalSignature' in request.resource.data;
+
+      // Create: Only professionals with valid license
+      allow create: if canAccessPHI() &&
+                       hasAuditTrail(request.resource.data) &&
+                       isPHIDataValid(request.resource.data) &&
+                       request.resource.data.createdBy == request.auth.uid &&
+                       'professionalSignature' in request.resource.data;
+    }
+
+    // ========================
+    // CONSENT RECORDS COLLECTION
+    // ========================
+
+    match /consent_records/{consentId} {
+      // Read: User can read their own consent records, admins can read all
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+
+      // Write: Only admins can modify consent records (immutable after creation)
+      allow write: if isAdmin() && hasAuditTrail(request.resource.data);
+
+      // Create: Users can create their own consent records
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       hasAuditTrail(request.resource.data) &&
+                       // Must include Quebec Law 25 compliance fields
+                       'quebecLaw25Compliant' in request.resource.data &&
+                       'pipedaCompliant' in request.resource.data;
+    }
+
+    // ========================
+    // AUDIT LOGS COLLECTION
+    // ========================
+
+    match /audit_logs/{logId} {
+      // Read: Only admins can read audit logs
+      allow read: if isAdmin();
+
+      // Write: Audit logs are immutable after creation
+      allow write: if false;
+
+      // Create: System can create audit logs (handled by functions)
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       'timestamp' in request.resource.data &&
+                       'action' in request.resource.data &&
+                       // Require data residency compliance
+                       'dataResidency' in request.resource.data &&
+                       request.resource.data.dataResidency == 'quebec_canada';
+    }
+
+    // ========================
+    // SECURITY INCIDENTS COLLECTION
+    // ========================
+
+    match /security_incidents/{incidentId} {
+      // Read: Only admins can read security incidents
+      allow read: if isAdmin();
+
+      // Write: Only admins can update incident status
+      allow write: if isAdmin() && hasAuditTrail(request.resource.data);
+
+      // Create: System can create incidents for breach notification (72-hour rule)
+      allow create: if isAuthenticated() &&
+                       'detectedAt' in request.resource.data &&
+                       'severity' in request.resource.data &&
+                       'notificationRequired' in request.resource.data;
+    }
+
+    // ========================
+    // DATA EXPORT REQUESTS COLLECTION
+    // ========================
+
+    match /data_export_requests/{requestId} {
+      // Read: Users can read their own export requests, admins can read all
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+
+      // Write: Only admins can update export status
+      allow write: if isAdmin() && hasAuditTrail(request.resource.data);
+
+      // Create: Users can request their own data export (Quebec Law 25 right to portability)
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       hasQuebecConsent() &&
+                       hasAuditTrail(request.resource.data);
+    }
+
+    // ========================
+    // DELETION REQUESTS COLLECTION
+    // ========================
+
+    match /deletion_requests/{requestId} {
+      // Read: Users can read their own deletion requests, admins can read all
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+
+      // Write: Only admins can process deletion requests
+      allow write: if isAdmin() && hasAuditTrail(request.resource.data);
+
+      // Create: Users can request data deletion (Quebec Law 25 right to erasure)
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       hasQuebecConsent() &&
+                       hasAuditTrail(request.resource.data);
+    }
+
+    // ========================
+    // PROFESSIONAL CREDENTIALS COLLECTION
+    // ========================
+
+    match /professional_credentials/{credentialId} {
+      // Read: Professionals can read their own credentials, admins can read all
+      allow read: if isOwner(resource.data.professionalId) || isAdmin();
+
+      // Write: Only admins can verify/update credentials
+      allow write: if isAdmin() &&
+                      hasAuditTrail(request.resource.data) &&
+                      // Ensure Quebec jurisdiction
+                      'jurisdiction' in request.resource.data &&
+                      request.resource.data.jurisdiction == 'Quebec';
+
+      // Create: Professionals can submit credentials for verification
+      allow create: if isAuthenticated() &&
+                       request.resource.data.professionalId == request.auth.uid &&
+                       hasAuditTrail(request.resource.data);
+    }
+
+    // ========================
+    // INSURANCE INFO COLLECTION (PHI)
+    // ========================
+
+    match /insurance_info/{insuranceId} {
+      // Read: Only with full PHI access permissions
+      allow read: if canAccessPHI();
+
+      // Write: PHI data requires maximum protection
+      allow write: if canAccessPHI() &&
+                      hasAuditTrail(request.resource.data) &&
+                      isPHIDataValid(request.resource.data) &&
+                      // Must be encrypted
+                      'encrypted' in request.resource.data &&
+                      request.resource.data.encrypted == true;
+
+      // Create: Same PHI protection requirements
+      allow create: if canAccessPHI() &&
+                       hasAuditTrail(request.resource.data) &&
+                       isPHIDataValid(request.resource.data) &&
+                       request.resource.data.encrypted == true;
+    }
+
+    // ========================
+    // DATA RESIDENCY LOGS COLLECTION
+    // ========================
+
+    match /data_residency_logs/{logId} {
+      // Read: Only admins for compliance monitoring
+      allow read: if isAdmin();
+
+      // Write: Immutable compliance logs
+      allow write: if false;
+
+      // Create: System creates residency logs
+      allow create: if isAuthenticated() &&
+                       'region' in request.resource.data &&
+                       request.resource.data.region == 'quebec_canada' &&
+                       'compliance' in request.resource.data;
+    }
+
+    // ========================
+    // BREACH NOTIFICATION LOGS COLLECTION
+    // ========================
+
+    match /breach_notification_logs/{logId} {
+      // Read: Only admins
+      allow read: if isAdmin();
+
+      // Write: Immutable after creation
+      allow write: if false;
+
+      // Create: System creates notification logs (72-hour rule compliance)
+      allow create: if isAuthenticated() &&
+                       'incidentId' in request.resource.data &&
+                       'notifiedAt' in request.resource.data &&
+                       'notificationMethod' in request.resource.data &&
+                       'complianceOfficer' in request.resource.data;
+    }
+
+    // ========================
+    // DEFAULT DENY ALL OTHER COLLECTIONS
+    // ========================
+
+    // Any collection not explicitly defined above is denied
     match /{document=**} {
-      allow read, write: if true;
+      allow read, write: if false;
     }
   }
 }

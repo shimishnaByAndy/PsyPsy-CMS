@@ -181,7 +181,7 @@ export function StatWidget({
           <div>
             <p className="text-sm font-medium text-default-600">{title}</p>
             {subtitle && (
-              <p className="text-xs text-default-500">{subtitle}</p>
+              <p className="text-xs text-gray-600">{subtitle}</p>
             )}
           </div>
         </div>
@@ -206,7 +206,7 @@ export function StatWidget({
               )}>
                 {Math.abs(trend.value)}%
               </span>
-              <span className="text-xs text-default-500">
+              <span className="text-xs text-gray-600">
                 {trend.period}
               </span>
             </div>
@@ -384,7 +384,7 @@ export function AlertWidget({
                       {alert.type.toUpperCase()}
                     </Chip>
                     {alert.patient && (
-                      <span className="text-xs text-default-500">
+                      <span className="text-xs text-gray-600">
                         Patient: {alert.patient}
                       </span>
                     )}
@@ -392,7 +392,7 @@ export function AlertWidget({
                   <p className="text-sm font-medium text-default-700">
                     {alert.message}
                   </p>
-                  <p className="text-xs text-default-500 mt-1">
+                  <p className="text-xs text-gray-600 mt-1">
                     {new Date(alert.timestamp).toLocaleString()}
                   </p>
                 </div>
@@ -505,7 +505,7 @@ export function TeamWidget({
                     {member.status}
                   </Chip>
                 </div>
-                <div className="flex items-center space-x-2 text-xs text-default-500">
+                <div className="flex items-center space-x-2 text-xs text-gray-600">
                   <span>{member.role}</span>
                   {member.patients !== undefined && (
                     <>
@@ -589,7 +589,7 @@ export function AppointmentWidget({
       <CardBody>
         {appointments.length === 0 ? (
           <div className="text-center py-4">
-            <Calendar className="h-8 w-8 text-default-400 mx-auto mb-2" />
+            <Calendar className="h-8 w-8 text-gray-600 mx-auto mb-2" />
             <p className="text-sm text-default-600">No upcoming appointments</p>
           </div>
         ) : (
@@ -600,7 +600,7 @@ export function AppointmentWidget({
                 className="flex items-center space-x-3 p-3 rounded-lg border border-default-200"
               >
                 <div className="flex flex-col items-center">
-                  <Clock className="h-4 w-4 text-default-500 mb-1" />
+                  <Clock className="h-4 w-4 text-gray-600 mb-1" />
                   <span className="text-xs font-mono text-default-600">
                     {appointment.time}
                   </span>
@@ -618,7 +618,7 @@ export function AppointmentWidget({
                       {appointment.status}
                     </Chip>
                   </div>
-                  <div className="flex items-center space-x-2 text-xs text-default-500">
+                  <div className="flex items-center space-x-2 text-xs text-gray-600">
                     <span>{appointment.type}</span>
                     {appointment.duration && (
                       <>

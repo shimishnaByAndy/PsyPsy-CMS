@@ -188,7 +188,7 @@ export function TestHealthcareDesignSystem() {
     <div className="p-6 max-w-7xl mx-auto">
       <div className="text-center space-y-2 mb-8">
         <h1 className="text-3xl font-bold text-primary">Healthcare Design System</h1>
-        <p className="text-lg text-default-500">
+        <p className="text-lg text-gray-600">
           Complete NextUI-based healthcare component library with HIPAA compliance and Quebec Law 25 support
         </p>
         <div className="flex justify-center gap-2 mt-4">
@@ -277,7 +277,7 @@ export function TestHealthcareDesignSystem() {
             onCardClick={(auditData) => console.log('Patient card clicked:', auditData)}
           >
             <p className="text-sm">Next appointment: Jan 21, 2025 at 2:00 PM</p>
-            <p className="text-sm text-default-500">Anxiety Treatment Program</p>
+            <p className="text-sm text-gray-600">Anxiety Treatment Program</p>
           </HealthcareCard>
 
           <HealthcareCard
@@ -295,7 +295,7 @@ export function TestHealthcareDesignSystem() {
             }
           >
             <p className="text-sm">Specializing in trauma therapy and PTSD treatment</p>
-            <p className="text-sm text-default-500">Available for new patients</p>
+            <p className="text-sm text-gray-600">Available for new patients</p>
           </HealthcareCard>
 
           <HealthcareCard
@@ -311,7 +311,7 @@ export function TestHealthcareDesignSystem() {
             <p className="text-sm font-medium text-red-600">
               Patient requires immediate attention
             </p>
-            <p className="text-sm text-default-500">Triggered: 5 minutes ago</p>
+            <p className="text-sm text-gray-600">Triggered: 5 minutes ago</p>
           </HealthcareCard>
         </div>
       </section>
@@ -418,24 +418,24 @@ export function TestHealthcareDesignSystem() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm font-medium">Patient ID</p>
-              <p className="text-sm text-default-500">PAT-001</p>
+              <p className="text-sm text-gray-600">PAT-001</p>
             </div>
             <div>
               <p className="text-sm font-medium">Date of Birth</p>
-              <p className="text-sm text-default-500">March 15, 1985</p>
+              <p className="text-sm text-gray-600">March 15, 1985</p>
             </div>
             <div>
               <p className="text-sm font-medium">Last Visit</p>
-              <p className="text-sm text-default-500">January 15, 2025</p>
+              <p className="text-sm text-gray-600">January 15, 2025</p>
             </div>
             <div>
               <p className="text-sm font-medium">Status</p>
-              <p className="text-sm text-default-500">Active</p>
+              <p className="text-sm text-gray-600">Active</p>
             </div>
           </div>
           <div>
             <p className="text-sm font-medium mb-2">Current Treatment</p>
-            <p className="text-sm text-default-500">
+            <p className="text-sm text-gray-600">
               Patient is undergoing cognitive behavioral therapy for anxiety disorder.
               Progress has been positive with decreased anxiety symptoms over the past month.
             </p>

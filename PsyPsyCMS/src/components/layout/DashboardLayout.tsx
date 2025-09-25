@@ -222,7 +222,7 @@ export function DashboardLayout({
             placeholder="Search patients, appointments..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            startContent={<Search className="w-4 h-4 text-default-400" />}
+            startContent={<Search className="w-4 h-4 text-gray-600" />}
             className="w-80"
             size="sm"
             variant="bordered"

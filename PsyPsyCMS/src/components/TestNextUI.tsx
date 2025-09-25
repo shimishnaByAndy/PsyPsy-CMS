@@ -45,7 +45,7 @@ export function TestNextUI() {
               />
               <div className="flex flex-col">
                 <p className="text-md font-semibold">Dr. Sarah Chen</p>
-                <p className="text-small text-default-500">Clinical Psychologist</p>
+                <p className="text-small text-gray-600">Clinical Psychologist</p>
               </div>
             </CardHeader>
             <CardBody>
@@ -79,7 +79,7 @@ export function TestNextUI() {
               />
               <div className="flex flex-col">
                 <p className="text-md font-semibold">Jean Martin</p>
-                <p className="text-small text-default-500">Patient ID: PAT-001</p>
+                <p className="text-small text-gray-600">Patient ID: PAT-001</p>
               </div>
               <Badge color="warning" variant="flat" content="PHI">
                 <div className="w-6 h-6" />

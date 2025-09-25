@@ -38,6 +38,8 @@ import {
   XCircle
 } from 'lucide-react'
 import { Professional } from '@/types/professional'
+import { ProfessionalGrid, GridLayout } from '@/components/ui/ProfessionalGrid'
+import { ModernProfessionalCard } from '@/components/healthcare/ModernProfessionalCard'
 import {
   Table,
   TableBody,
@@ -80,7 +82,8 @@ const ProfessionalsPage: React.FC = () => {
   const [professionals, setProfessionals] = useState<Professional[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards')
+  const [viewMode, setViewMode] = useState<'modern' | 'table'>('modern')
+  const [gridLayout, setGridLayout] = useState<GridLayout>('grid')
   const [showProfessionalModal, setShowProfessionalModal] = useState(false)
   const [editingProfessional, setEditingProfessional] = useState<Professional | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -90,6 +93,45 @@ const ProfessionalsPage: React.FC = () => {
   const [verificationNotes, setVerificationNotes] = useState('')
   const [isVerifying, setIsVerifying] = useState(false)
   const { toast } = useToast()
+
+  // Handler for professional actions from modern cards
+  const handleProfessionalAction = (professional: Professional, action: string) => {
+    switch (action) {
+      case 'view':
+        handleViewDetails(professional)
+        break
+      case 'schedule':
+        // TODO: Implement scheduling functionality
+        toast({
+          title: "Schedule Appointment",
+          description: `Scheduling with ${professional.profile?.firstName} ${professional.profile?.lastName}`,
+        })
+        break
+      case 'message':
+        // TODO: Implement messaging functionality
+        toast({
+          title: "Send Message",
+          description: `Sending message to ${professional.profile?.firstName} ${professional.profile?.lastName}`,
+        })
+        break
+      case 'favorite':
+        // TODO: Implement favorites functionality
+        toast({
+          title: "Added to Favorites",
+          description: `${professional.profile?.firstName} ${professional.profile?.lastName} added to favorites`,
+        })
+        break
+      case 'share':
+        // TODO: Implement sharing functionality
+        toast({
+          title: "Share Professional",
+          description: `Sharing ${professional.profile?.firstName} ${professional.profile?.lastName}`,
+        })
+        break
+      default:
+        console.log('Unknown action:', action, professional)
+    }
+  }
 
   // Mock professional data for development (moved here to fix temporal dead zone)
   const mockProfessionals: Professional[] = [
@@ -742,11 +784,11 @@ const ProfessionalsPage: React.FC = () => {
                 <option key="suspended" value="suspended">Suspended</option>
               </select>
               <button
-                onClick={() => setViewMode(viewMode === 'cards' ? 'table' : 'cards')}
+                onClick={() => setViewMode(viewMode === 'modern' ? 'table' : 'modern')}
                 className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-                aria-label={`Switch to ${viewMode === 'cards' ? 'table' : 'cards'} view`}
+                aria-label={`Switch to ${viewMode === 'modern' ? 'table' : 'modern'} view`}
               >
-                {viewMode === 'cards' ? <List className="w-4 h-4" /> : <Grid3X3 className="w-4 h-4" />}
+                {viewMode === 'modern' ? <List className="w-4 h-4" /> : <Grid3X3 className="w-4 h-4" />}
               </button>
             </div>
           </div>
@@ -788,12 +830,18 @@ const ProfessionalsPage: React.FC = () => {
             </div>
 
             {/* Professionals Display */}
-            {viewMode === 'cards' ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProfessionals.map(professional => (
-                  <ProfessionalCard key={professional.objectId} professional={professional} />
-                ))}
-              </div>
+            {viewMode === 'modern' ? (
+              <ProfessionalGrid
+                professionals={filteredProfessionals}
+                layout={gridLayout}
+                onLayoutChange={setGridLayout}
+                onProfessionalAction={handleProfessionalAction}
+                showLayoutControls={true}
+                enableSwipe={true}
+                prioritizeAvailable={true}
+                showFeatured={true}
+                className="mt-6"
+              />
             ) : (
               <ProfessionalsTable />
             )}
@@ -981,7 +1029,12 @@ const ProfessionalsPage: React.FC = () => {
       )}
 
       {/* Modals and dialogs */}
-      <ProfessionalFormModal />
+      <ProfessionalFormModal
+        editingProfessional={editingProfessional}
+        isOpen={showProfessionalModal}
+        onSubmit={handleSubmitProfessional}
+        onClose={handleCloseModal}
+      />
       <ProfessionalDetailsModal />
       <VerificationDialog />
     </div>
@@ -989,7 +1042,14 @@ const ProfessionalsPage: React.FC = () => {
 
 // Helper Components
 
-const ProfessionalFormModal = () => {
+interface ProfessionalFormModalProps {
+  editingProfessional: Professional | null
+  isOpen: boolean
+  onSubmit: (data: Partial<Professional>) => void
+  onClose: () => void
+}
+
+const ProfessionalFormModal = ({ editingProfessional, isOpen, onSubmit, onClose }: ProfessionalFormModalProps) => {
     const [formData, setFormData] = useState({
       // Personal Information
       firstName: editingProfessional?.profile.firstName || '',
@@ -1066,10 +1126,10 @@ const ProfessionalFormModal = () => {
         status: formData.status as Professional['status']
       }
 
-      handleSubmitProfessional(professionalData)
+      onSubmit(professionalData)
     }
 
-    if (!showProfessionalModal) return null
+    if (!isOpen) return null
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -1080,7 +1140,7 @@ const ProfessionalFormModal = () => {
               {editingProfessional ? 'Edit Professional' : 'Add New Professional'}
             </h2>
             <button
-              onClick={handleCloseModal}
+              onClick={onClose}
               className="text-gray-600 hover:text-gray-600 transition-colors"
             >
               <X className="w-6 h-6" />
@@ -1331,7 +1391,7 @@ const ProfessionalFormModal = () => {
           <div className="flex items-center justify-end space-x-3 p-6 border-t bg-gray-50">
             <button
               type="button"
-              onClick={handleCloseModal}
+              onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancel

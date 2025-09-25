@@ -4,20 +4,35 @@ import App from './App'
 import './globals.css'
 import { NextUIProvider } from '@/context/NextUIProvider'
 
-// Import DevTools console capture for cms-debugger integration
+// Import DevTools console capture for cms-debugger integration (fallback only)
 import devToolsCapture from '@/utils/devtools-console-capture'
 
-// Ensure we're running in a browser environment and initialize DevTools BEFORE React loads
-if (typeof window !== 'undefined') {
-  // DevTools console capture - runs in development mode automatically
-  // This MUST be initialized before React to catch early errors
-  if (import.meta.env.DEV) {
-    // Initialize immediately to catch all errors including React initialization
+// Enhanced initialization with proper timing coordination
+async function initializeApplication() {
+  // Wait for Tauri-injected CMS Debugger script to be ready (if available)
+  if ((window as any).__CMS_DEBUGGER_INJECTED__) {
+    console.log('[DevTools] Using Tauri-injected CMS Debugger script (optimal timing)')
+
+    // Wait for CMS Debugger to be fully ready
+    let attempts = 0
+    while (!(window as any).__CMS_DEBUGGER_READY__ && attempts < 50) {
+      await new Promise(resolve => setTimeout(resolve, 10))
+      attempts++
+    }
+
+    if ((window as any).__CMS_DEBUGGER_READY__) {
+      console.log('[DevTools] CMS Debugger ready - proceeding with React initialization')
+    } else {
+      console.warn('[DevTools] CMS Debugger script timeout - initializing fallback')
+    }
+  } else if (import.meta.env.DEV) {
+    // Fallback to frontend DevTools capture if Tauri injection not available
+    console.log('[DevTools] Tauri injection not detected - using frontend DevTools capture')
     devToolsCapture.initialize()
     console.log('[DevTools] PsyPsy CMS console capture initialized for cms-debugger')
   }
 
-  // Initialize the React application
+  // Initialize the React application after debugger is ready
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       <NextUIProvider theme="light">
@@ -25,6 +40,22 @@ if (typeof window !== 'undefined') {
       </NextUIProvider>
     </React.StrictMode>,
   )
+}
+
+// Ensure we're running in a browser environment and initialize properly
+if (typeof window !== 'undefined') {
+  // Start the coordinated initialization process
+  initializeApplication().catch(error => {
+    console.error('[DevTools] Application initialization failed:', error)
+    // Fallback: Initialize React anyway to prevent app breakage
+    ReactDOM.createRoot(document.getElementById('root')!).render(
+      <React.StrictMode>
+        <NextUIProvider theme="light">
+          <App />
+        </NextUIProvider>
+      </React.StrictMode>,
+    )
+  })
 
   // Add accessibility improvements
   if (import.meta.env.DEV) {

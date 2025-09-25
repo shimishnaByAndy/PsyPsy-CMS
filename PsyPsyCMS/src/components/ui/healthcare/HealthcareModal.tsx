@@ -369,7 +369,7 @@ export function HealthcareModal({
                 {getAccessLevelIcon()}
               </div>
               {description && (
-                <p className="text-sm text-default-500">{description}</p>
+                <p className="text-sm text-gray-600">{description}</p>
               )}
             </div>
 

@@ -215,7 +215,7 @@ const LoginPage: React.FC = () => {
 
           {/* Firebase Auth Info */}
           <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h3 className="text-sm font-medium text-blue-900 mb-2">Firebase Auth Emulator</h3>
+            <h2 className="text-sm font-medium text-blue-900 mb-2">Firebase Auth Emulator</h2>
             <div className="text-xs text-blue-700 space-y-1">
               <p>Connected to local Firebase Auth emulator</p>
               <p>Create test users in Firebase Auth UI: <code className="bg-blue-100 px-1 rounded">http://127.0.0.1:8782</code></p>

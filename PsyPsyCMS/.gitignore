@@ -87,10 +87,6 @@ node_modules/
 .vscode
 # OS specific
 
-# Task files
-# tasks.json
-# tasks/
-
 # Large binary files and build artifacts
 *.node
 *.a
@@ -110,3 +106,7 @@ seed-data/
 # Meeting minutes and note generation builds
 meeting-minutes/
 note-gen/
+
+# Task files
+# tasks.json
+# tasks/ 

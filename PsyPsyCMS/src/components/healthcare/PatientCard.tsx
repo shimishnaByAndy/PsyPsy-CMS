@@ -114,26 +114,26 @@ export function PatientCard({
         {/* Contact Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="flex items-center space-x-2 text-sm">
-            <Mail className="h-4 w-4 text-default-500" />
+            <Mail className="h-4 w-4 text-gray-600" />
             <span className="truncate">{patient.user.email}</span>
           </div>
 
           {patient.user.profile?.phone && (
             <div className="flex items-center space-x-2 text-sm">
-              <Phone className="h-4 w-4 text-default-500" />
+              <Phone className="h-4 w-4 text-gray-600" />
               <span>{patient.user.profile.phone}</span>
             </div>
           )}
 
           {age && (
             <div className="flex items-center space-x-2 text-sm">
-              <Clock className="h-4 w-4 text-default-500" />
+              <Clock className="h-4 w-4 text-gray-600" />
               <span>Age: {age}</span>
             </div>
           )}
 
           <div className="flex items-center space-x-2 text-sm">
-            <Calendar className="h-4 w-4 text-default-500" />
+            <Calendar className="h-4 w-4 text-gray-600" />
             <span>Since: {formatDate(patient.createdAt)}</span>
           </div>
         </div>

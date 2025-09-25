@@ -1,3 +1,6 @@
+/* Import accessibility CSS for WCAG AAA compliance */
+@import './styles/accessibility.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -145,9 +148,9 @@
   animation: slide-up 0.3s ease-out;
 }
 
-/* Focus styles for accessibility */
+/* Focus styles for accessibility - Fixed */
 .focus-psypsy {
-  @apply focus:outline-none focus:ring-2 focus:ring-psypsy-primary focus:ring-offset-2;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2;
 }
 
 /* Loading states */

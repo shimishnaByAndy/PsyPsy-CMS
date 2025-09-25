@@ -2,6 +2,7 @@ import React, { Suspense, useEffect, useState, useRef } from 'react'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
+import { NextUIProvider } from '@nextui-org/react'
 import { Toaster } from 'sonner'
 import { useTranslation } from 'react-i18next'
 import { Home, Users, Calendar, UserCog, FileText, Settings, Globe, Mic, Bell } from 'lucide-react'
@@ -31,6 +32,7 @@ import LoginPage from '@/pages/LoginPage'
 import LoadingPage from '@/pages/LoadingPage'
 import TestEmulatorConnection from '@/components/TestEmulatorConnection'
 import { TestHealthcareDesignSystem } from '@/components/TestHealthcareDesignSystem'
+import ErrorTestingComponent from '@/components/test/ErrorTestingComponent'
 
 // Import error boundary and dev console
 import { ErrorBoundary } from '@/components/ErrorBoundary'
@@ -198,6 +200,7 @@ function AppRoutes() {
         <>
           <Route path="/test-emulators" element={<TestEmulatorConnection />} />
           <Route path="/test-healthcare-design" element={<TestHealthcareDesignSystem />} />
+          <Route path="/test-error-patterns" element={<ErrorTestingComponent />} />
         </>
       )}
 
@@ -442,17 +445,18 @@ function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <AuthProvider>
-            <Router
-              future={{
-                v7_startTransition: true,
-                v7_relativeSplatPath: true
-              }}
-            >
-              <Suspense fallback={<LoadingFallback />}>
-                <AppRoutes />
-              </Suspense>
+        <NextUIProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <Router
+                future={{
+                  v7_startTransition: true,
+                  v7_relativeSplatPath: true
+                }}
+              >
+                <Suspense fallback={<LoadingFallback />}>
+                  <AppRoutes />
+                </Suspense>
               
               {/* Global toast notifications */}
               <Toaster 
@@ -485,6 +489,7 @@ function App() {
             </Router>
           </AuthProvider>
         </ThemeProvider>
+        </NextUIProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   )

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMS Debugger Error Categorization Validation</title>
+    <style>
+        body {
+            font-family: 'Monaco', 'Consolas', monospace;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        .test-result.success {
+            background: #1e3a2e;
+            border-color: #4ade80;
+        }
+        .test-result.warning {
+            background: #3a2e1e;
+            border-color: #fbbf24;
+        }
+        .test-result.error {
+            background: #3a1e1e;
+            border-color: #ef4444;
+        }
+        .test-result.critical {
+            background: #3a1e3a;
+            border-color: #a855f7;
+        }
+        .category { font-weight: bold; color: #60a5fa; }
+        .severity { font-weight: bold; }
+        .severity.low { color: #22c55e; }
+        .severity.medium { color: #f59e0b; }
+        .severity.high { color: #ef4444; }
+        .severity.critical { color: #a855f7; }
+        .healthcare-impact { color: #10b981; }
+        .compliance-risk { color: #f87171; }
+        .suggestions { color: #94a3b8; margin-top: 8px; }
+        h1 { color: #3b82f6; }
+        h2 { color: #8b5cf6; }
+    </style>
+</head>
+<body>
+    <h1>🧪 CMS Debugger Enhanced Error Categorization Validation</h1>
+    <p>Testing all 11 healthcare-specific React error patterns...</p>
+
+    <div id="results"></div>
+
+    <script>
+        // Copy the exact analyzeReactError function from our console-capture-script.js
+        function analyzeReactError(error) {
+            const message = error.message || String(error);
+            const stack = error.stack || '';
+            const componentStack = error.componentStack || '';
+
+            // React error patterns with healthcare context
+            const patterns = {
+                // Hook-related errors
+                HOOKS_RULES: {
+                    pattern: /(invalid hook call|hooks can only be called|hook is called conditionally)/i,
+                    category: 'React Hooks Violation',
+                    severity: 'high',
+                    suggestions: [
+                        'Ensure hooks are called at the top level of the component',
+                        'Do not call hooks inside loops, conditions, or nested functions',
+                        'Check for conditional hook usage in error boundary fallbacks'
+                    ],
+                    healthcareImpact: 'Critical - Can prevent proper rendering of patient data',
+                    complianceRisk: 'High - May cause PHI display failures'
+                },
+
+                // State management errors
+                STATE_MUTATION: {
+                    pattern: /(cannot assign to read only property|mutating prop|state.*directly)/i,
+                    category: 'State Mutation Error',
+                    severity: 'medium',
+                    suggestions: [
+                        'Use setState or state setters instead of direct mutation',
+                        'Ensure immutable updates for complex state objects',
+                        'Check for direct prop modifications in child components'
+                    ],
+                    healthcareImpact: 'Medium - May cause incorrect patient data display',
+                    complianceRisk: 'Medium - Potential audit trail inconsistencies'
+                },
+
+                // Key prop errors (common in medical lists)
+                MISSING_KEYS: {
+                    pattern: /(warning.*each child.*unique.*key|missing.*key.*prop)/i,
+                    category: 'React Keys Missing',
+                    severity: 'low',
+                    suggestions: [
+                        'Add unique key props to list items',
+                        'Use patient IDs or appointment IDs as keys for medical records',
+                        'Avoid using array indices for dynamic medical data lists'
+                    ],
+                    healthcareImpact: 'Low - May cause rendering inconsistencies in patient lists',
+                    complianceRisk: 'Low - No direct compliance impact'
+                },
+
+                // Component lifecycle errors
+                LIFECYCLE_ERROR: {
+                    pattern: /(componentdidmount|componentwillunmount|useeffect.*cleanup)/i,
+                    category: 'Component Lifecycle Error',
+                    severity: 'medium',
+                    suggestions: [
+                        'Check useEffect cleanup functions',
+                        'Ensure proper component unmounting',
+                        'Verify async operations are cancelled on unmount'
+                    ],
+                    healthcareImpact: 'Medium - May cause memory leaks in long-running sessions',
+                    complianceRisk: 'Medium - Potential session management issues'
+                },
+
+                // Memory and performance errors
+                MEMORY_LEAK: {
+                    pattern: /(memory.*leak|too many.*renders|maximum.*update.*depth)/i,
+                    category: 'Performance/Memory Issue',
+                    severity: 'high',
+                    suggestions: [
+                        'Check for infinite re-renders in useEffect',
+                        'Verify state update dependencies',
+                        'Look for missing cleanup in event listeners'
+                    ],
+                    healthcareImpact: 'High - Can freeze healthcare interface during critical operations',
+                    complianceRisk: 'High - May prevent proper audit logging'
+                },
+
+                // Prop validation errors
+                PROP_TYPES: {
+                    pattern: /(failed.*prop.*type|invalid.*prop|expected.*received)/i,
+                    category: 'Prop Validation Error',
+                    severity: 'medium',
+                    suggestions: [
+                        'Check component prop types and interfaces',
+                        'Verify patient data structure matches expected format',
+                        'Ensure medical record props are properly typed'
+                    ],
+                    healthcareImpact: 'Medium - May cause incorrect patient information display',
+                    complianceRisk: 'High - Critical for PHI data integrity'
+                },
+
+                // Context errors
+                CONTEXT_ERROR: {
+                    pattern: /(context.*undefined|provider.*not.*found|usecontext.*outside)/i,
+                    category: 'React Context Error',
+                    severity: 'high',
+                    suggestions: [
+                        'Ensure component is wrapped in proper context provider',
+                        'Check authentication context for protected medical routes',
+                        'Verify theme and configuration contexts are available'
+                    ],
+                    healthcareImpact: 'High - May prevent access to authentication and patient context',
+                    complianceRisk: 'Critical - Authentication context failures can expose PHI'
+                },
+
+                // Portal and DOM errors
+                DOM_ERROR: {
+                    pattern: /(portal.*unmounted|node.*not.*found|dom.*manipulation)/i,
+                    category: 'DOM/Portal Error',
+                    severity: 'medium',
+                    suggestions: [
+                        'Check portal mount points exist before rendering',
+                        'Verify modal and tooltip containers are available',
+                        'Ensure DOM elements exist before manipulation'
+                    ],
+                    healthcareImpact: 'Medium - May prevent modal dialogs for critical medical alerts',
+                    complianceRisk: 'Medium - Could affect consent and warning dialogs'
+                },
+
+                // Hydration errors (SSR/Static)
+                HYDRATION_ERROR: {
+                    pattern: /(hydration.*failed|text.*content.*match|server.*client.*mismatch)/i,
+                    category: 'Hydration Mismatch',
+                    severity: 'medium',
+                    suggestions: [
+                        'Ensure server and client render the same content',
+                        'Check for client-only features affecting initial render',
+                        'Verify dynamic content is properly handled'
+                    ],
+                    healthcareImpact: 'Medium - May cause flash of incorrect content',
+                    complianceRisk: 'Medium - Potential inconsistent PHI display'
+                },
+
+                // Network and async errors
+                ASYNC_ERROR: {
+                    pattern: /(fetch.*failed|network.*error|promise.*rejected|async.*error)/i,
+                    category: 'Async/Network Error',
+                    severity: 'high',
+                    suggestions: [
+                        'Implement proper error boundaries for async operations',
+                        'Add retry logic for critical medical data fetching',
+                        'Check network connectivity and Firebase emulator status'
+                    ],
+                    healthcareImpact: 'Critical - May prevent loading of patient medical records',
+                    complianceRisk: 'Critical - Network failures can affect audit trail completeness'
+                },
+
+                // Security and authentication errors
+                AUTH_ERROR: {
+                    pattern: /(unauthorized|authentication.*failed|permission.*denied|403|401)/i,
+                    category: 'Authentication/Security Error',
+                    severity: 'critical',
+                    suggestions: [
+                        'Check user authentication status',
+                        'Verify RBAC permissions for medical data access',
+                        'Ensure proper session management'
+                    ],
+                    healthcareImpact: 'Critical - Prevents access to patient care functions',
+                    complianceRisk: 'Critical - Authentication failures must be audited per HIPAA'
+                }
+            };
+
+            // Analyze error against patterns
+            for (const [key, patternInfo] of Object.entries(patterns)) {
+                if (patternInfo.pattern.test(message) || patternInfo.pattern.test(stack)) {
+                    return {
+                        category: patternInfo.category,
+                        pattern: key,
+                        severity: patternInfo.severity,
+                        suggestions: patternInfo.suggestions,
+                        healthcareImpact: patternInfo.healthcareImpact,
+                        complianceRisk: patternInfo.complianceRisk
+                    };
+                }
+            }
+
+            // Default categorization for unknown errors
+            return {
+                category: 'Unknown React Error',
+                pattern: 'UNKNOWN',
+                severity: 'medium',
+                suggestions: [
+                    'Review error message and stack trace for specific details',
+                    'Check if error occurs in healthcare-critical components',
+                    'Consider adding error boundary for better error handling'
+                ],
+                healthcareImpact: 'Unknown - No component stack available',
+                complianceRisk: 'Unknown - Cannot determine PHI involvement'
+            };
+        }
+
+        // Test cases - all 11 error patterns
+        const testCases = [
+            {
+                name: 'HOOKS_RULES',
+                error: { message: 'Error: Invalid hook call. Hooks can only be called inside the body of a function component.' }
+            },
+            {
+                name: 'STATE_MUTATION',
+                error: { message: 'TypeError: Cannot assign to read only property \'patientData\' of object' }
+            },
+            {
+                name: 'MISSING_KEYS',
+                error: { message: 'Warning: Each child in a list should have a unique "key" prop for medical records' }
+            },
+            {
+                name: 'MEMORY_LEAK',
+                error: { message: 'Error: Maximum update depth exceeded. This can happen when a component repeatedly calls setState.' }
+            },
+            {
+                name: 'LIFECYCLE_ERROR',
+                error: { message: 'Error: useEffect cleanup function failed: Cannot cancel patient data subscription after component unmount' }
+            },
+            {
+                name: 'PROP_TYPES',
+                error: { message: 'Warning: Failed prop type: Invalid prop `patientData` of type `string` supplied to `PatientCard`, expected `object`.' }
+            },
+            {
+                name: 'CONTEXT_ERROR',
+                error: { message: 'Error: useContext must be used within a AuthenticationProvider for protected medical routes' }
+            },
+            {
+                name: 'DOM_ERROR',
+                error: { message: 'Error: Portal target container for medical alert modal not found in DOM' }
+            },
+            {
+                name: 'HYDRATION_ERROR',
+                error: { message: 'Warning: Text content did not match. Server: "Loading patient..." Client: "Patient: John Doe"' }
+            },
+            {
+                name: 'ASYNC_ERROR',
+                error: { message: 'NetworkError: Failed to fetch patient medical records from Firebase emulator' }
+            },
+            {
+                name: 'AUTH_ERROR',
+                error: { message: 'AuthenticationError: Permission denied for accessing patient PHI data - 401 Unauthorized' }
+            }
+        ];
+
+        // Run tests and display results
+        function runTests() {
+            const resultsDiv = document.getElementById('results');
+            let passedTests = 0;
+            let totalTests = testCases.length;
+
+            testCases.forEach((testCase, index) => {
+                const result = analyzeReactError(testCase.error);
+                const expectedPattern = testCase.name;
+                const actualPattern = result.pattern;
+
+                const isMatch = actualPattern === expectedPattern;
+                if (isMatch) passedTests++;
+
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `test-result ${result.severity}`;
+
+                resultDiv.innerHTML = `
+                    <h3>Test ${index + 1}: ${testCase.name} ${isMatch ? '✅' : '❌'}</h3>
+                    <p><strong>Error:</strong> ${testCase.error.message}</p>
+                    <p><strong>Expected Pattern:</strong> ${expectedPattern}</p>
+                    <p><strong>Actual Pattern:</strong> ${actualPattern}</p>
+                    <p><strong>Category:</strong> <span class="category">${result.category}</span></p>
+                    <p><strong>Severity:</strong> <span class="severity ${result.severity}">${result.severity.toUpperCase()}</span></p>
+                    <p><strong>Healthcare Impact:</strong> <span class="healthcare-impact">${result.healthcareImpact}</span></p>
+                    <p><strong>Compliance Risk:</strong> <span class="compliance-risk">${result.complianceRisk}</span></p>
+                    <div class="suggestions">
+                        <strong>Suggestions:</strong>
+                        <ul>
+                            ${result.suggestions.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+
+                resultsDiv.appendChild(resultDiv);
+            });
+
+            // Summary
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = `test-result ${passedTests === totalTests ? 'success' : 'error'}`;
+            summaryDiv.innerHTML = `
+                <h2>📊 Test Summary</h2>
+                <p><strong>Tests Passed:</strong> ${passedTests}/${totalTests}</p>
+                <p><strong>Success Rate:</strong> ${Math.round((passedTests/totalTests) * 100)}%</p>
+                <p><strong>Status:</strong> ${passedTests === totalTests ? '✅ All patterns correctly categorized!' : '❌ Some patterns failed - check implementation'}</p>
+            `;
+            resultsDiv.appendChild(summaryDiv);
+
+            console.log(`🧪 Validation Complete: ${passedTests}/${totalTests} tests passed`);
+        }
+
+        // Run the tests
+        runTests();
+    </script>
+</body>
+</html>

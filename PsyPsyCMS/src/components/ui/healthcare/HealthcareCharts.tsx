@@ -150,7 +150,7 @@ export function ProgressRing({
           <div>
             <h3 className="text-sm font-medium">{title}</h3>
             {subtitle && (
-              <p className="text-xs text-default-500">{subtitle}</p>
+              <p className="text-xs text-gray-600">{subtitle}</p>
             )}
           </div>
           {onRefresh && (
@@ -206,7 +206,7 @@ export function ProgressRing({
               >
                 {value}{unit}
               </span>
-              <span className="text-xs text-default-500">
+              <span className="text-xs text-gray-600">
                 of {maxValue}{unit}
               </span>
             </div>
@@ -271,7 +271,7 @@ export function SimpleBarChart({
           <div>
             <h3 className="text-lg font-semibold">{title}</h3>
             {subtitle && (
-              <p className="text-sm text-default-500">{subtitle}</p>
+              <p className="text-sm text-gray-600">{subtitle}</p>
             )}
           </div>
           <div className="flex gap-1">
@@ -418,7 +418,7 @@ export function TimeSeriesChart({
           <div>
             <h3 className="text-lg font-semibold">{title}</h3>
             {subtitle && (
-              <p className="text-sm text-default-500">{subtitle}</p>
+              <p className="text-sm text-gray-600">{subtitle}</p>
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -540,7 +540,7 @@ export function MiniChart({
       case 'down':
         return <TrendingDown className="h-3 w-3 text-danger-500" />
       default:
-        return <Activity className="h-3 w-3 text-default-500" />
+        return <Activity className="h-3 w-3 text-gray-600" />
     }
   }
 
@@ -611,7 +611,7 @@ export function MetricCard({
                 {value}
               </span>
               {unit && (
-                <span className="text-sm text-default-500">{unit}</span>
+                <span className="text-sm text-gray-600">{unit}</span>
               )}
             </div>
             {change && (

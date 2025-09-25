@@ -1,0 +1,767 @@
+import React from 'react'
+import { Card, CardHeader, CardBody, CardFooter, Divider } from '@/components/ui/nextui'
+import { AlertCircle, Shield, CheckCircle2, FileText } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { designTokens } from '@/ui/design-tokens'
+import { HealthcareButton } from './HealthcareButton'
+
+interface HealthcareFormProps {
+  /**
+   * Form title
+   */
+  title?: string
+
+  /**
+   * Form description
+   */
+  description?: string
+
+  /**
+   * Form variant for different healthcare contexts
+   */
+  variant?: 'patient' | 'professional' | 'medical' | 'compliance' | 'emergency'
+
+  /**
+   * PHI data in form
+   */
+  containsPHI?: boolean
+
+  /**
+   * Compliance requirements
+   */
+  complianceLevel?: 'HIPAA' | 'Law25' | 'PIPEDA'
+
+  /**
+   * Form validation state
+   */
+  validation?: {
+    isValid?: boolean
+    errors?: string[]
+    warnings?: string[]
+  }
+
+  /**
+   * Emergency form flag
+   */
+  isEmergency?: boolean
+
+  /**
+   * Read-only state
+   */
+  isReadOnly?: boolean
+
+  /**
+   * Loading state
+   */
+  isLoading?: boolean
+
+  /**
+   * Form content
+   */
+  children?: React.ReactNode
+
+  /**
+   * Form actions
+   */
+  actions?: React.ReactNode
+
+  /**
+   * Custom submit handler
+   */
+  onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void
+
+  /**
+   * Custom cancel handler
+   */
+  onCancel?: () => void
+
+  /**
+   * Additional class names
+   */
+  className?: string
+}
+
+/**
+ * HealthcareForm - A comprehensive form component for healthcare data with HIPAA compliance
+ *
+ * @example
+ * ```tsx
+ * <HealthcareForm
+ *   title="Patient Information"
+ *   variant="patient"
+ *   containsPHI={true}
+ *   complianceLevel="HIPAA"
+ *   onSubmit={handleSubmit}
+ * >
+ *   <HealthcareInput
+ *     healthcareType="patient-name"
+ *     label="Full Name"
+ *     containsPHI={true}
+ *   />
+ *   <HealthcareInput
+ *     healthcareType="medical-id"
+ *     label="Medical Record Number"
+ *     containsPHI={true}
+ *   />
+ * </HealthcareForm>
+ * ```
+ */
+export function HealthcareForm({
+  title,
+  description,
+  variant = 'patient',
+  containsPHI = false,
+  complianceLevel,
+  validation,
+  isEmergency = false,
+  isReadOnly = false,
+  isLoading = false,
+  children,
+  actions,
+  onSubmit,
+  onCancel,
+  className,
+  'aria-label': ariaLabel,
+  'aria-describedby': ariaDescribedBy,
+}: HealthcareFormProps) {
+  // Generate unique IDs for accessibility
+  const formId = React.useId()
+  const headingId = `${formId}-heading`
+  const descriptionId = `${formId}-description`
+  const errorId = `${formId}-errors`
+  const warningId = `${formId}-warnings`
+  const successId = `${formId}-success`
+
+  // Get variant-specific styling with accessibility descriptions
+  const getVariantStyles = () => {
+    switch (variant) {
+      case 'patient':
+        return {
+          headerColor: `text-[${designTokens.colors.interactive.primary}]`,
+          borderColor: `border-l-[${designTokens.colors.interactive.primary}]`,
+          icon: <FileText className="h-5 w-5" aria-hidden="true" />,
+          description: 'Patient information form',
+          landmarkLabel: 'Patient form'
+        }
+      case 'professional':
+        return {
+          headerColor: `text-[${designTokens.colors.status.available}]`,
+          borderColor: `border-l-[${designTokens.colors.status.available}]`,
+          icon: <Shield className="h-5 w-5" aria-hidden="true" />,
+          description: 'Healthcare professional form',
+          landmarkLabel: 'Professional form'
+        }
+      case 'medical':
+        return {
+          headerColor: `text-[${designTokens.colors.alert.warning}]`,
+          borderColor: `border-l-[${designTokens.colors.alert.warning}]`,
+          icon: <FileText className="h-5 w-5" aria-hidden="true" />,
+          description: 'Medical record form',
+          landmarkLabel: 'Medical form'
+        }
+      case 'compliance':
+        return {
+          headerColor: `text-[${designTokens.colors.compliance.audit}]`,
+          borderColor: `border-l-[${designTokens.colors.compliance.audit}]`,
+          icon: <Shield className="h-5 w-5" aria-hidden="true" />,
+          description: 'Compliance and audit form',
+          landmarkLabel: 'Compliance form'
+        }
+      case 'emergency':
+        return {
+          headerColor: `text-[${designTokens.colors.alert.critical}]`,
+          borderColor: `border-l-[${designTokens.colors.alert.critical}]`,
+          icon: <AlertCircle className="h-5 w-5" aria-hidden="true" />,
+          description: 'Emergency information form - requires immediate attention',
+          landmarkLabel: 'Emergency form'
+        }
+      default:
+        return {
+          headerColor: `text-[${designTokens.colors.text.primary}]`,
+          borderColor: `border-l-[${designTokens.colors.border.subtle}]`,
+          icon: <FileText className="h-5 w-5" aria-hidden="true" />,
+          description: 'Healthcare form',
+          landmarkLabel: 'Healthcare form'
+        }
+    }
+  }
+
+  const variantStyles = getVariantStyles()
+
+  // Enhanced submit handler with accessibility announcements
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    // Audit logging for form submission
+    if (containsPHI || complianceLevel) {
+      console.log('[Healthcare Audit] Form Submission:', {
+        variant,
+        containsPHI,
+        complianceLevel,
+        timestamp: new Date().toISOString(),
+        isEmergency,
+        accessibility: {
+          hasAriaLabel: !!ariaLabel,
+          hasDescription: !!ariaDescribedBy,
+          hasValidationErrors: validation?.errors && validation.errors.length > 0,
+          isEmergency
+        }
+      })
+    }
+
+    // Announce form submission to screen readers
+    const announcement = isEmergency 
+      ? 'Emergency form submitted - processing immediately'
+      : 'Form submitted successfully'
+    
+    const liveRegion = document.createElement('div')
+    liveRegion.setAttribute('aria-live', isEmergency ? 'assertive' : 'polite')
+    liveRegion.setAttribute('aria-atomic', 'true')
+    liveRegion.className = 'sr-only'
+    liveRegion.textContent = announcement
+    document.body.appendChild(liveRegion)
+    
+    setTimeout(() => {
+      if (document.body.contains(liveRegion)) {
+        document.body.removeChild(liveRegion)
+      }
+    }, 1000)
+
+    onSubmit?.(event)
+  }
+
+  // Enhanced keyboard navigation
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    // Emergency quick-submit with Ctrl+Enter
+    if (isEmergency && event.ctrlKey && event.key === 'Enter') {
+      event.preventDefault()
+      const form = event.currentTarget.closest('form')
+      if (form) {
+        const submitEvent = new Event('submit', { bubbles: true, cancelable: true })
+        form.dispatchEvent(submitEvent)
+      }
+    }
+    
+    // Quick save with Ctrl+S
+    if (event.ctrlKey && event.key === 's') {
+      event.preventDefault()
+      const announcement = 'Form auto-saved'
+      const liveRegion = document.createElement('div')
+      liveRegion.setAttribute('aria-live', 'polite')
+      liveRegion.className = 'sr-only'
+      liveRegion.textContent = announcement
+      document.body.appendChild(liveRegion)
+      
+      setTimeout(() => {
+        if (document.body.contains(liveRegion)) {
+          document.body.removeChild(liveRegion)
+        }
+      }, 1000)
+    }
+  }
+
+  const renderValidationMessages = () => {
+    if (!validation) return null
+
+    return (
+      <div className={`space-y-${designTokens.spacing[2]}`} role="group" aria-label="Form validation messages">
+        {validation.errors && validation.errors.length > 0 && (
+          <div 
+            id={errorId}
+            className={`p-${designTokens.spacing[3]} bg-[${designTokens.colors.alert.critical}]/10 border border-[${designTokens.colors.alert.critical}]/30 rounded-lg`}
+            role="alert"
+            aria-live="assertive"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <AlertCircle 
+                className={`h-4 w-4 text-[${designTokens.colors.alert.critical}]`} 
+                aria-hidden="true"
+              />
+              <span className={`text-sm font-medium text-[${designTokens.colors.alert.critical}]`}>
+                Validation Errors ({validation.errors.length})
+              </span>
+            </div>
+            <ul className="text-sm space-y-1" role="list">
+              {validation.errors.map((error, index) => (
+                <li 
+                  key={index} 
+                  className={`text-[${designTokens.colors.alert.critical}]`}
+                  role="listitem"
+                >
+                  • {error}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {validation.warnings && validation.warnings.length > 0 && (
+          <div 
+            id={warningId}
+            className={`p-${designTokens.spacing[3]} bg-[${designTokens.colors.alert.warning}]/10 border border-[${designTokens.colors.alert.warning}]/30 rounded-lg`}
+            role="region"
+            aria-live="polite"
+            aria-label="Form warnings"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <AlertCircle 
+                className={`h-4 w-4 text-[${designTokens.colors.alert.warning}]`} 
+                aria-hidden="true"
+              />
+              <span className={`text-sm font-medium text-[${designTokens.colors.alert.warning}]`}>
+                Warnings ({validation.warnings.length})
+              </span>
+            </div>
+            <ul className="text-sm space-y-1" role="list">
+              {validation.warnings.map((warning, index) => (
+                <li 
+                  key={index} 
+                  className={`text-[${designTokens.colors.alert.warning}]`}
+                  role="listitem"
+                >
+                  • {warning}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {validation.isValid && (
+          <div 
+            id={successId}
+            className={`p-${designTokens.spacing[3]} bg-[${designTokens.colors.alert.success}]/10 border border-[${designTokens.colors.alert.success}]/30 rounded-lg`}
+            role="status"
+            aria-live="polite"
+          >
+            <div className="flex items-center gap-2">
+              <CheckCircle2 
+                className={`h-4 w-4 text-[${designTokens.colors.alert.success}]`} 
+                aria-hidden="true"
+              />
+              <span className={`text-sm font-medium text-[${designTokens.colors.alert.success}]`}>
+                Form validation passed - ready to submit
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const renderDefaultActions = () => {
+    if (actions) return actions
+
+    return (
+      <div className="flex gap-3 justify-end" role="group" aria-label="Form actions">
+        {onCancel && (
+          <HealthcareButton
+            variant="secondary"
+            size="standard"
+            onClick={onCancel}
+            disabled={isLoading}
+            aria-label="Cancel form and discard changes"
+          >
+            Cancel
+          </HealthcareButton>
+        )}
+        <HealthcareButton
+          variant={isEmergency ? 'danger' : 'primary'}
+          size="standard"
+          type="submit"
+          isLoading={isLoading}
+          complianceLevel={complianceLevel}
+          auditAction={`form_submit_${variant}`}
+          isEmergency={isEmergency}
+          aria-label={isEmergency ? 'Submit emergency form immediately' : 'Submit form'}
+        >
+          {isEmergency ? 'Emergency Submit' : 'Submit'}
+        </HealthcareButton>
+      </div>
+    )
+  }
+
+  // Generate comprehensive accessibility description
+  const getAccessibilityDescription = () => {
+    const descriptions = []
+    
+    descriptions.push(variantStyles.description)
+    
+    if (containsPHI) {
+      descriptions.push('Contains protected health information')
+    }
+    
+    if (complianceLevel) {
+      descriptions.push(`${complianceLevel} compliance required`)
+    }
+    
+    if (isEmergency) {
+      descriptions.push('Emergency form - use Ctrl+Enter for quick submit')
+    }
+    
+    if (isReadOnly) {
+      descriptions.push('Form is read-only')
+    }
+    
+    if (validation?.errors && validation.errors.length > 0) {
+      descriptions.push(`${validation.errors.length} validation errors`)
+    }
+    
+    descriptions.push('Use Ctrl+S for auto-save')
+    
+    return descriptions.join('. ')
+  }
+
+  const accessibilityDescription = getAccessibilityDescription()
+
+  return (
+    <>
+      {/* Hidden description for screen readers */}
+      {accessibilityDescription && (
+        <span id={descriptionId} className="sr-only">
+          {accessibilityDescription}
+        </span>
+      )}
+      
+      <Card
+        className={cn(
+          // Base form styling using design tokens
+          `transition-all ${designTokens.animation.duration.base}`,
+          `${designTokens.animation.easing.easeInOut}`,
+          `max-w-full`,
+
+          // WCAG AAA Focus indicators
+          'focus-within:ring-2 focus-within:ring-offset-2',
+          'focus-within:ring-blue-600 focus-within:ring-offset-white',
+          'dark:focus-within:ring-blue-400 dark:focus-within:ring-offset-gray-900',
+
+          // Variant-specific border with enhanced contrast
+          variantStyles.borderColor,
+          'border-l-4',
+
+          // PHI data indicator with enhanced visibility
+          containsPHI && 'ring-2',
+          containsPHI && `ring-[${designTokens.colors.compliance.phi}]/40`,
+          containsPHI && `bg-[${designTokens.colors.compliance.phi}]/5`,
+
+          // Emergency indicator with high contrast
+          isEmergency && 'shadow-lg animate-pulse',
+          isEmergency && `shadow-[${designTokens.colors.alert.critical}]/40`,
+          isEmergency && `bg-[${designTokens.colors.alert.critical}]/10`,
+          isEmergency && 'ring-2 ring-red-500',
+
+          // Read-only state with clear visual feedback
+          isReadOnly && 'opacity-70 cursor-not-allowed',
+          isReadOnly && 'bg-gray-50 dark:bg-gray-900',
+
+          // High contrast mode support
+          'contrast-more:border-4 contrast-more:border-current',
+
+          className
+        )}
+        role="region"
+        aria-labelledby={title ? headingId : undefined}
+        aria-describedby={cn(
+          accessibilityDescription ? descriptionId : undefined,
+          validation?.errors?.length ? errorId : undefined,
+          validation?.warnings?.length ? warningId : undefined,
+          validation?.isValid ? successId : undefined,
+          ariaDescribedBy
+        )}
+        aria-live={isEmergency ? 'assertive' : 'off'}
+      >
+        {/* Header */}
+        {(title || description || containsPHI || complianceLevel) && (
+          <CardHeader className={`pb-${designTokens.spacing[4]}`}>
+            <div className="flex items-start gap-3">
+              <div 
+                className={cn('flex-shrink-0 mt-1', variantStyles.headerColor)}
+                role="img"
+                aria-label={`${variant} form icon`}
+              >
+                {variantStyles.icon}
+              </div>
+              <div className="flex-1 min-w-0">
+                {title && (
+                  <h1 
+                    id={headingId}
+                    className={cn(
+                      'text-lg font-semibold',
+                      variantStyles.headerColor,
+                      `mb-${designTokens.spacing[1]}`
+                    )}
+                  >
+                    {title}
+                  </h1>
+                )}
+                {description && (
+                  <p className={`text-sm text-[${designTokens.colors.text.secondary}] mb-${designTokens.spacing[2]}`}>
+                    {description}
+                  </p>
+                )}
+
+                {/* Compliance and PHI indicators */}
+                <div className="flex gap-2 flex-wrap" role="group" aria-label="Form indicators">
+                  {containsPHI && (
+                    <div 
+                      className={`inline-flex items-center gap-1 px-2 py-1 bg-[${designTokens.colors.compliance.phi}]/10 border border-[${designTokens.colors.compliance.phi}]/30 rounded text-xs font-medium text-[${designTokens.colors.compliance.phi}]`}
+                      role="status"
+                      aria-label="Protected Health Information indicator"
+                    >
+                      <Shield className="h-3 w-3" aria-hidden="true" />
+                      PHI Data
+                    </div>
+                  )}
+                  {complianceLevel && (
+                    <div 
+                      className={`inline-flex items-center gap-1 px-2 py-1 bg-[${designTokens.colors.compliance.audit}]/10 border border-[${designTokens.colors.compliance.audit}]/30 rounded text-xs font-medium text-[${designTokens.colors.compliance.audit}]`}
+                      role="status"
+                      aria-label={`${complianceLevel} compliance indicator`}
+                    >
+                      <Shield className="h-3 w-3" aria-hidden="true" />
+                      {complianceLevel} Compliant
+                    </div>
+                  )}
+                  {isEmergency && (
+                    <div 
+                      className={`inline-flex items-center gap-1 px-2 py-1 bg-[${designTokens.colors.alert.critical}]/10 border border-[${designTokens.colors.alert.critical}]/30 rounded text-xs font-medium text-[${designTokens.colors.alert.critical}]`}
+                      role="alert"
+                      aria-label="Emergency form indicator"
+                    >
+                      <AlertCircle className="h-3 w-3" aria-hidden="true" />
+                      Emergency
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+        )}
+
+        {/* Form Content */}
+        <form 
+          onSubmit={handleSubmit}
+          onKeyDown={handleKeyDown}
+          aria-label={ariaLabel || variantStyles.landmarkLabel}
+          aria-describedby={accessibilityDescription ? descriptionId : undefined}
+          noValidate // Use custom validation
+          role="form"
+        >
+          <CardBody className={`space-y-${designTokens.spacing[4]}`}>
+            {/* Validation Messages */}
+            {renderValidationMessages()}
+
+            {/* Form Fields */}
+            {children && (
+              <fieldset 
+                className={`space-y-${designTokens.spacing[4]}`}
+                disabled={isReadOnly || isLoading}
+                aria-label="Form fields"
+              >
+                <legend className="sr-only">
+                  {title || 'Healthcare form fields'}
+                </legend>
+                {children}
+              </fieldset>
+            )}
+          </CardBody>
+
+          {/* Footer with Actions */}
+          <CardFooter className={`pt-${designTokens.spacing[4]}`}>
+            <Divider className="mb-4" aria-hidden="true" />
+            {renderDefaultActions()}
+          </CardFooter>
+        </form>
+      </Card>
+    </>
+  )
+
+    return (
+      <div className="flex gap-3 justify-end">
+        {onCancel && (
+          <HealthcareButton
+            variant="secondary"
+            size="standard"
+            onClick={onCancel}
+            disabled={isLoading}
+          >
+            Cancel
+          </HealthcareButton>
+        )}
+        <HealthcareButton
+          variant={isEmergency ? 'danger' : 'primary'}
+          size="standard"
+          type="submit"
+          isLoading={isLoading}
+          complianceLevel={complianceLevel}
+          auditAction={`form_submit_${variant}`}
+          isEmergency={isEmergency}
+        >
+          {isEmergency ? 'Emergency Submit' : 'Submit'}
+        </HealthcareButton>
+      </div>
+    )
+  }
+
+  return (
+    <Card
+      className={cn(
+        // Base form styling using design tokens
+        `transition-all ${designTokens.animation.duration.base}`,
+        `${designTokens.animation.easing.easeInOut}`,
+        `max-w-full`,
+
+        // Variant-specific border
+        variantStyles.borderColor,
+        'border-l-4',
+
+        // PHI data indicator
+        containsPHI && 'ring-2',
+        containsPHI && `ring-[${designTokens.colors.compliance.phi}]/30`,
+        containsPHI && `bg-[${designTokens.colors.compliance.phi}]/5`,
+
+        // Emergency indicator
+        isEmergency && 'shadow-lg animate-pulse',
+        isEmergency && `shadow-[${designTokens.colors.alert.critical}]/30`,
+        isEmergency && `bg-[${designTokens.colors.alert.critical}]/10`,
+
+        // Read-only state
+        isReadOnly && 'opacity-70',
+
+        className
+      )}
+    >
+      {/* Header */}
+      {(title || description || containsPHI || complianceLevel) && (
+        <CardHeader className={`pb-${designTokens.spacing[4]}`}>
+          <div className="flex items-start gap-3">
+            <div className={cn('flex-shrink-0 mt-1', variantStyles.headerColor)}>
+              {variantStyles.icon}
+            </div>
+            <div className="flex-1 min-w-0">
+              {title && (
+                <h3 className={cn(
+                  'text-lg font-semibold',
+                  variantStyles.headerColor,
+                  `mb-${designTokens.spacing[1]}`
+                )}>
+                  {title}
+                </h3>
+              )}
+              {description && (
+                <p className={`text-sm text-[${designTokens.colors.text.secondary}] mb-${designTokens.spacing[2]}`}>
+                  {description}
+                </p>
+              )}
+
+              {/* Compliance and PHI indicators */}
+              <div className="flex gap-2 flex-wrap">
+                {containsPHI && (
+                  <div className={`inline-flex items-center gap-1 px-2 py-1 bg-[${designTokens.colors.compliance.phi}]/10 border border-[${designTokens.colors.compliance.phi}]/30 rounded text-xs font-medium text-[${designTokens.colors.compliance.phi}]`}>
+                    <Shield className="h-3 w-3" />
+                    PHI Data
+                  </div>
+                )}
+                {complianceLevel && (
+                  <div className={`inline-flex items-center gap-1 px-2 py-1 bg-[${designTokens.colors.compliance.audit}]/10 border border-[${designTokens.colors.compliance.audit}]/30 rounded text-xs font-medium text-[${designTokens.colors.compliance.audit}]`}>
+                    <Shield className="h-3 w-3" />
+                    {complianceLevel} Compliant
+                  </div>
+                )}
+                {isEmergency && (
+                  <div className={`inline-flex items-center gap-1 px-2 py-1 bg-[${designTokens.colors.alert.critical}]/10 border border-[${designTokens.colors.alert.critical}]/30 rounded text-xs font-medium text-[${designTokens.colors.alert.critical}]`}>
+                    <AlertCircle className="h-3 w-3" />
+                    Emergency
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardHeader>
+      )}
+
+      {/* Form Content */}
+      <form onSubmit={handleSubmit}>
+        <CardBody className={`space-y-${designTokens.spacing[4]}`}>
+          {/* Validation Messages */}
+          {renderValidationMessages()}
+
+          {/* Form Fields */}
+          {children && (
+            <div className={`space-y-${designTokens.spacing[4]}`}>
+              {children}
+            </div>
+          )}
+        </CardBody>
+
+        {/* Footer with Actions */}
+        <CardFooter className={`pt-${designTokens.spacing[4]}`}>
+          <Divider className="mb-4" />
+          {renderDefaultActions()}
+        </CardFooter>
+      </form>
+    </Card>
+  )
+}
+
+// Predefined healthcare form configurations
+export const HealthcareFormPresets = {
+  // Patient forms
+  patientRegistration: {
+    variant: 'patient' as const,
+    title: 'Patient Registration',
+    description: 'Complete patient information and consent forms',
+    containsPHI: true,
+    complianceLevel: 'HIPAA' as const,
+  },
+
+  patientUpdate: {
+    variant: 'patient' as const,
+    title: 'Update Patient Information',
+    description: 'Modify existing patient records',
+    containsPHI: true,
+    complianceLevel: 'HIPAA' as const,
+  },
+
+  // Medical forms
+  medicalHistory: {
+    variant: 'medical' as const,
+    title: 'Medical History',
+    description: 'Patient medical history and current conditions',
+    containsPHI: true,
+    complianceLevel: 'HIPAA' as const,
+  },
+
+  clinicalNotes: {
+    variant: 'medical' as const,
+    title: 'Clinical Notes',
+    description: 'Session notes and observations',
+    containsPHI: true,
+    complianceLevel: 'HIPAA' as const,
+  },
+
+  // Professional forms
+  licenseVerification: {
+    variant: 'professional' as const,
+    title: 'License Verification',
+    description: 'Verify professional credentials and licensing',
+    complianceLevel: 'Law25' as const,
+  },
+
+  // Emergency forms
+  emergencyInformation: {
+    variant: 'emergency' as const,
+    title: 'Emergency Information',
+    description: 'Critical information for emergency situations',
+    isEmergency: true,
+    containsPHI: true,
+    complianceLevel: 'HIPAA' as const,
+  },
+
+  // Compliance forms
+  consentForm: {
+    variant: 'compliance' as const,
+    title: 'Consent Management',
+    description: 'Quebec Law 25 and PIPEDA consent tracking',
+    complianceLevel: 'Law25' as const,
+  },
+} as const

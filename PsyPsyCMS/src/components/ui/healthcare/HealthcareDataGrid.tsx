@@ -666,7 +666,7 @@ export function HealthcareDataGrid({
       {pagination && (
         <div className="flex items-center justify-between p-4 border-t">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-default-500">
+            <span className="text-sm text-gray-600">
               Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} results
             </span>
           </div>
