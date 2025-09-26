@@ -76,7 +76,7 @@ const DashboardPage: React.FC = () => {
       </div>
       <div className="text-right">
         <p className="font-medium text-gray-900">{appointment.time}</p>
-        <p className={`text-sm capitalize ${appointment.status === 'confirmed' ? 'text-green-600' : 'text-yellow-600'}`}>
+        <p className={`text-sm capitalize ${appointment.status === 'confirmed' ? 'text-green-700' : 'text-yellow-700'}`}>
           {appointment.status}
         </p>
       </div>

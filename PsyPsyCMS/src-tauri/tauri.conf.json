@@ -51,7 +51,7 @@
         "use": "brownfield"
       }
     },
-    "withGlobalTauri": false
+    "withGlobalTauri": true
   },
   "bundle": {
     "active": true,

@@ -737,8 +737,8 @@ const ProfessionalsPage: React.FC = () => {
 
   // Main component return with proper semantic structure
   return (
-    <main role="main" aria-label="Professionals management">
-      <header className="mb-6">
+    <div className="professionals-page" aria-label="Professionals management">
+      <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Healthcare Professionals</h1>
@@ -793,7 +793,7 @@ const ProfessionalsPage: React.FC = () => {
             </div>
           </div>
         </section>
-      </header>
+      </div>
 
       {/* Results Section */}
       <section aria-label="Professionals list" className="space-y-6">
@@ -848,7 +848,7 @@ const ProfessionalsPage: React.FC = () => {
           </>
         )}
       </section>
-    </main>
+    </div>
   )
 
 
@@ -1050,20 +1050,20 @@ interface ProfessionalFormModalProps {
 }
 
 const ProfessionalFormModal = ({ editingProfessional, isOpen, onSubmit, onClose }: ProfessionalFormModalProps) => {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState(() => ({
       // Personal Information
-      firstName: editingProfessional?.profile.firstName || '',
-      lastName: editingProfessional?.profile.lastName || '',
+      firstName: editingProfessional?.profile?.firstName || '',
+      lastName: editingProfessional?.profile?.lastName || '',
       email: editingProfessional?.bussEmail || '',
-      phoneNumber: editingProfessional?.phoneNb.number || '',
-      dateOfBirth: editingProfessional?.profile.dateOfBirth || '',
-      gender: editingProfessional?.profile.gender?.toString() || '0',
+      phoneNumber: editingProfessional?.phoneNb?.number || '',
+      dateOfBirth: editingProfessional?.profile?.dateOfBirth || '',
+      gender: editingProfessional?.profile?.gender?.toString() || '0',
       // Address
-      street: editingProfessional?.addressObj.street || '',
-      city: editingProfessional?.addressObj.city || '',
-      province: editingProfessional?.addressObj.state || 'QC',
-      postalCode: editingProfessional?.addressObj.zipCode || '',
-      country: editingProfessional?.addressObj.country || 'Canada',
+      street: editingProfessional?.addressObj?.street || '',
+      city: editingProfessional?.addressObj?.city || '',
+      province: editingProfessional?.addressObj?.state || 'QC',
+      postalCode: editingProfessional?.addressObj?.zipCode || '',
+      country: editingProfessional?.addressObj?.country || 'Canada',
       // Business Information
       businessName: editingProfessional?.businessName || '',
       businessRegistrationNumber: '',
@@ -1071,11 +1071,11 @@ const ProfessionalFormModal = ({ editingProfessional, isOpen, onSubmit, onClose 
       website: '',
       // Professional Information
       title: 'Healthcare Professional',
-      specializations: editingProfessional?.expertises.map(e => `Category ${e.category}`).join(', ') || '',
-      yearsOfExperience: Math.max(...(editingProfessional?.expertises.map(e => e.experience) || [0])) || 0,
+      specializations: editingProfessional?.expertises?.map(e => `Category ${e.category}`).join(', ') || '',
+      yearsOfExperience: Math.max(...(editingProfessional?.expertises?.map(e => e.experience) || [0])) || 0,
       // Status
       status: editingProfessional?.status || 'pending_verification'
-    })
+    }))
 
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault()

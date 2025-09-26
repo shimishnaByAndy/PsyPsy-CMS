@@ -1,0 +1,27 @@
+{
+  "projectType": "tauri",
+  "debugPort": 9224,
+  "errorCapture": {
+    "enabled": true,
+    "wsPort": 9224,
+    "reactPatterns": true,
+    "persistence": true
+  },
+  "autoFix": {
+    "enabled": true,
+    "vectorIndex": true,
+    "sharedDatabase": true,
+    "patterns": [
+      "react",
+      "typescript",
+      "build-errors"
+    ]
+  },
+  "tools": {
+    "electron": false,
+    "tauri": true,
+    "playwright": true
+  },
+  "generatedAt": "2025-09-25T10:28:54.506Z",
+  "version": "2.0.0"
+}

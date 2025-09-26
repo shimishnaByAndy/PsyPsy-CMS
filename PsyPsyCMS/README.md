@@ -1,261 +1,329 @@
-# PsyPsy CMS - Quebec Law 25 Compliant Healthcare Management System
+# PsyPsy CMS - Healthcare Management System
 
-## 🇨🇦 Quebec Law 25 Compliance Status: ✅ CERTIFIED COMPLIANT
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://semver.org)
+[![HIPAA Compliance](https://img.shields.io/badge/HIPAA-Compliant-green.svg)](docs/compliance/)
+[![Quebec Law 25](https://img.shields.io/badge/Quebec%20Law%2025-Compliant-green.svg)](docs/compliance/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-**PsyPsy CMS v2.0.0** is a comprehensive healthcare content management system designed specifically for Quebec mental health professionals, fully compliant with Quebec Law 25 (Loi 25) privacy regulations effective September 22, 2024.
+A **HIPAA-compliant healthcare management system** built for medical professionals to manage clients, appointments, and professional credentials with enterprise-grade security and compliance.
 
-### 🏥 Purpose
-Empowering Quebec healthcare professionals with secure, compliant, and intelligent tools for patient care, documentation, and professional networking while maintaining the highest standards of data protection and privacy.
+## 🏥 Project Overview
 
-## 🏥 Healthcare Features
+PsyPsy CMS is a comprehensive healthcare management platform specifically designed for Quebec healthcare professionals, ensuring full compliance with both HIPAA and Quebec Law 25 (Bill 25) privacy regulations.
 
-- **HIPAA Compliance**: Medical-grade security with AES-256-GCM encryption
-- **Patient Management**: Comprehensive client profiles and medical history
-- **Professional Management**: Credential tracking and availability scheduling
-- **Appointment System**: Intelligent scheduling with conflict detection
-- **Audit Trails**: Complete 7-year audit logging for compliance
-- **Multi-language Support**: English and French localization
+### Key Features
 
-## 🚀 Quick Start
+- **👥 Client Management** - Complete patient records with PHI protection
+- **📅 Appointment Scheduling** - 50-minute session blocks with conflict detection
+- **👨‍⚕️ Professional Credentials** - License tracking and annual validation
+- **📝 Medical Notes** - Quebec-compliant templates with audit trails
+- **🔒 HIPAA Compliance** - AES-256-GCM encryption and comprehensive audit logging
+- **🇨🇦 Quebec Law 25** - Data residency, consent management, and breach notification
+- **🌐 Real-time Sync** - Firebase backend with offline capabilities
+- **🖥️ Desktop App** - Built with Tauri 2.1+ for cross-platform support
 
-### Prerequisites
+## 🛠️ Technology Stack (September 2025)
 
-- **Node.js** 18+ and npm 9+
-- **Rust** 1.70+ (for HIPAA security patches)
-- **Tauri CLI** 2.0
+### Frontend
+- **React 19** - Latest React with compiler optimization
+- **TypeScript 5.3+** - Strict typing with branded types
+- **Vite 5+** - Fast build tool with advanced chunking
+- **Tailwind CSS 3.4+** - Utility-first styling
+- **shadcn/ui + Radix UI** - Accessible component library
 
-### Installation
+### Backend & Desktop
+- **Tauri 2.1+** - Rust-based desktop framework
+- **Firebase** - Real-time database and authentication
+- **Rust** - High-performance backend services
 
-```bash
-# Install dependencies
-npm install
+### State Management & Data
+- **TanStack Query v5** - Server state management
+- **Zustand** - Client state management
+- **React Hook Form** - Form handling with validation
 
-# Install Tauri CLI (if not already installed)
-npm install -g @tauri-apps/cli@latest
-
-# Development mode
-npm run tauri:dev
-
-# Build for production
-npm run tauri:build
-```
-
-### Development Workflow
-
-```bash
-# Start frontend development server
-npm run dev
-
-# Start Tauri development with hot reload
-npm run tauri:dev
-
-# Run tests
-npm run test           # Unit tests
-npm run e2e           # E2E tests
-npm run test:coverage # Coverage report
-
-# Build optimized production version
-npm run tauri:build
-```
+### Testing & Quality
+- **Vitest** - Unit and integration testing
+- **Playwright** - End-to-end testing with accessibility
+- **TypeScript** - Static type checking
 
 ## 📁 Project Structure
 
 ```
-psypsy-cms-tauri-app/
-├── src/                    # React frontend source
-│   ├── components/         # UI components (shadcn/ui + healthcare)
-│   ├── hooks/             # Custom React hooks
-│   ├── services/          # API layer and TanStack Query
-│   ├── types/             # TypeScript type definitions
-│   └── localization/      # i18n configuration
-├── src-tauri/             # Rust backend
-│   ├── src/
-│   │   ├── security/      # HIPAA security modules
-│   │   ├── tests/         # Rust unit tests
-│   │   └── lib.rs         # Main application logic
-│   ├── Cargo.toml         # Rust dependencies
-│   └── tauri.conf.json    # Tauri configuration
-├── tests/                 # E2E and integration tests
-│   ├── e2e/              # Playwright tests
-│   ├── security/         # Security compliance tests
-│   └── performance/      # Performance benchmarks
-├── .github/              # CI/CD pipeline
-└── package.json          # Node.js dependencies and scripts
+PsyPsyCMS/
+├── 📂 src/                          # Frontend source code
+│   ├── 📂 components/               # React components
+│   │   ├── 📂 ui/                   # Base UI components (shadcn/ui)
+│   │   ├── 📂 healthcare/           # Healthcare-specific components
+│   │   ├── 📂 forms/                # Form components
+│   │   ├── 📂 tables/               # Data table components
+│   │   └── 📂 layout/               # Layout components
+│   ├── 📂 pages/                    # Application pages
+│   ├── 📂 hooks/                    # Custom React hooks
+│   ├── 📂 services/                 # API services
+│   ├── 📂 types/                    # TypeScript type definitions
+│   ├── 📂 utils/                    # Utility functions
+│   ├── 📂 styles/                   # CSS and styling
+│   └── 📂 localization/             # i18n support (EN/FR)
+├── 📂 src-tauri/                    # Tauri backend (Rust)
+│   ├── 📂 src/                      # Rust source code
+│   │   ├── 📂 commands/             # Tauri commands by domain
+│   │   ├── 📂 services/             # Business logic services
+│   │   ├── 📂 models/               # Data models
+│   │   ├── 📂 security/             # Security & compliance
+│   │   └── 📂 meeting/              # Meeting & audio processing
+│   └── 📂 migrations/               # Database migrations
+├── 📂 tests/                        # All test files
+│   ├── 📂 e2e/                      # End-to-end tests
+│   │   ├── 📂 healthcare/           # Healthcare workflow tests
+│   │   └── 📂 accessibility/        # Accessibility E2E tests
+│   ├── 📂 integration/              # Integration tests
+│   ├── 📂 security/                 # Security tests
+│   ├── 📂 performance/              # Performance tests
+│   └── 📂 utilities/                # Test utilities & helpers
+├── 📂 scripts/                      # Build and utility scripts
+├── 📂 docs/                         # Documentation
+│   ├── 📂 testing/                  # Testing guides
+│   ├── 📂 compliance/               # Compliance documentation
+│   ├── 📂 setup/                    # Setup guides
+│   ├── 📂 security/                 # Security documentation
+│   └── 📂 design-system/            # Design system docs
+├── 📂 public/                       # Static assets
+└── 📋 Configuration Files
+    ├── package.json                 # Node.js dependencies
+    ├── tauri.conf.json             # Tauri configuration
+    ├── vite.config.mjs             # Vite build config
+    ├── playwright.config.ts        # E2E testing config
+    ├── vitest.config.ts            # Unit testing config
+    ├── tailwind.config.js          # Tailwind CSS config
+    ├── firebase.json               # Firebase configuration
+    ├── CLAUDE.md                   # AI assistant instructions
+    └── DEVELOPMENT_RULES_2025.md   # Development guidelines
 ```
 
-## 🔒 Security & Compliance
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** 20+ and npm
+- **Rust** 1.70+ and Cargo
+- **Firebase CLI** (for emulator development)
+- **Git** for version control
+
+### Development Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd PsyPsyCMS
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Setup environment variables**
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local with your configuration
+   ```
+
+4. **Start Firebase emulators** (Required for development)
+   ```bash
+   firebase emulators:start --import=./seed-data
+   ```
+
+5. **Start development server**
+   ```bash
+   npm run tauri:dev
+   ```
+
+### Available Commands
+
+#### Development
+- `npm run dev` - Start Vite dev server
+- `npm run tauri:dev` - Start Tauri development mode
+- `npm run build` - Build for production
+- `npm run tauri:build` - Build Tauri desktop application
+
+#### Testing
+- `npm run test` - Run unit tests with Vitest
+- `npm run e2e` - Run end-to-end tests with Playwright
+- `npm run test:accessibility` - Run accessibility tests
+- `npm run test:coverage` - Generate test coverage report
+
+#### Quality & Linting
+- `npm run lint` - Run ESLint
+- `npm run type-check` - Run TypeScript type checking
+- `npm run lint:fix` - Auto-fix linting issues
+
+#### Firebase & Environment
+- `npm run switch:dev` - Switch to development environment
+- `npm run switch:prod` - Switch to production environment
+- `npm run test:firebase` - Test Firebase connection
+
+## 🏗️ Architecture Overview
+
+### Frontend Architecture (Feature-Based)
+
+The application follows a feature-based architecture pattern as defined in `DEVELOPMENT_RULES_2025.md`:
+
+```
+src/
+├── features/                    # Business domain features
+│   ├── authentication/         # Auth feature module
+│   ├── patients/              # Patient management
+│   ├── appointments/          # Appointment scheduling
+│   ├── medical-notes/         # Medical notes with Quebec templates
+│   └── professionals/         # Professional credential management
+├── shared/                      # Cross-feature shared code
+│   ├── components/            # Reusable UI components
+│   ├── hooks/                 # Generic custom hooks
+│   ├── services/              # Common API services
+│   └── utils/                 # Utility functions
+└── app/                        # Application-level code
+    ├── providers/             # Context providers
+    ├── router/                # Routing configuration
+    └── store/                 # Global state management
+```
+
+### Backend Architecture (Tauri/Rust)
+
+```
+src-tauri/src/
+├── commands/                   # Tauri command handlers (by domain)
+├── services/                   # Business logic services
+├── models/                     # Data models and types
+├── security/                   # HIPAA compliance & encryption
+└── plugins/                    # Custom Tauri plugins
+```
+
+## 🔐 Security & Compliance
 
 ### HIPAA Compliance Features
+- **🔒 AES-256-GCM Encryption** - All PHI data encrypted at rest and in transit
+- **📋 Audit Trails** - Comprehensive logging of all PHI access
+- **🔑 RBAC** - Role-based access control system
+- **⚠️ Error Boundaries** - Compliance-aware error handling
+- **🛡️ Data Classification** - Explicit PHI marking and handling
 
-- **Medical-Grade Encryption**: AES-256-GCM + ChaCha20-Poly1305
-- **Role-Based Access Control**: 6 healthcare roles with 60+ permissions
-- **Audit Logging**: Tamper-proof logs with 7-year retention
-- **Multi-Factor Authentication**: TOTP-based MFA for sensitive operations
-- **Data Validation**: Healthcare code validation (ICD-10, CPT, NPI)
+### Quebec Law 25 Compliance
+- **🇨🇦 Data Residency** - Data processing within Quebec/Canada
+- **✅ Consent Management** - Explicit consent tracking and renewal
+- **⏰ Breach Notification** - Automated 72-hour reporting system
+- **📤 Data Portability** - Right to data export functionality
+- **🗑️ Right to Erasure** - Complete data deletion workflows
 
-### Security Testing
+## 🧪 Testing Strategy
 
-```bash
-# Run security compliance tests
-npm run test:security
+### Test Types
+- **Unit Tests** - Component and function testing with Vitest
+- **Integration Tests** - API and service integration testing
+- **E2E Tests** - Full user workflow testing with Playwright
+- **Accessibility Tests** - WCAG 2.1 AA compliance testing
+- **Security Tests** - HIPAA compliance validation
+- **Performance Tests** - Load and stress testing
 
-# HIPAA compliance validation
-npm run test:hipaa
+### Healthcare-Specific Testing
+- **Patient Data Workflows** - Complete patient management flows
+- **Appointment Scheduling** - 50-minute blocks and conflict detection
+- **Professional Validation** - License tracking and renewal
+- **Compliance Validation** - PIPEDA and Law 25 requirements
 
-# Performance and load testing
-npm run test:performance
-```
-
-## 🧪 Testing
-
-### Comprehensive Test Suite
-
+### Current Test Coverage
 - **847 Total Tests** across all layers
 - **92% Backend Coverage** (Rust unit and integration tests)
 - **87% Frontend Coverage** (React component and hook tests)
 - **E2E Testing** with Playwright for desktop automation
 - **Security Testing** with HIPAA compliance validation
 
-### Testing Commands
+## 📖 Documentation
 
-```bash
-# Run all tests
-npm run test:all
+### Core Documentation
+- **[Development Rules](DEVELOPMENT_RULES_2025.md)** - Mandatory development patterns
+- **[CLAUDE.md](CLAUDE.md)** - AI assistant instructions and project context
+- **[Testing Strategy](docs/testing/TESTING_STRATEGY.md)** - Comprehensive testing approach
+- **[Compliance Guide](docs/compliance/)** - HIPAA and Quebec Law 25 compliance
 
-# Individual test suites
-npm run test              # Frontend unit tests
-npm run test:coverage     # Coverage reports
-npm run e2e              # End-to-end tests
-npm run test:visual      # Visual regression tests
+### Setup Guides
+- **[Firebase Setup](docs/setup/setup-firebase-emulator.md)** - Development environment setup
+- **[Implementation Guide](docs/CMS_IMPLEMENTATION_GUIDE.md)** - Detailed implementation reference
 
-# Healthcare-specific testing
-npm run test:healthcare   # Healthcare workflow tests
-npm run test:hipaa       # HIPAA compliance tests
-```
+### Design System
+- **[Healthcare Components](src/components/ui/healthcare/)** - Medical domain components
+- **[Design Tokens](src/ui/design-tokens/)** - Design system tokens
+- **[Accessibility Guidelines](docs/accessibility/)** - WCAG compliance patterns
 
-## 📈 Performance
+## 🌐 Internationalization
+
+- **Languages Supported**: English, French (Quebec)
+- **Medical Terminology**: Quebec healthcare terminology
+- **Date/Time**: Montreal timezone handling (America/Montreal)
+- **Currency**: Canadian Dollar (CAD) support
+
+## 📊 Performance & Monitoring
 
 ### Achieved Metrics
-
 - **Bundle Size**: 45MB (70% reduction from Electron)
 - **Startup Time**: 4 seconds (50% improvement)
 - **Memory Usage**: 160MB (60% reduction)
 - **Test Coverage**: 90%+ across all layers
 
-### Performance Monitoring
+### Bundle Optimization
+- **Medical Core Chunk** - Critical healthcare features
+- **Compliance Chunk** - Lazy-loaded compliance features
+- **UI Components** - Cached component library
+- **Charts & Analytics** - Separate visualization chunk
 
+### Monitoring
+- **Performance Metrics** - Core Web Vitals tracking
+- **Error Tracking** - Comprehensive error logging
+- **Audit Monitoring** - HIPAA compliance audit trails
+- **Usage Analytics** - Privacy-compliant usage tracking
+
+## 🔄 Change Log & Versioning
+
+Version 2.0.0 represents a major architectural upgrade:
+
+### Recent Changes (September 2025)
+- ✅ **React 19 Upgrade** - Compiler optimization enabled
+- ✅ **TanStack Query v5** - Enhanced server state management
+- ✅ **Tauri 2.1+** - Universal entry point for cross-platform support
+- ✅ **Feature-Based Architecture** - Self-contained feature modules
+- ✅ **Enhanced HIPAA Compliance** - Upgraded security and audit systems
+- ✅ **Quebec Law 25 Integration** - Full compliance implementation
+
+### Development Status
+- 🟢 **Core Features** - Stable and production-ready
+- 🟡 **Advanced Features** - In development
+- 🔴 **Experimental Features** - Research and development phase
+
+## 🤝 Contributing
+
+This is a healthcare system with strict compliance requirements. Development follows guidelines outlined in:
+
+- **[Development Rules](DEVELOPMENT_RULES_2025.md)** - Mandatory patterns
+- **[Security Guidelines](docs/security/)** - Security requirements
+- **[Compliance Standards](docs/compliance/)** - Healthcare compliance
+
+### Code Quality Standards
 ```bash
-# Analyze bundle size
-npm run analyze:bundle
-
-# Performance benchmarks
-npm run test:performance
-
-# Memory usage testing
-npm run test:memory
-```
-
-## 🌍 Internationalization
-
-The application supports multiple languages with healthcare-specific terminology:
-
-- **English** (default)
-- **French** (Français)
-
-Language detection is automatic based on browser/system settings, with manual override available.
-
-## 🛠️ Development
-
-### Tech Stack
-
-**Frontend**:
-- React 18 with concurrent features
-- TypeScript with strict mode
-- shadcn/ui component system
-- TanStack Query v5 for data management
-- Tailwind CSS with healthcare theme
-
-**Backend**:
-- Rust with Tauri 2.0
-- Firebase integration
-- SQLite for offline caching
-- Medical-grade encryption
-
-**Testing**:
-- Vitest for unit testing
-- Playwright for E2E testing
-- Rust testing with cargo test
-
-### Code Quality
-
-```bash
-# Linting and formatting
+# Pre-commit checks
 npm run lint              # ESLint
-npm run lint:fix          # Auto-fix issues
-npm run format           # Prettier formatting
-npm run type-check       # TypeScript checking
-
-# Pre-commit hooks
-npm run pre-commit       # Lint staged files
+npm run type-check        # TypeScript checking
+npm run test             # Unit tests
+npm run test:security    # Security compliance
 ```
 
-## 📦 Building & Distribution
-
-### Development Build
-
-```bash
-npm run tauri:dev
-```
-
-### Production Build
-
-```bash
-# Build for current platform
-npm run tauri:build
-
-# Cross-platform builds available for:
-# - Windows (NSIS installer)
-# - macOS (DMG and app bundle)
-# - Linux (AppImage and deb)
-```
-
-### Build Artifacts
-
-Production builds are optimized for:
-- **Security**: Code signing and verification
-- **Performance**: Bundle optimization and tree shaking
-- **Compliance**: HIPAA-ready deployment packages
-
-## 🏥 Healthcare Deployment
-
-### HIPAA Deployment Checklist
-
-- [ ] Verify encryption settings in production
-- [ ] Configure audit logging retention (7 years)
-- [ ] Set up secure backup procedures
-- [ ] Enable multi-factor authentication
-- [ ] Configure user access controls
-- [ ] Validate security compliance tests
-
-### Environment Configuration
-
-Create `.env.local` for local development:
-
-```env
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_domain
-VITE_FIREBASE_PROJECT_ID=your_project_id
-```
-
-## 📞 Support
-
-For healthcare deployment support and HIPAA compliance guidance, contact the PsyPsy development team.
-
-## 📄 License
+## 📝 License
 
 MIT License - See [LICENSE](LICENSE) for details.
 
 ---
+
+**Healthcare Compliance**: HIPAA + Quebec Law 25
+**Last Updated**: September 2025
+**Architecture**: React 19 + Tauri 2.1+ + TanStack Query v5
 
 **Built with ❤️ for healthcare professionals**
 

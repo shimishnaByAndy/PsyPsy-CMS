@@ -152,20 +152,44 @@
     </nav>
 
     <!-- Initial loading state -->
-    <main id="initial-loading" class="initial-loading" role="main" aria-label="Application loading">
+    <div id="initial-loading" class="initial-loading" role="status" aria-label="Application loading">
       <div>
         <div class="loading-spinner" role="status" aria-label="Loading application"></div>
         <div class="loading-text">
           Loading PsyPsy CMS...
         </div>
       </div>
-    </main>
+    </div>
     
     <!-- Main React mount point -->
     <div id="root" role="application" aria-label="PsyPsy Healthcare Management System">
       <!-- React app will mount here -->
     </div>
     
+    <!-- Tauri API readiness check -->
+    <script>
+      // Wait for Tauri API to be available before proceeding
+      function waitForTauriAPI() {
+        return new Promise((resolve) => {
+          function checkTauri() {
+            if (window.__TAURI__ && window.__TAURI__.core) {
+              console.log('[PsyPsy] Tauri API is ready');
+              resolve();
+            } else {
+              setTimeout(checkTauri, 50);
+            }
+          }
+          checkTauri();
+        });
+      }
+
+      // Initialize CMS console capture after Tauri is ready
+      waitForTauriAPI().then(() => {
+        console.log('[PsyPsy] CMS console capture can now initialize safely');
+        window.tauriAPIReady = true;
+      });
+    </script>
+
     <!-- Remove loading state once React takes over -->
     <script>
       // Remove loading state once React hydrates

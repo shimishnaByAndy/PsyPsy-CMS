@@ -6,6 +6,18 @@ model: claude-3-5-sonnet-20241022
 
 # PsyPsy CMS - Healthcare Management System
 
+
+## Serena MCP Integration
+
+For detailed guidance on using Serena MCP tools with this project, see the project-specific usage guide:
+- **[Serena MCP Usage Guide](docs/serena-mcp-usage.md)** - Project-specific tool usage and workflows
+
+### Quick Reference
+The Serena MCP server provides semantic code analysis and editing capabilities optimized for this project:
+- **Code Analysis**: `get_symbols_overview`, `find_symbol`, `find_referencing_symbols`
+- **Code Editing**: `replace_symbol_body`, `insert_after_symbol`, `insert_before_symbol`
+- **Project Management**: `activate_project`, memory tools, file operations
+
 ## Project Context & Overview
 
 This is a **HIPAA-compliant healthcare management system** built for medical professionals to manage clients, appointments, and professional credentials with enterprise-grade security and compliance.
@@ -856,3 +868,153 @@ for (const taskPrompt of complianceTasks) {
 **Task Master AI Integration Level**: Healthcare Development Optimized
 **Research Capability**: Perplexity-powered for up-to-date compliance
 **Last Updated**: September 2025
+
+## Project Organization Rules (MANDATORY)
+
+### **ORG-001: File Organization Standards**
+
+**CRITICAL**: All agents MUST maintain the organized project structure:
+
+```
+PsyPsyCMS/
+├── 📂 tests/                        # ALL test files organized by type
+│   ├── 📂 e2e/                      # End-to-end tests
+│   │   ├── 📂 healthcare/           # Healthcare workflow tests
+│   │   └── 📂 accessibility/        # Accessibility E2E tests
+│   ├── 📂 integration/              # Integration tests (.cjs, .js files)
+│   ├── 📂 security/                 # Security & HIPAA tests
+│   ├── 📂 performance/              # Performance & load tests
+│   └── 📂 utilities/                # Test utilities & HTML test files
+│       └── 📂 html/                 # HTML-based test utilities
+├── 📂 docs/                         # ALL documentation centralized
+│   ├── 📂 testing/                  # Testing strategies & guides
+│   ├── 📂 compliance/               # HIPAA & Quebec Law 25 docs
+│   ├── 📂 setup/                    # Setup & configuration guides
+│   ├── 📂 security/                 # Security documentation
+│   └── 📂 design-system/            # Design system documentation
+├── 📂 scripts/                      # Build & utility scripts ONLY
+└── 📋 ROOT FILES (Keep minimal)
+    ├── README.md                    # SINGLE comprehensive project overview
+    ├── CLAUDE.md                    # Agent instructions
+    ├── DEVELOPMENT_RULES_2025.md    # Development patterns
+    └── Configuration files only
+```
+
+### **ORG-002: Documentation Hierarchy Rules**
+
+**MANDATORY**: Keep only ONE main documentation file at the root:
+
+✅ **ALLOWED at root:**
+- `README.md` - Complete project overview and structure
+- `CLAUDE.md` - Agent instructions (this file)
+- `DEVELOPMENT_RULES_2025.md` - Development patterns
+- `CHANGELOG.md` - Version history
+
+❌ **FORBIDDEN at root:**
+- Test files (*.test.*, test-*, autonomous-*)
+- Implementation docs (move to `docs/`)
+- Setup guides (move to `docs/setup/`)
+- Compliance reports (move to `docs/compliance/`)
+- Strategy documents (move to `docs/testing/` or appropriate folder)
+
+### **ORG-003: Test File Naming Conventions**
+
+**MANDATORY**: Follow these naming patterns:
+
+```
+tests/
+├── integration/
+│   ├── auth-connection.test.cjs
+│   ├── firebase-connection.test.cjs
+│   ├── professionals-api.test.js
+│   └── client-professional.test.cjs
+├── e2e/healthcare/
+│   ├── medical-notes.test.cjs
+│   └── quebec-healthcare.test.cjs
+└── utilities/
+    ├── error-injection.test.js
+    └── html/
+        ├── test-error-patterns.html
+        └── validate-error-categorization.html
+```
+
+### **ORG-004: Agent Responsibilities**
+
+**CRITICAL**: Every agent MUST:
+
+1. **✅ Before adding ANY file to root:**
+   - Check if it belongs in `docs/`, `tests/`, or `scripts/`
+   - Use the appropriate subfolder structure
+
+2. **✅ When creating test files:**
+   - Place in correct `tests/` subfolder
+   - Use proper naming conventions
+   - Update test documentation if needed
+
+3. **✅ When adding documentation:**
+   - Place in `docs/` with appropriate subfolder
+   - Reference from main `README.md` if needed
+   - Keep root minimal and organized
+
+4. **✅ When creating scripts:**
+   - Place in `scripts/` folder
+   - Update `package.json` scripts if needed
+
+### **ORG-005: Change Tracking Requirements**
+
+**MANDATORY**: All significant changes MUST:
+
+1. **Update CHANGELOG.md** with:
+   - Version number
+   - Change category (Added, Changed, Fixed, Removed)
+   - Healthcare compliance impact
+   - Breaking changes notation
+
+2. **Update README.md** if:
+   - New major features added
+   - Architecture changes
+   - New dependencies or requirements
+
+3. **Maintain file organization**:
+   - No loose files in root
+   - Proper categorization in subfolders
+   - Clear naming conventions
+
+### **ORG-006: Documentation Cross-References**
+
+**REQUIRED**: Maintain these links in `README.md`:
+
+- Link to all major documentation in `docs/`
+- Reference HIPAA compliance docs
+- Point to testing strategies
+- Include setup guides
+- Reference design system docs
+
+### **ORG-007: Cleanup Responsibilities**
+
+**AGENTS MUST**: When finding disorganized files:
+
+1. **Immediate action**:
+   - Move files to proper folders
+   - Update references if needed
+   - Clean up broken links
+
+2. **Report to user**:
+   - What was reorganized
+   - Why the change was needed
+   - Impact on project structure
+
+### **ORG-008: Version Control Integration**
+
+**REQUIRED**: Changes that affect:
+
+- Project structure → Update README.md
+- Test organization → Update testing docs
+- Documentation → Update cross-references
+- Scripts → Update package.json references
+
+**ENFORCEMENT**: Any agent that creates files outside the organized structure will be considered non-compliant with healthcare development standards.
+
+**COMPLIANCE LEVEL**: Healthcare Organization Standards
+**Enforcement**: Automatic for all AI agents
+**Review**: Monthly organizational audit
