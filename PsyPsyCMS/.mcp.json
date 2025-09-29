@@ -1,12 +1,17 @@
 {
   "mcpServers": {
     "psypsy-cms-debugger": {
-      "type": "stdio",
       "command": "node",
       "args": [
-        "/Users/andreichira/Documents/Mobile_App_Dev/Tools/kandyClaude/desktop-app-mcp-server/build/src/orchestrator-server.js"
+        "build/unified-server.js"
       ],
-      "env": {}
+      "cwd": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS",
+      "env": {
+        "PROJECT_NAME": "PsyPsy CMS",
+        "PROJECT_TYPE": "tauri",
+        "PROJECT_PATH": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS",
+        "BRAIN_MODE": "enabled"
+      }
     }
   }
 }

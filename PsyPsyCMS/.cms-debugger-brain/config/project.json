@@ -1,0 +1,13 @@
+{
+  "projectName": "PsyPsy CMS",
+  "projectType": "tauri",
+  "myPreferences": {
+    "debuggingStyle": "systematic",
+    "toolPreferences": [],
+    "workflowPatterns": []
+  },
+  "analytics": {
+    "enabled": true,
+    "trackingLevel": "detailed"
+  }
+}

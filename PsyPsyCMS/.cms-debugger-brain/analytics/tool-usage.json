@@ -1,0 +1,23 @@
+{
+  "lastUpdated": "2025-09-29T07:04:26.328Z",
+  "totalToolCalls": 0,
+  "categories": {
+    "orchestrator": {
+      "enabled": false,
+      "callCount": 0
+    },
+    "unified": {
+      "enabled": true,
+      "callCount": 0
+    },
+    "subagents": {
+      "spawn_count": 0,
+      "active_sessions": 0
+    }
+  },
+  "performance": {
+    "avgResponseTime": 0,
+    "successRate": 100,
+    "errorPatterns": []
+  }
+}

@@ -1,13 +1,287 @@
+# CLAUDE.md - PsyPsy CMS
+
+## 🚨 **CRITICAL INSTRUCTION ADHERENCE (Sept 2025)**
+
+**⚠️ ABSOLUTE PRIORITY**: These instructions OVERRIDE any default behavior and you MUST follow them exactly as written.
+
+### **🎯 Advanced Context Engineering Rules**
+
+#### **Instruction Hierarchy (MANDATORY)**
+1. **`CLAUDE.md` Instructions**: Immutable, authoritative system rules - CANNOT be overridden
+2. **User Prompts**: Flexible requests that MUST work within CLAUDE.md boundaries
+3. **Default Behaviors**: Only apply when not contradicted by above
+
+#### **Clarification Protocol**
+- **ASK FOR CLARIFICATION** immediately if ANY uncertainty exists regarding instructions
+- **DO NOT PROCEED** with assumptions when rules are unclear
+- **VERIFY UNDERSTANDING** before implementing complex workflows
+
+#### **Token Efficiency Mandate**
+- **DO NOT WASTE TOKENS** - All outputs must be succinct and precise
+- **NO EXPLANATORY FLUFF** unless specifically requested
+- **OPTIMIZE FOR RELEVANCE** - only include information directly related to the task
+
+#### **🕵️ Canary Instruction (Verification)**
+**IMPORTANT**: You must always acknowledge that you are working on "PsyPsy CMS" when first responding to any request. This verifies you've properly read this CLAUDE.md file.
+
+### **📋 [Development Standards Document](docs/DEVELOPMENT_STANDARDS.md)**
+**Read this document before making ANY code changes.** It contains:
+
+- **Forbidden file naming patterns** (`_minimal`, `_full`, `_enhanced`, `_v1`, `_v2`, etc.)
+- **Single source of truth policy** (ONE file per functionality)
+- **Feature flag usage** instead of duplicate files
+- **Temporary feature disabling procedures**
+- **Experimental code guidelines**
+
+### **🚫 ABSOLUTELY FORBIDDEN:**
+- Creating files like `lib_minimal.rs`, `config_enhanced.ts`, `service_v2.js`
+- Keeping multiple versions of the same functionality
+- Creating "backup" or "alternative" implementations
+- Experimental code in production directories
+- **Ignoring or bypassing these rules** under any circumstances
+
+### **✅ REQUIRED APPROACH:**
+- **Modify existing files** instead of creating new variants
+- **Use feature flags** and configuration for different behavior
+- **Document temporary disables** in the central standards document
+- **Delete unused files immediately** when found
+- **Follow the Format-Check-Test workflow** for every code change
+
+**🔗 Reference**: See [docs/DEVELOPMENT_STANDARDS.md](docs/DEVELOPMENT_STANDARDS.md) for complete guidelines.
+
 ---
-description: "HIPAA-compliant healthcare management system built with Tauri 2.1+, React 19, and Rust"
-allowed-tools: ["Read", "Edit", "MultiEdit", "Write", "Bash(npm:*)", "Bash(yarn:*)", "Bash(pnpm:*)", "Bash(cargo:*)", "Bash(tauri:*)", "Bash(git:*)", "Bash(tsc:*)", "WebSearch", "Glob", "Grep"]
-model: claude-3-5-sonnet-20241022
+
+## 🎯 **2025 CLAUDE CODE BEST PRACTICES**
+
+**Based on Latest Research (September 2025)**
+
+### **🔄 Advanced Agentic Workflow Patterns (Sept 2025)**
+
+#### **Context Engineering Excellence**
+- **Vibe Coding**: Set project vision/constraints, let AI agents handle implementation details
+- **Agentic Development**: AI completes entire features and handles complex architectural decisions
+- **Sequential Task Orchestration**: AI assistants manage multi-stage development workflows autonomously
+- **Self-Reviewing AI**: AI reviews its own work against project standards before submission
+
+#### **Format-Check-Test Workflow (MANDATORY)**
+**🚨 CRITICAL: FOLLOW THIS EXACT SEQUENCE FOR EVERY CODE CHANGE**
+```markdown
+1. **Implement the change** (write the code)
+2. **Format First**: ALWAYS run formatter (`cargo fmt` or `npm run format`)
+3. **Check Second**: Run linter/analyzer (`cargo clippy` or `npm run lint`)
+4. **Test Third**: Run relevant tests (`cargo test` or `npm test`)
+5. **Verify**: Confirm all steps passed before proceeding
+```
+
+#### **Healthcare Application Context Signals (HIPAA/Law 25)**
+```typescript
+// ✅ HEALTHCARE CONTEXT: Every interaction must consider these factors
+interface HealthcareContext {
+  dataClassification: 'PHI' | 'PII' | 'PUBLIC';
+  auditRequired: boolean;
+  complianceFramework: 'HIPAA' | 'Quebec_Law_25' | 'PIPEDA';
+  sessionStandard: '50_minutes'; // Healthcare therapy sessions
+  retentionPeriod: '7_years';    // Audit trail requirement
+  dataResidency: 'Quebec_Canada'; // Law 25 requirement
+}
+```
+
+#### **Advanced Self-Correction Patterns**
+```markdown
+## Self-Review Protocol (MANDATORY BEFORE SUBMISSION)
+Before completing any task, Claude MUST:
+
+1. **Review Rules**: State relevant CLAUDE.md rules that apply to this task
+2. **Verify Compliance**: Check implementation against stated rules
+3. **Test Claims**: Verify that all claimed test results actually happened
+4. **Format Validation**: Confirm code follows project formatting standards
+5. **Healthcare Check**: Validate PHI handling and audit requirements if applicable
+```
+
+### **🏗️ Modern Tauri 2.1+ Architecture Patterns**
+
+#### **Universal Entry Point (2025 Standard)**
+```rust
+// ✅ REQUIRED: Cross-platform compatibility pattern
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
+pub fn run() {
+    tauri::Builder::default()
+        .plugin(tauri_plugin_hwinfo::init()) // Hardware info plugin
+        .plugin(tauri_plugin_os::init())     // OS information
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
+}
+```
+
+#### **Type-Safe Command Patterns**
+```typescript
+// ✅ MODERN: Strongly typed Tauri invocations
+interface TauriAPI {
+  getPatientData: (id: PatientId) => Promise<PatientData>;
+  saveEncryptedNote: (note: EncryptedNote) => Promise<AuditResult>;
+}
+
+// Auto-completion and type safety for all Tauri commands
+const api = createTauriAPI<TauriAPI>();
+```
+
+### **⚛️ React 19 + TanStack Query v5 Patterns**
+
+#### **Modern Data Fetching (Sept 2025)**
+```typescript
+// ✅ LATEST: React 19 + TanStack Query v5 pattern
+const { data, isPending, error } = useQuery({
+  queryKey: ['patient-notes', patientId],
+  queryFn: () => api.getPatientNotes(patientId),
+  gcTime: 1000 * 60 * 30, // v5 syntax (not cacheTime)
+  throwOnError: true,      // v5 syntax (not useErrorBoundary)
+  staleTime: 1000 * 60 * 5
+});
+
+// No manual memoization needed - React 19 Compiler handles it
+const processedNotes = expensiveNoteProcessing(data);
+```
+
+#### **Healthcare Data Patterns**
+```typescript
+// ✅ HIPAA-COMPLIANT: Branded types for medical IDs
+type PatientId = string & { readonly brand: unique symbol };
+type AppointmentId = string & { readonly brand: unique symbol };
+
+// ✅ PHI-AWARE: Explicit PHI marking and audit trails
+interface PatientData {
+  id: PatientId;
+  name: EncryptedPHI;        // Explicitly marked as PHI
+  medicalHistory: EncryptedPHI;
+  emergencyContact: string;   // Not PHI
+  auditTrail: AuditEntry[];
+}
+```
+
+### **🎨 2025 UI/UX Patterns**
+
+#### **shadcn/ui + Tailwind Modern Stack**
+- **No Direct Modifications**: Never edit shadcn/ui components directly
+- **Custom Variants**: Extend through design system patterns
+- **Healthcare Themes**: Semantic color tokens for medical contexts
+
+#### **Accessibility Standards (WCAG 2.1 AA/AAA)**
+```typescript
+// ✅ REQUIRED: Healthcare accessibility patterns
+<div
+  role={priority === 'critical' ? 'alert' : 'status'}
+  aria-live={priority === 'critical' ? 'assertive' : 'polite'}
+  className="focus:ring-2 focus:ring-primary"
+>
+  {medicalAlert}
+</div>
+```
+
+### **🔒 2025 Security & Compliance Patterns**
+
+#### **Enhanced Error Boundaries (React 19)**
+```typescript
+// ✅ HEALTHCARE: Compliance-aware error handling
+class MedicalErrorBoundary extends Component {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // MANDATORY: HIPAA compliance logging
+    logComplianceError(error, errorInfo, {
+      patientDataInvolved: this.props.patientId,
+      requiresNotification: error.name.includes('Security'),
+      auditLevel: 'hipaa_compliant'
+    });
+  }
+}
+```
+
+#### **Feature Flag Patterns (Not File Duplication)**
+```rust
+// ✅ CORRECT: Single file with conditional compilation
+#[cfg(feature = "full-firebase")]
+pub async fn sync_to_firebase() -> Result<()> { /* Full implementation */ }
+
+#[cfg(not(feature = "full-firebase"))]
+pub async fn sync_to_firebase() -> Result<()> { /* Mock implementation */ }
+```
+
+### **🚀 Performance Optimization (2025)**
+
+#### **Bundle Splitting Strategy**
+```typescript
+// vite.config.ts - HEALTHCARE-OPTIMIZED
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'medical-core': ['./src/features/patients', './src/features/appointments'],
+          'compliance': ['./src/features/audit', './src/features/compliance'],
+          'encryption': ['./src/security/encryption'],
+          'tanstack': ['@tanstack/react-query', '@tanstack/react-router'],
+        }
+      }
+    }
+  }
+});
+```
+
+### **🔧 Advanced MCP Integration Patterns (Sept 2025)**
+
+#### **Multi-Agent Orchestration**
+- **Task Master AI**: Strategic project orchestration and intelligent task decomposition
+- **Serena**: Semantic code analysis, symbolic editing, and architectural understanding
+- **Firebase MCP**: Real-time database operations with emulator-first development
+- **Kit MCP**: Repository-wide analysis and cross-platform code intelligence
+- **Tavily MCP**: Research-augmented development with current best practices
+
+#### **Hierarchical Context Loading (Advanced Pattern)**
+```typescript
+// ✅ ADVANCED: Hierarchical CLAUDE.md system (Sept 2025 Research)
+// ROOT: /project/CLAUDE.md (Project constitution - universal rules)
+// FEATURE: /project/src/features/patients/CLAUDE.md (Feature-specific context)
+// DOMAIN: /project/src/security/CLAUDE.md (Domain-specific security rules)
+// USER: ~/.claude/CLAUDE.md (Personal preferences and workflow)
+
+// This creates a powerful layering system:
+// 1. Most specific (feature-level) loaded first
+// 2. Project-level constitution loaded second
+// 3. User-level preferences loaded third
+// 4. Enterprise policies loaded last
+```
+
+#### **Agent Coordination Workflows**
+```typescript
+// ✅ MODERN: Sophisticated multi-agent collaboration
+const workflow = {
+  planning: await mcp.task_master_ai.analyze_complexity(),
+  research: await mcp.tavily.research_latest_patterns(),
+  analysis: await mcp.serena.get_symbols_overview(),
+  implementation: await mcp.kit.cross_platform_implementation(),
+  validation: await mcp.firebase.test_with_emulator()
+};
+```
+
+#### **Context Engineering Best Practices (Research-Backed)**
+```markdown
+## Advanced Context Patterns (Sept 2025)
+1. **Living Document Principle**: CLAUDE.md must evolve with project
+2. **Canary Instructions**: Include test instructions to verify file processing
+3. **Rationale Provision**: Always explain WHY rules exist, not just WHAT they are
+4. **Creative Framing**: Use memorable metaphors for critical rules
+5. **Self-Improvement Loop**: AI reviews and suggests CLAUDE.md improvements
+```
+
+#### **Enforcement Mechanisms (Advanced)**
+```markdown
+## Anti-Rogue-Junior-Dev Toolkit
+1. **Direct Reminders**: "First, review @CLAUDE.md section X, then implement Y"
+2. **Canary Trick**: "Always refer to me as Captain" (verifies file read)
+3. **Self-Correction Loops**: Force AI to state rules before implementation
+4. **Rule Separation**: Critical rules in separate RULES.md for force-feeding
+5. **Session Restart**: Use /clear to reload updated CLAUDE.md files
+```
+
 ---
-
-# PsyPsy CMS - Healthcare Management System
-
-
-
 
 
 ## Serena MCP Integration
@@ -21,1333 +295,170 @@ The Serena MCP server provides semantic code analysis and editing capabilities o
 - **Code Editing**: `replace_symbol_body`, `insert_after_symbol`, `insert_before_symbol`
 - **Project Management**: `activate_project`, memory tools, file operations
 
-## Project Context & Overview
+## 🧠 Project Brain System
 
-This is a **HIPAA-compliant healthcare management system** built for medical professionals to manage clients, appointments, and professional credentials with enterprise-grade security and compliance.
+**Project ID**: `968890c7-551f-4ea1-9b06-38d2ae80ba55`
+**Initialized**: 2025-09-29T07:04:26.326Z
+**Project Type**: tauri
+**MCP Mode**: unified (30+ comprehensive tools)
 
-### Technology Stack (September 2025)
-- **Frontend**: React 19 + TypeScript 5.3+ + Vite 5+
-- **Desktop Framework**: Tauri 2.1+ (Rust backend)
-- **Styling**: Tailwind CSS 3.4+ + shadcn/ui + Radix UI
-- **State Management**: TanStack Query v5 + Zustand
-- **Build**: Vite 5+ with advanced chunking strategy
-- **Testing**: Vitest + Playwright E2E
-- **Package Manager**: npm (primary) / bun (alternative)
-
-### Critical Domain Context
-- **Compliance**: HIPAA + Quebec Law 25
-- **Data Classification**: PHI (Protected Health Information) handling
-- **Security**: AES-256-GCM encryption, comprehensive audit trails
-- **Healthcare Workflows**: 50-minute sessions, professional licensing, insurance management
-
-## 🚨 MANDATORY DEVELOPMENT RULES
-
-**BEFORE WRITING ANY CODE, YOU MUST FOLLOW:**
-
-@DEVELOPMENT_RULES_2025.md
-
-**Key Enforcement Points:**
-1. ✅ **React 19**: Never use manual `memo`/`useMemo`/`useCallback` (React Compiler handles this)
-2. ✅ **TanStack Query v5**: Use `isPending` (not `isLoading`), `throwOnError` (not `useErrorBoundary`)
-3. ✅ **Tauri 2.1+**: Universal entry point pattern for mobile/desktop compatibility
-4. ✅ **Feature-Based Architecture**: Self-contained feature modules (AR-001)
-5. ✅ **HIPAA Compliance**: Enhanced error boundaries with audit logging
-6. ✅ **Type Safety**: Branded types for medical IDs (TS-001)
-7. ✅ **Security**: All PHI data must be explicitly marked and audited
-
-## Project Architecture
-
-### Feature-Based Structure (MANDATORY - Rule AR-001)
-```
-src/
-├── features/                    # Business domain features
-│   ├── authentication/         # Self-contained feature modules
-│   ├── patients/              # Patient management
-│   ├── appointments/          # Appointment scheduling
-│   ├── medical-notes/         # Medical notes with Quebec templates
-│   ├── professionals/         # Professional credential management
-│   └── compliance/            # HIPAA/Quebec Law 25 compliance
-├── shared/                      # Cross-feature shared code ONLY
-│   ├── components/ui/         # shadcn/ui base components (DO NOT MODIFY)
-│   ├── hooks/                 # Generic custom hooks
-│   ├── services/              # Common API services
-│   ├── utils/                 # Utility functions
-│   └── types/                 # Global type definitions
-├── app/                        # Application-level code
-│   ├── providers/             # Context providers
-│   ├── router/                # Routing configuration
-│   └── store/                 # Global state management
-└── assets/                     # Static assets
-```
-
-### Tauri Backend Structure
-```
-src-tauri/src/
-├── commands/                   # Tauri command handlers (by domain)
-├── services/                   # Business logic services
-├── models/                     # Data models
-├── security/                   # HIPAA compliance & encryption
-├── plugins/                    # Custom Tauri plugins
-├── lib.rs                     # Universal entry point
-└── main.rs                    # Application entry point
-```
-
-## Development Workflows
-
-### Code Style & Standards
-- **ES Modules**: Use `type: "module"` syntax
-- **Async/Await**: Prefer over callbacks
-- **TypeScript Strict**: All new code must use strict mode
-- **File Size**: Maximum 300 lines per file
-- **Path Aliases**: MUST use `@/components`, `@/hooks`, etc.
-
-### Import Order (MANDATORY)
-1. External libraries (`react`, `@tauri-apps/*`)
-2. Internal modules (`@/components`, `@/hooks`)
-3. Local files (`./utils`)
-4. Styles/assets (`@/assets`)
-
-### Key Commands
-```bash
-npm run dev                    # Start Vite dev server
-bun run tauri dev             # Start Tauri development (PREFERRED)
-npm run tauri:dev             # Alternative Tauri development
-npm run tauri:build           # Build production app
-npm run test                  # Run Vitest test suite
-npm run e2e                   # Run Playwright E2E tests
-npm run lint                  # Check ESLint rules
-npm run type-check            # TypeScript validation (MANDATORY before commits)
-npm run test:coverage         # Test coverage report
-```
-
-## HIPAA Compliance Requirements
-
-### Security Standards
-- **Encryption**: AES-256-GCM for all PHI data
-- **Audit Logging**: 7-year retention requirement
-- **Access Control**: Role-based permissions (RBAC)
-- **Data Classification**: All PHI must be explicitly marked
-- **Error Handling**: Compliance-aware error boundaries
-
-### PHI Data Handling Pattern (MANDATORY - Rule SEC-002)
-```typescript
-// ✅ CORRECT: PHI-aware data handling
-const handlePatientData = (data: PatientData) => {
-  const sanitizedData = {
-    ...data,
-    ssn: markAsPHI(data.ssn),
-    medicalHistory: markAsPHI(data.medicalHistory),
-    // Non-PHI fields remain unmarked
-    name: data.name,
-    id: data.id
-  }
-
-  // MANDATORY: Audit all PHI access
-  auditPHIAccess('view', sanitizedData.id, getCurrentUser().id)
-
-  return sanitizedData
-}
-```
-
-## Healthcare Domain Requirements
-
-### Business Rules
-- **Sessions**: Must be 50-minute blocks
-- **Professional Credentials**: Annual validation required
-- **Appointments**: Conflict prevention mandatory
-- **Insurance**: All information requires encryption
-- **Emergency Contacts**: Mandatory field
-- **Medical Notes**: Professional signature required
-
-### Quebec Law 25 Compliance
-- **Consent Management**: Explicit consent tracking
-- **Data Residency**: Data must remain in Quebec/Canada
-- **Breach Notification**: 72-hour reporting requirement
-- **Right to Erasure**: Complete data deletion capability
-
-## Performance & Quality Standards
-
-### Bundle Optimization (Rule P-001)
-- **Medical Core**: Separate chunk for critical features
-- **Compliance**: Lazy-loaded compliance features
-- **UI Components**: Cached UI component chunks
-- **Charts**: Separate chunk for data visualization
-
-### Testing Requirements
-- **Coverage**: Minimum 80% for new code
-- **E2E Tests**: All critical healthcare workflows
-- **HIPAA Tests**: Compliance validation in test suite
-- **Security Tests**: PHI handling and audit logging
-
-### Error Handling Standards
-- **Never Silent**: All errors must be logged with context
-- **User-Friendly**: Provide clear error messages via toast
-- **Retry Logic**: Implement for network failures
-- **Validation**: Use Zod for runtime validation
-- **Audit Trail**: All errors involving PHI must be audited
-
-## Quick Reference
-
-### Key Files & Directories
-- **Main Entry**: `src/main.tsx`
-- **App Root**: `src/App.tsx`
-- **Tauri Config**: `src-tauri/tauri.conf.json`
-- **Commands**: `src-tauri/src/commands/`
-- **Types**: `src/types/index.ts`
-- **Rules**: `DEVELOPMENT_RULES_2025.md`
-
-### Migration Priorities (September 2025)
-1. ✅ Update to React 19 + remove manual memoization
-2. ✅ Update TanStack Query to v5 syntax (`isPending`, `throwOnError`)
-3. ⏳ Implement feature-based architecture
-4. ⏳ Add type-safe Tauri command wrappers
-5. ⏳ Enhance HIPAA compliance error boundaries
-6. ⏳ Add proper bundle splitting configuration
-
-## Forbidden Patterns (DO NOT USE)
-
-❌ **Manual memoization** with React Compiler enabled
-❌ **TanStack Query v4 syntax** (`isLoading`, `useErrorBoundary`)
-❌ **Direct PHI logging** (`console.log(patient.ssn)`)
-❌ **Deep feature imports** (`.../components/internal/helper`)
-❌ **Untyped Tauri commands** (raw `invoke()` without types)
-❌ **Modifying shadcn/ui** components directly
-❌ **Unaudited PHI access** (database queries without audit)
+### Brain Intelligence Features
+- **Tool Usage Analytics**: Tracks which tools work best for different scenarios
+- **Personal Pattern Learning**: Learns from your debugging style and preferences  
+- **Project Evolution**: Records changes and their impact on debugging efficiency
+- **Smart Recommendations**: Suggests optimal tools based on your usage patterns
 
 ---
 
-**Compliance Level**: HIPAA + Quebec Law 25
-**Last Updated**: September 2025
-**Tech Stack Version**: React 19 + Tauri 2.1+ + TanStack Query v5
+## 🔧 MCP Server Configuration
 
-## Task Master AI Instructions
-**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
-@./.taskmaster/CLAUDE.md
+Add this to your `.mcp.json`:
 
-## Firebase MCP Integration Rules
-
-### Firebase Emulator Development Environment
-
-**Current PsyPsy Emulator Configuration:**
-```
-┌────────────────┬────────────────┬──────────────────────────────────┐
-│ Emulator       │ Host:Port      │ View in Emulator UI              │
-├────────────────┼────────────────┼──────────────────────────────────┤
-│ Authentication │ 127.0.0.1:9880 │ http://127.0.0.1:8782/auth       │
-├────────────────┼────────────────┼──────────────────────────────────┤
-│ Functions      │ 127.0.0.1:8780 │ http://127.0.0.1:8782/functions  │
-├────────────────┼────────────────┼──────────────────────────────────┤
-│ Firestore      │ 127.0.0.1:9881 │ http://127.0.0.1:8782/firestore  │
-├────────────────┼────────────────┼──────────────────────────────────┤
-│ Database       │ 127.0.0.1:9882 │ http://127.0.0.1:8782/database   │
-├────────────────┼────────────────┼──────────────────────────────────┤
-│ Hosting        │ 127.0.0.1:8781 │ n/a                              │
-└────────────────┴────────────────┴──────────────────────────────────┘
-```
-
-**Emulator UI:** http://127.0.0.1:8782/
-
-### Firebase MCP Usage Patterns (MANDATORY)
-
-#### **FMCP-001: Always Use Emulator Flag in Development**
-```javascript
-// ✅ CORRECT: Always use use_emulator: true in development
-await firestore_get_documents({
-  paths: ["patients/patient-123", "appointments/appt-456"],
-  use_emulator: true,
-  database: "(default)"
-});
-
-// ❌ FORBIDDEN: Never omit emulator flag in development
-await firestore_get_documents({
-  paths: ["patients/patient-123"],
-  // Missing use_emulator: true - will hit production!
-});
-```
-
-#### **FMCP-002: PHI Data Testing Patterns**
-```javascript
-// ✅ CORRECT: Healthcare data queries with emulator
-await firestore_query_collection({
-  collection_path: "patients",
-  filters: [{
-    field: "emergencyContact.phone",
-    op: "NOT_EQUAL",
-    compare_value: { string_value: "" }
-  }],
-  use_emulator: true,
-  limit: 10
-});
-
-// Test appointment scheduling (50-minute blocks)
-await firestore_query_collection({
-  collection_path: "appointments",
-  filters: [{
-    field: "duration",
-    op: "EQUAL",
-    compare_value: { integer_value: 50 }
-  }, {
-    field: "status",
-    op: "IN",
-    compare_value: {
-      string_array_value: ["scheduled", "confirmed", "in-progress"]
+```json
+{
+  "mcpServers": {
+    "psypsy-cms-debugger": {
+      "command": "node",
+      "args": ["build/unified-server.js"],
+      "cwd": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS"
     }
-  }],
-  use_emulator: true,
-  order: {
-    orderBy: "dateTime",
-    orderByDirection: "ASCENDING"
   }
-});
-```
-
-#### **FMCP-003: RBAC and Authentication Testing**
-```javascript
-// ✅ CORRECT: Test user roles for Quebec healthcare compliance
-await auth_set_claim({
-  uid: "prof-123",
-  claim: "userType",
-  value: 1  // PROFESSIONAL type
-});
-
-await auth_set_claim({
-  uid: "client-456",
-  claim: "userType",
-  value: 2  // CLIENT type
-});
-
-// Test Quebec Law 25 consent tracking
-await auth_set_claim({
-  uid: "client-456",
-  claim: "consentStatus",
-  value: "explicit_consent_given"
-});
-
-await auth_set_claim({
-  uid: "client-456",
-  claim: "dataResidency",
-  value: "quebec_canada"
-});
-```
-
-#### **FMCP-004: Compliance Audit Testing**
-```javascript
-// ✅ CORRECT: Test audit trails for PIPEDA compliance
-await firestore_query_collection({
-  collection_path: "audit_logs",
-  filters: [{
-    field: "dataType",
-    op: "EQUAL",
-    compare_value: { string_value: "PHI" }
-  }, {
-    field: "action",
-    op: "IN",
-    compare_value: {
-      string_array_value: ["read", "write", "delete", "export"]
-    }
-  }, {
-    field: "timestamp",
-    op: "GREATER_THAN",
-    compare_value: { string_value: "2025-01-01T00:00:00Z" }
-  }],
-  use_emulator: true,
-  order: {
-    orderBy: "timestamp",
-    orderByDirection: "DESCENDING"
-  },
-  limit: 100
-});
-
-// Test Law 25 breach notification requirements (72-hour rule)
-await firestore_query_collection({
-  collection_path: "security_incidents",
-  filters: [{
-    field: "severity",
-    op: "GREATER_THAN_OR_EQUAL",
-    compare_value: { string_value: "high" }
-  }, {
-    field: "notificationStatus",
-    op: "EQUAL",
-    compare_value: { string_value: "pending" }
-  }],
-  use_emulator: true
-});
-```
-
-#### **FMCP-005: Real-time Database for Live Updates**
-```javascript
-// ✅ CORRECT: Test appointment availability in real-time
-await database_get_data({
-  path: "/availability/prof-123/2025-01-20",
-  databaseUrl: "http://localhost:9882/psypsy-dev-local-default-rtdb"
-});
-
-// Test conflict prevention for double-booking
-await database_set_data({
-  path: "/appointments/live-updates/appt-456",
-  data: JSON.stringify({
-    status: "booking_in_progress",
-    timestamp: new Date().toISOString(),
-    professionalId: "prof-123",
-    clientId: "client-456",
-    lockExpiry: new Date(Date.now() + 300000).toISOString() // 5-minute lock
-  }),
-  databaseUrl: "http://localhost:9882/psypsy-dev-local-default-rtdb"
-});
-```
-
-#### **FMCP-006: Professional Credential Validation**
-```javascript
-// ✅ CORRECT: Test professional licensing and specialization
-await firestore_query_collection({
-  collection_path: "professionals",
-  filters: [{
-    field: "licenseStatus",
-    op: "EQUAL",
-    compare_value: { string_value: "active" }
-  }, {
-    field: "specialization",
-    op: "IN",
-    compare_value: {
-      string_array_value: [
-        "Clinical Psychology",
-        "Counseling Psychology",
-        "Psychiatry",
-        "Social Work"
-      ]
-    }
-  }, {
-    field: "jurisdiction",
-    op: "EQUAL",
-    compare_value: { string_value: "Quebec" }
-  }],
-  use_emulator: true
-});
-
-// Test credential expiry tracking
-await firestore_query_collection({
-  collection_path: "professional_credentials",
-  filters: [{
-    field: "expiryDate",
-    op: "LESS_THAN",
-    compare_value: {
-      string_value: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString() // 90 days
-    }
-  }],
-  use_emulator: true,
-  order: {
-    orderBy: "expiryDate",
-    orderByDirection: "ASCENDING"
-  }
-});
-```
-
-### Firebase MCP Environment Setup
-
-#### **Required Environment Variables**
-```bash
-# Automatically set when emulators are running
-FIRESTORE_EMULATOR_HOST=localhost:9881
-FIREBASE_DATABASE_EMULATOR_HOST=localhost:9882
-FIREBASE_AUTH_EMULATOR_HOST=localhost:9880
-FIREBASE_FUNCTIONS_EMULATOR_HOST=localhost:8780
-FIREBASE_EMULATOR_HUB=localhost:4400
-```
-
-#### **Pre-Development Checklist**
-1. ✅ Start emulators: `firebase emulators:start --import=./seed-data`
-2. ✅ Verify connectivity: Test each emulator endpoint
-3. ✅ Load seed data: Import typical PsyPsy scenarios
-4. ✅ Set project directory: Use `firebase_update_environment`
-
-### Development Workflow Integration
-
-#### **Daily Development Loop**
-```bash
-# 1. Start emulators with data persistence
-firebase emulators:start --import=./seed-data --export-on-exit=./seed-data
-
-# 2. Use Firebase MCP tools for testing
-# Always include use_emulator: true for development
-
-# 3. Export data for reproducible testing
-firebase emulators:export ./test-scenarios/$(date +%Y%m%d)
-```
-
-#### **Testing Healthcare Scenarios**
-```javascript
-// Test complete patient registration flow
-async function testPatientRegistrationFlow() {
-  // 1. Create patient with mandatory emergency contact
-  await firestore_get_documents({
-    paths: ["patients/new-patient-123"],
-    use_emulator: true
-  });
-
-  // 2. Verify PHI encryption and audit logging
-  await firestore_query_collection({
-    collection_path: "audit_logs",
-    filters: [{
-      field: "resourceId",
-      op: "EQUAL",
-      compare_value: { string_value: "patients/new-patient-123" }
-    }, {
-      field: "action",
-      op: "EQUAL",
-      compare_value: { string_value: "create" }
-    }],
-    use_emulator: true,
-    limit: 1
-  });
-
-  // 3. Test appointment scheduling (50-minute blocks)
-  await firestore_query_collection({
-    collection_path: "appointments",
-    filters: [{
-      field: "clientId",
-      op: "EQUAL",
-      compare_value: { string_value: "new-patient-123" }
-    }],
-    use_emulator: true
-  });
 }
 ```
 
-### Security and Compliance Testing
+### Available Tools (UNIFIED Mode)
 
-#### **PIPEDA/Law 25 Validation Patterns**
-```javascript
-// Test data residency compliance
-await firestore_query_collection({
-  collection_path: "data_residency_logs",
-  filters: [{
-    field: "region",
-    op: "EQUAL",
-    compare_value: { string_value: "quebec-canada" }
-  }, {
-    field: "dataType",
-    op: "EQUAL",
-    compare_value: { string_value: "PHI" }
-  }],
-  use_emulator: true
-});
 
-// Test consent management and renewal
-await firestore_query_collection({
-  collection_path: "consent_records",
-  filters: [{
-    field: "consentType",
-    op: "EQUAL",
-    compare_value: { string_value: "explicit_consent" }
-  }, {
-    field: "expiryDate",
-    op: "GREATER_THAN",
-    compare_value: { string_value: new Date().toISOString() }
-  }],
-  use_emulator: true
-});
-```
+#### Comprehensive Debugging Tools (30+ Tools)
+- **Electron Tools**: start_electron_app, electron_evaluate, electron_reload, etc.
+- **Tauri Tools**: start_tauri_app, get_tauri_console, get_tauri_errors, apply_tauri_autofix, etc.
+- **Playwright Tools**: launch_playwright_app, playwright_interact, etc.
+- **Analytics**: get_autofix_stats, performance tracking
+- **Integration**: Task Master, iTerm2 automation
 
-### Forbidden Patterns (NEVER DO THESE)
+**Perfect for**: Direct debugging, error analysis, real-time console monitoring
 
-❌ **Omitting emulator flag in development**
-❌ **Testing with production Firebase project during development**
-❌ **Hardcoding emulator ports (use environment variables)**
-❌ **Bypassing audit logging in test scenarios**
-❌ **Testing without proper RBAC role assignment**
-❌ **Creating test data without PHI encryption simulation**
 
 ---
 
-**Firebase MCP Compliance Level**: PIPEDA + Quebec Law 25
-**Last Updated**: September 2025
-**Emulator Environment**: PsyPsy Development Suite
+## 📋 **MANDATORY PROJECT BRAIN RULES**
 
-## Task Master AI MCP Integration Rules
+### **Change Tracking & Learning System** 
+**⚠️ CRITICAL**: ALL significant changes MUST be logged to help the brain learn and improve recommendations.
 
-### Task Master AI Development Workflow (MANDATORY)
+#### **Change Log Table**
+| Date | Change Type | Impact | Description | Tools Used | Learning |
+|------|-------------|---------|-------------|------------|----------|
+| 2025-09-29 | Project Init | High | Project brain initialized with unified mode | init_project | Solo developer with tauri project - brain will learn debugging patterns and tool preferences over time |
+| 2025-09-29 | Code Standards | Critical | Created development standards to prevent duplicate files and enforce single source of truth policy | Kit MCP, Edit | User experienced proliferation of lib_full.rs, lib_minimal.rs variants - established central standards document and CLAUDE.md enforcement |
+| 2025-09-29 | Best Practices | High | Updated CLAUDE.md with 2025 Claude Code best practices, modern Tauri patterns, and healthcare-specific workflows | Tavily MCP, Edit | Research revealed latest trends: vibe coding, agentic development, React 19 patterns, TanStack Query v5 syntax, and MCP coordination patterns |
 
-**Task Master AI** provides comprehensive task management for PsyPsy CMS development with AI-powered task generation, expansion, and progress tracking.
+#### **Update Procedures**
+1. **Structural Changes**: Always log major architectural changes
+2. **Tool Usage**: The brain automatically tracks which tools are most effective
+3. **Team Patterns**: Document recurring issues and solutions
+4. **Performance**: Track response times and success rates
 
-#### **TMCP-001: Essential Task Master AI Commands**
-
-```bash
-# Core Project Management
-task-master init                                    # Initialize Task Master in project
-task-master parse-prd .taskmaster/docs/prd.txt      # Generate tasks from PRD
-task-master models --setup                        # Configure AI models
-
-# Daily Development Workflow
-task-master list                                   # Show all tasks with status
-task-master next                                   # Get next available task
-task-master show <id>                             # View task details (e.g., task-master show 1.2)
-task-master set-status --id=<id> --status=done    # Mark task complete
-
-# Task Management
-task-master add-task --prompt="description" --research        # Add new task with AI
-task-master expand --id=<id> --research --force              # Break into subtasks
-task-master update-task --id=<id> --prompt="changes"         # Update specific task
-task-master update-subtask --id=<id> --prompt="notes"        # Add implementation notes
-```
-
-#### **TMCP-002: MCP Tool Usage Patterns**
-
-```javascript
-// ✅ CORRECT: Use MCP tools for task management
-await mcp__task_master_ai__get_tasks({
-  projectRoot: "/absolute/path/to/project",
-  status: "pending",
-  withSubtasks: true
-});
-
-// Get next task for development
-await mcp__task_master_ai__next_task({
-  projectRoot: "/absolute/path/to/project"
-});
-
-// Update task with progress notes
-await mcp__task_master_ai__update_subtask({
-  projectRoot: "/absolute/path/to/project",
-  id: "1.2",
-  prompt: "Implemented authentication middleware with JWT validation. Added unit tests for login/logout flows."
-});
-
-// Mark task complete
-await mcp__task_master_ai__set_task_status({
-  projectRoot: "/absolute/path/to/project",
-  id: "1.2",
-  status: "done"
-});
-```
-
-#### **TMCP-003: Healthcare Development Integration**
-
-```javascript
-// ✅ CORRECT: Healthcare-specific task management
-await mcp__task_master_ai__add_task({
-  projectRoot: "/absolute/path/to/project",
-  prompt: "Implement PIPEDA consent tracking for patient data access with 72-hour breach notification system",
-  research: true
-});
-
-// Expand healthcare compliance tasks
-await mcp__task_master_ai__expand_task({
-  projectRoot: "/absolute/path/to/project",
-  id: "5",
-  research: true,
-  prompt: "Focus on Quebec Law 25 specific requirements for healthcare data processing"
-});
-
-// Track PHI implementation progress
-await mcp__task_master_ai__update_task({
-  projectRoot: "/absolute/path/to/project",
-  id: "3",
-  prompt: "Added AES-256-GCM encryption for all PHI fields. Implemented audit logging for data access. Need to add automatic consent renewal workflows."
-});
-```
-
-#### **TMCP-004: Research-Backed Task Generation**
-
-```javascript
-// ✅ CORRECT: Use research for complex healthcare tasks
-await mcp__task_master_ai__research({
-  projectRoot: "/absolute/path/to/project",
-  query: "Quebec Law 25 specific requirements for healthcare management systems and PIPEDA compliance integration",
-  saveTo: "5.2", // Save research to specific subtask
-  detailLevel: "high"
-});
-
-// Analyze task complexity for healthcare features
-await mcp__task_master_ai__analyze_project_complexity({
-  projectRoot: "/absolute/path/to/project",
-  research: true,
-  threshold: 7 // High complexity threshold for medical features
-});
-```
-
-#### **TMCP-005: Task Hierarchy and Dependencies**
-
-```javascript
-// ✅ CORRECT: Manage healthcare development dependencies
-await mcp__task_master_ai__add_dependency({
-  projectRoot: "/absolute/path/to/project",
-  id: "5", // Patient management
-  dependsOn: "2" // Database encryption must be completed first
-});
-
-// Move tasks between development phases
-await mcp__task_master_ai__move_task({
-  projectRoot: "/absolute/path/to/project",
-  from: "8",
-  to: "3", // Move compliance task earlier in priority
-  withDependencies: true
-});
-```
-
-### Task Master AI Environment Configuration
-
-#### **Required API Keys for PsyPsy Development**
-```bash
-# .env configuration (configure with your own keys)
-PERPLEXITY_API_KEY=your_perplexity_key_here
-# Optional: Add additional providers for redundancy
-ANTHROPIC_API_KEY=your_anthropic_key_here
-OPENAI_API_KEY=your_openai_key_here
-```
-
-#### **Model Configuration for Healthcare Development**
-```bash
-# Configure AI models for healthcare-specific tasks
-task-master models --set-main claude-3-5-sonnet-20241022
-task-master models --set-research sonar-pro  # Perplexity for research
-task-master models --set-fallback gpt-4o-mini
-```
-
-### PsyPsy-Specific Task Management Patterns
-
-#### **Healthcare Task Categories**
-```javascript
-// Security and Compliance Tasks
-await mcp__task_master_ai__add_task({
-  prompt: "Implement Quebec healthcare data residency requirements with Canadian cloud infrastructure",
-  priority: "high",
-  dependencies: "1,2" // Database and auth dependencies
-});
-
-// Professional Credential Management
-await mcp__task_master_ai__add_task({
-  prompt: "Build professional license tracking with annual renewal reminders for Quebec medical professionals",
-  research: true
-});
-
-// Patient Privacy and Consent
-await mcp__task_master_ai__add_task({
-  prompt: "Create Law 25 compliant consent management with explicit consent tracking and renewal workflows"
-});
-```
-
-#### **Development Workflow Integration**
-
-```bash
-# Start development session
-task-master next                           # Get next task
-task-master show 3.1                      # Review subtask details
-
-# During implementation
-task-master update-subtask --id=3.1 --prompt="Added Firebase Auth integration. Testing RBAC permissions."
-
-# Complete and move to next
-task-master set-status --id=3.1 --status=done
-task-master next                           # Get next available task
-```
-
-#### **Task Master AI File Structure**
-
-```
-.taskmaster/
-├── tasks/
-│   ├── tasks.json              # Main task database
-│   ├── task-1.md              # Individual task files
-│   ├── task-2.md
-│   └── ...
-├── docs/
-│   ├── prd.txt                # Product requirements document
-│   └── research/              # Research outputs
-├── reports/
-│   └── task-complexity-report.json
-├── config.json                # AI model configuration
-└── CLAUDE.md                  # Task Master integration guide
-```
-
-### Development Best Practices
-
-#### **TMCP-006: Healthcare Task Documentation**
-
-```javascript
-// ✅ CORRECT: Document healthcare implementation details
-await mcp__task_master_ai__update_subtask({
-  projectRoot: "/absolute/path/to/project",
-  id: "4.3",
-  prompt: `
-  Implemented patient appointment scheduling with 50-minute blocks:
-  - Added conflict detection to prevent double-booking
-  - Integrated Quebec timezone handling (America/Montreal)
-  - Created audit logs for all appointment modifications
-  - Added emergency contact validation (mandatory field)
-  - Next: Implement appointment reminder system with SMS/push notifications
-  `
-});
-```
-
-#### **TMCP-007: Compliance Progress Tracking**
-
-```javascript
-// Track PIPEDA compliance implementation
-await mcp__task_master_ai__plan({
-  projectRoot: "/absolute/path/to/project",
-  id: "6",
-  research: true // Use research for up-to-date compliance requirements
-});
-
-// Generate compliance-focused expansion
-await mcp__task_master_ai__expand_task({
-  projectRoot: "/absolute/path/to/project",
-  id: "6",
-  num: "8", // More detailed subtasks for compliance
-  research: true,
-  prompt: "Focus on Montreal healthcare regulations and Quebec Law 25 requirements"
-});
-```
-
-### Integration with Firebase MCP Tools
-
-#### **TMCP-008: Combined Workflow Pattern**
-
-```javascript
-// 1. Use Task Master AI to plan
-const nextTask = await mcp__task_master_ai__next_task({
-  projectRoot: "/absolute/path/to/project"
-});
-
-// 2. Implement using Firebase MCP tools
-await firestore_query_collection({
-  collection_path: "patients",
-  filters: [{ field: "status", op: "EQUAL", compare_value: { string_value: "active" }}],
-  use_emulator: true
-});
-
-// 3. Update task progress
-await mcp__task_master_ai__update_subtask({
-  projectRoot: "/absolute/path/to/project",
-  id: nextTask.id,
-  prompt: "Tested patient query functionality with Firebase emulator. All active patients retrieved successfully."
-});
-
-// 4. Mark complete and get next
-await mcp__task_master_ai__set_task_status({
-  projectRoot: "/absolute/path/to/project",
-  id: nextTask.id,
-  status: "done"
-});
-```
-
-### Task Master AI Compliance Tracking
-
-#### **PIPEDA/Law 25 Task Templates**
-
-```javascript
-// Quebec-specific compliance tasks
-const complianceTasks = [
-  "Implement explicit consent collection and tracking",
-  "Add 72-hour breach notification automation",
-  "Create data portability export functionality",
-  "Build right-to-deletion workflows",
-  "Add Quebec data residency validation",
-  "Implement privacy impact assessment automation"
-];
-
-// Generate tasks for each compliance requirement
-for (const taskPrompt of complianceTasks) {
-  await mcp__task_master_ai__add_task({
-    projectRoot: "/absolute/path/to/project",
-    prompt: taskPrompt,
-    research: true,
-    priority: "high"
-  });
-}
-```
-
-### Forbidden Task Master AI Patterns
-
-❌ **Using relative paths** (always use absolute projectRoot paths)
-❌ **Skipping research flag** for complex healthcare tasks
-❌ **Not updating subtask progress** during implementation
-❌ **Creating tasks without proper dependencies**
-❌ **Marking tasks complete** without proper validation
-❌ **Ignoring task complexity analysis** for medical features
+### **Brain Analytics Integration**
+The project brain continuously learns from:
+- Tool usage patterns and effectiveness
+- Common error types and resolutions  
+- Team debugging workflows and preferences
+- Project evolution and impact of changes
 
 ---
 
-**Task Master AI Integration Level**: Healthcare Development Optimized
-**Research Capability**: Perplexity-powered for up-to-date compliance
-**Last Updated**: September 2025
+## 🎯 **TAURI Specific Optimizations**
 
-## Project Organization Rules (MANDATORY)
+### Tauri Debugging Excellence
+- **Real-time Console**: Use `get_tauri_console` for WebView debugging
+- **Error Analysis**: `get_tauri_errors` categorizes React, network, and Rust issues  
+- **Auto-Fix**: `apply_tauri_autofix` learns from your codebase patterns
+- **Performance**: Monitor bundle size and startup times
 
-### **ORG-001: File Organization Standards**
+---
 
-**CRITICAL**: All agents MUST maintain the organized project structure:
+## 🎯 **My Debugging Patterns**
 
-```
-PsyPsyCMS/
-├── 📂 tests/                        # ALL test files organized by type
-│   ├── 📂 e2e/                      # End-to-end tests
-│   │   ├── 📂 healthcare/           # Healthcare workflow tests
-│   │   └── 📂 accessibility/        # Accessibility E2E tests
-│   ├── 📂 integration/              # Integration tests (.cjs, .js files)
-│   ├── 📂 security/                 # Security & HIPAA tests
-│   ├── 📂 performance/              # Performance & load tests
-│   └── 📂 utilities/                # Test utilities & HTML test files
-│       └── 📂 html/                 # HTML-based test utilities
-├── 📂 docs/                         # ALL documentation centralized
-│   ├── 📂 testing/                  # Testing strategies & guides
-│   ├── 📂 compliance/               # HIPAA & Quebec Law 25 docs
-│   ├── 📂 setup/                    # Setup & configuration guides
-│   ├── 📂 security/                 # Security documentation
-│   └── 📂 design-system/            # Design system documentation
-├── 📂 scripts/                      # Build & utility scripts ONLY
-└── 📋 ROOT FILES (Keep minimal)
-    ├── README.md                    # SINGLE comprehensive project overview
-    ├── CLAUDE.md                    # Agent instructions
-    ├── DEVELOPMENT_RULES_2025.md    # Development patterns
-    └── Configuration files only
-```
+The brain will learn your debugging style and preferences:
+- **Preferred Tools**: Tracks which tools you use most effectively
+- **Common Issues**: Remembers problems you encounter frequently  
+- **Successful Workflows**: Records debugging approaches that work well for you
+- **Time Patterns**: Learns when you're most productive with different tools
 
-### **ORG-002: Documentation Hierarchy Rules**
+---
 
-**MANDATORY**: Keep only ONE main documentation file at the root:
+## 📊 **Analytics & Learning**
 
-✅ **ALLOWED at root:**
-- `README.md` - Complete project overview and structure
-- `CLAUDE.md` - Agent instructions (this file)
-- `DEVELOPMENT_RULES_2025.md` - Development patterns
-- `CHANGELOG.md` - Version history
+Analytics Status: **ENABLED**
 
-❌ **FORBIDDEN at root:**
-- Test files (*.test.*, test-*, autonomous-*)
-- Implementation docs (move to `docs/`)
-- Setup guides (move to `docs/setup/`)
-- Compliance reports (move to `docs/compliance/`)
-- Strategy documents (move to `docs/testing/` or appropriate folder)
+The project brain tracks:
+- Tool effectiveness and response times
+- Your personal debugging patterns and solutions
+- Successful workflows and preferences
+- Error resolution strategies and outcomes
 
-### **ORG-003: Test File Naming Conventions**
+**Brain Data Location**: `.cms-debugger-brain/analytics/`
+**My Patterns**: `.cms-debugger-brain/team-knowledge/`
 
-**MANDATORY**: Follow these naming patterns:
+---
 
-```
-tests/
-├── integration/
-│   ├── auth-connection.test.cjs
-│   ├── firebase-connection.test.cjs
-│   ├── professionals-api.test.js
-│   └── client-professional.test.cjs
-├── e2e/healthcare/
-│   ├── medical-notes.test.cjs
-│   └── quebec-healthcare.test.cjs
-└── utilities/
-    ├── error-injection.test.js
-    └── html/
-        ├── test-error-patterns.html
-        └── validate-error-categorization.html
-```
+## 🚀 **Quick Start Commands**
 
-### **ORG-004: Agent Responsibilities**
-
-**CRITICAL**: Every agent MUST:
-
-1. **✅ Before adding ANY file to root:**
-   - Check if it belongs in `docs/`, `tests/`, or `scripts/`
-   - Use the appropriate subfolder structure
-
-2. **✅ When creating test files:**
-   - Place in correct `tests/` subfolder
-   - Use proper naming conventions
-   - Update test documentation if needed
-
-3. **✅ When adding documentation:**
-   - Place in `docs/` with appropriate subfolder
-   - Reference from main `README.md` if needed
-   - Keep root minimal and organized
-
-4. **✅ When creating scripts:**
-   - Place in `scripts/` folder
-   - Update `package.json` scripts if needed
-
-### **ORG-005: Change Tracking Requirements**
-
-**MANDATORY**: All significant changes MUST:
-
-1. **Update CHANGELOG.md** with:
-   - Version number
-   - Change category (Added, Changed, Fixed, Removed)
-   - Healthcare compliance impact
-   - Breaking changes notation
-
-2. **Update README.md** if:
-   - New major features added
-   - Architecture changes
-   - New dependencies or requirements
-
-3. **Maintain file organization**:
-   - No loose files in root
-   - Proper categorization in subfolders
-   - Clear naming conventions
-
-### **ORG-006: Documentation Cross-References**
-
-**REQUIRED**: Maintain these links in `README.md`:
-
-- Link to all major documentation in `docs/`
-- Reference HIPAA compliance docs
-- Point to testing strategies
-- Include setup guides
-- Reference design system docs
-
-### **ORG-007: Cleanup Responsibilities**
-
-**AGENTS MUST**: When finding disorganized files:
-
-1. **Immediate action**:
-   - Move files to proper folders
-   - Update references if needed
-   - Clean up broken links
-
-2. **Report to user**:
-   - What was reorganized
-   - Why the change was needed
-   - Impact on project structure
-
-### **ORG-008: Version Control Integration**
-
-**REQUIRED**: Changes that affect:
-
-- Project structure → Update README.md
-- Test organization → Update testing docs
-- Documentation → Update cross-references
-- Scripts → Update package.json references
-
-**ENFORCEMENT**: Any agent that creates files outside the organized structure will be considered non-compliant with healthcare development standards.
-
-**COMPLIANCE LEVEL**: Healthcare Organization Standards
-**Enforcement**: Automatic for all AI agents
-**Review**: Monthly organizational audit
-
-## 🤖 AI Agent Organization Rules (CRITICAL ENFORCEMENT)
-
-### **AGENT-001: Project Structure Preservation (MANDATORY)**
-
-**BEFORE ANY FILE CREATION OR MODIFICATION, ALL AI AGENTS MUST:**
-
-#### **✅ File Creation Protocol:**
+### Tauri Development
 ```bash
-# STEP 1: Check target directory
-if [[ "$new_file" == *.test.* ]] || [[ "$new_file" == *test*.* ]]; then
-  TARGET_DIR="tests/"
-  # Determine test type: integration/, e2e/, security/, performance/, utilities/
-elif [[ "$new_file" == *.md ]] && [[ "$new_file" != "README.md" ]] && [[ "$new_file" != "CLAUDE.md" ]] && [[ "$new_file" != "DEVELOPMENT_RULES_2025.md" ]] && [[ "$new_file" != "CHANGELOG.md" ]]; then
-  TARGET_DIR="docs/"
-  # Determine docs type: testing/, compliance/, setup/, security/, design-system/
-elif [[ "$new_file" == *.js ]] && [[ "$purpose" == "automation" ]]; then
-  TARGET_DIR="scripts/"
-else
-  # ROOT FILES ONLY: README.md, CLAUDE.md, DEVELOPMENT_RULES_2025.md, CHANGELOG.md, config files
-  if [[ "$new_file" != "README.md" ]] && [[ "$new_file" != "CLAUDE.md" ]] && [[ "$new_file" != "DEVELOPMENT_RULES_2025.md" ]] && [[ "$new_file" != "CHANGELOG.md" ]] && [[ "$new_file" != *".json" ]] && [[ "$new_file" != *".toml" ]] && [[ "$new_file" != *".yaml" ]] && [[ "$new_file" != *".yml" ]]; then
-    REJECT_CREATION="File belongs in organized subfolder, not root"
-  fi
-fi
+# Start your tauri app with debugging
+npm run tauri dev  # or bun run tauri dev
+
+# Use MCP tools for debugging
+# Direct debugging tools
+start_tauri_app(appPath=".")
+get_tauri_console(processId="your-process-id")
 ```
 
-#### **🚫 FORBIDDEN Actions for AI Agents:**
+---
 
-**❌ NEVER CREATE in root directory:**
-- Test files (`*.test.*`, `*-test.*`, `test-*.*`)
-- Implementation guides (`*-implementation.*`, `*-guide.*`)
-- Strategy documents (`*-strategy.*`, `*-approach.*`)
-- Compliance reports (`*-compliance.*`, `*-audit.*`)
-- Setup instructions (`setup-*.*`, `install-*.*`)
-- Temporary files (`temp-*.*`, `tmp-*.*`)
+## 🔄 **Advanced Self-Improvement Protocol (Sept 2025)**
 
-**❌ NEVER MODIFY core organization files without explicit user permission:**
-- `docs/README.md` (master navigation hub)
-- `DEVELOPMENT_RULES_2025.md` (development patterns)
-- `.taskmaster/` directory structure
-- `tests/` directory organization
+### **Living Document Evolution**
+This CLAUDE.md implements advanced self-improvement patterns:
 
-**❌ NEVER CREATE redundant documentation:**
-- Multiple setup guides (consolidate into `docs/setup/`)
-- Duplicate testing strategies (use `docs/testing/`)
-- Multiple compliance documents (organize in `docs/compliance/`)
-
-### **AGENT-002: Healthcare Compliance Enforcement (CRITICAL)**
-
-**ALL AI AGENTS MUST VERIFY:**
-
-#### **🏥 HIPAA Compliance Checklist:**
-```typescript
-// BEFORE ANY PHI-RELATED CODE CHANGES
-const complianceCheck = {
-  auditLogging: "✅ All PHI access logged with timestamp + user ID",
-  encryption: "✅ AES-256-GCM encryption for all PHI fields",
-  accessControl: "✅ RBAC permissions enforced",
-  dataClassification: "✅ PHI fields explicitly marked",
-  errorHandling: "✅ No PHI in error messages or logs"
-}
-
-// MANDATORY: Verify before proceeding
-if (!allChecksPass(complianceCheck)) {
-  throw new Error("HIPAA compliance requirements not met")
-}
-```
-
-#### **🇨🇦 Quebec Law 25 Compliance:**
-```typescript
-// BEFORE ANY DATA PROCESSING CODE
-const quebecLaw25Check = {
-  consentTracking: "✅ Explicit consent recorded and tracked",
-  dataResidency: "✅ Data remains within Quebec/Canada",
-  breachNotification: "✅ 72-hour notification system implemented",
-  rightToErasure: "✅ Complete data deletion capability",
-  privacyImpact: "✅ Privacy impact assessment documented"
-}
-```
-
-### **AGENT-003: Technology Stack Enforcement (STRICT)**
-
-**ALL CODE CHANGES MUST USE CURRENT STACK:**
-
-#### **✅ REQUIRED Patterns (September 2025):**
-```typescript
-// ✅ React 19 with Compiler Optimization
-function HealthcareComponent({ patientData }: Props) {
-  // NO manual memoization - React Compiler handles optimization
-  const processedData = expensiveCalculation(patientData)
-  return <PatientCard data={processedData} />
-}
-
-// ✅ TanStack Query v5 syntax
-const { data, isPending, error } = useQuery({
-  queryKey: ['patients'],
-  queryFn: fetchPatients,
-  throwOnError: true, // v5 syntax
-  gcTime: 1000 * 60 * 30 // v5 syntax
-})
-
-// ✅ Tauri 2.1+ Universal Entry Point
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
-  tauri::Builder::default()
-    .plugin(tauri_plugin_shell::init())
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application")
-}
-```
-
-#### **❌ FORBIDDEN Patterns (Agents must reject):**
-```typescript
-// ❌ REJECT: React 18 manual memoization
-const MemoComponent = memo(Component)
-const value = useMemo(() => calc(), [deps])
-const callback = useCallback(() => {}, [deps])
-
-// ❌ REJECT: TanStack Query v4 syntax
-const { data, isLoading } = useQuery() // Use isPending
-const { useErrorBoundary } = useQuery() // Use throwOnError
-
-// ❌ REJECT: Direct PHI logging
-console.log(patient.ssn) // HIPAA violation
-console.error('Error:', patient.medicalHistory) // HIPAA violation
-```
-
-### **AGENT-004: Documentation Maintenance Protocol**
-
-**WHEN MAKING CODE CHANGES, ALL AGENTS MUST:**
-
-#### **📚 Documentation Update Requirements:**
+#### **Automated CLAUDE.md Enhancement**
 ```markdown
-## Required Documentation Updates
+## Meta-Improvement Command: /project:reflection
+When user types "/project:reflection", Claude MUST:
 
-### For Security/Compliance Changes:
-- ✅ Update `docs/security/README.md`
-- ✅ Update `docs/compliance/overview.md`
-- ✅ Add entry to `docs/CHANGELOG.md`
-
-### For API/Integration Changes:
-- ✅ Update `docs/api/` relevant documentation
-- ✅ Update code examples in documentation
-- ✅ Verify all examples use current tech stack
-
-### For UI/UX Changes:
-- ✅ Update `docs/design-system/` if design tokens affected
-- ✅ Update accessibility documentation if applicable
-- ✅ Run accessibility tests: `npm run test:a11y`
-
-### For Testing Changes:
-- ✅ Update `docs/testing/testing-strategy.md`
-- ✅ Document new test patterns or utilities
-- ✅ Maintain test organization per ORG-001 rules
+1. **Analyze Recent Session**: Review last 10-20 interactions for patterns
+2. **Identify Gaps**: Find recurring issues or missing context
+3. **Propose Updates**: Suggest specific CLAUDE.md improvements
+4. **Rationale**: Explain WHY each proposed change would help
+5. **Draft Changes**: Provide exact text for CLAUDE.md updates
 ```
 
-#### **🔄 Cross-Reference Maintenance:**
+#### **Continuous Learning Patterns**
+- **Pattern Recognition**: Track what works well vs. what causes confusion
+- **Rule Effectiveness**: Monitor which rules actually prevent problems
+- **Context Optimization**: Identify which context is most valuable vs. noise
+- **User Preference Learning**: Adapt to specific workflow and communication styles
+
+#### **Healthcare Project Evolution**
 ```typescript
-// AGENTS MUST verify these links remain valid after changes
-const requiredCrossReferences = [
-  'docs/README.md → all major documentation categories',
-  'DEVELOPMENT_RULES_2025.md → current patterns and examples',
-  'docs/onboarding/quick-start.md → up-to-date setup steps',
-  'docs/testing/ → current test file locations',
-  'docs/compliance/ → current compliance implementations'
-]
-```
-
-### **AGENT-005: Task Master Integration Requirements**
-
-**ALL DEVELOPMENT WORK MUST INTEGRATE WITH TASK MASTER:**
-
-#### **📋 Task Management Protocol:**
-```bash
-# BEFORE starting any substantial work
-task-master next                # Get next priority task
-task-master show <id>          # Review task requirements
-
-# DURING implementation
-task-master update-subtask --id=<id> --prompt="Progress update with specific details"
-
-# AFTER completion
-task-master set-status --id=<id> --status=done
-```
-
-#### **🏥 Healthcare Task Documentation:**
-```javascript
-// REQUIRED: Document healthcare-specific implementation details
-await mcp__task_master_ai__update_subtask({
-  projectRoot: "/absolute/path/to/project",
-  id: "task.subtask",
-  prompt: `
-  Healthcare Implementation Details:
-  - HIPAA compliance measures implemented: [specific measures]
-  - Quebec Law 25 requirements addressed: [specific requirements]
-  - PHI handling patterns used: [encryption, audit logging, etc.]
-  - Security testing performed: [test results]
-  - Next steps: [what comes next in healthcare workflow]
-  `
-})
-```
-
-### **AGENT-006: Quality Assurance Enforcement**
-
-**BEFORE ANY COMMIT, ALL AGENTS MUST:**
-
-#### **🧪 Required Quality Checks:**
-```bash
-# MANDATORY testing sequence
-npm run type-check    # TypeScript validation
-npm run lint         # ESLint compliance
-npm run test         # Unit test suite
-npm run test:a11y    # Accessibility testing
-npm run test:security # Security compliance tests
-
-# Healthcare-specific validations
-npm run test:hipaa   # HIPAA compliance verification
-npm run test:quebec  # Quebec Law 25 compliance checks
-```
-
-#### **📊 Performance Budget Compliance:**
-```typescript
-// AGENTS MUST verify performance budgets are maintained
-const performanceBudgets = {
-  bundleSize: "< 2MB total",
-  initialLoad: "< 2 seconds",
-  timeToInteractive: "< 2.5 seconds",
-  memoryUsage: "< 200MB",
-  patientDataLoad: "< 500ms"
-}
-
-// REJECT changes that exceed these budgets
-```
-
-### **AGENT-007: Emergency Response Protocol**
-
-**FOR SECURITY/COMPLIANCE INCIDENTS:**
-
-#### **🚨 Immediate Actions Required:**
-```typescript
-// IF PHI exposure detected
-const emergencyProtocol = {
-  step1: "STOP all development activity immediately",
-  step2: "Assess scope of potential PHI exposure",
-  step3: "Log incident in security incident tracking",
-  step4: "Notify security team per docs/security/README.md",
-  step5: "Update documentation to prevent recurrence"
-}
-
-// IF Quebec Law 25 violation detected
-const quebecEmergencyProtocol = {
-  step1: "Document potential violation details",
-  step2: "Assess 72-hour notification requirements",
-  step3: "Contact privacy compliance officer",
-  step4: "Implement immediate containment measures",
-  step5: "Update compliance documentation"
+// ✅ PROJECT GROWTH: As PsyPsy CMS evolves, CLAUDE.md tracks:
+interface ProjectEvolution {
+  codebaseSize: 'growing' | 'stable' | 'refactoring';
+  teamSize: 'solo' | 'small_team' | 'large_team';
+  complianceMaturity: 'basic' | 'intermediate' | 'expert';
+  aiIntegration: 'experimental' | 'production' | 'enterprise';
 }
 ```
 
-### **AGENT-008: Continuous Monitoring Requirements**
-
-**ALL AGENTS MUST MONITOR:**
-
-#### **📈 Project Health Metrics:**
-```typescript
-const projectHealthChecks = {
-  documentation: {
-    currency: "< 30 days since last update for active docs",
-    completeness: "100% cross-reference coverage",
-    accuracy: "100% working code examples",
-    compliance: "100% healthcare context preserved"
-  },
-  codeQuality: {
-    testCoverage: "> 85% frontend, > 90% backend",
-    accessibilityCompliance: "WCAG 2.1 AA minimum",
-    securityCompliance: "Zero critical vulnerabilities",
-    performanceCompliance: "All budgets maintained"
-  },
-  organizationalCompliance: {
-    fileOrganization: "ORG-001 rules enforced",
-    documentationHierarchy: "ORG-002 compliance",
-    testFileNaming: "ORG-003 conventions followed",
-    changeTracking: "ORG-005 requirements met"
-  }
-}
-```
+### **Current Status: September 2025**
+- **Research Integration**: ✅ Latest Claude Code best practices integrated
+- **Context Engineering**: ✅ Advanced instruction hierarchy implemented
+- **Enforcement Patterns**: ✅ Anti-rogue-dev toolkit deployed
+- **Self-Improvement**: ✅ Meta-learning protocols active
+- **Healthcare Focus**: ✅ HIPAA/Quebec Law 25 compliance patterns embedded
 
 ---
 
-## 🎯 Success Criteria for AI Agents
-
-### **Primary Objectives (MANDATORY):**
-1. **✅ Maintain healthcare compliance** at all times
-2. **✅ Preserve clean project organization** per ORG rules
-3. **✅ Use current tech stack patterns** (React 19, TanStack Query v5, Tauri 2.1+)
-4. **✅ Integrate with Task Master** workflow
-5. **✅ Update documentation** when making changes
-6. **✅ Enforce quality standards** before commits
-
-### **Compliance Verification:**
-```typescript
-// ALL AGENTS MUST pass this verification before any substantial work
-const agentComplianceCheck = {
-  hipaaCompliance: "✅ PHI handling patterns verified",
-  quebecLaw25: "✅ Data residency and consent tracking verified",
-  organizationRules: "✅ File placement follows ORG-001 through ORG-008",
-  techStackCurrency: "✅ All code uses September 2025 patterns",
-  documentationIntegrity: "✅ Cross-references and examples updated",
-  taskMasterIntegration: "✅ Progress tracked and documented",
-  qualityStandards: "✅ All tests pass, performance budgets maintained"
-}
-
-// REJECT any work that doesn't meet these criteria
-```
-
-### **Monthly Review Requirements:**
-All AI agents contributing to this project will have their adherence to these rules reviewed monthly to ensure:
-- Healthcare compliance standards are maintained
-- Project organization remains clean and logical
-- Documentation stays current and accurate
-- Technology patterns follow best practices
-- Task management integration is effective
-
----
-
-**FINAL ENFORCEMENT NOTICE**: Any AI agent that creates files outside the organized structure, uses deprecated technology patterns, compromises healthcare compliance, or fails to integrate with established workflows will be considered non-compliant with PsyPsy CMS development standards.
-
-**COMPLIANCE LEVEL**: Healthcare Organization Standards + AI Agent Enforcement
-**Enforcement**: Automatic for all AI agents with monthly compliance review
-**Last Updated**: September 29, 2025
+**🧠 This CLAUDE.md implements 2025 cutting-edge context engineering and will continuously evolve through self-improvement protocols as PsyPsy CMS grows.**

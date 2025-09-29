@@ -18,7 +18,7 @@
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 84% 4.9%;
     --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 35%; /* Darkened for WCAG AA compliance (4.5:1 contrast) */
+    --muted-foreground: 215.4 16.3% 30%; /* Darker for WCAG AA compliance (4.5:1 contrast) - #4a525a */
     --accent: 210 40% 96%;
     --accent-foreground: 222.2 84% 4.9%;
     --destructive: 0 84.2% 60.2%;

@@ -1,0 +1,21 @@
+{
+  "initialized": "2025-09-29T07:04:26.326Z",
+  "projectId": "968890c7-551f-4ea1-9b06-38d2ae80ba55",
+  "version": "1.0.0",
+  "toolUsage": {},
+  "myPatterns": {
+    "frequentTools": [],
+    "commonIssues": [],
+    "successfulWorkflows": [],
+    "timeOfDayPreferences": {}
+  },
+  "projectEvolution": [
+    {
+      "timestamp": "2025-09-29T07:04:26.326Z",
+      "event": "project_brain_initialized",
+      "impact": "high",
+      "description": "Project brain initialized for PsyPsy CMS (tauri)",
+      "toolsAffected": []
+    }
+  ]
+}

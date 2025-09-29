@@ -10,6 +10,7 @@ import {
   Plus,
   ArrowRight
 } from 'lucide-react'
+import { SafeDateDisplay, RelativeTimeDisplay } from '@/components/common/SafeDateDisplay'
 
 const DashboardPage: React.FC = () => {
   // Mock data for demonstration
@@ -25,17 +26,69 @@ const DashboardPage: React.FC = () => {
   }
 
   const recentAppointments = [
-    { id: 1, client: 'Sarah Johnson', time: '2:00 PM', type: 'Therapy Session', status: 'confirmed' },
-    { id: 2, client: 'Michael Chen', time: '3:30 PM', type: 'Initial Consultation', status: 'pending' },
-    { id: 3, client: 'Emma Davis', time: '4:00 PM', type: 'Follow-up', status: 'confirmed' },
-    { id: 4, client: 'James Wilson', time: '5:15 PM', type: 'Group Therapy', status: 'pending' }
+    { 
+      id: 1, 
+      client: 'Sarah Johnson', 
+      startTime: new Date(new Date().setHours(14, 0, 0, 0)).toISOString(), // 2:00 PM today
+      endTime: new Date(new Date().setHours(14, 50, 0, 0)).toISOString(), // 2:50 PM (50-minute session)
+      type: 'Therapy Session', 
+      status: 'confirmed' 
+    },
+    { 
+      id: 2, 
+      client: 'Michael Chen', 
+      startTime: new Date(new Date().setHours(15, 30, 0, 0)).toISOString(), // 3:30 PM today
+      endTime: new Date(new Date().setHours(16, 20, 0, 0)).toISOString(), // 4:20 PM (50-minute session)
+      type: 'Initial Consultation', 
+      status: 'pending' 
+    },
+    { 
+      id: 3, 
+      client: 'Emma Davis', 
+      startTime: new Date(new Date().setHours(16, 0, 0, 0)).toISOString(), // 4:00 PM today
+      endTime: new Date(new Date().setHours(16, 50, 0, 0)).toISOString(), // 4:50 PM (50-minute session)
+      type: 'Follow-up', 
+      status: 'confirmed' 
+    },
+    { 
+      id: 4, 
+      client: 'James Wilson', 
+      startTime: new Date(new Date().setHours(17, 15, 0, 0)).toISOString(), // 5:15 PM today
+      endTime: new Date(new Date().setHours(18, 5, 0, 0)).toISOString(), // 6:05 PM (50-minute session)
+      type: 'Group Therapy', 
+      status: 'pending' 
+    }
   ]
 
   const activityFeed = [
-    { id: 1, action: 'New client registered', client: 'Sarah Johnson', time: '2 hours ago', type: 'registration' },
-    { id: 2, action: 'Appointment scheduled', client: 'Michael Chen', time: '3 hours ago', type: 'appointment' },
-    { id: 3, action: 'Session completed', client: 'Emma Davis', time: '5 hours ago', type: 'session' },
-    { id: 4, action: 'Payment received', client: 'James Wilson', time: '1 day ago', type: 'payment' }
+    { 
+      id: 1, 
+      action: 'New client registered', 
+      client: 'Sarah Johnson', 
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+      type: 'registration' 
+    },
+    { 
+      id: 2, 
+      action: 'Appointment scheduled', 
+      client: 'Michael Chen', 
+      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
+      type: 'appointment' 
+    },
+    { 
+      id: 3, 
+      action: 'Session completed', 
+      client: 'Emma Davis', 
+      timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hours ago
+      type: 'session' 
+    },
+    { 
+      id: 4, 
+      action: 'Payment received', 
+      client: 'James Wilson', 
+      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+      type: 'payment' 
+    }
   ]
 
   const StatCard = ({ title, value, icon: Icon, trend, trendValue, color = 'blue' }: any) => (
@@ -75,7 +128,12 @@ const DashboardPage: React.FC = () => {
         </div>
       </div>
       <div className="text-right">
-        <p className="font-medium text-gray-900">{appointment.time}</p>
+        <SafeDateDisplay 
+          date={appointment.startTime} 
+          format="time"
+          timezone="America/Montreal"
+          className="font-medium text-gray-900"
+        />
         <p className={`text-sm capitalize ${appointment.status === 'confirmed' ? 'text-green-700' : 'text-yellow-700'}`}>
           {appointment.status}
         </p>
@@ -95,7 +153,11 @@ const DashboardPage: React.FC = () => {
           <span className="font-medium">{item.action}</span>
           {item.client && <span className="text-gray-600"> - {item.client}</span>}
         </p>
-        <p className="text-xs text-gray-500 mt-1">{item.time}</p>
+        <RelativeTimeDisplay 
+          date={item.timestamp || item.time} 
+          className="text-xs text-gray-500 mt-1"
+          showTooltip={true}
+        />
       </div>
     </div>
   )

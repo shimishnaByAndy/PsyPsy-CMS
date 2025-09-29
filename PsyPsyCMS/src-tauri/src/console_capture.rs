@@ -330,6 +330,10 @@ pub fn get_console_injection_script() -> String {
 
         // Enhanced error capture with React support
         function captureError(error, source = 'unknown') {
+            if (devToolsSending) {
+                return;
+            }
+
             const errorData = {
                 message: error.message || String(error),
                 stack: error.stack,
@@ -359,8 +363,18 @@ pub fn get_console_injection_script() -> String {
             sendToDevTools('error', [enhancedError]);
         }
 
+        // Add recursion protection flag
+        let devToolsSending = false;
+
         function sendToDevTools(level, args) {
+            // Prevent recursion if already sending
+            if (devToolsSending) {
+                return;
+            }
+
             try {
+                devToolsSending = true;
+
                 const message = args.map(arg => {
                     // Special handling for error objects
                     if (arg instanceof Error) {
@@ -393,28 +407,50 @@ pub fn get_console_injection_script() -> String {
                         message: message,
                         stack: stack,
                         source: source
+                    }).then(() => {
+                        devToolsSending = false;
                     }).catch(err => {
-                        originalConsole.error('Failed to send log to DevTools:', err);
+                        devToolsSending = false;
+                        // Use setTimeout with original console to prevent any recursion
+                        setTimeout(() => {
+                            // Call original console directly, not the overridden one
+                            origConsole.error('[DevTools] Failed to send log (recursion-safe):', err.message || String(err));
+                        }, 0);
                     });
+                } else {
+                    devToolsSending = false;
                 }
             } catch (e) {
-                originalConsole.error('Error in console interceptor:', e);
+                devToolsSending = false;
+                // Use original console to prevent recursion
+                setTimeout(() => {
+                    origConsole.error('[DevTools] Error in console interceptor (recursion-safe):', e.message || String(e));
+                }, 0);
             }
         }
 
         // Override console methods with enhanced error detection
         console.log = function(...args) {
-            originalConsole.log.apply(console, args);
-            sendToDevTools('info', args);
+            originalConsole.log.apply(originalConsole, args);
+            if (!devToolsSending) {
+                sendToDevTools('info', args);
+            }
         };
 
         console.info = function(...args) {
-            originalConsole.info.apply(console, args);
-            sendToDevTools('info', args);
+            originalConsole.info.apply(originalConsole, args);
+            if (!devToolsSending) {
+                sendToDevTools('info', args);
+            }
         };
 
         console.warn = function(...args) {
-            originalConsole.warn.apply(console, args);
+            originalConsole.warn.apply(originalConsole, args);
+
+            if (devToolsSending) {
+                return;
+            }
+
             // Treat React warnings as errors for better visibility
             if (args.length > 0 && typeof args[0] === 'string') {
                 const message = args[0];
@@ -444,18 +480,28 @@ pub fn get_console_injection_script() -> String {
         };
 
         console.debug = function(...args) {
-            originalConsole.debug.apply(console, args);
-            sendToDevTools('debug', args);
+            originalConsole.debug.apply(originalConsole, args);
+            if (!devToolsSending) {
+                sendToDevTools('debug', args);
+            }
         };
 
         console.trace = function(...args) {
-            originalConsole.trace.apply(console, args);
-            sendToDevTools('trace', args);
+            originalConsole.trace.apply(originalConsole, args);
+            if (!devToolsSending) {
+                sendToDevTools('trace', args);
+            }
         };
 
         // Enhanced console.error override for React error detection
         console.error = function(...args) {
-            originalConsole.error.apply(console, args);
+            // Call original console first to ensure error is always logged
+            originalConsole.error.apply(originalConsole, args);
+
+            // Skip if we're already in DevTools processing to prevent recursion
+            if (devToolsSending) {
+                return;
+            }
 
             const now = Date.now();
 
@@ -490,6 +536,10 @@ pub fn get_console_injection_script() -> String {
 
         // Capture unhandled errors with enhanced details
         window.addEventListener('error', function(event) {
+            if (devToolsSending) {
+                return;
+            }
+
             const errorInfo = {
                 message: event.message,
                 source: 'window.error',
@@ -513,6 +563,10 @@ pub fn get_console_injection_script() -> String {
 
         // Capture unhandled promise rejections with details
         window.addEventListener('unhandledrejection', function(event) {
+            if (devToolsSending) {
+                return;
+            }
+
             const errorInfo = {
                 message: `Unhandled Promise Rejection: ${event.reason}`,
                 source: 'promise.rejection',
@@ -556,37 +610,44 @@ pub fn get_console_injection_script() -> String {
             const startTime = performance.now();
             const [url, options = {}] = args;
 
-            sendToDevTools('debug', [`🌐 Fetch: ${options.method || 'GET'} ${url}`]);
+            if (!devToolsSending) {
+                sendToDevTools('debug', [`🌐 Fetch: ${options.method || 'GET'} ${url}`]);
+            }
 
             return originalFetch.apply(this, args).then(response => {
                 const duration = performance.now() - startTime;
-                sendToDevTools('debug', [
-                    `✅ Fetch completed: ${options.method || 'GET'} ${url}`,
-                    `Status: ${response.status}`,
-                    `Duration: ${duration.toFixed(2)}ms`
-                ]);
+                if (!devToolsSending) {
+                    sendToDevTools('debug', [
+                        `✅ Fetch completed: ${options.method || 'GET'} ${url}`,
+                        `Status: ${response.status}`,
+                        `Duration: ${duration.toFixed(2)}ms`
+                    ]);
+                }
                 return response;
             }).catch(error => {
                 const duration = performance.now() - startTime;
-                const errorData = {
-                    message: `❌ Fetch failed: ${options.method || 'GET'} ${url} - ${error.message}`,
-                    source: 'fetch.error',
-                    timestamp: Date.now(),
-                    duration: duration.toFixed(2),
-                    url: url,
-                    method: options.method || 'GET',
-                    stack: error.stack
-                };
 
-                // Analyze with healthcare patterns
-                const analysis = analyzeReactError(errorData);
-                const enhancedError = {
-                    ...errorData,
-                    analysis: analysis,
-                    cmsDebuggerEnhanced: true
-                };
+                if (!devToolsSending) {
+                    const errorData = {
+                        message: `❌ Fetch failed: ${options.method || 'GET'} ${url} - ${error.message}`,
+                        source: 'fetch.error',
+                        timestamp: Date.now(),
+                        duration: duration.toFixed(2),
+                        url: url,
+                        method: options.method || 'GET',
+                        stack: error.stack
+                    };
 
-                sendToDevTools('error', [enhancedError]);
+                    // Analyze with healthcare patterns
+                    const analysis = analyzeReactError(errorData);
+                    const enhancedError = {
+                        ...errorData,
+                        analysis: analysis,
+                        cmsDebuggerEnhanced: true
+                    };
+
+                    sendToDevTools('error', [enhancedError]);
+                }
                 throw error;
             });
         };
