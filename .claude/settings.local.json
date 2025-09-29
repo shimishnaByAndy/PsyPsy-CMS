@@ -1,0 +1,6 @@
+{
+  "enabledMcpjsonServers": [
+    "psypsy-cms-debugger"
+  ],
+  "enableAllProjectMcpServers": true
+}

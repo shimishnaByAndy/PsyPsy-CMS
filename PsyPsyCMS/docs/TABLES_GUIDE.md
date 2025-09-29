@@ -1,8 +1,22 @@
 # PsyPsy CMS Advanced Tables Guide
+**Last Updated**: September 29, 2025  
+**Audience**: Frontend Developers, UX Engineers  
+**Prerequisites**: React 19, TanStack Table v8, TypeScript  
+
+## Overview
 
 A comprehensive table system built with **TanStack Table v8**, designed specifically for healthcare data management in Quebec, Canada, with full **PIPEDA** and **Quebec Law 25** compliance.
 
-## 🌟 Features Overview
+## Table of Contents
+
+- [Features Overview](#features-overview)
+- [Core Capabilities](#core-capabilities)
+- [Advanced Features](#advanced-features)
+- [Implementation Examples](#implementation-examples)
+- [Compliance Features](#compliance-features)
+- [Performance Optimization](#performance-optimization)
+
+## Features Overview
 
 ### Core Capabilities
 - **TanStack Table v8** - Latest version with React Compiler support
@@ -232,7 +246,7 @@ module.exports = {
 ```typescript
 const {
   data: result,
-  isLoading,
+  isPending,
   error,
 } = useUsersTableQuery(
   { pagination, sorting, columnFilters },

@@ -3,7 +3,6 @@
 
 use std::sync::Arc;
 use tauri::State;
-use tokio::net::TcpStream;
 
 #[derive(Debug, Default)]
 pub struct DevToolsState {

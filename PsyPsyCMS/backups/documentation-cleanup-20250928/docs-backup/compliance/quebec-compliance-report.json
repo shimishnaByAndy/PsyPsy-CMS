@@ -1,0 +1,115 @@
+{
+  "test_summary": {
+    "total_tests": 25,
+    "passed": 10,
+    "failed": 15,
+    "warnings": 0,
+    "success_rate": "40.0%",
+    "duration_seconds": 1.317
+  },
+  "compliance_status": {
+    "pipeda_compliant": false,
+    "quebec_law25_compliant": false,
+    "total_violations": 12
+  },
+  "compliance_violations": [
+    {
+      "timestamp": "2025-09-17T06:41:41.027Z",
+      "message": "PIPEDA violation detected: data_collection_limitation",
+      "violation": "Excessive data collection detected: name, email, phone, medical-history",
+      "severity": "high"
+    },
+    {
+      "timestamp": "2025-09-17T06:41:41.027Z",
+      "message": "PIPEDA violation detected: use_limitation",
+      "violation": "Validation not implemented for use_limitation",
+      "severity": "high"
+    },
+    {
+      "timestamp": "2025-09-17T06:41:41.027Z",
+      "message": "PIPEDA violation detected: disclosure_limitation",
+      "violation": "Validation not implemented for disclosure_limitation",
+      "severity": "high"
+    },
+    {
+      "timestamp": "2025-09-17T06:41:41.027Z",
+      "message": "PIPEDA violation detected: accuracy_requirement",
+      "violation": "Validation not implemented for accuracy_requirement",
+      "severity": "high"
+    },
+    {
+      "timestamp": "2025-09-17T06:41:41.027Z",
+      "message": "PIPEDA violation detected: openness_requirement",
+      "violation": "Validation not implemented for openness_requirement",
+      "severity": "high"
+    },
+    {
+      "timestamp": "2025-09-17T06:41:41.027Z",
+      "message": "PIPEDA violation detected: individual_access",
+      "violation": "Validation not implemented for individual_access",
+      "severity": "high"
+    },
+    {
+      "timestamp": "2025-09-17T06:41:41.027Z",
+      "message": "PIPEDA violation detected: challenging_compliance",
+      "violation": "Validation not implemented for challenging_compliance",
+      "severity": "high"
+    },
+    {
+      "timestamp": "2025-09-17T06:41:41.027Z",
+      "message": "Quebec Law 25 violation detected: privacy_impact_assessment",
+      "violation": "Quebec validation not implemented for privacy_impact_assessment",
+      "severity": "critical"
+    },
+    {
+      "timestamp": "2025-09-17T06:41:41.027Z",
+      "message": "Quebec Law 25 violation detected: data_protection_officer",
+      "violation": "Quebec validation not implemented for data_protection_officer",
+      "severity": "critical"
+    },
+    {
+      "timestamp": "2025-09-17T06:41:41.027Z",
+      "message": "Quebec Law 25 violation detected: consent_withdrawal",
+      "violation": "this.validateConsentWithdrawal is not a function",
+      "severity": "critical"
+    },
+    {
+      "timestamp": "2025-09-17T06:41:41.027Z",
+      "message": "Quebec Law 25 violation detected: data_portability",
+      "violation": "this.validateDataPortability is not a function",
+      "severity": "critical"
+    },
+    {
+      "timestamp": "2025-09-17T06:41:41.027Z",
+      "message": "Quebec Law 25 violation detected: automated_decision_transparency",
+      "violation": "Quebec validation not implemented for automated_decision_transparency",
+      "severity": "critical"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "high",
+      "category": "compliance",
+      "action": "Address compliance violations immediately",
+      "description": "Quebec Law 25 and PIPEDA violations detected and must be resolved"
+    },
+    {
+      "priority": "medium",
+      "category": "functionality",
+      "action": "Fix failing healthcare workflows",
+      "description": "Core healthcare functionality is not working correctly"
+    },
+    {
+      "priority": "low",
+      "category": "monitoring",
+      "action": "Implement continuous compliance monitoring",
+      "description": "Set up automated monitoring for Quebec compliance requirements"
+    }
+  ],
+  "timestamp": "2025-09-17T06:41:42.343Z",
+  "jurisdiction": "Quebec, Canada",
+  "applicable_laws": [
+    "PIPEDA",
+    "Quebec Law 25"
+  ]
+}

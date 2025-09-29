@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import {
   Users,
   Search,
@@ -16,131 +17,46 @@ import {
   FileText,
   Clock,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from 'lucide-react'
+import { healthcareAPI } from '@/services/tauri-api'
+import type { ClientResponse } from '@/services/tauri-api'
 
-interface Client {
-  id: string
-  name: string
-  email: string
-  phone: string
-  dateOfBirth: string
-  address: string
-  lastVisit: string
-  nextAppointment?: string
-  status: 'active' | 'inactive' | 'pending'
-  totalSessions: number
-  notes: string
-  emergencyContact: {
-    name: string
-    phone: string
-    relationship: string
-  }
-}
+// Use the ClientResponse type from our API
+type Client = ClientResponse
 
 const ClientsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [selectedClients, setSelectedClients] = useState<string[]>([])
 
-  // Mock client data
-  const clients: Client[] = [
-    {
-      id: '1',
-      name: 'Sarah Johnson',
-      email: 'sarah.johnson@email.com',
-      phone: '+1 (555) 123-4567',
-      dateOfBirth: '1985-03-15',
-      address: '123 Main St, Montreal, QC H3B 1A1',
-      lastVisit: '2024-01-10',
-      nextAppointment: '2024-01-25 14:00',
-      status: 'active',
-      totalSessions: 12,
-      notes: 'Anxiety and stress management sessions. Making good progress.',
-      emergencyContact: {
-        name: 'John Johnson',
-        phone: '+1 (555) 987-6543',
-        relationship: 'Spouse'
-      }
-    },
-    {
-      id: '2',
-      name: 'Michael Chen',
-      email: 'michael.chen@email.com',
-      phone: '+1 (555) 234-5678',
-      dateOfBirth: '1992-07-22',
-      address: '456 Oak Ave, Montreal, QC H2Y 2Z3',
-      lastVisit: '2024-01-08',
-      nextAppointment: '2024-01-28 10:00',
-      status: 'active',
-      totalSessions: 8,
-      notes: 'Initial consultation completed. Developing treatment plan.',
-      emergencyContact: {
-        name: 'Lisa Chen',
-        phone: '+1 (555) 876-5432',
-        relationship: 'Sister'
-      }
-    },
-    {
-      id: '3',
-      name: 'Emma Davis',
-      email: 'emma.davis@email.com',
-      phone: '+1 (555) 345-6789',
-      dateOfBirth: '1978-11-08',
-      address: '789 Pine St, Montreal, QC H1A 0A6',
-      lastVisit: '2024-01-05',
-      status: 'inactive',
-      totalSessions: 24,
-      notes: 'Completed therapy sessions. Follow-up in 6 months.',
-      emergencyContact: {
-        name: 'Robert Davis',
-        phone: '+1 (555) 765-4321',
-        relationship: 'Husband'
-      }
-    },
-    {
-      id: '4',
-      name: 'James Wilson',
-      email: 'james.wilson@email.com',
-      phone: '+1 (555) 456-7890',
-      dateOfBirth: '1990-05-14',
-      address: '321 Elm Dr, Montreal, QC H4B 2M8',
-      lastVisit: '2023-12-28',
-      nextAppointment: '2024-01-30 16:00',
-      status: 'pending',
-      totalSessions: 3,
-      notes: 'New client. Assessment phase ongoing.',
-      emergencyContact: {
-        name: 'Mary Wilson',
-        phone: '+1 (555) 654-3210',
-        relationship: 'Mother'
-      }
-    },
-    {
-      id: '5',
-      name: 'Anna Martinez',
-      email: 'anna.martinez@email.com',
-      phone: '+1 (555) 567-8901',
-      dateOfBirth: '1988-12-03',
-      address: '654 Maple Ln, Montreal, QC H3G 1M5',
-      lastVisit: '2024-01-12',
-      nextAppointment: '2024-01-26 11:30',
-      status: 'active',
-      totalSessions: 16,
-      notes: 'Group therapy participant. Excellent progress with social anxiety.',
-      emergencyContact: {
-        name: 'Carlos Martinez',
-        phone: '+1 (555) 543-2109',
-        relationship: 'Brother'
-      }
-    }
-  ]
+  // Fetch clients using TanStack Query
+  const {
+    data: clients = [],
+    isPending,
+    isError,
+    error,
+    refetch
+  } = useQuery({
+    queryKey: ['clients'],
+    queryFn: () => healthcareAPI.client.getAllClients(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  })
 
   const filteredClients = clients.filter(client => {
-    const matchesSearch = client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         client.phone.includes(searchQuery)
-    const matchesStatus = filterStatus === 'all' || client.status === filterStatus
+    const displayName = client.displayName || `${client.user?.firstName || ''} ${client.user?.lastName || ''}`.trim()
+    const email = client.user?.email || ''
+    const phone = client.user?.phone || ''
+
+    const matchesSearch = displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         phone.includes(searchQuery)
+    const matchesStatus = filterStatus === 'all' ||
+                         (filterStatus === 'active' && client.isActive) ||
+                         (filterStatus === 'inactive' && !client.isActive) ||
+                         client.status === filterStatus
     return matchesSearch && matchesStatus
   })
 
@@ -160,105 +76,161 @@ const ClientsPage: React.FC = () => {
     }
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-green-100 text-green-900 border-green-200'
-      case 'inactive': return 'bg-gray-100 text-gray-900 border-gray-200'
-      case 'pending': return 'bg-yellow-100 text-yellow-900 border-yellow-200'
-      default: return 'bg-gray-100 text-gray-900 border-gray-200'
-    }
+  const getStatusColor = (client: Client) => {
+    if (client.isActive) return 'bg-green-100 text-green-900 border-green-200'
+    if (client.status === 'pending') return 'bg-yellow-100 text-yellow-900 border-yellow-200'
+    return 'bg-gray-100 text-gray-900 border-gray-200'
   }
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'active': return <CheckCircle className="w-4 h-4" />
-      case 'inactive': return <Clock className="w-4 h-4" />
-      case 'pending': return <AlertCircle className="w-4 h-4" />
-      default: return <Clock className="w-4 h-4" />
-    }
+  const getStatusIcon = (client: Client) => {
+    if (client.isActive) return <CheckCircle className="w-4 h-4" />
+    if (client.status === 'pending') return <AlertCircle className="w-4 h-4" />
+    return <Clock className="w-4 h-4" />
   }
 
-  const ClientCard = ({ client }: { client: Client }) => (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center space-x-3">
-          <input
-            type="checkbox"
-            checked={selectedClients.includes(client.id)}
-            onChange={() => handleSelectClient(client.id)}
-            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-          />
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900">{client.name}</h3>
-            <p className="text-sm text-gray-600">ID: {client.id}</p>
+  const getStatusLabel = (client: Client) => {
+    if (client.isActive) return 'active'
+    if (client.status === 'pending') return 'pending'
+    return 'inactive'
+  }
+
+  const ClientCard = ({ client }: { client: Client }) => {
+    const displayName = client.displayName || `${client.user?.firstName || ''} ${client.user?.lastName || ''}`.trim()
+    const email = client.user?.email || 'No email'
+    const phone = client.user?.phone || 'No phone'
+    const dateOfBirth = client.user?.dateOfBirth || null
+    const address = client.user?.address ?
+      `${client.user.address.street}, ${client.user.address.city}, ${client.user.address.state} ${client.user.address.zipCode}` :
+      'No address'
+    const emergencyContact = client.emergencyContact?.[0] || null
+
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={selectedClients.includes(client.objectId)}
+              onChange={() => handleSelectClient(client.objectId)}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">{displayName}</h3>
+              <p className="text-sm text-gray-600">ID: {client.clientId}</p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize border ${getStatusColor(client)}`}>
+              {getStatusIcon(client)}
+              <span className="ml-1">{getStatusLabel(client)}</span>
+            </span>
+            <button className="text-gray-600 hover:text-gray-700">
+              <MoreVertical className="w-5 h-5" />
+            </button>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize border ${getStatusColor(client.status)}`}>
-            {getStatusIcon(client.status)}
-            <span className="ml-1">{client.status}</span>
-          </span>
-          <button className="text-gray-600 hover:text-gray-700">
-            <MoreVertical className="w-5 h-5" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="space-y-2">
+            <div className="flex items-center text-sm text-gray-600">
+              <Mail className="w-4 h-4 mr-2" />
+              <span>{email}</span>
+            </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <Phone className="w-4 h-4 mr-2" />
+              <span>{phone}</span>
+            </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <MapPin className="w-4 h-4 mr-2" />
+              <span>{address}</span>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {dateOfBirth && (
+              <div className="flex items-center text-sm text-gray-600">
+                <Calendar className="w-4 h-4 mr-2" />
+                <span>Born: {new Date(dateOfBirth).toLocaleDateString()}</span>
+              </div>
+            )}
+            <div className="text-sm text-gray-600">
+              <strong>Total Appointments:</strong> {client.totalAppointments}
+            </div>
+            <div className="text-sm text-gray-600">
+              <strong>Completed:</strong> {client.completedAppointments}
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t pt-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-700">
+              Cancelled: {client.cancelledAppointments}
+            </span>
+            {emergencyContact && (
+              <span className="text-sm text-gray-600">
+                Emergency: {emergencyContact.name}
+              </span>
+            )}
+          </div>
+          {client.notes && client.notes.length > 0 && (
+            <p className="text-sm text-gray-600 line-clamp-2">
+              {client.notes[0]?.content || 'No notes available'}
+            </p>
+          )}
+        </div>
+
+        <div className="flex justify-end space-x-2 mt-4 pt-4 border-t">
+          <button className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+            <FileText className="w-4 h-4 mr-1" />
+            Notes
+          </button>
+          <button className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+            <Calendar className="w-4 h-4 mr-1" />
+            Schedule
+          </button>
+          <button className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100">
+            <Edit3 className="w-4 h-4 mr-1" />
+            Edit
           </button>
         </div>
       </div>
+    )
+  }
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div className="space-y-2">
-          <div className="flex items-center text-sm text-gray-600">
-            <Mail className="w-4 h-4 mr-2" />
-            <span>{client.email}</span>
-          </div>
-          <div className="flex items-center text-sm text-gray-600">
-            <Phone className="w-4 h-4 mr-2" />
-            <span>{client.phone}</span>
-          </div>
-          <div className="flex items-center text-sm text-gray-600">
-            <MapPin className="w-4 h-4 mr-2" />
-            <span>{client.address}</span>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div className="flex items-center text-sm text-gray-600">
-            <Calendar className="w-4 h-4 mr-2" />
-            <span>Born: {new Date(client.dateOfBirth).toLocaleDateString()}</span>
-          </div>
-          <div className="text-sm text-gray-600">
-            <strong>Last Visit:</strong> {new Date(client.lastVisit).toLocaleDateString()}
-          </div>
-          {client.nextAppointment && (
-            <div className="text-sm text-gray-600">
-              <strong>Next:</strong> {new Date(client.nextAppointment).toLocaleDateString()}
-            </div>
-          )}
+  // Show loading state
+  if (isPending) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <span className="ml-2 text-gray-600">Loading clients...</span>
         </div>
       </div>
+    )
+  }
 
-      <div className="border-t pt-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">Sessions: {client.totalSessions}</span>
-          <span className="text-sm text-gray-600">Emergency: {client.emergencyContact.name}</span>
+  // Show error state
+  if (isError) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center py-12">
+          <AlertCircle className="mx-auto h-12 w-12 text-red-600" />
+          <h3 className="mt-2 text-sm font-medium text-gray-900">Error loading clients</h3>
+          <p className="mt-1 text-sm text-gray-500">
+            {error instanceof Error ? error.message : 'An unexpected error occurred'}
+          </p>
+          <div className="mt-6">
+            <button
+              onClick={() => refetch()}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
         </div>
-        <p className="text-sm text-gray-600 line-clamp-2">{client.notes}</p>
       </div>
-
-      <div className="flex justify-end space-x-2 mt-4 pt-4 border-t">
-        <button className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-          <FileText className="w-4 h-4 mr-1" />
-          Notes
-        </button>
-        <button className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-          <Calendar className="w-4 h-4 mr-1" />
-          Schedule
-        </button>
-        <button className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100">
-          <Edit3 className="w-4 h-4 mr-1" />
-          Edit
-        </button>
-      </div>
-    </div>
-  )
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -300,7 +272,7 @@ const ClientsPage: React.FC = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Active</p>
-              <p className="text-2xl font-bold text-gray-900">{clients.filter(c => c.status === 'active').length}</p>
+              <p className="text-2xl font-bold text-gray-900">{clients.filter(c => c.isActive).length}</p>
             </div>
           </div>
         </div>
@@ -321,8 +293,8 @@ const ClientsPage: React.FC = () => {
               <UserPlus className="w-6 h-6 text-gray-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">New This Month</p>
-              <p className="text-2xl font-bold text-gray-900">3</p>
+              <p className="text-sm font-medium text-gray-600">Inactive</p>
+              <p className="text-2xl font-bold text-gray-900">{clients.filter(c => !c.isActive && c.status !== 'pending').length}</p>
             </div>
           </div>
         </div>

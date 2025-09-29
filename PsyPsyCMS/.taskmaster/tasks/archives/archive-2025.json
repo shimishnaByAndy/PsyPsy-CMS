@@ -1,0 +1,117 @@
+{
+  "version": "1.0.0",
+  "year": 2025,
+  "created": "2025-09-29T01:58:42.161Z",
+  "lastUpdated": "2025-09-29T02:24:00.453Z",
+  "tags": {
+    "master": {
+      "tasks": [
+        {
+          "id": 1,
+          "title": "Audit Existing Documentation and Scripts",
+          "description": "Perform a comprehensive audit of all documentation files and scripts to identify redundancies, outdated content, and structural issues.",
+          "details": "Use automated tools (e.g., markdownlint v0.32+, custom Node.js scripts) to scan the docs/ directory for duplicate files, outdated references, and inconsistent formatting. Document findings in a spreadsheet for tracking.",
+          "testStrategy": "Verify audit completeness by cross-referencing all files in the repository against the audit report. Spot-check for missed duplicates and outdated content.",
+          "priority": "high",
+          "dependencies": [],
+          "status": "done",
+          "subtasks": [],
+          "archived_at": "2025-09-29T01:58:42.161Z",
+          "archived_from_tag": "master",
+          "session_notes": "Task completed via MCP at 2025-09-29T01:58:42.160Z",
+          "project_path": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS"
+        },
+        {
+          "id": 2,
+          "title": "Backup Documentation and Scripts",
+          "description": "Create a secure backup of all documentation and scripts before making any changes.",
+          "details": "Use git tags and archive the current docs/ and scripts/ directories to a secure location (e.g., cloud storage, S3 bucket). Ensure backup includes file metadata and version history.",
+          "testStrategy": "Restore backup in a test environment and verify integrity and completeness of all files.",
+          "priority": "high",
+          "dependencies": [
+            1
+          ],
+          "status": "done",
+          "subtasks": [],
+          "archived_at": "2025-09-29T02:15:58.008Z",
+          "archived_from_tag": "master",
+          "session_notes": "Task completed via MCP at 2025-09-29T02:15:58.007Z",
+          "project_path": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS"
+        },
+        {
+          "id": 3,
+          "title": "Plan Documentation Structure and Migration",
+          "description": "Design the new documentation hierarchy and migration strategy based on audit findings.",
+          "details": "Draft a new docs/ structure in a planning document. Use diagrams (e.g., Mermaid.js) to visualize hierarchy. Define migration steps and assign responsibilities.",
+          "testStrategy": "Review plan with stakeholders for completeness and clarity. Validate structure against PRD requirements.",
+          "priority": "high",
+          "dependencies": [
+            1,
+            2
+          ],
+          "status": "done",
+          "subtasks": [],
+          "archived_at": "2025-09-29T02:17:57.401Z",
+          "archived_from_tag": "master",
+          "session_notes": "Task completed via MCP at 2025-09-29T02:17:57.400Z",
+          "project_path": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS"
+        },
+        {
+          "id": 4,
+          "title": "Merge Redundant Documentation Files",
+          "description": "Consolidate overlapping documentation into authoritative sources.",
+          "details": "Use diff tools (e.g., Meld, VSCode Compare) to merge CMS_IMPLEMENTATION_GUIDE.md and IMPLEMENTATION_SUMMARY.md. Remove duplicates, preserve unique content, and resolve conflicts. Repeat for compliance and testing docs.",
+          "testStrategy": "Peer review merged documents for completeness and accuracy. Ensure no critical information is lost.",
+          "priority": "high",
+          "dependencies": [
+            3
+          ],
+          "status": "done",
+          "subtasks": [],
+          "archived_at": "2025-09-29T02:20:20.014Z",
+          "archived_from_tag": "master",
+          "session_notes": "Task completed via MCP at 2025-09-29T02:20:20.014Z",
+          "project_path": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS"
+        },
+        {
+          "id": 5,
+          "title": "Update Technical Content to Current Stack",
+          "description": "Modernize all technical examples and references to match the September 2025 stack.",
+          "details": "Update React examples to React 19 (remove manual memoization, use new hooks), TanStack Query v5 (use isPending, throwOnError), Tauri 2.1+ (universal entry point), and TypeScript patterns. Use Prettier v3+ for code formatting.",
+          "testStrategy": "Run code examples in isolated environments (e.g., CodeSandbox, local test repo) to verify correctness and compatibility.",
+          "priority": "high",
+          "dependencies": [
+            4
+          ],
+          "status": "done",
+          "subtasks": [],
+          "archived_at": "2025-09-29T02:21:20.129Z",
+          "archived_from_tag": "master",
+          "session_notes": "Task completed via MCP at 2025-09-29T02:21:20.129Z",
+          "project_path": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS"
+        },
+        {
+          "id": 6,
+          "title": "Consolidate Compliance Documentation",
+          "description": "Merge Quebec Law 25 and HIPAA documentation into a unified compliance section.",
+          "details": "Create docs/compliance/overview.md with consolidated content. Add quick-reference guides and update compliance testing procedures. Use markdown tables for comparison and clarity.",
+          "testStrategy": "Legal/compliance review for completeness and accuracy. Validate against latest regulatory requirements.",
+          "priority": "high",
+          "dependencies": [
+            4
+          ],
+          "status": "done",
+          "subtasks": [],
+          "archived_at": "2025-09-29T02:24:00.452Z",
+          "archived_from_tag": "master",
+          "session_notes": "Task completed via MCP at 2025-09-29T02:24:00.452Z",
+          "project_path": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS"
+        }
+      ],
+      "metadata": {
+        "created": "2025-09-29T01:58:42.161Z",
+        "lastUpdated": "2025-09-29T02:24:00.453Z"
+      }
+    }
+  }
+}

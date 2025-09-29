@@ -78,6 +78,16 @@ use commands::auth_commands::{
     auth_verify_token,
     auth_check_status,
 };
+use commands::user_commands::{
+    create_user,
+    get_user_by_id,
+    update_user_profile,
+    record_user_login,
+    suspend_user,
+    reactivate_user,
+    get_user_display_name,
+    check_user_availability,
+};
 use commands::client_commands::{
     get_clients,
     get_client,
@@ -88,6 +98,10 @@ use commands::client_commands::{
     get_client_appointments,
     assign_professional_to_client,
     get_client_stats,
+    unassign_professional_from_client,
+    increment_client_appointments,
+    check_client_active_status,
+    get_client_display_name,
 };
 use commands::professional_commands::{
     get_professionals,
@@ -100,6 +114,8 @@ use commands::professional_commands::{
     get_professional_appointments,
     get_professional_stats,
     update_professional_verification,
+    check_professional_active_status,
+    get_professional_display_name,
 };
 use commands::appointment_commands::{
     get_appointments,
@@ -138,6 +154,8 @@ use devtools_server::DevToolsServer;
 use services::firebase_service_simple::{FirebaseServiceState, AuthServiceState};
 use crate::security::auth::AuthState;
 use std::sync::Arc;
+use std::collections::HashMap;
+use crate::models::user::User;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -263,6 +281,7 @@ pub fn run() {
         .manage(Arc::new(tokio::sync::RwLock::new(AuthState::default())))
         .manage(Arc::new(std::sync::RwLock::new(DevToolsState::default())))
         .manage(DevToolsBroadcaster { tx: broadcast_tx.clone() })
+        .manage(std::sync::RwLock::new(HashMap::<String, User>::new()))
         .invoke_handler(tauri::generate_handler![
             // Core system commands
             greet,
@@ -283,6 +302,16 @@ pub fn run() {
             get_stored_session,
             clear_stored_session,
 
+            // User management commands
+            create_user,
+            get_user_by_id,
+            update_user_profile,
+            record_user_login,
+            suspend_user,
+            reactivate_user,
+            get_user_display_name,
+            check_user_availability,
+
             // Client/Patient management commands
             get_clients,
             get_client,
@@ -293,6 +322,10 @@ pub fn run() {
             get_client_appointments,
             assign_professional_to_client,
             get_client_stats,
+            unassign_professional_from_client,
+            increment_client_appointments,
+            check_client_active_status,
+            get_client_display_name,
 
             // Professional management commands
             get_professionals,
@@ -305,6 +338,8 @@ pub fn run() {
             get_professional_appointments,
             get_professional_stats,
             update_professional_verification,
+            check_professional_active_status,
+            get_professional_display_name,
 
             // Appointment management commands
             get_appointments,

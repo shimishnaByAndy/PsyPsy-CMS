@@ -417,7 +417,7 @@ interface FigmaToCodeMapping {
   codeProperty: 'containsPHI: boolean'
 
   figmaState: 'Loading'
-  codeState: 'isLoading: boolean'
+  codeState: 'isPending: boolean'
 
   figmaSpec: '44px minimum height'
   codeImplementation: 'min-h-[44px] (Tailwind) / designTokens.accessibility.minTouchTarget'

@@ -1,4 +1,4 @@
-use super::audio_processing::audio_to_mono; 
+use super::audio_processing::audio_to_mono;
 use anyhow::{anyhow, Result};
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::StreamError;

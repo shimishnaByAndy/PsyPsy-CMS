@@ -7,6 +7,12 @@ pub fn firestore_now() -> FirestoreTimestamp {
     FirestoreTimestamp::from(chrono::Utc::now())
 }
 
+/// Helper function to convert FirestoreTimestamp to string
+pub fn firestore_timestamp_to_string(timestamp: &FirestoreTimestamp) -> String {
+    let datetime: DateTime<Utc> = timestamp.0;
+    datetime.to_rfc3339()
+}
+
 /// Address object used by clients and professionals
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -101,6 +107,31 @@ pub enum UserType {
     Professional,
     HealthcareProvider,
     Admin,
+}
+
+impl TryFrom<u8> for UserType {
+    type Error = String;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(UserType::Client),
+            1 => Ok(UserType::Professional),
+            2 => Ok(UserType::HealthcareProvider),
+            3 => Ok(UserType::Admin),
+            _ => Err(format!("Invalid user type: {}", value)),
+        }
+    }
+}
+
+impl From<UserType> for u8 {
+    fn from(user_type: UserType) -> Self {
+        match user_type {
+            UserType::Client => 0,
+            UserType::Professional => 1,
+            UserType::HealthcareProvider => 2,
+            UserType::Admin => 3,
+        }
+    }
 }
 
 /// Paginated response structure

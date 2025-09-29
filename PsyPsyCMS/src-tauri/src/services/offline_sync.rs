@@ -8,19 +8,14 @@ use uuid::Uuid;
 #[derive(Debug, thiserror::Error)]
 pub enum SyncError {
     #[error("Storage error: {0}")]
-    #[allow(dead_code)] // Healthcare data sync functionality
     Storage(String),
     #[error("Firebase error: {0}")]
-    #[allow(dead_code)] // Healthcare data sync functionality
     Firebase(String),
     #[error("Conflict resolution failed: {0}")]
-    #[allow(dead_code)] // Healthcare data sync functionality
     ConflictResolution(String),
     #[error("Network error: {0}")]
-    #[allow(dead_code)] // Healthcare data sync functionality
     Network(String),
     #[error("Sync disabled due to compliance violation: {0}")]
-    #[allow(dead_code)] // Healthcare data sync functionality
     ComplianceViolation(String),
 }
 
@@ -51,11 +46,9 @@ pub enum ResolutionStrategy {
 }
 
 pub struct OfflineSyncService {
-    #[allow(dead_code)] // Healthcare data sync functionality
     local_storage: EncryptedNoteStorage,
     firebase_service: Option<FirebaseService>,
     sync_metadata: SyncMetadata,
-    #[allow(dead_code)] // Healthcare data sync functionality
     user_id: String,
 }
 

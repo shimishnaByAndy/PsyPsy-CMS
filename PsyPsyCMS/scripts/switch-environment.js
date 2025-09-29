@@ -2,6 +2,8 @@
 
 /**
  * Environment Switching Script for PsyPsy CMS
+ * 
+ * Enhanced script with validation, backup, and health checks
  *
  * Usage:
  *   npm run switch:dev    # Switch to development (emulators)
@@ -12,6 +14,8 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

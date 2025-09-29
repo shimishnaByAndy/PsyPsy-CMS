@@ -1,0 +1,150 @@
+{
+  "projectType": "psypsy-cms",
+  "version": "3.0.0",
+  "architecture": {
+    "frontend": "React 19 + TypeScript 5.3+",
+    "backend": "Tauri 2.1+ (Rust)",
+    "database": "Firebase",
+    "styling": "Tailwind CSS + shadcn/ui",
+    "stateManagement": "TanStack Query v5 + Zustand"
+  },
+  "compliance": {
+    "hipaa": true,
+    "quebecLaw25": true,
+    "auditTrails": true,
+    "phiHandling": true
+  },
+  "debugger": {
+    "port": 9224,
+    "wsPort": 9224,
+    "errorCapture": {
+      "enabled": true,
+      "reactPatterns": true,
+      "tauriPatterns": true,
+      "firebasePatterns": true,
+      "persistence": true,
+      "hipaaCompliant": true
+    },
+    "autoFix": {
+      "enabled": true,
+      "vectorIndex": true,
+      "sharedDatabase": true,
+      "healthcarePatterns": true,
+      "patterns": [
+        "react-19",
+        "typescript-5.3",
+        "tauri-2.1",
+        "tanstack-query-v5",
+        "firebase-integration",
+        "hipaa-compliance",
+        "build-errors",
+        "security-patterns"
+      ]
+    }
+  },
+  "subagents": {
+    "debug": {
+      "enabled": true,
+      "category": "debug",
+      "specializations": [
+        "Tauri 2.x debugging",
+        "React 19 error analysis",
+        "Build process issues",
+        "WebView debugging",
+        "Console error analysis",
+        "Auto-fix generation"
+      ],
+      "tools": 16,
+      "resourceLimits": {
+        "memory": "512MB",
+        "timeout": "15min"
+      }
+    },
+    "firebase": {
+      "enabled": true,
+      "category": "firebase",
+      "specializations": [
+        "Firebase Auth integration",
+        "Firestore database design",
+        "Security rules configuration",
+        "Functions deployment",
+        "Tauri Firebase setup",
+        "CSP/CORS troubleshooting"
+      ],
+      "tools": 12,
+      "resourceLimits": {
+        "memory": "256MB",
+        "timeout": "10min"
+      }
+    },
+    "styling": {
+      "enabled": true,
+      "category": "styling",
+      "specializations": [
+        "TailwindCSS v4 setup",
+        "Component styling patterns",
+        "Responsive design",
+        "Accessibility optimization",
+        "Design system architecture",
+        "CSS performance tuning"
+      ],
+      "tools": 10,
+      "resourceLimits": {
+        "memory": "256MB",
+        "timeout": "8min"
+      }
+    },
+    "data": {
+      "enabled": true,
+      "category": "data",
+      "specializations": [
+        "TanStack Query v5 mastery",
+        "Cache optimization",
+        "State architecture",
+        "API integration patterns",
+        "Offline data strategies",
+        "Performance optimization"
+      ],
+      "tools": 10,
+      "resourceLimits": {
+        "memory": "384MB",
+        "timeout": "12min"
+      }
+    },
+    "planning": {
+      "enabled": true,
+      "category": "planning",
+      "specializations": [
+        "Feature architecture design",
+        "User story creation",
+        "Technical debt analysis",
+        "Testing strategy planning",
+        "Code review automation",
+        "Documentation generation"
+      ],
+      "tools": 10,
+      "resourceLimits": {
+        "memory": "256MB",
+        "timeout": "10min"
+      }
+    }
+  },
+  "mcp": {
+    "servers": {
+      "psypsy-cms-debugger": {
+        "enabled": true,
+        "command": "node",
+        "args": ["build/unified-server.js"],
+        "categories": ["debug", "firebase", "styling", "data", "planning"]
+      }
+    }
+  },
+  "healthcare": {
+    "phiProtection": true,
+    "auditCompliance": true,
+    "quebecRegulations": true,
+    "dataResidency": "quebec-canada",
+    "encryptionLevel": "AES-256-GCM"
+  },
+  "generatedAt": "2025-09-26T06:32:00.000Z"
+}

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "psypsy-cms-debugger": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/Users/andreichira/Documents/Mobile_App_Dev/Tools/kandyClaude/desktop-app-mcp-server/build/src/orchestrator-server.js"
+      ],
+      "env": {}
+    }
+  }
+}

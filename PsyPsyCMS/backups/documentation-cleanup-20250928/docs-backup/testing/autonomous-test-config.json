@@ -1,0 +1,243 @@
+{
+  "autonomous_testing_config": {
+    "app_info": {
+      "name": "PsyPsy CMS",
+      "type": "healthcare_management_system",
+      "compliance": ["PIPEDA", "Quebec Law 25"],
+      "framework": "Tauri + React + Rust",
+      "app_url": "http://localhost:5178",
+      "process_id": "tauri-1758090070330"
+    },
+    "cms_debugger": {
+      "enabled": true,
+      "auto_fix_enabled": true,
+      "debug_port": 9474,
+      "webdriver_port": 9229,
+      "session_management": {
+        "max_tabs": 5,
+        "tab_cleanup": "immediate",
+        "session_timeout": "30m"
+      }
+    },
+    "deepwiki_integration": {
+      "enabled": true,
+      "repository_analysis": {
+        "claude_code_repo": "anthropics/claude-code",
+        "focus_areas": [
+          "MCP system integration",
+          "Automated testing workflows",
+          "Tool ecosystem patterns"
+        ]
+      }
+    },
+    "tavily_integration": {
+      "enabled": true,
+      "search_capabilities": {
+        "healthcare_testing": true,
+        "pipeda_compliance": true,
+        "quebec_law25_compliance": true,
+        "tauri_automation": true,
+        "rust_testing_patterns": true
+      },
+      "search_depth": "advanced",
+      "max_results": 5
+    },
+    "test_scenarios": {
+      "healthcare_workflows": [
+        {
+          "name": "patient_registration_workflow",
+          "description": "Complete patient registration with medical history and compliance validation",
+          "steps": [
+            "Navigate to patient registration",
+            "Fill patient demographics (PHI data)",
+            "Add medical history with encryption validation",
+            "Add emergency contacts",
+            "Verify PIPEDA compliance markers",
+            "Verify Quebec Law 25 compliance markers",
+            "Submit and validate audit trail"
+          ],
+          "compliance_checks": [
+            "PHI data encryption verification",
+            "Audit trail generation",
+            "Access control validation",
+            "Data retention policy check"
+          ],
+          "expected_elements": [
+            "patient-form",
+            "medical-history-section",
+            "emergency-contacts",
+            "pipeda-consent-checkbox",
+            "quebec-law25-notice"
+          ]
+        },
+        {
+          "name": "professional_credential_verification",
+          "description": "Professional registration with credential validation and license verification",
+          "steps": [
+            "Navigate to professional registration",
+            "Enter professional credentials",
+            "Upload license documentation",
+            "Verify professional order membership",
+            "Validate specialization certifications",
+            "Complete verification workflow"
+          ],
+          "compliance_checks": [
+            "Credential validation algorithms",
+            "License expiry monitoring",
+            "Professional order verification",
+            "Annual renewal tracking"
+          ],
+          "expected_elements": [
+            "professional-form",
+            "license-upload",
+            "credential-verification",
+            "specialization-selector",
+            "verification-status"
+          ]
+        },
+        {
+          "name": "appointment_scheduling_quebec_compliant",
+          "description": "Quebec Law 25 compliant appointment scheduling with conflict detection",
+          "steps": [
+            "Navigate to appointment scheduling",
+            "Select patient (with access control)",
+            "Choose professional and time slot",
+            "Verify no scheduling conflicts",
+            "Add appointment notes (encrypted)",
+            "Generate appointment confirmation"
+          ],
+          "compliance_checks": [
+            "Patient access control validation",
+            "Appointment data encryption",
+            "Conflict prevention algorithms",
+            "Audit logging for personal information access (PIPEDA)"
+          ],
+          "expected_elements": [
+            "appointment-calendar",
+            "patient-selector",
+            "time-slot-grid",
+            "conflict-warning",
+            "appointment-notes"
+          ]
+        },
+        {
+          "name": "medical_notes_encryption_workflow",
+          "description": "Quebec Law 25 compliant medical notes creation and encryption",
+          "steps": [
+            "Navigate to medical notes",
+            "Initialize encrypted storage",
+            "Create new medical note",
+            "Select Quebec-compliant template",
+            "Add clinical observations",
+            "Validate compliance before saving",
+            "Save with AES-256-GCM encryption"
+          ],
+          "compliance_checks": [
+            "Encryption algorithm validation (AES-256-GCM)",
+            "Quebec Law 25 template compliance",
+            "7-year retention policy setting",
+            "Professional signature requirements",
+            "Audit trail completeness"
+          ],
+          "expected_elements": [
+            "notes-editor",
+            "template-selector",
+            "encryption-status",
+            "compliance-validator",
+            "professional-signature"
+          ]
+        },
+        {
+          "name": "meeting_recording_quebec_workflow",
+          "description": "Quebec Law 25 compliant meeting recording and transcription",
+          "steps": [
+            "Navigate to meeting recording",
+            "Initialize audio recording infrastructure",
+            "Start recording with Quebec Law 25 compliance",
+            "Monitor transcription status",
+            "Stop recording and encrypt data",
+            "Save transcript with metadata"
+          ],
+          "compliance_checks": [
+            "Audio encryption during recording",
+            "Transcription personal information protection (PIPEDA)",
+            "Metadata compliance markers",
+            "Audit trail for recording access"
+          ],
+          "expected_elements": [
+            "recording-controls",
+            "audio-status-indicator",
+            "transcription-viewer",
+            "encryption-status",
+            "save-transcript-btn"
+          ]
+        }
+      ],
+      "security_penetration_tests": [
+        {
+          "name": "personal_info_exposure_test",
+          "description": "Verify personal information cannot be exposed through UI or network (PIPEDA)",
+          "checks": [
+            "Console log personal information screening (PIPEDA)",
+            "Network request personal information validation",
+            "Local storage encryption check",
+            "Memory dump personal information prevention"
+          ]
+        },
+        {
+          "name": "access_control_validation",
+          "description": "Validate role-based access controls for healthcare data",
+          "checks": [
+            "Professional role access validation",
+            "Patient role limitations",
+            "Administrative privilege escalation prevention",
+            "Cross-patient data access prevention"
+          ]
+        },
+        {
+          "name": "encryption_algorithm_validation",
+          "description": "Verify AES-256-GCM encryption implementation",
+          "checks": [
+            "Encryption key generation validation",
+            "Cipher algorithm verification",
+            "Decryption integrity check",
+            "Key rotation compliance"
+          ]
+        }
+      ],
+      "performance_benchmarks": [
+        {
+          "name": "healthcare_load_testing",
+          "description": "Performance testing under healthcare workload",
+          "metrics": [
+            "Patient record load time < 2s",
+            "Appointment scheduling response < 1s",
+            "Medical notes encryption time < 500ms",
+            "Audit trail generation < 100ms"
+          ]
+        }
+      ]
+    },
+    "automation_framework": {
+      "testing_strategy": "hybrid_automation",
+      "tools": {
+        "ui_automation": "cms-debugger + Playwright integration",
+        "api_testing": "Tauri command validation",
+        "security_testing": "PHI data protection validation",
+        "compliance_testing": "PIPEDA + Quebec Law 25 validation"
+      },
+      "reporting": {
+        "compliance_report": true,
+        "security_audit": true,
+        "performance_metrics": true,
+        "error_analysis": true
+      }
+    },
+    "continuous_monitoring": {
+      "real_time_error_detection": true,
+      "personal_info_access_monitoring": true,
+      "compliance_drift_detection": true,
+      "performance_degradation_alerts": true
+    }
+  }
+}

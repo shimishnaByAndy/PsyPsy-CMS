@@ -845,7 +845,7 @@ export function ClinicalNotesEditor() {
         {...HealthcareFormPresets.clinicalNotes}
         onSubmit={handleSubmit}
         validation={validation}
-        isLoading={isSubmitting}
+        isPending={isSubmitting}
       >
         {/* Session Planning */}
         <div className="space-y-6">
@@ -1019,7 +1019,7 @@ export function ClinicalNotesEditor() {
           <HealthcareButton
             variant="primary"
             type="submit"
-            isLoading={isSubmitting}
+            isPending={isSubmitting}
             complianceLevel="HIPAA"
             auditAction="submit_clinical_notes"
             containsPHI={true}

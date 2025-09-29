@@ -9,30 +9,38 @@ import devToolsCapture from '@/utils/devtools-console-capture'
 
 // Enhanced initialization with proper timing coordination
 async function initializeApplication() {
-  // Wait for Tauri-injected CMS Debugger script to be ready (if available)
-  if ((window as any).__CMS_DEBUGGER_INJECTED__) {
-    console.log('[DevTools] Using Tauri-injected CMS Debugger script (optimal timing)')
+  console.log('[DevTools] Starting application initialization...')
 
-    // Wait for CMS Debugger to be fully ready
-    let attempts = 0
-    while (!(window as any).__CMS_DEBUGGER_READY__ && attempts < 50) {
-      await new Promise(resolve => setTimeout(resolve, 10))
-      attempts++
-    }
+  // Initialize debugger tools but don't block React rendering
+  try {
+    if ((window as any).__CMS_DEBUGGER_INJECTED__) {
+      console.log('[DevTools] Using Tauri-injected CMS Debugger script (optimal timing)')
 
-    if ((window as any).__CMS_DEBUGGER_READY__) {
-      console.log('[DevTools] CMS Debugger ready - proceeding with React initialization')
-    } else {
-      console.warn('[DevTools] CMS Debugger script timeout - initializing fallback')
+      // Give CMS Debugger a brief moment to initialize, but don't wait too long
+      let attempts = 0
+      while (!(window as any).__CMS_DEBUGGER_READY__ && attempts < 10) {
+        await new Promise(resolve => setTimeout(resolve, 5))
+        attempts++
+      }
+
+      if ((window as any).__CMS_DEBUGGER_READY__) {
+        console.log('[DevTools] CMS Debugger ready - proceeding with React initialization')
+      } else {
+        console.log('[DevTools] CMS Debugger not ready yet - proceeding with React (debugger will initialize in background)')
+      }
+    } else if (import.meta.env.DEV) {
+      // Fallback to frontend DevTools capture if Tauri injection not available
+      console.log('[DevTools] Tauri injection not detected - using frontend DevTools capture')
+      devToolsCapture.initialize()
+      console.log('[DevTools] PsyPsy CMS console capture initialized for cms-debugger')
     }
-  } else if (import.meta.env.DEV) {
-    // Fallback to frontend DevTools capture if Tauri injection not available
-    console.log('[DevTools] Tauri injection not detected - using frontend DevTools capture')
-    devToolsCapture.initialize()
-    console.log('[DevTools] PsyPsy CMS console capture initialized for cms-debugger')
+  } catch (error) {
+    console.error('[DevTools] DevTools initialization error (non-fatal):', error)
   }
 
-  // Initialize the React application after debugger is ready
+  console.log('[DevTools] Proceeding with React application initialization...')
+
+  // Initialize the React application
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       <NextUIProvider theme="light">

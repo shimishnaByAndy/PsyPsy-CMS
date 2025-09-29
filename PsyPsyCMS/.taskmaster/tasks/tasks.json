@@ -1,0 +1,264 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 7,
+        "title": "Create Master Documentation Index",
+        "description": "docs/README.md is now the authoritative, up-to-date master index for all project documentation. It reflects the latest consolidated documentation set, with obsolete files archived and all content aligned to the React 19, TanStack Query v5, and Tauri 2.1+ stack. The documentation structure is streamlined for healthcare compliance and developer clarity.",
+        "status": "in-progress",
+        "dependencies": [
+          4,
+          5,
+          6
+        ],
+        "priority": "medium",
+        "details": "All major documentation sections are listed in docs/README.md with accurate relative links to current files only. Obsolete/redundant files (CMS_IMPLEMENTATION_GUIDE.md, IMPLEMENTATION_SUMMARY.md, COMPREHENSIVE_TEST_SUITE.md, RUN_TESTS.md) have been archived to docs/archived/ and are no longer referenced. All technical examples in linked docs use React 19, TanStack Query v5, and Tauri 2.1+ syntax. Test documentation is organized under the tests/ directory per ORG-001 rules, and the scripts directory has been audited for necessity and organization. Markdown TOC generators (e.g., markdown-toc v1.2+) are used for automated table of contents. The documentation set is now minimal, current, and optimized for healthcare project requirements.",
+        "testStrategy": "Confirm that docs/README.md covers all active documentation categories and that all links are functional. Verify that no obsolete files are referenced and that all technical examples use the current tech stack. Ensure test documentation is referenced only from the tests/ directory and that the scripts directory remains focused and necessary. Prepare for final compliance verification and archival.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Archive Obsolete Documentation Files",
+            "description": "Move CMS_IMPLEMENTATION_GUIDE.md, IMPLEMENTATION_SUMMARY.md, COMPREHENSIVE_TEST_SUITE.md, and RUN_TESTS.md to an archive directory. Remove references from docs/README.md.",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Update Documentation Links and Examples",
+            "description": "Review all documentation files linked from docs/README.md. Update technical examples to use React 19, TanStack Query v5, and Tauri 2.1+ syntax.",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Organize and Reference Test Documentation",
+            "description": "Ensure all test documentation files are located in the tests/ directory per ORG-001 rules. Update docs/README.md to reference tests/ directory only.",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Validate Master Index Coverage and Link Integrity",
+            "description": "Run link validation tools and manually review docs/README.md to confirm all links work and all documentation categories are covered. Ensure obsolete files are not referenced.",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Final Compliance Verification and Task Archival",
+            "description": "Conduct a final review to ensure documentation meets healthcare compliance requirements and project standards. If compliant, mark the task as complete and archive.",
+            "status": "done",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Review documentation for healthcare compliance, technical accuracy, and organizational clarity. Confirm that all previous cleanup and restructuring steps are reflected in the master index.",
+            "testStrategy": "Perform a compliance checklist review. Confirm with project stakeholders that documentation is ready for archival."
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Implement Consistent Document Templates",
+        "description": "Apply standardized templates to all documentation files for consistency.",
+        "details": "Create a markdown template with required sections: Purpose, Audience, Steps, References, Last Updated. Use markdownlint config for enforcement.",
+        "testStrategy": "Lint all documentation files and manually review for template adherence.",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Add Navigation and Cross-References",
+        "description": "Ensure clear navigation between related documents using relative links.",
+        "details": "Add 'See Also' sections and cross-links in all major docs. Use markdown link checker tools to validate.",
+        "testStrategy": "Automated link checking and manual navigation tests.",
+        "priority": "medium",
+        "dependencies": [
+          7,
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Categorize Documentation by Topic",
+        "description": "Organize documentation into Setup, Development, Compliance, Testing, Deployment, and API categories.",
+        "details": "Move files into appropriate subdirectories. Update links and index accordingly. Use metadata tags in frontmatter for category identification.",
+        "testStrategy": "Verify all documents are correctly categorized and accessible from the index.",
+        "priority": "medium",
+        "dependencies": [
+          7,
+          8,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Add Table of Contents to Major Documents",
+        "description": "Insert auto-generated tables of contents in all major documentation files.",
+        "details": "Use markdown-toc or similar tools to generate TOCs. Place TOC after the title in each document.",
+        "testStrategy": "Check TOC accuracy and update on document changes.",
+        "priority": "medium",
+        "dependencies": [
+          8,
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Audit and Consolidate Scripts",
+        "description": "Review all build and test scripts for redundancy and consolidate into a single solution.",
+        "details": "Use shellcheck v0.9+ for linting. Merge overlapping test runners (prefer Jest v30+, Playwright v1.45+ for E2E). Remove deprecated scripts and document changes.",
+        "testStrategy": "Run consolidated scripts in CI/CD pipeline and verify all tests/builds pass.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Standardize Script Naming and Documentation",
+        "description": "Apply kebab-case naming and add usage comments to all scripts.",
+        "details": "Rename scripts to kebab-case (e.g., run-tests.sh). Add header comments with usage, parameters, and exit codes. Use Prettier for formatting.",
+        "testStrategy": "Manual review for naming and documentation standards. Run scripts to verify usage comments are accurate.",
+        "priority": "medium",
+        "dependencies": [
+          12
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Implement Consistent Logging and Error Handling in Scripts",
+        "description": "Ensure all scripts use consistent logging format and proper error handling.",
+        "details": "Adopt winston v4+ for Node.js scripts, standardize log output, and implement exit codes. Add error handling blocks and test for edge cases.",
+        "testStrategy": "Inject errors and verify logs and exit codes behave as expected.",
+        "priority": "medium",
+        "dependencies": [
+          13
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Remove Deprecated Scripts",
+        "description": "Delete scripts identified as obsolete or redundant during audit.",
+        "details": "Remove files from repository and update documentation to reflect changes. Archive deprecated scripts in backup if needed.",
+        "testStrategy": "Verify no references to removed scripts remain in documentation or CI/CD configs.",
+        "priority": "medium",
+        "dependencies": [
+          12,
+          13,
+          14
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Create Developer Onboarding Checklist",
+        "description": "Develop a comprehensive onboarding checklist for new developers.",
+        "details": "List all setup steps, required accounts, and initial tasks. Use markdown checklist format. Include links to relevant documentation.",
+        "testStrategy": "Test onboarding process with a new developer and gather feedback.",
+        "priority": "medium",
+        "dependencies": [
+          7,
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Design Progressive Documentation Journey",
+        "description": "Structure documentation to guide users from basic to advanced topics.",
+        "details": "Create navigation paths and 'Next Steps' sections in onboarding docs. Use visual flowcharts for progression.",
+        "testStrategy": "User testing with new and experienced developers to validate clarity and progression.",
+        "priority": "medium",
+        "dependencies": [
+          16
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Create Quick-Start Guides for Common Tasks",
+        "description": "Develop quick-start guides for frequent developer tasks.",
+        "details": "Write concise guides for setup, running tests, deploying, etc. Include code snippets and troubleshooting tips.",
+        "testStrategy": "Have new developers follow guides and report any issues or confusion.",
+        "priority": "medium",
+        "dependencies": [
+          16,
+          17
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 19,
+        "title": "Add Troubleshooting Sections to Key Documents",
+        "description": "Include troubleshooting guides in onboarding and setup documentation.",
+        "details": "Document common errors and solutions. Use markdown callouts for warnings and tips.",
+        "testStrategy": "Simulate common issues and verify troubleshooting steps resolve them.",
+        "priority": "medium",
+        "dependencies": [
+          18
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 20,
+        "title": "Final Review and Stakeholder Approval",
+        "description": "Conduct a final review of all documentation and scripts, and obtain stakeholder approval.",
+        "details": "Organize peer reviews, compliance checks, and stakeholder walkthroughs. Address feedback and finalize changes.",
+        "testStrategy": "Collect sign-off from all stakeholders and verify all acceptance criteria are met.",
+        "priority": "high",
+        "dependencies": [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          15,
+          19
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-09-29T01:52:35.274Z",
+      "updated": "2025-09-29T03:39:23.017Z",
+      "description": "Tasks for master context"
+    },
+    "lastUpdated": "2025-09-29T02:24:00.453Z"
+  }
+}

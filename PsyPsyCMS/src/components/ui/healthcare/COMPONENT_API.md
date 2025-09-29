@@ -41,7 +41,7 @@ interface HealthcareButtonProps extends Omit<ButtonProps, 'color' | 'size'> {
   /**
    * Loading state with spinner
    */
-  isLoading?: boolean
+  isPending?: boolean
 
   /**
    * Custom icon to display
@@ -432,7 +432,7 @@ interface HealthcareFormProps {
   /**
    * Loading state
    */
-  isLoading?: boolean
+  isPending?: boolean
 
   /**
    * Form content

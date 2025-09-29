@@ -1,10 +1,28 @@
 # Firestore Security Rules Documentation
-
-**PsyPsy CMS - Healthcare Data Protection**
+**Last Updated**: September 29, 2025  
+**Audience**: Security Engineers, Developers, Compliance Officers  
+**Prerequisites**: Firestore knowledge, HIPAA/Quebec Law 25 understanding  
+**Categories**: Security, Database, Compliance, Firebase  
+**Topics**: Firestore Rules, Access Control, PHI Protection, Audit Trails  
 
 ## Overview
 
 This document provides comprehensive documentation for the Firestore security rules implemented in PsyPsy CMS, designed to ensure full compliance with HIPAA, PIPEDA, and Quebec Law 25 requirements for healthcare data protection.
+
+### Related Documentation
+- [Compliance Overview](../compliance/overview.md) - High-level compliance requirements and status
+- [Quebec Law 25 Guide](../compliance/quebec-law25.md) - Detailed Quebec privacy law implementation
+- [Architecture Guide](../development/architecture.md) - System design with security considerations
+- [Firebase Setup](../setup/setup-firebase-emulator.md) - Local development security testing
+
+## Table of Contents
+
+- [Compliance Framework](#compliance-framework)
+- [Security Rules Structure](#security-rules-structure)
+- [Access Control Patterns](#access-control-patterns)
+- [Data Validation](#data-validation)
+- [Audit Requirements](#audit-requirements)
+- [Implementation Examples](#implementation-examples)
 
 ## Compliance Framework
 

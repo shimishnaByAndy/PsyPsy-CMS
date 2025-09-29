@@ -7,6 +7,9 @@ model: claude-3-5-sonnet-20241022
 # PsyPsy CMS - Healthcare Management System
 
 
+
+
+
 ## Serena MCP Integration
 
 For detailed guidance on using Serena MCP tools with this project, see the project-specific usage guide:
@@ -1018,3 +1021,333 @@ tests/
 **COMPLIANCE LEVEL**: Healthcare Organization Standards
 **Enforcement**: Automatic for all AI agents
 **Review**: Monthly organizational audit
+
+## 🤖 AI Agent Organization Rules (CRITICAL ENFORCEMENT)
+
+### **AGENT-001: Project Structure Preservation (MANDATORY)**
+
+**BEFORE ANY FILE CREATION OR MODIFICATION, ALL AI AGENTS MUST:**
+
+#### **✅ File Creation Protocol:**
+```bash
+# STEP 1: Check target directory
+if [[ "$new_file" == *.test.* ]] || [[ "$new_file" == *test*.* ]]; then
+  TARGET_DIR="tests/"
+  # Determine test type: integration/, e2e/, security/, performance/, utilities/
+elif [[ "$new_file" == *.md ]] && [[ "$new_file" != "README.md" ]] && [[ "$new_file" != "CLAUDE.md" ]] && [[ "$new_file" != "DEVELOPMENT_RULES_2025.md" ]] && [[ "$new_file" != "CHANGELOG.md" ]]; then
+  TARGET_DIR="docs/"
+  # Determine docs type: testing/, compliance/, setup/, security/, design-system/
+elif [[ "$new_file" == *.js ]] && [[ "$purpose" == "automation" ]]; then
+  TARGET_DIR="scripts/"
+else
+  # ROOT FILES ONLY: README.md, CLAUDE.md, DEVELOPMENT_RULES_2025.md, CHANGELOG.md, config files
+  if [[ "$new_file" != "README.md" ]] && [[ "$new_file" != "CLAUDE.md" ]] && [[ "$new_file" != "DEVELOPMENT_RULES_2025.md" ]] && [[ "$new_file" != "CHANGELOG.md" ]] && [[ "$new_file" != *".json" ]] && [[ "$new_file" != *".toml" ]] && [[ "$new_file" != *".yaml" ]] && [[ "$new_file" != *".yml" ]]; then
+    REJECT_CREATION="File belongs in organized subfolder, not root"
+  fi
+fi
+```
+
+#### **🚫 FORBIDDEN Actions for AI Agents:**
+
+**❌ NEVER CREATE in root directory:**
+- Test files (`*.test.*`, `*-test.*`, `test-*.*`)
+- Implementation guides (`*-implementation.*`, `*-guide.*`)
+- Strategy documents (`*-strategy.*`, `*-approach.*`)
+- Compliance reports (`*-compliance.*`, `*-audit.*`)
+- Setup instructions (`setup-*.*`, `install-*.*`)
+- Temporary files (`temp-*.*`, `tmp-*.*`)
+
+**❌ NEVER MODIFY core organization files without explicit user permission:**
+- `docs/README.md` (master navigation hub)
+- `DEVELOPMENT_RULES_2025.md` (development patterns)
+- `.taskmaster/` directory structure
+- `tests/` directory organization
+
+**❌ NEVER CREATE redundant documentation:**
+- Multiple setup guides (consolidate into `docs/setup/`)
+- Duplicate testing strategies (use `docs/testing/`)
+- Multiple compliance documents (organize in `docs/compliance/`)
+
+### **AGENT-002: Healthcare Compliance Enforcement (CRITICAL)**
+
+**ALL AI AGENTS MUST VERIFY:**
+
+#### **🏥 HIPAA Compliance Checklist:**
+```typescript
+// BEFORE ANY PHI-RELATED CODE CHANGES
+const complianceCheck = {
+  auditLogging: "✅ All PHI access logged with timestamp + user ID",
+  encryption: "✅ AES-256-GCM encryption for all PHI fields",
+  accessControl: "✅ RBAC permissions enforced",
+  dataClassification: "✅ PHI fields explicitly marked",
+  errorHandling: "✅ No PHI in error messages or logs"
+}
+
+// MANDATORY: Verify before proceeding
+if (!allChecksPass(complianceCheck)) {
+  throw new Error("HIPAA compliance requirements not met")
+}
+```
+
+#### **🇨🇦 Quebec Law 25 Compliance:**
+```typescript
+// BEFORE ANY DATA PROCESSING CODE
+const quebecLaw25Check = {
+  consentTracking: "✅ Explicit consent recorded and tracked",
+  dataResidency: "✅ Data remains within Quebec/Canada",
+  breachNotification: "✅ 72-hour notification system implemented",
+  rightToErasure: "✅ Complete data deletion capability",
+  privacyImpact: "✅ Privacy impact assessment documented"
+}
+```
+
+### **AGENT-003: Technology Stack Enforcement (STRICT)**
+
+**ALL CODE CHANGES MUST USE CURRENT STACK:**
+
+#### **✅ REQUIRED Patterns (September 2025):**
+```typescript
+// ✅ React 19 with Compiler Optimization
+function HealthcareComponent({ patientData }: Props) {
+  // NO manual memoization - React Compiler handles optimization
+  const processedData = expensiveCalculation(patientData)
+  return <PatientCard data={processedData} />
+}
+
+// ✅ TanStack Query v5 syntax
+const { data, isPending, error } = useQuery({
+  queryKey: ['patients'],
+  queryFn: fetchPatients,
+  throwOnError: true, // v5 syntax
+  gcTime: 1000 * 60 * 30 // v5 syntax
+})
+
+// ✅ Tauri 2.1+ Universal Entry Point
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
+pub fn run() {
+  tauri::Builder::default()
+    .plugin(tauri_plugin_shell::init())
+    .run(tauri::generate_context!())
+    .expect("error while running tauri application")
+}
+```
+
+#### **❌ FORBIDDEN Patterns (Agents must reject):**
+```typescript
+// ❌ REJECT: React 18 manual memoization
+const MemoComponent = memo(Component)
+const value = useMemo(() => calc(), [deps])
+const callback = useCallback(() => {}, [deps])
+
+// ❌ REJECT: TanStack Query v4 syntax
+const { data, isLoading } = useQuery() // Use isPending
+const { useErrorBoundary } = useQuery() // Use throwOnError
+
+// ❌ REJECT: Direct PHI logging
+console.log(patient.ssn) // HIPAA violation
+console.error('Error:', patient.medicalHistory) // HIPAA violation
+```
+
+### **AGENT-004: Documentation Maintenance Protocol**
+
+**WHEN MAKING CODE CHANGES, ALL AGENTS MUST:**
+
+#### **📚 Documentation Update Requirements:**
+```markdown
+## Required Documentation Updates
+
+### For Security/Compliance Changes:
+- ✅ Update `docs/security/README.md`
+- ✅ Update `docs/compliance/overview.md`
+- ✅ Add entry to `docs/CHANGELOG.md`
+
+### For API/Integration Changes:
+- ✅ Update `docs/api/` relevant documentation
+- ✅ Update code examples in documentation
+- ✅ Verify all examples use current tech stack
+
+### For UI/UX Changes:
+- ✅ Update `docs/design-system/` if design tokens affected
+- ✅ Update accessibility documentation if applicable
+- ✅ Run accessibility tests: `npm run test:a11y`
+
+### For Testing Changes:
+- ✅ Update `docs/testing/testing-strategy.md`
+- ✅ Document new test patterns or utilities
+- ✅ Maintain test organization per ORG-001 rules
+```
+
+#### **🔄 Cross-Reference Maintenance:**
+```typescript
+// AGENTS MUST verify these links remain valid after changes
+const requiredCrossReferences = [
+  'docs/README.md → all major documentation categories',
+  'DEVELOPMENT_RULES_2025.md → current patterns and examples',
+  'docs/onboarding/quick-start.md → up-to-date setup steps',
+  'docs/testing/ → current test file locations',
+  'docs/compliance/ → current compliance implementations'
+]
+```
+
+### **AGENT-005: Task Master Integration Requirements**
+
+**ALL DEVELOPMENT WORK MUST INTEGRATE WITH TASK MASTER:**
+
+#### **📋 Task Management Protocol:**
+```bash
+# BEFORE starting any substantial work
+task-master next                # Get next priority task
+task-master show <id>          # Review task requirements
+
+# DURING implementation
+task-master update-subtask --id=<id> --prompt="Progress update with specific details"
+
+# AFTER completion
+task-master set-status --id=<id> --status=done
+```
+
+#### **🏥 Healthcare Task Documentation:**
+```javascript
+// REQUIRED: Document healthcare-specific implementation details
+await mcp__task_master_ai__update_subtask({
+  projectRoot: "/absolute/path/to/project",
+  id: "task.subtask",
+  prompt: `
+  Healthcare Implementation Details:
+  - HIPAA compliance measures implemented: [specific measures]
+  - Quebec Law 25 requirements addressed: [specific requirements]
+  - PHI handling patterns used: [encryption, audit logging, etc.]
+  - Security testing performed: [test results]
+  - Next steps: [what comes next in healthcare workflow]
+  `
+})
+```
+
+### **AGENT-006: Quality Assurance Enforcement**
+
+**BEFORE ANY COMMIT, ALL AGENTS MUST:**
+
+#### **🧪 Required Quality Checks:**
+```bash
+# MANDATORY testing sequence
+npm run type-check    # TypeScript validation
+npm run lint         # ESLint compliance
+npm run test         # Unit test suite
+npm run test:a11y    # Accessibility testing
+npm run test:security # Security compliance tests
+
+# Healthcare-specific validations
+npm run test:hipaa   # HIPAA compliance verification
+npm run test:quebec  # Quebec Law 25 compliance checks
+```
+
+#### **📊 Performance Budget Compliance:**
+```typescript
+// AGENTS MUST verify performance budgets are maintained
+const performanceBudgets = {
+  bundleSize: "< 2MB total",
+  initialLoad: "< 2 seconds",
+  timeToInteractive: "< 2.5 seconds",
+  memoryUsage: "< 200MB",
+  patientDataLoad: "< 500ms"
+}
+
+// REJECT changes that exceed these budgets
+```
+
+### **AGENT-007: Emergency Response Protocol**
+
+**FOR SECURITY/COMPLIANCE INCIDENTS:**
+
+#### **🚨 Immediate Actions Required:**
+```typescript
+// IF PHI exposure detected
+const emergencyProtocol = {
+  step1: "STOP all development activity immediately",
+  step2: "Assess scope of potential PHI exposure",
+  step3: "Log incident in security incident tracking",
+  step4: "Notify security team per docs/security/README.md",
+  step5: "Update documentation to prevent recurrence"
+}
+
+// IF Quebec Law 25 violation detected
+const quebecEmergencyProtocol = {
+  step1: "Document potential violation details",
+  step2: "Assess 72-hour notification requirements",
+  step3: "Contact privacy compliance officer",
+  step4: "Implement immediate containment measures",
+  step5: "Update compliance documentation"
+}
+```
+
+### **AGENT-008: Continuous Monitoring Requirements**
+
+**ALL AGENTS MUST MONITOR:**
+
+#### **📈 Project Health Metrics:**
+```typescript
+const projectHealthChecks = {
+  documentation: {
+    currency: "< 30 days since last update for active docs",
+    completeness: "100% cross-reference coverage",
+    accuracy: "100% working code examples",
+    compliance: "100% healthcare context preserved"
+  },
+  codeQuality: {
+    testCoverage: "> 85% frontend, > 90% backend",
+    accessibilityCompliance: "WCAG 2.1 AA minimum",
+    securityCompliance: "Zero critical vulnerabilities",
+    performanceCompliance: "All budgets maintained"
+  },
+  organizationalCompliance: {
+    fileOrganization: "ORG-001 rules enforced",
+    documentationHierarchy: "ORG-002 compliance",
+    testFileNaming: "ORG-003 conventions followed",
+    changeTracking: "ORG-005 requirements met"
+  }
+}
+```
+
+---
+
+## 🎯 Success Criteria for AI Agents
+
+### **Primary Objectives (MANDATORY):**
+1. **✅ Maintain healthcare compliance** at all times
+2. **✅ Preserve clean project organization** per ORG rules
+3. **✅ Use current tech stack patterns** (React 19, TanStack Query v5, Tauri 2.1+)
+4. **✅ Integrate with Task Master** workflow
+5. **✅ Update documentation** when making changes
+6. **✅ Enforce quality standards** before commits
+
+### **Compliance Verification:**
+```typescript
+// ALL AGENTS MUST pass this verification before any substantial work
+const agentComplianceCheck = {
+  hipaaCompliance: "✅ PHI handling patterns verified",
+  quebecLaw25: "✅ Data residency and consent tracking verified",
+  organizationRules: "✅ File placement follows ORG-001 through ORG-008",
+  techStackCurrency: "✅ All code uses September 2025 patterns",
+  documentationIntegrity: "✅ Cross-references and examples updated",
+  taskMasterIntegration: "✅ Progress tracked and documented",
+  qualityStandards: "✅ All tests pass, performance budgets maintained"
+}
+
+// REJECT any work that doesn't meet these criteria
+```
+
+### **Monthly Review Requirements:**
+All AI agents contributing to this project will have their adherence to these rules reviewed monthly to ensure:
+- Healthcare compliance standards are maintained
+- Project organization remains clean and logical
+- Documentation stays current and accurate
+- Technology patterns follow best practices
+- Task management integration is effective
+
+---
+
+**FINAL ENFORCEMENT NOTICE**: Any AI agent that creates files outside the organized structure, uses deprecated technology patterns, compromises healthcare compliance, or fails to integrate with established workflows will be considered non-compliant with PsyPsy CMS development standards.
+
+**COMPLIANCE LEVEL**: Healthcare Organization Standards + AI Agent Enforcement
+**Enforcement**: Automatic for all AI agents with monthly compliance review
+**Last Updated**: September 29, 2025

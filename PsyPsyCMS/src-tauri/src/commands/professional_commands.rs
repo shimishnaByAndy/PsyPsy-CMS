@@ -713,6 +713,70 @@ pub async fn get_professional_stats(
     Ok(ApiResponse::success(stats))
 }
 
+/// Check if professional is active using the Professional.is_active() method
+#[tauri::command]
+pub async fn check_professional_active_status(
+    professional_id: String,
+    _firebase_state: State<'_, FirebaseServiceState>,
+    _auth_state: State<'_, Arc<RwLock<AuthState>>>,
+) -> Result<bool, String> {
+    // Find professional from mock data
+    let mock_professionals = generate_mock_professionals();
+    let professional = mock_professionals
+        .into_iter()
+        .find(|p| p.object_id == professional_id)
+        .ok_or("Professional not found")?;
+
+    // Use the Professional.is_active() method
+    let is_active = professional.is_active();
+
+    // Log the operation (when Firebase is available)
+    let firebase_guard = _firebase_state.0.lock().await;
+    if let Some(firebase) = firebase_guard.as_ref() {
+        let _ = firebase.audit_log(
+            "CHECK_PROFESSIONAL_STATUS",
+            "professional",
+            "system", // Default user until auth is implemented
+            false, // Professional status check is not PHI
+            Some(serde_json::json!({"professional_id": professional_id, "is_active": is_active}))
+        ).await;
+    }
+
+    Ok(is_active)
+}
+
+/// Get professional display name using the Professional.display_name() method
+#[tauri::command]
+pub async fn get_professional_display_name(
+    professional_id: String,
+    _firebase_state: State<'_, FirebaseServiceState>,
+    _auth_state: State<'_, Arc<RwLock<AuthState>>>,
+) -> Result<String, String> {
+    // Find professional from mock data
+    let mock_professionals = generate_mock_professionals();
+    let professional = mock_professionals
+        .into_iter()
+        .find(|p| p.object_id == professional_id)
+        .ok_or("Professional not found")?;
+
+    // Use the Professional.display_name() method
+    let display_name = professional.display_name();
+
+    // Log the operation (when Firebase is available)
+    let firebase_guard = _firebase_state.0.lock().await;
+    if let Some(firebase) = firebase_guard.as_ref() {
+        let _ = firebase.audit_log(
+            "GET_PROFESSIONAL_DISPLAY_NAME",
+            "professional",
+            "system", // Default user until auth is implemented
+            false, // Professional display name is not PHI
+            Some(serde_json::json!({"professional_id": professional_id}))
+        ).await;
+    }
+
+    Ok(display_name)
+}
+
 /// Update professional verification status
 #[tauri::command]
 pub async fn update_professional_verification(

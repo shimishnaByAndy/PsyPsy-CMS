@@ -1,0 +1,48 @@
+{
+  "mcpServers": {
+    "psypsy-cms-debugger": {
+      "command": "node",
+      "args": ["build/unified-server.js"],
+      "env": {
+        "PROJECT_ROOT": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS",
+        "DEBUG_MODE": "healthcare",
+        "HIPAA_COMPLIANCE": "true",
+        "QUEBEC_LAW_25": "true",
+        "AUDIT_ENABLED": "true",
+        "PHI_PROTECTION": "true",
+        "DATA_RESIDENCY": "quebec-canada",
+        "ENCRYPTION_LEVEL": "AES-256-GCM"
+      }
+    },
+    "serena": {
+      "command": "uvx",
+      "args": ["--from", "serena-mcp", "serena-mcp"],
+      "env": {
+        "SERENA_PROJECT_PATH": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS",
+        "SERENA_CACHE_DIR": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS/.serena",
+        "HEALTHCARE_MODE": "true"
+      }
+    },
+    "firebase": {
+      "command": "npx",
+      "args": ["firebase-tools-mcp"],
+      "env": {
+        "FIREBASE_PROJECT": "psypsy-dev-local",
+        "FIREBASE_EMULATOR_HOST": "127.0.0.1",
+        "FIRESTORE_EMULATOR_HOST": "127.0.0.1:9881",
+        "FIREBASE_AUTH_EMULATOR_HOST": "127.0.0.1:9880",
+        "FIREBASE_DATABASE_EMULATOR_HOST": "127.0.0.1:9882",
+        "HEALTHCARE_COMPLIANCE": "true"
+      }
+    },
+    "task-master": {
+      "command": "uvx",
+      "args": ["task-master-mcp"],
+      "env": {
+        "TASKMASTER_PROJECT_ROOT": "/Users/andreichira/Documents/Mobile_App_Dev/PsyPsy/CMS/PsyPsyCMS",
+        "HEALTHCARE_CONTEXT": "true",
+        "COMPLIANCE_TRACKING": "true"
+      }
+    }
+  }
+}

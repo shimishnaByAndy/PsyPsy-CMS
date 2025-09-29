@@ -385,6 +385,185 @@ pub async fn get_client_stats(
     Ok(ApiResponse::success(stats))
 }
 
+// ============================================================================
+// NEW COMMANDS TO CONNECT UNUSED CLIENT MODEL METHODS
+// ============================================================================
+
+/// Unassign professional from client (connects to unused unassign_professional method)
+#[tauri::command]
+pub async fn unassign_professional_from_client(
+    client_id: String,
+    professional_id: String,
+    firebase: State<'_, Arc<tokio::sync::Mutex<FirebaseService>>>,
+    auth_state: State<'_, Arc<RwLock<AuthState>>>,
+) -> Result<ApiResponse<()>, String> {
+    let auth = auth_state.read().await;
+    if !auth.is_authenticated {
+        return Err("Unauthorized".to_string());
+    }
+
+    if !auth.has_permission("unassign_professional") {
+        return Err("Insufficient permissions".to_string());
+    }
+
+    let firebase = firebase.lock().await;
+
+    // Get client
+    let mut client: Client = firebase.get_document("clients", &client_id)
+        .await
+        .map_err(|e| e.to_string())?
+        .ok_or("Client not found")?;
+
+    // Use the unused unassign_professional method
+    client.unassign_professional(&professional_id);
+
+    // Save updated client
+    firebase.update_document("clients", &client_id, &client)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    // Audit log
+    firebase.audit_log(
+        "UNASSIGN_PROFESSIONAL",
+        "client_professional_assignment",
+        auth.user_id.as_ref().unwrap(),
+        true, // PHI modified
+        Some(serde_json::json!({
+            "client_id": client_id,
+            "professional_id": professional_id,
+            "client_name": client.display_name()
+        }))
+    ).await.map_err(|e| e.to_string())?;
+
+    Ok(ApiResponse::success_with_message(
+        (),
+        "Professional unassigned successfully".to_string()
+    ))
+}
+
+/// Increment client appointments (connects to unused increment_appointments method)
+#[tauri::command]
+pub async fn increment_client_appointments(
+    client_id: String,
+    appointment_type: String, // "total", "completed", or "cancelled"
+    firebase: State<'_, Arc<tokio::sync::Mutex<FirebaseService>>>,
+    auth_state: State<'_, Arc<RwLock<AuthState>>>,
+) -> Result<ApiResponse<()>, String> {
+    let auth = auth_state.read().await;
+    if !auth.is_authenticated {
+        return Err("Unauthorized".to_string());
+    }
+
+    if !auth.has_permission("update_client") {
+        return Err("Insufficient permissions".to_string());
+    }
+
+    let firebase = firebase.lock().await;
+
+    // Get client
+    let mut client: Client = firebase.get_document("clients", &client_id)
+        .await
+        .map_err(|e| e.to_string())?
+        .ok_or("Client not found")?;
+
+    // Use the unused increment_appointments method
+    let appointment_type_enum = match appointment_type.as_str() {
+        "total" => crate::models::client::AppointmentType::Total,
+        "completed" => crate::models::client::AppointmentType::Completed,
+        "cancelled" => crate::models::client::AppointmentType::Cancelled,
+        _ => return Err("Invalid appointment type".to_string()),
+    };
+
+    client.increment_appointments(appointment_type_enum);
+
+    // Save updated client
+    firebase.update_document("clients", &client_id, &client)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    // Audit log
+    firebase.audit_log(
+        "INCREMENT_APPOINTMENT_COUNT",
+        "client_appointments",
+        auth.user_id.as_ref().unwrap(),
+        true, // PHI modified
+        Some(serde_json::json!({
+            "client_id": client_id,
+            "appointment_type": appointment_type,
+            "client_name": client.display_name()
+        }))
+    ).await.map_err(|e| e.to_string())?;
+
+    Ok(ApiResponse::success_with_message(
+        (),
+        format!("{} appointment count incremented successfully", appointment_type)
+    ))
+}
+
+/// Check client active status (connects to unused is_active method)
+#[tauri::command]
+pub async fn check_client_active_status(
+    client_id: String,
+    firebase: State<'_, Arc<tokio::sync::Mutex<FirebaseService>>>,
+    auth_state: State<'_, Arc<RwLock<AuthState>>>,
+) -> Result<ApiResponse<bool>, String> {
+    let auth = auth_state.read().await;
+    if !auth.is_authenticated {
+        return Err("Unauthorized".to_string());
+    }
+
+    let firebase = firebase.lock().await;
+
+    // Get client
+    let client: Client = firebase.get_document("clients", &client_id)
+        .await
+        .map_err(|e| e.to_string())?
+        .ok_or("Client not found")?;
+
+    // Use the unused is_active method
+    let is_active = client.is_active();
+
+    // Audit log
+    firebase.audit_log(
+        "CHECK_CLIENT_STATUS",
+        "client_status",
+        auth.user_id.as_ref().unwrap(),
+        false, // No PHI accessed
+        Some(serde_json::json!({
+            "client_id": client_id,
+            "is_active": is_active
+        }))
+    ).await.map_err(|e| e.to_string())?;
+
+    Ok(ApiResponse::success(is_active))
+}
+
+/// Get client display name (connects to unused display_name method)
+#[tauri::command]
+pub async fn get_client_display_name(
+    client_id: String,
+    firebase: State<'_, Arc<tokio::sync::Mutex<FirebaseService>>>,
+    auth_state: State<'_, Arc<RwLock<AuthState>>>,
+) -> Result<ApiResponse<String>, String> {
+    let auth = auth_state.read().await;
+    if !auth.is_authenticated {
+        return Err("Unauthorized".to_string());
+    }
+
+    let firebase = firebase.lock().await;
+
+    // Get client
+    let client: Client = firebase.get_document("clients", &client_id)
+        .await
+        .map_err(|e| e.to_string())?
+        .ok_or("Client not found")?;
+
+    // Use the unused display_name method
+    let display_name = client.display_name();
+
+    Ok(ApiResponse::success(display_name))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -1,10 +1,30 @@
-# TESTING STRATEGY - Aspect 5: Testing & Quality Assurance
+# PsyPsy CMS Testing Strategy
+**Last Updated**: September 29, 2025  
+**Audience**: Developers, QA Engineers, DevOps  
+**Prerequisites**: React 19, Tauri 2.1+, Vitest, Playwright  
+**Categories**: Testing, Quality Assurance, Development  
+**Topics**: Unit Testing, Integration Testing, E2E Testing, Vitest, Playwright  
 
-## 🎯 Testing Overview
+## Overview
 
 This document outlines the comprehensive testing strategy for the PsyPsy CMS Tauri 2.0 migration, implementing multi-layer testing with 90%+ backend coverage and 85%+ frontend coverage.
 
-## 📊 Testing Pyramid
+### Related Documentation
+- [Firebase Emulator Setup](../setup/setup-firebase-emulator.md) - Local testing environment configuration
+- [UI Component Testing](test-ui-components.md) - Frontend component testing checklist
+- [Architecture Guide](../development/architecture.md) - System design and testing considerations
+- [Compliance Overview](../compliance/overview.md) - Compliance validation testing requirements
+
+## Table of Contents
+
+- [Testing Pyramid](#testing-pyramid)
+- [Unit Testing](#unit-testing)
+- [Integration Testing](#integration-testing)
+- [End-to-End Testing](#end-to-end-testing)
+- [Performance Testing](#performance-testing)
+- [Compliance Testing](#compliance-testing)
+
+## Testing Pyramid
 
 ### Layer 1: Unit Tests (70% of total tests)
 - **Rust Backend**: Comprehensive unit tests for all business logic

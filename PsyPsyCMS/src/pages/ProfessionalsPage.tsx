@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { invoke } from '@tauri-apps/api/core'
+import React, { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import {
   Users,
   Search,
@@ -40,6 +40,7 @@ import {
 import { Professional } from '@/types/professional'
 import { ProfessionalGrid, GridLayout } from '@/components/ui/ProfessionalGrid'
 import { ModernProfessionalCard } from '@/components/healthcare/ModernProfessionalCard'
+import { healthcareAPI } from '@/services/tauri-api'
 import {
   Table,
   TableBody,
@@ -79,9 +80,19 @@ const ProfessionalsPage: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState('all')
   const [filterSpecialty, setFilterSpecialty] = useState('all')
   const [selectedProfessionals, setSelectedProfessionals] = useState<string[]>([])
-  const [professionals, setProfessionals] = useState<Professional[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  // Fetch professionals using TanStack Query
+  const {
+    data: professionalsResponse,
+    isPending,
+    isError,
+    error,
+    refetch
+  } = useQuery({
+    queryKey: ['professionals'],
+    queryFn: () => healthcareAPI.professional.getAllProfessionals(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  })
   const [viewMode, setViewMode] = useState<'modern' | 'table'>('modern')
   const [gridLayout, setGridLayout] = useState<GridLayout>('grid')
   const [showProfessionalModal, setShowProfessionalModal] = useState(false)
@@ -219,115 +230,85 @@ const ProfessionalsPage: React.FC = () => {
     }
   ]
 
-  // Load professionals on component mount
-  useEffect(() => {
-    loadProfessionals()
-  }, [])
-
-  const loadProfessionals = async () => {
-    try {
-      setIsLoading(true)
-      setError(null)
-
-      // Call Tauri backend API
-      const apiResponse = await invoke('get_professionals', {
-        page: 1,
-        limit: 50
-      })
-
-      console.log('API Response:', apiResponse)
-
-      // Handle the ApiResponse<PaginatedResponse<Professional>> structure
-      if (apiResponse && apiResponse.success && apiResponse.data) {
-        const professionals = apiResponse.data.data || []
-
-        // Transform backend professionals to frontend format (matching aligned interface)
-        const transformedProfessionals = professionals.map((backendProf: any) => ({
-          objectId: backendProf.object_id || backendProf.id,
-          userId: backendProf.user_id,
-          profile: {
-            firstName: backendProf.profile?.first_name || backendProf.first_name || '',
-            lastName: backendProf.profile?.last_name || backendProf.last_name || '',
-            dateOfBirth: backendProf.profile?.date_of_birth || undefined,
-            gender: backendProf.profile?.gender || undefined,
-            profilePicture: backendProf.profile?.profile_picture || undefined,
-            bio: backendProf.profile?.bio || undefined,
-            createdAt: backendProf.profile?.created_at || backendProf.created_at || new Date().toISOString(),
-            updatedAt: backendProf.profile?.updated_at || backendProf.updated_at || new Date().toISOString(),
-            isActive: backendProf.profile?.is_active ?? true
-          },
-          addressObj: {
-            street: backendProf.address_obj?.street || '',
-            city: backendProf.address_obj?.city || '',
-            state: backendProf.address_obj?.state || 'QC',
-            zipCode: backendProf.address_obj?.zip_code || '',
-            country: backendProf.address_obj?.country || 'Canada'
-          },
-          geoPt: backendProf.geo_pt,
-          phoneNb: {
-            countryCode: backendProf.phone_nb?.country_code || '+1',
-            number: backendProf.phone_nb?.number || '',
-            formatted: backendProf.phone_nb?.formatted
-          },
-          bussEmail: backendProf.buss_email || '',
-          businessName: backendProf.business_name || '',
-          profType: backendProf.prof_type || 1,
-          eduInstitute: backendProf.edu_institute || 0,
-          motherTongue: backendProf.mother_tongue || 1,
-          offeredLangArr: backendProf.offered_lang_arr || [1],
-          expertises: backendProf.expertises || [],
-          servOfferedArr: backendProf.serv_offered_arr || [],
-          servOfferedObj: backendProf.serv_offered_obj || {},
-          servedClientele: backendProf.served_clientele || [],
-          availability: backendProf.availability || [],
-          meetType: backendProf.meet_type || 'Both',
-          thirdPartyPayers: backendProf.third_party_payers || [],
-          partOfOrder: backendProf.part_of_order,
-          status: backendProf.status || 'pending',
-          verification: {
-            isVerified: backendProf.verification?.is_verified || false,
-            verificationDate: backendProf.verification?.verification_date,
-            verifiedBy: backendProf.verification?.verified_by,
-            verificationDocuments: backendProf.verification?.verification_documents || []
-          },
-          licenseInfo: backendProf.license_info || {
-            licenseNumber: '',
-            licenseType: '',
-            issuingState: 'QC',
-            issueDate: '',
-            expiryDate: '',
-            isActive: true
-          },
-          rating: {
-            averageRating: backendProf.rating?.average_rating || 0,
-            totalReviews: backendProf.rating?.total_reviews || 0,
-            ratingDistribution: backendProf.rating?.rating_distribution || {}
-          },
-          totalClients: backendProf.total_clients || 0,
-          activeClients: backendProf.active_clients || 0,
-          totalAppointments: backendProf.total_appointments || 0,
-          completedAppointments: backendProf.completed_appointments || 0,
-          createdAt: backendProf.created_at || new Date().toISOString(),
-          updatedAt: backendProf.updated_at || new Date().toISOString()
-        }))
-
-        setProfessionals(transformedProfessionals)
-      } else {
-        console.warn('Unexpected API response format, using mock data')
-        setProfessionals(mockProfessionals)
-      }
-    } catch (error) {
-      console.error('Failed to load professionals:', error)
-      setError('Failed to load professionals. Please try again.')
-      // Use mock data for development
-      setProfessionals(mockProfessionals)
-    } finally {
-      setIsLoading(false)
+  // Transform backend professionals to frontend format
+  const professionals = React.useMemo(() => {
+    if (!professionalsResponse?.success || !professionalsResponse?.data?.data) {
+      return mockProfessionals
     }
-  }
+
+    const backendProfessionals = professionalsResponse.data.data
+    return backendProfessionals.map((backendProf: any) => ({
+      objectId: backendProf.object_id || backendProf.id,
+      userId: backendProf.user_id,
+      profile: {
+        firstName: backendProf.profile?.first_name || backendProf.first_name || '',
+        lastName: backendProf.profile?.last_name || backendProf.last_name || '',
+        dateOfBirth: backendProf.profile?.date_of_birth || undefined,
+        gender: backendProf.profile?.gender || undefined,
+        profilePicture: backendProf.profile?.profile_picture || undefined,
+        bio: backendProf.profile?.bio || undefined,
+        createdAt: backendProf.profile?.created_at || backendProf.created_at || new Date().toISOString(),
+        updatedAt: backendProf.profile?.updated_at || backendProf.updated_at || new Date().toISOString(),
+        isActive: backendProf.profile?.is_active ?? true
+      },
+      addressObj: {
+        street: backendProf.address_obj?.street || '',
+        city: backendProf.address_obj?.city || '',
+        state: backendProf.address_obj?.state || 'QC',
+        zipCode: backendProf.address_obj?.zip_code || '',
+        country: backendProf.address_obj?.country || 'Canada'
+      },
+      geoPt: backendProf.geo_pt,
+      phoneNb: {
+        countryCode: backendProf.phone_nb?.country_code || '+1',
+        number: backendProf.phone_nb?.number || '',
+        formatted: backendProf.phone_nb?.formatted
+      },
+      bussEmail: backendProf.buss_email || '',
+      businessName: backendProf.business_name || '',
+      profType: backendProf.prof_type || 1,
+      eduInstitute: backendProf.edu_institute || 0,
+      motherTongue: backendProf.mother_tongue || 1,
+      offeredLangArr: backendProf.offered_lang_arr || [1],
+      expertises: backendProf.expertises || [],
+      servOfferedArr: backendProf.serv_offered_arr || [],
+      servOfferedObj: backendProf.serv_offered_obj || {},
+      servedClientele: backendProf.served_clientele || [],
+      availability: backendProf.availability || [],
+      meetType: backendProf.meet_type || 'Both',
+      thirdPartyPayers: backendProf.third_party_payers || [],
+      partOfOrder: backendProf.part_of_order,
+      status: backendProf.status || 'pending',
+      verification: {
+        isVerified: backendProf.verification?.is_verified || false,
+        verificationDate: backendProf.verification?.verification_date,
+        verifiedBy: backendProf.verification?.verified_by,
+        verificationDocuments: backendProf.verification?.verification_documents || []
+      },
+      licenseInfo: backendProf.license_info || {
+        licenseNumber: '',
+        licenseType: '',
+        issuingState: 'QC',
+        issueDate: '',
+        expiryDate: '',
+        isActive: true
+      },
+      rating: {
+        averageRating: backendProf.rating?.average_rating || 0,
+        totalReviews: backendProf.rating?.total_reviews || 0,
+        ratingDistribution: backendProf.rating?.rating_distribution || {}
+      },
+      totalClients: backendProf.total_clients || 0,
+      activeClients: backendProf.active_clients || 0,
+      totalAppointments: backendProf.total_appointments || 0,
+      completedAppointments: backendProf.completed_appointments || 0,
+      createdAt: backendProf.created_at || new Date().toISOString(),
+      updatedAt: backendProf.updated_at || new Date().toISOString()
+    }))
+  }, [professionalsResponse])
 
   // Early returns for loading and error states with proper landmarks
-  if (isLoading) {
+  if (isPending) {
     return (
       <main role="main" aria-label="Professionals management - loading">
         <div className="flex items-center justify-center h-64">
@@ -346,10 +327,12 @@ const ProfessionalsPage: React.FC = () => {
         <div className="text-center py-12">
           <AlertCircle className="mx-auto h-12 w-12 text-red-400" aria-hidden="true" />
           <h1 className="mt-2 text-sm font-medium text-gray-900">Error loading professionals</h1>
-          <p className="mt-1 text-sm text-gray-500">{error}</p>
+          <p className="mt-1 text-sm text-gray-500">
+            {error instanceof Error ? error.message : 'An unexpected error occurred'}
+          </p>
           <div className="mt-6">
             <button
-              onClick={loadProfessionals}
+              onClick={() => refetch()}
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
               aria-label="Retry loading professionals"
             >
@@ -564,25 +547,14 @@ const ProfessionalsPage: React.FC = () => {
 
     setIsVerifying(true)
     try {
-      await invoke('update_professional_verification', {
-        professionalId: selectedProfessional.objectId,
+      await healthcareAPI.professional.updateProfessionalVerification(
+        selectedProfessional.objectId,
         verified,
-        verificationNotes: verificationNotes || null
-      })
+        verificationNotes || undefined
+      )
 
-      // Update the professional in our local state
-      setProfessionals(professionals.map(p =>
-        p.objectId === selectedProfessional.objectId
-          ? {
-              ...p,
-              verification: {
-                ...p.verification,
-                isVerified: verified,
-                verificationDate: verified ? new Date().toISOString() : undefined
-              }
-            }
-          : p
-      ))
+      // Refetch professionals to get updated data
+      refetch()
 
       setShowVerificationDialog(false)
       setVerificationNotes('')
@@ -653,19 +625,20 @@ const ProfessionalsPage: React.FC = () => {
                  formData.status === 'suspended' ? 'Suspended' : 'Pending'
         }
 
-        const result = await invoke('update_professional', {
-          id: editingProfessional.id,
-          request: updateRequest
-        })
+        const result = await healthcareAPI.professional.updateProfessional(
+          editingProfessional.objectId,
+          updateRequest
+        )
 
         console.log('Professional updated successfully:', result)
-        alert('Professional updated successfully!')
 
-        // Update local state with the updated professional
-        const updatedProfessional = { ...editingProfessional, ...formData, updatedAt: new Date().toISOString() }
-        setProfessionals(prev =>
-          prev.map(p => p.id === editingProfessional.id ? updatedProfessional : p)
-        )
+        // Refetch professionals to get updated data
+        refetch()
+
+        toast({
+          title: 'Success',
+          description: 'Professional updated successfully',
+        })
 
       } else {
         // Create new professional
@@ -707,22 +680,17 @@ const ProfessionalsPage: React.FC = () => {
           services: {}
         }
 
-        const result = await invoke('create_professional', {
-          request: createRequest
-        })
+        const result = await healthcareAPI.professional.createProfessional(createRequest)
 
         console.log('Professional created successfully:', result)
-        alert('Professional created successfully!')
 
-        // Add new professional to local state
-        const newProfessional: Professional = {
-          id: `prof_${Date.now()}`,
-          userId: `user_${Date.now()}`,
-          ...formData as Professional,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-        setProfessionals(prev => [...prev, newProfessional])
+        // Refetch professionals to get updated data
+        refetch()
+
+        toast({
+          title: 'Success',
+          description: 'Professional created successfully',
+        })
       }
 
       handleCloseModal()

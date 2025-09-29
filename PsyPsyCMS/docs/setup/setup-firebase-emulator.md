@@ -1,6 +1,29 @@
 # Firebase Emulator Setup Guide
+**Last Updated**: September 29, 2025  
+**Audience**: Developers, DevOps Engineers  
+**Prerequisites**: Node.js 18+, Firebase CLI, Project setup  
+**Categories**: Setup, Development Environment, Firebase  
+**Topics**: Firebase Emulators, Local Development, Configuration, Testing  
 
-## 🚀 Quick Start
+## Overview
+
+This guide provides step-by-step instructions for setting up and configuring Firebase emulators for local development of the PsyPsy CMS application.
+
+### Related Documentation
+- [Architecture Guide](../development/architecture.md) - System architecture and Firebase integration
+- [Security Rules](../security/FIRESTORE_SECURITY_DOCUMENTATION.md) - Firestore security configuration
+- [Testing Strategy](../testing/TESTING_STRATEGY.md) - Integration testing with emulators
+- [Compliance Overview](../compliance/overview.md) - Data protection requirements
+
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Emulator Configuration](#emulator-configuration)
+- [API Endpoints](#api-endpoints)
+- [Testing Integration](#testing-integration)
+- [Troubleshooting](#troubleshooting)
+
+## Quick Start
 
 Your Firebase emulator integration is now ready! Follow these steps to test the connection:
 
